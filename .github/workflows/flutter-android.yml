@@ -51,7 +51,7 @@ jobs:
         shell: bash
         run: |
           STORE_PASSWORD=$(openssl rand -hex 16)
-          KEY_PASSWORD=$(openssl rand -hex 16)
+          KEY_PASSWORD="$STORE_PASSWORD"
           KEY_ALIAS=fcbaz
           keytool -genkeypair -v             -keystore android/app/fcbaz-release.jks             -alias "$KEY_ALIAS"             -keyalg RSA -keysize 2048 -validity 10000             -storepass "$STORE_PASSWORD"             -keypass "$KEY_PASSWORD"             -dname "CN=FCBaz, OU=Android, O=FCBaz, L=Tehran, ST=Tehran, C=IR"
 
