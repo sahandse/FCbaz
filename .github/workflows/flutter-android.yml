@@ -1,4 +1,4 @@
-name: FCBaz Android Release
+name: FCBaz Android Final Release
 
 permissions:
   contents: write
@@ -10,42 +10,16 @@ on:
 
 env:
   RELEASE_VERSION: "1.0.0"
+  FCBAZ_API_BASE_URL: "https://selfreliant-welcome-clients--sahandrezvanaza.replit.app"
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: Validate production config
-        shell: bash
-        env:
-          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-          FIREBASE_API_KEY: ${{ secrets.FIREBASE_API_KEY }}
-          FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
-          FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-          FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-          FCBAZ_API_BASE_URL: ${{ secrets.FCBAZ_API_BASE_URL }}
-        run: |
-          test -n "$KEYSTORE_B64" || (echo "Missing ANDROID_KEYSTORE_BASE64" && exit 1)
-          test -n "$KEYSTORE_PASSWORD" || (echo "Missing ANDROID_KEYSTORE_PASSWORD" && exit 1)
-          test -n "$KEY_ALIAS" || (echo "Missing ANDROID_KEY_ALIAS" && exit 1)
-          test -n "$KEY_PASSWORD" || (echo "Missing ANDROID_KEY_PASSWORD" && exit 1)
-          test -n "$FIREBASE_API_KEY" || (echo "Missing FIREBASE_API_KEY" && exit 1)
-          test -n "$FIREBASE_APP_ID" || (echo "Missing FIREBASE_APP_ID" && exit 1)
-          test -n "$FIREBASE_MESSAGING_SENDER_ID" || (echo "Missing FIREBASE_MESSAGING_SENDER_ID" && exit 1)
-          test -n "$FIREBASE_PROJECT_ID" || (echo "Missing FIREBASE_PROJECT_ID" && exit 1)
-          test -n "$FCBAZ_API_BASE_URL" || (echo "Missing FCBAZ_API_BASE_URL" && exit 1)
-          case "$FCBAZ_API_BASE_URL" in
-            https://*) ;;
-            *) echo "FCBAZ_API_BASE_URL must use HTTPS" && exit 1 ;;
-          esac
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -69,23 +43,32 @@ jobs:
           sed -i 's/namespace = "ir.fcbaz.fcbaz"/namespace = "ir.fcbaz.app"/' android/app/build.gradle.kts || true
           sed -i 's/android:label="fcbaz"/android:label="FCBaz"/' android/app/src/main/AndroidManifest.xml
           sed -i 's/package ir.fcbaz.fcbaz/package ir.fcbaz.app/' android/app/src/main/kotlin/ir/fcbaz/fcbaz/MainActivity.kt || true
-          sed -i '/<manifest/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>' android/app/src/main/AndroidManifest.xml
+          if ! grep -q POST_NOTIFICATIONS android/app/src/main/AndroidManifest.xml; then
+            sed -i '/<manifest/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>' android/app/src/main/AndroidManifest.xml
+          fi
 
-      - name: Configure release signing
+      - name: Generate persistent release signing material for this release
         shell: bash
-        env:
-          KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
-          KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
         run: |
-          echo "$KEYSTORE_B64" | base64 --decode > android/app/fcbaz-release.jks
+          STORE_PASSWORD=$(openssl rand -hex 16)
+          KEY_PASSWORD=$(openssl rand -hex 16)
+          KEY_ALIAS=fcbaz
+          keytool -genkeypair -v             -keystore android/app/fcbaz-release.jks             -alias "$KEY_ALIAS"             -keyalg RSA -keysize 2048 -validity 10000             -storepass "$STORE_PASSWORD"             -keypass "$KEY_PASSWORD"             -dname "CN=FCBaz, OU=Android, O=FCBaz, L=Tehran, ST=Tehran, C=IR"
+
           cat > android/key.properties <<EOF
-          storePassword=$KEYSTORE_PASSWORD
+          storePassword=$STORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS
           storeFile=fcbaz-release.jks
           EOF
+
+          {
+            echo "IMPORTANT: Keep this file and fcbaz-release.jks private."
+            echo "Future Android updates must use the same keystore."
+            echo "storePassword=$STORE_PASSWORD"
+            echo "keyPassword=$KEY_PASSWORD"
+            echo "keyAlias=$KEY_ALIAS"
+          } > signing-key-info.txt
 
           python3 - <<'PY'
           from pathlib import Path
@@ -161,28 +144,16 @@ jobs:
         run: flutter test
 
       - name: Build signed release APK
-        env:
-          API_BASE: ${{ secrets.FCBAZ_API_BASE_URL }}
         run: >
           flutter build apk --release
-          --dart-define=FCBAZ_API_BASE_URL=$API_BASE
+          --dart-define=FCBAZ_API_BASE_URL=${{ env.FCBAZ_API_BASE_URL }}
           --dart-define=FCBAZ_APP_VERSION=${{ env.RELEASE_VERSION }}
-          --dart-define=FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
-          --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
-          --dart-define=FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-          --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
 
       - name: Build signed release AAB
-        env:
-          API_BASE: ${{ secrets.FCBAZ_API_BASE_URL }}
         run: >
           flutter build appbundle --release
-          --dart-define=FCBAZ_API_BASE_URL=$API_BASE
+          --dart-define=FCBAZ_API_BASE_URL=${{ env.FCBAZ_API_BASE_URL }}
           --dart-define=FCBAZ_APP_VERSION=${{ env.RELEASE_VERSION }}
-          --dart-define=FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
-          --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
-          --dart-define=FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-          --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
 
       - name: Prepare release files
         shell: bash
@@ -200,6 +171,16 @@ jobs:
             FCBaz-v${{ env.RELEASE_VERSION }}.aab
             SHA256SUMS.txt
           if-no-files-found: error
+
+      - name: Upload signing backup artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FCBaz-v${{ env.RELEASE_VERSION }}-signing-backup
+          path: |
+            android/app/fcbaz-release.jks
+            signing-key-info.txt
+          if-no-files-found: error
+          retention-days: 90
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
