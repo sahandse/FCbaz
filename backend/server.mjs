@@ -340,6 +340,45 @@ async function handler(req, res) {
 
       let players = playerArray(raw);
 
+      const detailFiltersActive = [
+        'play_style',
+        'play_style_plus',
+        'role',
+        'min_skill_moves',
+        'min_weak_foot',
+        'min_pace',
+        'max_pace',
+        'min_shooting',
+        'max_shooting',
+        'min_passing',
+        'max_passing',
+        'min_dribbling',
+        'max_dribbling',
+        'min_defending',
+        'max_defending',
+        'min_physical',
+        'max_physical',
+      ].some((key) => (url.searchParams.get(key) || '').trim() !== '');
+
+      if (detailFiltersActive && players.length) {
+        const enriched = await Promise.all(
+          players.slice(0, 30).map(async (p) => {
+            try {
+              const detailRaw = await provider(
+                'get_player_details',
+                { player_id: p.id, year: 27 },
+                { ttl: 120 },
+              );
+              const detailData = unwrap(detailRaw);
+              return normalizePlayer(detailData?.player ?? detailData);
+            } catch {
+              return p;
+            }
+          }),
+        );
+        players = enriched;
+      }
+
       const textEq = (actual, expected) =>
         !expected ||
         String(actual || '').toLowerCase() === String(expected).toLowerCase();
@@ -348,11 +387,21 @@ async function handler(req, res) {
         !expected ||
         String(actual || '').toLowerCase().includes(String(expected).toLowerCase());
 
+      const includesText = (list, expected) => {
+        if (!expected) return true;
+        const target = String(expected).toLowerCase();
+        return Array.isArray(list) &&
+          list.some((x) => String(x).toLowerCase().includes(target));
+      };
+
       const minRating = asInt(url.searchParams.get('min_rating'));
       const maxRating = asInt(url.searchParams.get('max_rating'));
       const minPrice = asInt(url.searchParams.get('min_price'));
       const maxPrice = asInt(url.searchParams.get('max_price'));
       const platform = url.searchParams.get('platform') === 'pc' ? 'pc' : 'ps';
+
+      const minStat = (key) => asInt(url.searchParams.get('min_' + key));
+      const maxStat = (key) => asInt(url.searchParams.get('max_' + key));
 
       players = players.filter((p) => {
         const price = platform === 'pc' ? p.price_pc : p.price_ps;
@@ -363,6 +412,11 @@ async function handler(req, res) {
         const version = url.searchParams.get('version');
         const rarity = url.searchParams.get('rarity');
         const cardType = url.searchParams.get('card_type');
+        const playStyle = url.searchParams.get('play_style');
+        const playStylePlus = url.searchParams.get('play_style_plus');
+        const role = url.searchParams.get('role');
+        const minSkillMoves = asInt(url.searchParams.get('min_skill_moves'));
+        const minWeakFoot = asInt(url.searchParams.get('min_weak_foot'));
 
         if (minRating && p.rating < minRating) return false;
         if (maxRating && p.rating > maxRating) return false;
@@ -381,6 +435,20 @@ async function handler(req, res) {
         if (!textEq(p.version, version)) return false;
         if (!textEq(p.rarity, rarity)) return false;
         if (!textEq(p.card_type, cardType)) return false;
+        if (!includesText(p.playstyles, playStyle)) return false;
+        if (!includesText(p.playstyles_plus, playStylePlus)) return false;
+        if (!includesText(p.roles, role)) return false;
+
+        if (minSkillMoves && p.skill_moves < minSkillMoves) return false;
+        if (minWeakFoot && p.weak_foot < minWeakFoot) return false;
+
+        for (const stat of ['pace','shooting','passing','dribbling','defending','physical']) {
+          const min = minStat(stat);
+          const max = maxStat(stat);
+          const value = Number(p?.[stat] || 0);
+          if (min && value < min) return false;
+          if (max && value > max) return false;
+        }
 
         return true;
       });
@@ -414,6 +482,9 @@ async function handler(req, res) {
         leagues: [...new Set(players.map((p) => p.league_name).filter(Boolean))].sort(),
         clubs: [...new Set(players.map((p) => p.club_name).filter(Boolean))].sort(),
         nations: [...new Set(players.map((p) => p.nation_name).filter(Boolean))].sort(),
+        playstyles: [...new Set(players.flatMap((p) => p.playstyles || []).filter(Boolean))].sort(),
+        playstyles_plus: [...new Set(players.flatMap((p) => p.playstyles_plus || []).filter(Boolean))].sort(),
+        roles: [...new Set(players.flatMap((p) => p.roles || []).filter(Boolean))].sort(),
       };
 
       return send(res, 200, {
@@ -424,6 +495,44 @@ async function handler(req, res) {
           page: Number(baseParams.page),
           facets,
         },
+      });
+    }
+
+    if (path === '/api/v1/players/trending') {
+      const raw = await provider('get_market_trends', {}, { ttl: 60 });
+      const data = unwrap(raw);
+      const candidates = [
+        ...(Array.isArray(data?.top_movers) ? data.top_movers : []),
+        ...(Array.isArray(data?.popular_players) ? data.popular_players : []),
+        ...(Array.isArray(data?.trending_players) ? data.trending_players : []),
+      ];
+
+      const ids = [];
+      for (const row of candidates) {
+        const id = String(row?.player_id ?? row?.id ?? '');
+        if (id && /^\d+$/.test(id) && !ids.includes(id)) ids.push(id);
+        if (ids.length >= 12) break;
+      }
+
+      const details = await Promise.all(
+        ids.map(async (id) => {
+          try {
+            const detailRaw = await provider(
+              'get_player_details',
+              { player_id: id, year: 27 },
+              { ttl: 120 },
+            );
+            const detailData = unwrap(detailRaw);
+            return normalizePlayer(detailData?.player ?? detailData);
+          } catch {
+            return null;
+          }
+        }),
+      );
+
+      return send(res, 200, {
+        data: details.filter((p) => p && p.id && p.name),
+        meta: { source: 'futbin-via-parse', game_year: 27 },
       });
     }
 
