@@ -114,6 +114,32 @@ class AuthRepository {
     return session;
   }
 
+  Future<AccountSession> refreshSession() async {
+    final current = await currentSession();
+    if (current == null || current.refreshToken.isEmpty) {
+      throw const FCBazApiException('نشست ورود قابل بروزرسانی نیست.');
+    }
+
+    final json = await api.postJson(
+      '/api/v1/account/refresh',
+      body: {'refresh_token': current.refreshToken},
+    );
+    final raw = json is Map ? (json['data'] ?? json) : null;
+    if (raw is! Map) {
+      throw const FCBazApiException('پاسخ Refresh معتبر نیست.');
+    }
+
+    final session = AccountSession.fromJson(
+      Map<String, dynamic>.from(raw),
+    );
+    if (session.accessToken.isEmpty || session.userId.isEmpty) {
+      throw const FCBazApiException('Refresh نشست کامل نشد.');
+    }
+
+    await _save(session);
+    return session;
+  }
+
   Future<void> signOut() async {
     await Future.wait([
       storage.delete(key: _accessKey),
