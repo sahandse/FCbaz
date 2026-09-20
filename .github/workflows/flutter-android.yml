@@ -4,10 +4,12 @@ permissions:
   contents: write
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 env:
-  RELEASE_VERSION: "1.0.0"
+  RELEASE_VERSION: "1.0.1"
   FCBAZ_API_BASE_URL: "https://selfreliant-welcome-clients--sahandrezvanaza.replit.app"
 
 jobs:
