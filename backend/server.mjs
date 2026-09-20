@@ -147,6 +147,8 @@ function normalizePlayer(raw) {
     league_name: String(raw?.league ?? raw?.league_name ?? ''),
     nation_name: String(raw?.nation ?? raw?.nation_name ?? ''),
     version: String(raw?.version ?? raw?.rarity ?? ''),
+    rarity: String(raw?.rarity ?? raw?.rarity_name ?? ''),
+    card_type: String(raw?.card_type ?? raw?.type ?? raw?.quality ?? ''),
     image_url: String(raw?.image_large ?? raw?.image ?? ''),
     card_image_url: String(raw?.card_image_large_url ?? raw?.card_image_url ?? raw?.card_image ?? ''),
     pace: asInt(stats.PAC ?? stats.pace ?? raw?.pace),
@@ -309,6 +311,121 @@ async function handler(req, res) {
     }
 
     if (!API_KEY) return providerNotConfigured(res);
+
+    if (path === '/api/v1/players/advanced') {
+      const query = (url.searchParams.get('q') || '').trim();
+      const baseParams = {
+        page: url.searchParams.get('page') || 1,
+        min_rating: url.searchParams.get('min_rating'),
+        max_rating: url.searchParams.get('max_rating'),
+        min_price: url.searchParams.get('min_price'),
+        max_price: url.searchParams.get('max_price'),
+        position: url.searchParams.get('position'),
+        league_id: url.searchParams.get('league_id'),
+        club_id: url.searchParams.get('club_id'),
+        nation_id: url.searchParams.get('nation_id'),
+        version: url.searchParams.get('version'),
+        rarity: url.searchParams.get('rarity'),
+        card_type: url.searchParams.get('card_type'),
+        sort_by_price: url.searchParams.get('sort_by_price'),
+        platform: url.searchParams.get('platform') || 'ps',
+      };
+
+      const raw = query.length >= 2
+        ? await provider('search_players_fc27', {
+            query,
+            page: baseParams.page,
+          })
+        : await provider('list_fc27_players', baseParams);
+
+      let players = playerArray(raw);
+
+      const textEq = (actual, expected) =>
+        !expected ||
+        String(actual || '').toLowerCase() === String(expected).toLowerCase();
+
+      const textContains = (actual, expected) =>
+        !expected ||
+        String(actual || '').toLowerCase().includes(String(expected).toLowerCase());
+
+      const minRating = asInt(url.searchParams.get('min_rating'));
+      const maxRating = asInt(url.searchParams.get('max_rating'));
+      const minPrice = asInt(url.searchParams.get('min_price'));
+      const maxPrice = asInt(url.searchParams.get('max_price'));
+      const platform = url.searchParams.get('platform') === 'pc' ? 'pc' : 'ps';
+
+      players = players.filter((p) => {
+        const price = platform === 'pc' ? p.price_pc : p.price_ps;
+        const position = url.searchParams.get('position');
+        const league = url.searchParams.get('league');
+        const club = url.searchParams.get('club');
+        const nation = url.searchParams.get('nation');
+        const version = url.searchParams.get('version');
+        const rarity = url.searchParams.get('rarity');
+        const cardType = url.searchParams.get('card_type');
+
+        if (minRating && p.rating < minRating) return false;
+        if (maxRating && p.rating > maxRating) return false;
+        if (minPrice && (!price || price < minPrice)) return false;
+        if (maxPrice && (!price || price > maxPrice)) return false;
+
+        if (
+          position &&
+          p.position !== position &&
+          !p.positions.includes(position)
+        ) return false;
+
+        if (!textContains(p.league_name, league)) return false;
+        if (!textContains(p.club_name, club)) return false;
+        if (!textContains(p.nation_name, nation)) return false;
+        if (!textEq(p.version, version)) return false;
+        if (!textEq(p.rarity, rarity)) return false;
+        if (!textEq(p.card_type, cardType)) return false;
+
+        return true;
+      });
+
+      const sort = url.searchParams.get('sort') || 'rating_desc';
+      const statValue = (p, key) => Number(p?.[key] || 0);
+
+      const sorters = {
+        rating_desc: (a, b) => b.rating - a.rating,
+        rating_asc: (a, b) => a.rating - b.rating,
+        price_asc: (a, b) =>
+          (platform === 'pc' ? a.price_pc : a.price_ps) -
+          (platform === 'pc' ? b.price_pc : b.price_ps),
+        price_desc: (a, b) =>
+          (platform === 'pc' ? b.price_pc : b.price_ps) -
+          (platform === 'pc' ? a.price_pc : a.price_ps),
+        pace: (a, b) => statValue(b, 'pace') - statValue(a, 'pace'),
+        shooting: (a, b) => statValue(b, 'shooting') - statValue(a, 'shooting'),
+        passing: (a, b) => statValue(b, 'passing') - statValue(a, 'passing'),
+        dribbling: (a, b) => statValue(b, 'dribbling') - statValue(a, 'dribbling'),
+        defending: (a, b) => statValue(b, 'defending') - statValue(a, 'defending'),
+        physical: (a, b) => statValue(b, 'physical') - statValue(a, 'physical'),
+      };
+
+      players.sort(sorters[sort] || sorters.rating_desc);
+
+      const facets = {
+        versions: [...new Set(players.map((p) => p.version).filter(Boolean))].sort(),
+        rarities: [...new Set(players.map((p) => p.rarity).filter(Boolean))].sort(),
+        card_types: [...new Set(players.map((p) => p.card_type).filter(Boolean))].sort(),
+        leagues: [...new Set(players.map((p) => p.league_name).filter(Boolean))].sort(),
+        clubs: [...new Set(players.map((p) => p.club_name).filter(Boolean))].sort(),
+        nations: [...new Set(players.map((p) => p.nation_name).filter(Boolean))].sort(),
+      };
+
+      return send(res, 200, {
+        data: players,
+        meta: {
+          source: 'futbin-via-parse',
+          game_year: 27,
+          page: Number(baseParams.page),
+          facets,
+        },
+      });
+    }
 
     if (path === '/api/v1/players') {
       const raw = await provider('list_fc27_players', {
