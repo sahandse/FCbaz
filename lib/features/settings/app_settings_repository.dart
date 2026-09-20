@@ -52,7 +52,7 @@ class AppSettingsRepository {
 
     return AppSettings(
       themeMode: theme,
-      localeCode: prefs.getString(_localeKey) ?? 'fa',
+      localeCode: 'fa',
       defaultPlatform: prefs.getString(_platformKey) ?? 'console',
       priceAlertsEnabled: prefs.getBool(_alertsKey) ?? true,
       marketRefreshOnResume: prefs.getBool(_resumeRefreshKey) ?? true,
@@ -70,7 +70,7 @@ class AppSettingsRepository {
 
     await Future.wait([
       prefs.setString(_themeKey, theme),
-      prefs.setString(_localeKey, settings.localeCode),
+      prefs.setString(_localeKey, 'fa'),
       prefs.setString(_platformKey, settings.defaultPlatform),
       prefs.setBool(_alertsKey, settings.priceAlertsEnabled),
       prefs.setBool(_resumeRefreshKey, settings.marketRefreshOnResume),
