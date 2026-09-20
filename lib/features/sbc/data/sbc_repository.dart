@@ -28,9 +28,19 @@ class SbcRepository {
     return SbcChallenge.fromJson(Map<String, dynamic>.from(raw));
   }
 
-  Future<SbcSolution> getCheapestSolution(String id) async {
+  Future<SbcSolution> getCheapestSolution(
+    String id, {
+    Set<String> ownedPlayerIds = const {},
+  }) async {
+    final owned = ownedPlayerIds.isEmpty
+        ? ''
+        : '&owned_ids=' +
+            Uri.encodeQueryComponent(ownedPlayerIds.join(','));
     final json = await api.getJson(
-      '/api/v1/sbc/' + Uri.encodeComponent(id) + '/solution?mode=cheapest',
+      '/api/v1/sbc/' +
+          Uri.encodeComponent(id) +
+          '/solution?mode=cheapest' +
+          owned,
     );
     final raw = json is Map ? (json['data'] ?? json) : json;
     if (raw is! Map) {
