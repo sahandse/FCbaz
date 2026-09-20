@@ -76,7 +76,7 @@ void main() {
     expect(result.bySlot.values.every((value) => value <= 3), isTrue);
   });
 
-  test('out of position player gets zero chemistry', () {
+  test('out of position player gets zero and does not contribute', () {
     final formation = Formations.byId('433');
     final result = const ChemistryEngineFC27().calculate(
       formation: formation,
@@ -89,19 +89,102 @@ void main() {
           league: 'League A',
           nation: 'Nation A',
         ),
+        'lw': p(
+          id: '2',
+          name: 'B',
+          position: 'LW',
+          club: 'Club A',
+          league: 'League B',
+          nation: 'Nation B',
+        ),
       },
     );
 
     expect(result.bySlot['st'], 0);
+    expect(result.bySlot['lw'], 0);
   });
 
-  test('squad repository saves and restores squads', () async {
+  test('manager matching league adds chemistry up to max 3', () {
+    final formation = Formations.byId('433');
+    final result = const ChemistryEngineFC27().calculate(
+      formation: formation,
+      playersBySlot: {
+        'st': p(
+          id: '1',
+          name: 'A',
+          position: 'ST',
+          club: 'Club A',
+          league: 'League A',
+          nation: 'Nation A',
+        ),
+      },
+      manager: const ManagerProfile(
+        name: 'Manager',
+        nationName: 'Nation Z',
+        leagueName: 'League A',
+      ),
+    );
+
+    expect(result.bySlot['st'], 1);
+  });
+
+  test('squad repository saves advanced squad fields', () async {
     SharedPreferences.setMockInitialValues({});
     final repository = SquadRepository();
+
+    final starter = p(
+      id: '1',
+      name: 'A',
+      position: 'ST',
+      club: 'Club A',
+      league: 'League A',
+      nation: 'Nation A',
+    );
+    final bench = p(
+      id: '2',
+      name: 'B',
+      position: 'LW',
+      club: 'Club B',
+      league: 'League B',
+      nation: 'Nation B',
+    );
 
     final squad = SquadStateModel(
       id: 's1',
       name: 'تیم تست',
+      formationId: '433',
+      playersBySlot: {'st': starter},
+      playerConfigs: const {
+        'st': SquadPlayerConfig(
+          chemistryStyle: 'Hunter',
+          role: 'Advanced Forward++',
+          focus: 'Attack',
+        ),
+      },
+      bench: [bench],
+      manager: const ManagerProfile(
+        name: 'Manager',
+        nationName: 'Nation A',
+        leagueName: 'League A',
+      ),
+    );
+
+    await repository.upsert(squad);
+    final loaded = await repository.getAll();
+
+    expect(loaded, hasLength(1));
+    expect(loaded.single.name, 'تیم تست');
+    expect(loaded.single.playersBySlot['st']?.name, 'A');
+    expect(loaded.single.playerConfigs['st']?.chemistryStyle, 'Hunter');
+    expect(loaded.single.bench.single.name, 'B');
+    expect(loaded.single.manager?.leagueName, 'League A');
+  });
+
+  test('squad export and import preserve usable data', () {
+    final repository = SquadRepository();
+    final squad = SquadStateModel(
+      id: 's1',
+      name: 'Export Test',
       formationId: '433',
       playersBySlot: {
         'st': p(
@@ -113,13 +196,24 @@ void main() {
           nation: 'Nation A',
         ),
       },
+      bench: [
+        p(
+          id: '2',
+          name: 'B',
+          position: 'LW',
+          club: 'Club B',
+          league: 'League B',
+          nation: 'Nation B',
+        ),
+      ],
     );
 
-    await repository.upsert(squad);
-    final loaded = await repository.getAll();
+    final raw = repository.exportSquad(squad);
+    final imported = repository.importSquad(raw);
 
-    expect(loaded, hasLength(1));
-    expect(loaded.single.name, 'تیم تست');
-    expect(loaded.single.playersBySlot['st']?.name, 'A');
+    expect(imported.id, isNot('s1'));
+    expect(imported.formationId, '433');
+    expect(imported.playersBySlot['st']?.name, 'A');
+    expect(imported.bench.single.name, 'B');
   });
 }
