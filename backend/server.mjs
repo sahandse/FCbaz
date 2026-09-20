@@ -21,7 +21,7 @@ function send(res, status, body, extraHeaders = {}) {
   const payload = JSON.stringify(body);
   res.writeHead(status, {
     'content-type': 'application/json; charset=utf-8',
-    'cache-control': status === 200 ? 'public, max-age=30' : 'no-store',
+    'cache-control': 'no-store',
     'access-control-allow-origin': '*',
     ...extraHeaders,
   });
@@ -173,9 +173,6 @@ async function sendFcm(token, { title, body, data = {} }) {
           ),
           android: {
             priority: 'high',
-            notification: {
-              channel_id: 'price_alerts',
-            },
           },
         },
       }),
@@ -512,6 +509,27 @@ async function handler(req, res) {
       });
     }
 
+    if (path === '/api/v1/account/refresh' && req.method === 'POST') {
+      const body = await readJsonBody(req);
+      const refreshToken = String(body?.refresh_token || '').trim();
+      if (!refreshToken) {
+        return send(res, 400, { error: 'refresh_token_required' });
+      }
+
+      const data = await supabaseAuth('/token?grant_type=refresh_token', {
+        method: 'POST',
+        body: { refresh_token: refreshToken },
+      });
+
+      return send(res, 200, {
+        data: {
+          access_token: data?.access_token || '',
+          refresh_token: data?.refresh_token || refreshToken,
+          user: data?.user || null,
+        },
+      });
+    }
+
     if (path === '/api/v1/account/login' && req.method === 'POST') {
       const body = await readJsonBody(req);
       const email = String(body?.email || '').trim();
@@ -600,6 +618,110 @@ async function handler(req, res) {
       }
 
       if (!API_KEY) return providerNotConfigured(res);
+      if (!cloudConfigured()) {
+        return send(res, 503, { error: 'cloud_sync_not_configured' });
+      }
+
+      const syncRows = await supabaseRest(
+        'fcbaz_user_sync?select=user_id,snapshot&limit=1000'
+      );
+      let checked = 0;
+      let pushed = 0;
+
+      for (const row of Array.isArray(syncRows) ? syncRows : []) {
+        const snapshotData = row?.snapshot?.data || {};
+        const rawWatchlist = snapshotData?.fcbaz_market_watchlist;
+        if (!rawWatchlist || typeof rawWatchlist !== 'string') continue;
+
+        let watchlist = [];
+        try { watchlist = JSON.parse(rawWatchlist); } catch { continue; }
+        if (!Array.isArray(watchlist)) continue;
+
+        const defaultPlatform =
+          String(snapshotData?.fcbaz_default_platform || 'console') === 'pc'
+            ? 'pc'
+            : 'console';
+        const providerPlatform = defaultPlatform === 'pc' ? 'pc' : 'ps';
+
+        const devices = await supabaseRest(
+          'fcbaz_devices?user_id=eq.' +
+            encodeURIComponent(String(row.user_id)) +
+            '&select=token'
+        );
+        const tokens = (Array.isArray(devices) ? devices : [])
+          .map((d) => String(d?.token || ''))
+          .filter(Boolean);
+        if (!tokens.length) continue;
+
+        for (const item of watchlist) {
+          const playerId = String(item?.player_id || '');
+          const target = asInt(item?.target_price);
+          if (!playerId || !target) continue;
+
+          try {
+            const marketRaw = await provider(
+              'get_fc27_player_price',
+              { player_id: playerId, platform: providerPlatform },
+              { ttl: 45 },
+            );
+            const price = normalizePrice(marketRaw, playerId, defaultPlatform);
+            checked++;
+
+            const stateRows = await supabaseRest(
+              'fcbaz_push_alert_state?user_id=eq.' +
+                encodeURIComponent(String(row.user_id)) +
+                '&player_id=eq.' +
+                encodeURIComponent(playerId) +
+                '&target_price=eq.' +
+                encodeURIComponent(String(target)) +
+                '&select=reached&limit=1'
+            );
+            const wasReached =
+              Array.isArray(stateRows) && stateRows[0]?.reached === true;
+            const reached = price.current > 0 && price.current <= target;
+
+            if (reached && !wasReached) {
+              for (const token of tokens) {
+                try {
+                  await sendFcm(token, {
+                    title: 'FCBaz • قیمت هدف رسید',
+                    body:
+                      String(item?.player_name || 'بازیکن') +
+                      ' به ' +
+                      price.current +
+                      ' Coins رسید.',
+                    data: {
+                      type: 'price_alert',
+                      player_id: playerId,
+                      price: price.current,
+                      target_price: target,
+                    },
+                  });
+                  pushed++;
+                } catch {}
+              }
+            }
+
+            await supabaseRest('fcbaz_push_alert_state?on_conflict=user_id,player_id,target_price', {
+              method: 'POST',
+              prefer: 'resolution=merge-duplicates,return=minimal',
+              body: {
+                user_id: row.user_id,
+                player_id: playerId,
+                target_price: target,
+                reached,
+                last_price: price.current,
+                updated_at: new Date().toISOString(),
+              },
+            });
+          } catch {}
+        }
+      }
+
+      return send(res, 200, { data: { checked, pushed } });
+    }
+
+    if (!API_KEY) return providerNotConfigured(res);
       if (!cloudConfigured()) {
         return send(res, 503, { error: 'cloud_sync_not_configured' });
       }
