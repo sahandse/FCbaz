@@ -136,6 +136,45 @@ class _EvolutionCardState extends State<_EvolutionCard> {
             for (final req in item.requirements)
               Align(alignment: Alignment.centerRight, child: Text('• ' + req)),
           ],
+          if (item.steps.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            const Align(
+              alignment: Alignment.centerRight,
+              child: Text('مسیر Evolution', style: TextStyle(fontWeight: FontWeight.w900)),
+            ),
+            const SizedBox(height: 8),
+            for (var i = 0; i < item.steps.length; i++) ...[
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(14),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      (i + 1).toString() + '. ' +
+                          (item.steps[i].title.isEmpty ? 'مرحله ' + (i + 1).toString() : item.steps[i].title),
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                    if (item.steps[i].requirements.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      for (final req in item.steps[i].requirements)
+                        Text('• ' + req),
+                    ],
+                    if (item.steps[i].upgrades.isNotEmpty) ...[
+                      const SizedBox(height: 6),
+                      for (final up in item.steps[i].upgrades)
+                        Text('+ ' + up),
+                    ],
+                  ],
+                ),
+              ),
+              if (i != item.steps.length - 1) const SizedBox(height: 8),
+            ],
+          ],
           if (item.upgrades.isNotEmpty) ...[
             const SizedBox(height: 12),
             const Align(
