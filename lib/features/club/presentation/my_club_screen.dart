@@ -4,6 +4,7 @@ import '../../players/data/player_repository.dart';
 import '../../players/domain/player.dart';
 import '../../squad/data/squad_repository.dart';
 import '../../squad/domain/squad_models.dart';
+import '../../settings/app_settings_repository.dart';
 import '../data/my_club_repository.dart';
 import '../my_club_service.dart';
 
@@ -19,6 +20,9 @@ class _MyClubScreenState extends State<MyClubScreen> {
   final playerRepository = PlayerRepository();
   final clubService = MyClubService();
   final squadRepository = SquadRepository();
+  final settingsRepository = AppSettingsRepository();
+
+  String platform = 'console';
 
   List<MyClubItem> items = const [];
   ClubValuation? valuation;
@@ -31,7 +35,14 @@ class _MyClubScreenState extends State<MyClubScreen> {
   @override
   void initState() {
     super.initState();
-    _load();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    final settings = await settingsRepository.load();
+    if (!mounted) return;
+    setState(() => platform = settings.defaultPlatform);
+    await _load();
   }
 
   String _coins(int value) {
@@ -50,7 +61,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
     return negative ? '-' + result : result;
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool forceRefresh = false}) async {
     final data = await clubRepository.getAll();
     if (!mounted) return;
 
@@ -60,10 +71,10 @@ class _MyClubScreenState extends State<MyClubScreen> {
       loading = false;
     });
 
-    await _refreshValue();
+    await _refreshValue(forceRefresh: forceRefresh);
   }
 
-  Future<void> _refreshValue() async {
+  Future<void> _refreshValue({bool forceRefresh = false}) async {
     if (items.isEmpty) {
       setState(() {
         valuation = null;
@@ -78,7 +89,11 @@ class _MyClubScreenState extends State<MyClubScreen> {
     });
 
     try {
-      final data = await clubService.valueClub(items);
+      final data = await clubService.valueClub(
+        items,
+        platform: platform,
+        forceRefresh: forceRefresh,
+      );
       if (!mounted) return;
       setState(() => valuation = data);
     } catch (e) {
@@ -180,7 +195,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
         title: const Text('باشگاه من'),
         actions: [
           IconButton(
-            onPressed: loadingValue ? null : _refreshValue,
+            onPressed: loadingValue ? null : () => _refreshValue(forceRefresh: true),
             icon: const Icon(Icons.refresh_rounded),
             tooltip: 'بروزرسانی قیمت‌ها',
           ),
@@ -192,7 +207,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _load,
+        onRefresh: () => _load(forceRefresh: true),
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
