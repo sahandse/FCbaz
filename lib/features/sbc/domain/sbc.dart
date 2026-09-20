@@ -9,6 +9,8 @@ class SbcChallenge {
     required this.repeatable,
     required this.expiresAt,
     required this.estimatedCost,
+    required this.itemScore,
+    required this.guideFa,
   });
 
   final String id;
@@ -20,10 +22,15 @@ class SbcChallenge {
   final bool repeatable;
   final DateTime? expiresAt;
   final int? estimatedCost;
+  final int? itemScore;
+  final List<String> guideFa;
 
   factory SbcChallenge.fromJson(Map<String, dynamic> json) {
     int? asNullableInt(dynamic value) =>
         value == null ? null : (value is int ? value : int.tryParse(value.toString()));
+
+    List<String> asStrings(dynamic value) =>
+        value is List ? value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList() : const [];
 
     return SbcChallenge(
       id: (json['id'] ?? '').toString(),
@@ -31,12 +38,12 @@ class SbcChallenge {
       category: (json['category'] ?? 'SBC').toString(),
       description: (json['description'] ?? '').toString(),
       reward: (json['reward'] ?? json['rewards'] ?? '').toString(),
-      requirements: (json['requirements'] is List)
-          ? (json['requirements'] as List).map((e) => e.toString()).toList()
-          : const [],
+      requirements: asStrings(json['requirements']),
       repeatable: json['repeatable'] == true,
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
       estimatedCost: asNullableInt(json['estimated_cost'] ?? json['cost']),
+      itemScore: asNullableInt(json['item_score'] ?? json['required_item_score']),
+      guideFa: asStrings(json['guide_fa'] ?? json['persian_guide']),
     );
   }
 }
@@ -46,11 +53,13 @@ class SbcSolution {
     required this.totalCost,
     required this.playerIds,
     required this.notes,
+    required this.itemScore,
   });
 
   final int totalCost;
   final List<String> playerIds;
   final List<String> notes;
+  final int? itemScore;
 
   factory SbcSolution.fromJson(Map<String, dynamic> json) {
     final raw = json['player_ids'] ?? json['players'] ?? const [];
@@ -62,6 +71,9 @@ class SbcSolution {
       notes: json['notes'] is List
           ? (json['notes'] as List).map((e) => e.toString()).toList()
           : const [],
+      itemScore: json['item_score'] is int
+          ? json['item_score'] as int
+          : int.tryParse((json['item_score'] ?? '').toString()),
     );
   }
 }
