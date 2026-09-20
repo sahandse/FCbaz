@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../club/presentation/my_club_screen.dart';
-import '../evolutions/presentation/evolutions_screen.dart';
-import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
 import '../meta/presentation/meta_screen.dart';
-import '../sbc/presentation/sbc_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../settings/profile_screen.dart';
 import '../settings/settings_screen.dart';
@@ -58,18 +55,6 @@ class MoreScreen extends StatelessWidget {
               onTap: () => _open(context, const MarketScreen()),
             ),
             _ToolCard(
-              title: 'SBC',
-              subtitle: 'چالش‌ها و Solver',
-              icon: Icons.extension_rounded,
-              onTap: () => _open(context, const SbcScreen()),
-            ),
-            _ToolCard(
-              title: 'Evolutions',
-              subtitle: 'Evo Lab',
-              icon: Icons.auto_awesome_rounded,
-              onTap: () => _open(context, const EvolutionsScreen()),
-            ),
-            _ToolCard(
               title: 'باشگاه من',
               subtitle: 'کارت‌ها و ارزش باشگاه',
               icon: Icons.inventory_2_rounded,
@@ -80,12 +65,6 @@ class MoreScreen extends StatelessWidget {
               subtitle: 'بازیکنان برتر هر پست',
               icon: Icons.leaderboard_rounded,
               onTap: () => _open(context, const MetaScreen()),
-            ),
-            _ToolCard(
-              title: 'Objectives',
-              subtitle: 'هدف‌ها و پاداش‌ها',
-              icon: Icons.flag_rounded,
-              onTap: () => _open(context, const ObjectivesScreen()),
             ),
           ],
         ),
@@ -150,7 +129,7 @@ class MoreScreen extends StatelessWidget {
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'FCBaz فقط قابلیت‌هایی را در این منو نگه می‌دارد که داده یا منطق قابل استفاده دارند.',
+                  'بازیکنان، قیمت‌ها و Meta مستقیماً از منابع رایگان اینترنتی دریافت می‌شوند؛ بخش بدون منبع معتبر نمایش داده نمی‌شود.',
                 ),
               ),
             ],
