@@ -540,13 +540,21 @@ class _SquadScreenState extends State<SquadScreen> {
             PopupMenuButton<String>(
               tooltip: 'مدیریت ترکیب',
               onSelected: (value) {
-                if (value == 'rename') _rename();
                 if (value == 'save') _save();
+                if (value == 'rename') _rename();
+                if (value == 'manager') _editManager();
+                if (value == 'optimize') _optimizeChemistry();
+                if (value == 'export') _exportSquad();
+                if (value == 'import') _importSquad();
                 if (value == 'delete') _deleteCurrent();
               },
               itemBuilder: (_) => const [
                 PopupMenuItem(value: 'save', child: Text('ذخیره')),
                 PopupMenuItem(value: 'rename', child: Text('تغییر نام')),
+                PopupMenuItem(value: 'manager', child: Text('Manager')),
+                PopupMenuItem(value: 'optimize', child: Text('Optimize Chemistry')),
+                PopupMenuItem(value: 'export', child: Text('Export / Share')),
+                PopupMenuItem(value: 'import', child: Text('Import از Clipboard')),
                 PopupMenuItem(value: 'delete', child: Text('حذف ترکیب')),
               ],
             ),
@@ -575,6 +583,31 @@ class _SquadScreenState extends State<SquadScreen> {
             },
           ),
         ],
+        const SizedBox(height: 12),
+        Card(
+          child: ListTile(
+            onTap: _editManager,
+            leading: Icon(
+              Icons.badge_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            title: Text(
+              squad.manager == null || squad.manager!.name.isEmpty
+                  ? 'Manager اضافه نشده'
+                  : squad.manager!.name,
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
+            subtitle: Text(
+              squad.manager == null
+                  ? 'برای +1 Chemistry از Nation/League Manager استفاده کن'
+                  : [
+                      squad.manager!.nationName,
+                      squad.manager!.leagueName,
+                    ].where((e) => e.isNotEmpty).join(' • '),
+            ),
+            trailing: const Icon(Icons.edit_rounded),
+          ),
+        ),
         const SizedBox(height: 12),
         Row(
           children: [
@@ -630,11 +663,121 @@ class _SquadScreenState extends State<SquadScreen> {
         _Pitch(
           formation: formation,
           playersBySlot: squad.playersBySlot,
+          playerConfigs: squad.playerConfigs,
           chemistryBySlot: result.bySlot,
-          onTapSlot: _pickPlayer,
+          onTapEmptySlot: _pickPlayer,
+          onConfigurePlayer: _configurePlayer,
           onRemovePlayer: _removePlayer,
         ),
+        const SizedBox(height: 18),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                'نیمکت',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
+            Text(
+              squad.bench.length.toString() + '/7',
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
+            const SizedBox(width: 8),
+            IconButton.filledTonal(
+              onPressed: squad.bench.length >= 7 ? null : _addBenchPlayer,
+              icon: const Icon(Icons.person_add_alt_1_rounded),
+              tooltip: 'افزودن به نیمکت',
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 112,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: squad.bench.isEmpty ? 1 : squad.bench.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 8),
+            itemBuilder: (_, index) {
+              if (squad.bench.isEmpty) {
+                return SizedBox(
+                  width: 180,
+                  child: Card(
+                    child: InkWell(
+                      onTap: _addBenchPlayer,
+                      borderRadius: BorderRadius.circular(18),
+                      child: const Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.add_circle_outline_rounded),
+                          SizedBox(height: 6),
+                          Text('افزودن بازیکن نیمکت'),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }
+
+              final player = squad.bench[index];
+              return SizedBox(
+                width: 132,
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(10),
+                    child: Column(
+                      children: [
+                        CircleAvatar(
+                          radius: 25,
+                          backgroundImage: player.imageUrl.isEmpty
+                              ? null
+                              : NetworkImage(player.imageUrl),
+                          child: player.imageUrl.isEmpty
+                              ? Text(player.rating.toString())
+                              : null,
+                        ),
+                        const SizedBox(height: 5),
+                        Text(
+                          player.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(fontWeight: FontWeight.w800),
+                        ),
+                        Text(
+                          player.rating.toString() + ' • ' + player.position,
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                        const Spacer(),
+                        InkWell(
+                          onTap: () => _removeBenchPlayer(player.id),
+                          child: const Icon(Icons.close_rounded, size: 18),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
         const SizedBox(height: 14),
+        Row(
+          children: [
+            Expanded(
+              child: FilledButton.tonalIcon(
+                onPressed: _optimizeChemistry,
+                icon: const Icon(Icons.auto_fix_high_rounded),
+                label: const Text('Optimize Chemistry'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            IconButton.filledTonal(
+              onPressed: _exportSquad,
+              icon: const Icon(Icons.share_rounded),
+              tooltip: 'Share / Export',
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
@@ -699,15 +842,19 @@ class _Pitch extends StatelessWidget {
   const _Pitch({
     required this.formation,
     required this.playersBySlot,
+    required this.playerConfigs,
     required this.chemistryBySlot,
-    required this.onTapSlot,
+    required this.onTapEmptySlot,
+    required this.onConfigurePlayer,
     required this.onRemovePlayer,
   });
 
   final FormationDefinition formation;
   final Map<String, Player> playersBySlot;
+  final Map<String, SquadPlayerConfig> playerConfigs;
   final Map<String, int> chemistryBySlot;
-  final ValueChanged<FormationSlot> onTapSlot;
+  final ValueChanged<FormationSlot> onTapEmptySlot;
+  final void Function(FormationSlot slot, Player player) onConfigurePlayer;
   final ValueChanged<String> onRemovePlayer;
 
   @override
@@ -739,7 +886,15 @@ class _Pitch extends StatelessWidget {
                       slot: slot,
                       player: playersBySlot[slot.id],
                       chemistry: chemistryBySlot[slot.id] ?? 0,
-                      onTap: () => onTapSlot(slot),
+                      config: playerConfigs[slot.id],
+                      onTap: () {
+                        final player = playersBySlot[slot.id];
+                        if (player == null) {
+                          onTapEmptySlot(slot);
+                        } else {
+                          onConfigurePlayer(slot, player);
+                        }
+                      },
                       onRemove: () => onRemovePlayer(slot.id),
                     ),
                   ),
@@ -801,6 +956,7 @@ class _SlotCard extends StatelessWidget {
     required this.slot,
     required this.player,
     required this.chemistry,
+    required this.config,
     required this.onTap,
     required this.onRemove,
   });
@@ -808,6 +964,7 @@ class _SlotCard extends StatelessWidget {
   final FormationSlot slot;
   final Player? player;
   final int chemistry;
+  final SquadPlayerConfig? config;
   final VoidCallback onTap;
   final VoidCallback onRemove;
 
@@ -881,6 +1038,24 @@ class _SlotCard extends StatelessWidget {
                         fontWeight: FontWeight.w800,
                       ),
                     ),
+                    if (config != null &&
+                        (config!.role.isNotEmpty ||
+                            config!.chemistryStyle != 'Basic')) ...[
+                      const SizedBox(height: 1),
+                      Text(
+                        [
+                          if (config!.role.isNotEmpty) config!.role,
+                          if (config!.chemistryStyle != 'Basic')
+                            config!.chemistryStyle,
+                        ].join(' • '),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                          fontSize: 6.5,
+                        ),
+                      ),
+                    ],
                     const SizedBox(height: 2),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
