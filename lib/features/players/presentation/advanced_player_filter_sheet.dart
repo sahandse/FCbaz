@@ -36,8 +36,28 @@ class _AdvancedPlayerFilterSheetState
   late String? league = widget.current.league;
   late String? club = widget.current.club;
   late String? nation = widget.current.nation;
+  late String? playStyle = widget.current.playStyle;
+  late String? playStylePlus = widget.current.playStylePlus;
+  late String? role = widget.current.role;
+  late int? minSkillMoves = widget.current.minSkillMoves;
+  late int? minWeakFoot = widget.current.minWeakFoot;
   late String platform = widget.current.platform;
   late PlayerSort sort = widget.current.sort;
+
+  late final Map<String, TextEditingController> statControllers = {
+    'minPace': TextEditingController(text: widget.current.minPace?.toString() ?? ''),
+    'maxPace': TextEditingController(text: widget.current.maxPace?.toString() ?? ''),
+    'minShooting': TextEditingController(text: widget.current.minShooting?.toString() ?? ''),
+    'maxShooting': TextEditingController(text: widget.current.maxShooting?.toString() ?? ''),
+    'minPassing': TextEditingController(text: widget.current.minPassing?.toString() ?? ''),
+    'maxPassing': TextEditingController(text: widget.current.maxPassing?.toString() ?? ''),
+    'minDribbling': TextEditingController(text: widget.current.minDribbling?.toString() ?? ''),
+    'maxDribbling': TextEditingController(text: widget.current.maxDribbling?.toString() ?? ''),
+    'minDefending': TextEditingController(text: widget.current.minDefending?.toString() ?? ''),
+    'maxDefending': TextEditingController(text: widget.current.maxDefending?.toString() ?? ''),
+    'minPhysical': TextEditingController(text: widget.current.minPhysical?.toString() ?? ''),
+    'maxPhysical': TextEditingController(text: widget.current.maxPhysical?.toString() ?? ''),
+  };
 
   static const positions = [
     'GK',
@@ -59,6 +79,9 @@ class _AdvancedPlayerFilterSheetState
   void dispose() {
     minPriceController.dispose();
     maxPriceController.dispose();
+    for (final controller in statControllers.values) {
+      controller.dispose();
+    }
     super.dispose();
   }
 
@@ -87,12 +110,12 @@ class _AdvancedPlayerFilterSheetState
     }
   }
 
-  PlayerFilter _result() {
-    int? price(TextEditingController controller) {
-      final text = controller.text.trim();
-      return text.isEmpty ? null : int.tryParse(text);
-    }
+  int? _int(TextEditingController controller) {
+    final text = controller.text.trim();
+    return text.isEmpty ? null : int.tryParse(text);
+  }
 
+  PlayerFilter _result() {
     return PlayerFilter(
       query: widget.current.query,
       position: position,
@@ -104,9 +127,26 @@ class _AdvancedPlayerFilterSheetState
       nation: _clean(nation),
       minRating: rating.start.round(),
       maxRating: rating.end.round(),
-      minPrice: price(minPriceController),
-      maxPrice: price(maxPriceController),
+      minPrice: _int(minPriceController),
+      maxPrice: _int(maxPriceController),
       platform: platform,
+      playStyle: _clean(playStyle),
+      playStylePlus: _clean(playStylePlus),
+      role: _clean(role),
+      minSkillMoves: minSkillMoves,
+      minWeakFoot: minWeakFoot,
+      minPace: _int(statControllers['minPace']!),
+      maxPace: _int(statControllers['maxPace']!),
+      minShooting: _int(statControllers['minShooting']!),
+      maxShooting: _int(statControllers['maxShooting']!),
+      minPassing: _int(statControllers['minPassing']!),
+      maxPassing: _int(statControllers['maxPassing']!),
+      minDribbling: _int(statControllers['minDribbling']!),
+      maxDribbling: _int(statControllers['maxDribbling']!),
+      minDefending: _int(statControllers['minDefending']!),
+      maxDefending: _int(statControllers['maxDefending']!),
+      minPhysical: _int(statControllers['minPhysical']!),
+      maxPhysical: _int(statControllers['maxPhysical']!),
       sort: sort,
     );
   }
@@ -144,10 +184,7 @@ class _AdvancedPlayerFilterSheetState
               ],
             ),
             const SizedBox(height: 16),
-            const Text(
-              'پلتفرم قیمت',
-              style: TextStyle(fontWeight: FontWeight.w900),
-            ),
+            const _SectionTitle('پلتفرم و قیمت'),
             const SizedBox(height: 8),
             SegmentedButton<String>(
               segments: const [
@@ -164,54 +201,10 @@ class _AdvancedPlayerFilterSheetState
               ],
               selected: {platform},
               onSelectionChanged: (values) {
-                if (values.isNotEmpty) {
-                  setState(() => platform = values.first);
-                }
+                if (values.isNotEmpty) setState(() => platform = values.first);
               },
             ),
-            const SizedBox(height: 18),
-            const Text(
-              'پست',
-              style: TextStyle(fontWeight: FontWeight.w900),
-            ),
-            const SizedBox(height: 8),
-            Wrap(
-              spacing: 7,
-              runSpacing: 7,
-              children: [
-                ChoiceChip(
-                  label: const Text('همه'),
-                  selected: position == null,
-                  onSelected: (_) => setState(() => position = null),
-                ),
-                for (final item in positions)
-                  ChoiceChip(
-                    label: Text(item),
-                    selected: position == item,
-                    onSelected: (_) => setState(() => position = item),
-                  ),
-              ],
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'ریتینگ ' +
-                  rating.start.round().toString() +
-                  ' تا ' +
-                  rating.end.round().toString(),
-              style: const TextStyle(fontWeight: FontWeight.w900),
-            ),
-            RangeSlider(
-              min: 40,
-              max: 99,
-              divisions: 59,
-              values: rating,
-              labels: RangeLabels(
-                rating.start.round().toString(),
-                rating.end.round().toString(),
-              ),
-              onChanged: (value) => setState(() => rating = value),
-            ),
-            const SizedBox(height: 8),
+            const SizedBox(height: 10),
             Row(
               children: [
                 Expanded(
@@ -237,7 +230,48 @@ class _AdvancedPlayerFilterSheetState
                 ),
               ],
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 18),
+            const _SectionTitle('پست و ریتینگ'),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 7,
+              runSpacing: 7,
+              children: [
+                ChoiceChip(
+                  label: const Text('همه'),
+                  selected: position == null,
+                  onSelected: (_) => setState(() => position = null),
+                ),
+                for (final item in positions)
+                  ChoiceChip(
+                    label: Text(item),
+                    selected: position == item,
+                    onSelected: (_) => setState(() => position = item),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              'ریتینگ ' +
+                  rating.start.round().toString() +
+                  ' تا ' +
+                  rating.end.round().toString(),
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
+            RangeSlider(
+              min: 40,
+              max: 99,
+              divisions: 59,
+              values: rating,
+              labels: RangeLabels(
+                rating.start.round().toString(),
+                rating.end.round().toString(),
+              ),
+              onChanged: (value) => setState(() => rating = value),
+            ),
+            const SizedBox(height: 18),
+            const _SectionTitle('کارت و لیگ'),
+            const SizedBox(height: 8),
             _SuggestField(
               label: 'Version',
               initialValue: version,
@@ -279,7 +313,100 @@ class _AdvancedPlayerFilterSheetState
               options: widget.facets.nations,
               onChanged: (value) => nation = value,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: 18),
+            const _SectionTitle('PlayStyles و Roles'),
+            const SizedBox(height: 8),
+            _SuggestField(
+              label: 'PlayStyle',
+              initialValue: playStyle,
+              options: widget.facets.playStyles,
+              onChanged: (value) => playStyle = value,
+            ),
+            const SizedBox(height: 10),
+            _SuggestField(
+              label: 'PlayStyle+',
+              initialValue: playStylePlus,
+              options: widget.facets.playStylesPlus,
+              onChanged: (value) => playStylePlus = value,
+            ),
+            const SizedBox(height: 10),
+            _SuggestField(
+              label: 'Role',
+              initialValue: role,
+              options: widget.facets.roles,
+              onChanged: (value) => role = value,
+            ),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                Expanded(
+                  child: DropdownButtonFormField<int?>(
+                    initialValue: minSkillMoves,
+                    decoration: const InputDecoration(labelText: 'حداقل SM'),
+                    items: const [
+                      DropdownMenuItem<int?>(value: null, child: Text('همه')),
+                      DropdownMenuItem<int?>(value: 3, child: Text('3★+')),
+                      DropdownMenuItem<int?>(value: 4, child: Text('4★+')),
+                      DropdownMenuItem<int?>(value: 5, child: Text('5★')),
+                    ],
+                    onChanged: (value) => setState(() => minSkillMoves = value),
+                  ),
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: DropdownButtonFormField<int?>(
+                    initialValue: minWeakFoot,
+                    decoration: const InputDecoration(labelText: 'حداقل WF'),
+                    items: const [
+                      DropdownMenuItem<int?>(value: null, child: Text('همه')),
+                      DropdownMenuItem<int?>(value: 3, child: Text('3★+')),
+                      DropdownMenuItem<int?>(value: 4, child: Text('4★+')),
+                      DropdownMenuItem<int?>(value: 5, child: Text('5★')),
+                    ],
+                    onChanged: (value) => setState(() => minWeakFoot = value),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            const _SectionTitle('Advanced Stat Range'),
+            const SizedBox(height: 8),
+            _StatRangeRow(
+              label: 'PAC',
+              minController: statControllers['minPace']!,
+              maxController: statControllers['maxPace']!,
+            ),
+            const SizedBox(height: 8),
+            _StatRangeRow(
+              label: 'SHO',
+              minController: statControllers['minShooting']!,
+              maxController: statControllers['maxShooting']!,
+            ),
+            const SizedBox(height: 8),
+            _StatRangeRow(
+              label: 'PAS',
+              minController: statControllers['minPassing']!,
+              maxController: statControllers['maxPassing']!,
+            ),
+            const SizedBox(height: 8),
+            _StatRangeRow(
+              label: 'DRI',
+              minController: statControllers['minDribbling']!,
+              maxController: statControllers['maxDribbling']!,
+            ),
+            const SizedBox(height: 8),
+            _StatRangeRow(
+              label: 'DEF',
+              minController: statControllers['minDefending']!,
+              maxController: statControllers['maxDefending']!,
+            ),
+            const SizedBox(height: 8),
+            _StatRangeRow(
+              label: 'PHY',
+              minController: statControllers['minPhysical']!,
+              maxController: statControllers['maxPhysical']!,
+            ),
+            const SizedBox(height: 16),
             DropdownButtonFormField<PlayerSort>(
               initialValue: sort,
               decoration: const InputDecoration(labelText: 'مرتب‌سازی'),
@@ -310,7 +437,62 @@ class _AdvancedPlayerFilterSheetState
   }
 }
 
-class _SuggestField extends StatefulWidget {
+class _SectionTitle extends StatelessWidget {
+  const _SectionTitle(this.title);
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      style: const TextStyle(fontWeight: FontWeight.w900),
+    );
+  }
+}
+
+class _StatRangeRow extends StatelessWidget {
+  const _StatRangeRow({
+    required this.label,
+    required this.minController,
+    required this.maxController,
+  });
+
+  final String label;
+  final TextEditingController minController;
+  final TextEditingController maxController;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 42,
+          child: Text(
+            label,
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
+        ),
+        Expanded(
+          child: TextField(
+            controller: minController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(labelText: 'Min'),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: TextField(
+            controller: maxController,
+            keyboardType: TextInputType.number,
+            decoration: const InputDecoration(labelText: 'Max'),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SuggestField extends StatelessWidget {
   const _SuggestField({
     required this.label,
     required this.initialValue,
@@ -324,53 +506,35 @@ class _SuggestField extends StatefulWidget {
   final ValueChanged<String?> onChanged;
 
   @override
-  State<_SuggestField> createState() => _SuggestFieldState();
-}
-
-class _SuggestFieldState extends State<_SuggestField> {
-  late final TextEditingController controller =
-      TextEditingController(text: widget.initialValue ?? '');
-
-  @override
-  void dispose() {
-    controller.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Autocomplete<String>(
-      initialValue: TextEditingValue(text: widget.initialValue ?? ''),
+      initialValue: TextEditingValue(text: initialValue ?? ''),
       optionsBuilder: (value) {
         final q = value.text.trim().toLowerCase();
-        if (q.isEmpty) return widget.options.take(12);
-        return widget.options
+        if (q.isEmpty) return options.take(12);
+        return options
             .where((item) => item.toLowerCase().contains(q))
             .take(12);
       },
-      onSelected: (value) {
-        controller.text = value;
-        widget.onChanged(value);
-      },
+      onSelected: onChanged,
       fieldViewBuilder: (
         context,
-        textController,
+        controller,
         focusNode,
         onSubmitted,
       ) {
         return TextField(
-          controller: textController,
+          controller: controller,
           focusNode: focusNode,
-          onChanged: (value) => widget.onChanged(value),
+          onChanged: onChanged,
           decoration: InputDecoration(
-            labelText: widget.label,
-            suffixIcon: textController.text.isEmpty
+            labelText: label,
+            suffixIcon: controller.text.isEmpty
                 ? null
                 : IconButton(
                     onPressed: () {
-                      textController.clear();
-                      widget.onChanged(null);
-                      setState(() {});
+                      controller.clear();
+                      onChanged(null);
                     },
                     icon: const Icon(Icons.close_rounded),
                   ),
