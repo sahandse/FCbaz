@@ -18,6 +18,15 @@ class Player {
     required this.physical,
     required this.skillMoves,
     required this.weakFoot,
+    this.cardImageUrl = '',
+    this.playStyles = const [],
+    this.playStylesPlus = const [],
+    this.roles = const [],
+    this.inGameStats = const {},
+    this.traits = const [],
+    this.foot = '',
+    this.height = '',
+    this.workRates = '',
   });
 
   final String id;
@@ -30,6 +39,7 @@ class Player {
   final String nationName;
   final String version;
   final String imageUrl;
+  final String cardImageUrl;
   final int pace;
   final int shooting;
   final int passing;
@@ -38,13 +48,50 @@ class Player {
   final int physical;
   final int skillMoves;
   final int weakFoot;
+  final List<String> playStyles;
+  final List<String> playStylesPlus;
+  final List<String> roles;
+  final Map<String, int> inGameStats;
+  final List<String> traits;
+  final String foot;
+  final String height;
+  final String workRates;
 
   factory Player.fromJson(Map<String, dynamic> json) {
-    int asInt(dynamic value) => value is int ? value : int.tryParse(value?.toString() ?? '') ?? 0;
+    int asInt(dynamic value) =>
+        value is int ? value : int.tryParse(value?.toString() ?? '') ?? 0;
+
     String asString(dynamic value) => value?.toString() ?? '';
-    List<String> asStrings(dynamic value) => value is List
-        ? value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList()
-        : const [];
+
+    List<String> asStrings(dynamic value) {
+      if (value is! List) return const [];
+      return value
+          .map((e) {
+            if (e is Map) {
+              return (e['name'] ?? e['title'] ?? e['label'] ?? '').toString();
+            }
+            return e.toString();
+          })
+          .where((e) => e.isNotEmpty)
+          .toList();
+    }
+
+    Map<String, int> asStats(dynamic value) {
+      if (value is! Map) return const {};
+      final out = <String, int>{};
+      for (final entry in value.entries) {
+        if (entry.value is Map) {
+          for (final child in (entry.value as Map).entries) {
+            final n = asInt(child.value);
+            if (n > 0) out[child.key.toString()] = n;
+          }
+        } else {
+          final n = asInt(entry.value);
+          if (n > 0) out[entry.key.toString()] = n;
+        }
+      }
+      return out;
+    }
 
     return Player(
       id: asString(json['id']),
@@ -57,6 +104,7 @@ class Player {
       nationName: asString(json['nation_name'] ?? json['nation']),
       version: asString(json['version'] ?? json['rarity']),
       imageUrl: asString(json['image_url'] ?? json['image']),
+      cardImageUrl: asString(json['card_image_url'] ?? json['card_image']),
       pace: asInt(json['pace']),
       shooting: asInt(json['shooting']),
       passing: asInt(json['passing']),
@@ -65,6 +113,18 @@ class Player {
       physical: asInt(json['physical']),
       skillMoves: asInt(json['skill_moves']),
       weakFoot: asInt(json['weak_foot']),
+      playStyles: asStrings(json['playstyles'] ?? json['play_styles']),
+      playStylesPlus: asStrings(
+        json['playstyles_plus'] ?? json['play_styles_plus'],
+      ),
+      roles: asStrings(json['roles'] ?? json['player_roles']),
+      inGameStats: asStats(
+        json['in_game_stats'] ?? json['detailed_stats'] ?? json['attributes'],
+      ),
+      traits: asStrings(json['traits']),
+      foot: asString(json['foot'] ?? json['preferred_foot']),
+      height: asString(json['height']),
+      workRates: asString(json['work_rates'] ?? json['workrates']),
     );
   }
 }
