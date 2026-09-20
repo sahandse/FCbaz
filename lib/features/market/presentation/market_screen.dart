@@ -4,6 +4,7 @@ import '../../players/domain/player.dart';
 import '../data/market_repository.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
+import '../../settings/app_settings_repository.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -15,6 +16,7 @@ class MarketScreen extends StatefulWidget {
 class _MarketScreenState extends State<MarketScreen> {
   final market = MarketRepository();
   final watchlist = WatchlistRepository();
+  final settingsRepository = AppSettingsRepository();
 
   List<Map<String, dynamic>> feed = const [];
   List<WatchlistItem> saved = const [];
@@ -26,6 +28,7 @@ class _MarketScreenState extends State<MarketScreen> {
   String? error;
   String? cheapestError;
 
+  String platform = 'console';
   int minRating = 80;
   int maxRating = 99;
   String? position;
@@ -46,8 +49,15 @@ class _MarketScreenState extends State<MarketScreen> {
   @override
   void initState() {
     super.initState();
-    _load();
-    _loadCheapest();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    final settings = await settingsRepository.load();
+    if (!mounted) return;
+    setState(() => platform = settings.defaultPlatform);
+    await _load();
+    await _loadCheapest();
   }
 
   Future<void> _load() async {
@@ -84,7 +94,7 @@ class _MarketScreenState extends State<MarketScreen> {
 
     for (final item in items) {
       try {
-        final price = await market.getPlayerPrice(item.playerId);
+        final price = await market.getPlayerPrice(item.playerId, platform: platform);
         if (!mounted) return;
         savedPrices[item.playerId] = price;
       } catch (_) {
@@ -106,6 +116,7 @@ class _MarketScreenState extends State<MarketScreen> {
         minRating: minRating,
         maxRating: maxRating,
         position: position,
+        platform: platform,
       );
       if (!mounted) return;
       setState(() => cheapest = data);
