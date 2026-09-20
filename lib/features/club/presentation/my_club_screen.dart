@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../players/data/player_repository.dart';
 import '../../players/domain/player.dart';
+import '../../squad/data/squad_repository.dart';
+import '../../squad/domain/squad_models.dart';
 import '../data/my_club_repository.dart';
+import '../my_club_service.dart';
 
 class MyClubScreen extends StatefulWidget {
   const MyClubScreen({super.key});
@@ -14,9 +17,16 @@ class MyClubScreen extends StatefulWidget {
 class _MyClubScreenState extends State<MyClubScreen> {
   final clubRepository = MyClubRepository();
   final playerRepository = PlayerRepository();
+  final clubService = MyClubService();
+  final squadRepository = SquadRepository();
 
   List<MyClubItem> items = const [];
+  ClubValuation? valuation;
+  BestClubSquad? bestSquad;
+
   bool loading = true;
+  bool loadingValue = false;
+  String? valueError;
 
   @override
   void initState() {
@@ -24,13 +34,59 @@ class _MyClubScreenState extends State<MyClubScreen> {
     _load();
   }
 
+  String _coins(int value) {
+    final negative = value < 0;
+    final abs = value.abs();
+    String result;
+    if (abs >= 1000000) {
+      final n = abs / 1000000;
+      result = n.toStringAsFixed(n >= 10 ? 0 : 1) + 'M';
+    } else if (abs >= 1000) {
+      final n = abs / 1000;
+      result = n.toStringAsFixed(n >= 100 ? 0 : 1) + 'K';
+    } else {
+      result = abs.toString();
+    }
+    return negative ? '-' + result : result;
+  }
+
   Future<void> _load() async {
     final data = await clubRepository.getAll();
     if (!mounted) return;
+
     setState(() {
       items = data;
+      bestSquad = clubService.buildBestSquad(data);
       loading = false;
     });
+
+    await _refreshValue();
+  }
+
+  Future<void> _refreshValue() async {
+    if (items.isEmpty) {
+      setState(() {
+        valuation = null;
+        valueError = null;
+      });
+      return;
+    }
+
+    setState(() {
+      loadingValue = true;
+      valueError = null;
+    });
+
+    try {
+      final data = await clubService.valueClub(items);
+      if (!mounted) return;
+      setState(() => valuation = data);
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => valueError = e.toString());
+    } finally {
+      if (mounted) setState(() => loadingValue = false);
+    }
   }
 
   Future<void> _addPlayer() async {
@@ -54,61 +110,80 @@ class _MyClubScreenState extends State<MyClubScreen> {
       builder: (context) => _ClubPlayerPicker(players: players),
     );
 
-    if (selected == null) return;
+    if (selected == null || !mounted) return;
 
-    final controller = TextEditingController();
-    final price = await showDialog<int>(
+    final result = await showDialog<_AddClubResult>(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text(selected.name),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'قیمت خرید',
-            suffixText: 'Coins',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('انصراف'),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(
-              context,
-              int.tryParse(controller.text.trim()) ?? 0,
-            ),
-            child: const Text('افزودن'),
-          ),
-        ],
-      ),
+      builder: (context) => _AddClubDialog(player: selected),
     );
 
-    if (price == null) return;
+    if (result == null) return;
 
     await clubRepository.upsert(
-      MyClubItem(
-        playerId: selected.id,
-        playerName: selected.name,
-        rating: selected.rating,
-        position: selected.position,
-        acquisitionPrice: price,
+      MyClubItem.fromPlayer(
+        selected,
+        acquisitionPrice: result.acquisitionPrice,
+        untradeable: result.untradeable,
       ),
     );
 
     await _load();
   }
 
-  int get totalInvestment =>
-      items.fold<int>(0, (sum, e) => sum + e.acquisitionPrice);
+  Future<void> _saveBestSquad() async {
+    final best = bestSquad;
+    if (best == null) return;
+
+    final squad = SquadStateModel(
+      id: 'club_best_' + DateTime.now().millisecondsSinceEpoch.toString(),
+      name: 'بهترین ترکیب باشگاه من',
+      formationId: best.formation.id,
+      playersBySlot: {
+        for (final entry in best.playersBySlot.entries)
+          entry.key: entry.value.toPlayer(),
+      },
+    );
+
+    await squadRepository.upsert(squad);
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('بهترین ترکیب در تیم‌ساز ذخیره شد'),
+      ),
+    );
+  }
+
+  Future<void> _remove(String playerId) async {
+    await clubRepository.remove(playerId);
+    await _load();
+  }
+
+  ClubPlayerValue? _valueFor(String playerId) {
+    final list = valuation?.players ?? const <ClubPlayerValue>[];
+    for (final value in list) {
+      if (value.item.playerId == playerId) return value;
+    }
+    return null;
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (loading) {
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('باشگاه من'),
         actions: [
+          IconButton(
+            onPressed: loadingValue ? null : _refreshValue,
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: 'بروزرسانی قیمت‌ها',
+          ),
           IconButton(
             onPressed: _addPlayer,
             icon: const Icon(Icons.person_add_alt_1_rounded),
@@ -116,99 +191,203 @@ class _MyClubScreenState extends State<MyClubScreen> {
           ),
         ],
       ),
-      body: loading
-          ? const Center(child: CircularProgressIndicator())
-          : ListView(
-              padding: const EdgeInsets.all(16),
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: _SummaryCard(
-                        label: 'بازیکن',
-                        value: items.length.toString(),
-                        icon: Icons.groups_2_rounded,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: _SummaryCard(
-                        label: 'سرمایه',
-                        value: totalInvestment.toString(),
-                        icon: Icons.monetization_on_outlined,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                if (items.isEmpty)
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(26),
-                      child: Column(
+      body: RefreshIndicator(
+        onRefresh: _load,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            _ClubSummary(
+              count: items.length,
+              valuation: valuation,
+              loadingValue: loadingValue,
+              error: valueError,
+              coins: _coins,
+            ),
+            const SizedBox(height: 14),
+            if (bestSquad != null)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
                         children: [
                           Icon(
-                            Icons.inventory_2_outlined,
-                            size: 44,
+                            Icons.auto_awesome_rounded,
                             color: Theme.of(context).colorScheme.primary,
                           ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            'باشگاهت خالی است',
-                            style: TextStyle(fontWeight: FontWeight.w900),
-                          ),
-                          const SizedBox(height: 6),
-                          const Text(
-                            'بازیکن‌هایی که در Ultimate Team داری اینجا ثبت کن.',
-                            textAlign: TextAlign.center,
-                          ),
-                          const SizedBox(height: 14),
-                          FilledButton.icon(
-                            onPressed: _addPlayer,
-                            icon: const Icon(Icons.add_rounded),
-                            label: const Text('افزودن بازیکن'),
+                          const SizedBox(width: 8),
+                          const Expanded(
+                            child: Text(
+                              'بهترین ترکیب از باشگاه من',
+                              style: TextStyle(fontWeight: FontWeight.w900),
+                            ),
                           ),
                         ],
                       ),
-                    ),
-                  )
-                else
-                  for (final item in items) ...[
-                    Dismissible(
-                      key: ValueKey(item.playerId),
-                      direction: DismissDirection.endToStart,
-                      onDismissed: (_) async {
-                        await clubRepository.remove(item.playerId);
-                        await _load();
-                      },
-                      background: Container(
-                        alignment: Alignment.centerLeft,
-                        padding: const EdgeInsets.symmetric(horizontal: 22),
-                        decoration: BoxDecoration(
-                          color: Colors.redAccent.withValues(alpha: .18),
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: const Icon(Icons.delete_outline_rounded),
+                      const SizedBox(height: 10),
+                      Text(
+                        bestSquad!.formation.name +
+                            ' • Chemistry ' +
+                            bestSquad!.chemistry.total.toString() +
+                            '/33 • میانگین ' +
+                            bestSquad!.averageRating.toStringAsFixed(1),
                       ),
-                      child: Card(
-                        child: ListTile(
-                          leading: CircleAvatar(
-                            child: Text(item.rating.toString()),
-                          ),
-                          title: Text(
-                            item.playerName,
-                            style: const TextStyle(fontWeight: FontWeight.w800),
-                          ),
-                          subtitle: Text(
-                            item.position + ' • خرید ' + item.acquisitionPrice.toString() + ' Coins',
-                          ),
+                      const SizedBox(height: 12),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          onPressed: _saveBestSquad,
+                          icon: const Icon(Icons.stadium_rounded),
+                          label: const Text('ذخیره در تیم‌ساز'),
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 8),
-                  ],
+                    ],
+                  ),
+                ),
+              )
+            else if (items.isNotEmpty)
+              const Card(
+                child: ListTile(
+                  leading: Icon(Icons.info_outline_rounded),
+                  title: Text('برای ساخت ترکیب حداقل ۱۱ کارت لازم است'),
+                ),
+              ),
+            const SizedBox(height: 16),
+            if (items.isEmpty)
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(26),
+                  child: Column(
+                    children: [
+                      Icon(
+                        Icons.inventory_2_outlined,
+                        size: 44,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        'باشگاهت خالی است',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        'کارت‌های واقعی Ultimate Team خودت را اینجا ثبت کن.',
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 14),
+                      FilledButton.icon(
+                        onPressed: _addPlayer,
+                        icon: const Icon(Icons.add_rounded),
+                        label: const Text('افزودن بازیکن'),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else ...[
+              Text(
+                'کارت‌های باشگاه',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 10),
+              for (final item in items) ...[
+                _ClubPlayerCard(
+                  item: item,
+                  value: _valueFor(item.playerId),
+                  coins: _coins,
+                  onDelete: () => _remove(item.playerId),
+                ),
+                const SizedBox(height: 8),
               ],
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ClubSummary extends StatelessWidget {
+  const _ClubSummary({
+    required this.count,
+    required this.valuation,
+    required this.loadingValue,
+    required this.error,
+    required this.coins,
+  });
+
+  final int count;
+  final ClubValuation? valuation;
+  final bool loadingValue;
+  final String? error;
+  final String Function(int) coins;
+
+  @override
+  Widget build(BuildContext context) {
+    final data = valuation;
+
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: _SummaryCard(
+                label: 'بازیکن',
+                value: count.toString(),
+                icon: Icons.groups_2_rounded,
+              ),
             ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _SummaryCard(
+                label: 'ارزش لحظه‌ای',
+                value: loadingValue
+                    ? '...'
+                    : data == null
+                        ? '—'
+                        : coins(data.totalMarketValue),
+                icon: Icons.account_balance_wallet_outlined,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 10),
+        Row(
+          children: [
+            Expanded(
+              child: _SummaryCard(
+                label: 'قابل فروش',
+                value: data == null ? '—' : coins(data.tradeableMarketValue),
+                icon: Icons.sell_outlined,
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: _SummaryCard(
+                label: 'سود/ضرر',
+                value: data == null
+                    ? '—'
+                    : coins(data.realizedComparableProfitLoss),
+                icon: data != null && data.realizedComparableProfitLoss < 0
+                    ? Icons.trending_down_rounded
+                    : Icons.trending_up_rounded,
+              ),
+            ),
+          ],
+        ),
+        if (error != null) ...[
+          const SizedBox(height: 10),
+          Card(
+            child: ListTile(
+              leading: const Icon(Icons.cloud_off_rounded),
+              title: const Text('ارزش زنده قابل دریافت نیست'),
+              subtitle: Text(error!),
+            ),
+          ),
+        ],
+      ],
     );
   }
 }
@@ -243,13 +422,172 @@ class _SummaryCard extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
+                Text(
+                  value,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontWeight: FontWeight.w900),
+                ),
                 Text(label, style: Theme.of(context).textTheme.labelSmall),
               ],
             ),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _ClubPlayerCard extends StatelessWidget {
+  const _ClubPlayerCard({
+    required this.item,
+    required this.value,
+    required this.coins,
+    required this.onDelete,
+  });
+
+  final MyClubItem item;
+  final ClubPlayerValue? value;
+  final String Function(int) coins;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final current = value?.currentPrice;
+    final pnl = value?.profitLoss;
+
+    return Card(
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+        leading: CircleAvatar(
+          backgroundImage:
+              item.imageUrl.isEmpty ? null : NetworkImage(item.imageUrl),
+          child: item.imageUrl.isEmpty ? Text(item.rating.toString()) : null,
+        ),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                item.playerName,
+                style: const TextStyle(fontWeight: FontWeight.w900),
+              ),
+            ),
+            if (item.untradeable)
+              const Chip(label: Text('Untradeable')),
+          ],
+        ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              item.rating.toString() +
+                  ' • ' +
+                  item.position +
+                  ' • ' +
+                  item.clubName,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              current == null
+                  ? 'قیمت زنده: در دسترس نیست'
+                  : 'قیمت زنده: ' + coins(current) + ' Coins',
+            ),
+            if (!item.untradeable && item.acquisitionPrice > 0)
+              Text(
+                pnl == null
+                    ? 'سود/ضرر: نامشخص'
+                    : 'سود/ضرر: ' + coins(pnl) + ' Coins',
+                style: TextStyle(
+                  color: pnl == null
+                      ? null
+                      : pnl >= 0
+                          ? Theme.of(context).colorScheme.primary
+                          : Colors.redAccent,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+          ],
+        ),
+        trailing: IconButton(
+          onPressed: onDelete,
+          icon: const Icon(Icons.delete_outline_rounded),
+          tooltip: 'حذف از باشگاه',
+        ),
+      ),
+    );
+  }
+}
+
+class _AddClubResult {
+  const _AddClubResult({
+    required this.acquisitionPrice,
+    required this.untradeable,
+  });
+
+  final int acquisitionPrice;
+  final bool untradeable;
+}
+
+class _AddClubDialog extends StatefulWidget {
+  const _AddClubDialog({required this.player});
+  final Player player;
+
+  @override
+  State<_AddClubDialog> createState() => _AddClubDialogState();
+}
+
+class _AddClubDialogState extends State<_AddClubDialog> {
+  final controller = TextEditingController();
+  bool untradeable = false;
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.player.name),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            value: untradeable,
+            onChanged: (value) => setState(() => untradeable = value),
+            title: const Text('Untradeable'),
+            subtitle: const Text('این کارت قابل فروش نیست'),
+          ),
+          if (!untradeable)
+            TextField(
+              controller: controller,
+              keyboardType: TextInputType.number,
+              decoration: const InputDecoration(
+                labelText: 'قیمت خرید واقعی',
+                suffixText: 'Coins',
+              ),
+            ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('انصراف'),
+        ),
+        FilledButton(
+          onPressed: () => Navigator.pop(
+            context,
+            _AddClubResult(
+              acquisitionPrice:
+                  untradeable ? 0 : int.tryParse(controller.text.trim()) ?? 0,
+              untradeable: untradeable,
+            ),
+          ),
+          child: const Text('افزودن'),
+        ),
+      ],
     );
   }
 }
@@ -273,6 +611,7 @@ class _ClubPlayerPickerState extends State<_ClubPlayerPicker> {
           p.clubName.toLowerCase().contains(q) ||
           p.position.toLowerCase().contains(q);
     }).toList();
+
     data.sort((a, b) => b.rating.compareTo(a.rating));
     return data;
   }
@@ -280,6 +619,7 @@ class _ClubPlayerPickerState extends State<_ClubPlayerPicker> {
   @override
   Widget build(BuildContext context) {
     final data = visible;
+
     return SafeArea(
       child: SizedBox(
         height: MediaQuery.sizeOf(context).height * .78,
@@ -301,12 +641,26 @@ class _ClubPlayerPickerState extends State<_ClubPlayerPicker> {
                   separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (_, index) {
                     final p = data[index];
+
                     return Card(
                       child: ListTile(
                         onTap: () => Navigator.pop(context, p),
-                        title: Text(p.name),
+                        leading: CircleAvatar(
+                          backgroundImage:
+                              p.imageUrl.isEmpty ? null : NetworkImage(p.imageUrl),
+                          child:
+                              p.imageUrl.isEmpty ? Text(p.rating.toString()) : null,
+                        ),
+                        title: Text(
+                          p.name,
+                          style: const TextStyle(fontWeight: FontWeight.w800),
+                        ),
                         subtitle: Text(
-                          p.rating.toString() + ' • ' + p.position + ' • ' + p.clubName,
+                          p.rating.toString() +
+                              ' • ' +
+                              p.position +
+                              ' • ' +
+                              p.clubName,
                         ),
                         trailing: const Icon(Icons.add_rounded),
                       ),
