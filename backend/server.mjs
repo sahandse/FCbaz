@@ -228,6 +228,7 @@ function normalizeEvolutionList(raw) {
     requirements: Array.isArray(e?.requirements)
       ? e.requirements.map((x) => typeof x === 'string' ? x : JSON.stringify(x))
       : [],
+    requirements_raw: Array.isArray(e?.requirements) ? e.requirements : [],
     upgrades: Array.isArray(e?.upgrades ?? e?.boosts)
       ? (e.upgrades ?? e.boosts).map((x) => typeof x === 'string' ? x : JSON.stringify(x))
       : [],
