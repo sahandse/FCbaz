@@ -6,7 +6,6 @@ import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
 import '../meta/presentation/meta_screen.dart';
 import '../sbc/presentation/sbc_screen.dart';
-import '../settings/account_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../settings/profile_screen.dart';
 import '../settings/settings_screen.dart';
@@ -35,7 +34,7 @@ class MoreScreen extends StatelessWidget {
         ),
         const SizedBox(height: 4),
         Text(
-          'ابزارهای اصلی، حساب و تنظیمات؛ بدون منوی شلوغ.',
+          'ابزارهای اصلی و تنظیمات؛ بدون ثبت‌نام و بدون حساب اجباری.',
           style: TextStyle(color: scheme.onSurfaceVariant),
         ),
         const SizedBox(height: 18),
@@ -92,20 +91,13 @@ class MoreScreen extends StatelessWidget {
         ),
         const SizedBox(height: 22),
         Text(
-          'حساب من',
+          'اطلاعات من',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 10),
         Card(
           child: Column(
             children: [
-              _MenuTile(
-                icon: Icons.cloud_sync_rounded,
-                title: 'حساب و Cloud',
-                subtitle: 'Login، Sync، Backup و Push',
-                onTap: () => _open(context, const AccountScreen()),
-              ),
-              const Divider(),
               _MenuTile(
                 icon: Icons.account_circle_rounded,
                 title: 'پروفایل',
