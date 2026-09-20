@@ -129,7 +129,7 @@ class SquadInsightsService {
         weaknesses.add(SquadWeakness(
           title: 'Out of Position',
           detail: player.name + ' در ' + slot.position + ' Chemistry صفر می‌گیرد.',
-          severity: 3,
+          severity: 4,
           slotId: slot.id,
         ));
       } else if (chemistryValue == 0) {
