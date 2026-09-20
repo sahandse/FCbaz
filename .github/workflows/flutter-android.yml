@@ -4,32 +4,23 @@ permissions:
   contents: write
 
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
-    inputs:
-      version:
-        description: Release version without v prefix, e.g. 1.0.0
-        required: true
-        type: string
-      api_base_url:
-        description: Production FCBaz API base URL
-        required: true
-        type: string
-      publish_release:
-        description: Publish GitHub Release after successful build
-        required: true
-        default: false
-        type: boolean
+
+env:
+  RELEASE_VERSION: "1.0.0"
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 40
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Validate signing secrets
+      - name: Validate production config
         shell: bash
         env:
           KEYSTORE_B64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
@@ -40,6 +31,7 @@ jobs:
           FIREBASE_APP_ID: ${{ secrets.FIREBASE_APP_ID }}
           FIREBASE_MESSAGING_SENDER_ID: ${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
+          FCBAZ_API_BASE_URL: ${{ secrets.FCBAZ_API_BASE_URL }}
         run: |
           test -n "$KEYSTORE_B64" || (echo "Missing ANDROID_KEYSTORE_BASE64" && exit 1)
           test -n "$KEYSTORE_PASSWORD" || (echo "Missing ANDROID_KEYSTORE_PASSWORD" && exit 1)
@@ -49,6 +41,11 @@ jobs:
           test -n "$FIREBASE_APP_ID" || (echo "Missing FIREBASE_APP_ID" && exit 1)
           test -n "$FIREBASE_MESSAGING_SENDER_ID" || (echo "Missing FIREBASE_MESSAGING_SENDER_ID" && exit 1)
           test -n "$FIREBASE_PROJECT_ID" || (echo "Missing FIREBASE_PROJECT_ID" && exit 1)
+          test -n "$FCBAZ_API_BASE_URL" || (echo "Missing FCBAZ_API_BASE_URL" && exit 1)
+          case "$FCBAZ_API_BASE_URL" in
+            https://*) ;;
+            *) echo "FCBAZ_API_BASE_URL must use HTTPS" && exit 1 ;;
+          esac
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -120,11 +117,10 @@ jobs:
 
               '''
           s = s.replace(signing_anchor, signing + signing_anchor, 1)
-
-          debug_line = 'signingConfig = signingConfigs.getByName("debug")'
-          release_line = 'signingConfig = signingConfigs.getByName("release")'
-          s = s.replace(debug_line, release_line)
-
+          s = s.replace(
+              'signingConfig = signingConfigs.getByName("debug")',
+              'signingConfig = signingConfigs.getByName("release")'
+          )
           p.write_text(s)
           PY
 
@@ -133,12 +129,12 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          version = "${{ inputs.version }}"
+          version = "${{ env.RELEASE_VERSION }}"
           p = Path("pubspec.yaml")
-          s = p.read_text().splitlines()
+          lines = p.read_text().splitlines()
           out = []
           changed = False
-          for line in s:
+          for line in lines:
               if line.startswith("version:"):
                   out.append("version: " + version + "+${{ github.run_number }}")
                   changed = True
@@ -165,20 +161,24 @@ jobs:
         run: flutter test
 
       - name: Build signed release APK
+        env:
+          API_BASE: ${{ secrets.FCBAZ_API_BASE_URL }}
         run: >
           flutter build apk --release
-          --dart-define=FCBAZ_API_BASE_URL=${{ inputs.api_base_url }}
-          --dart-define=FCBAZ_APP_VERSION=${{ inputs.version }}
+          --dart-define=FCBAZ_API_BASE_URL=$API_BASE
+          --dart-define=FCBAZ_APP_VERSION=${{ env.RELEASE_VERSION }}
           --dart-define=FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
           --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
           --dart-define=FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
 
       - name: Build signed release AAB
+        env:
+          API_BASE: ${{ secrets.FCBAZ_API_BASE_URL }}
         run: >
           flutter build appbundle --release
-          --dart-define=FCBAZ_API_BASE_URL=${{ inputs.api_base_url }}
-          --dart-define=FCBAZ_APP_VERSION=${{ inputs.version }}
+          --dart-define=FCBAZ_API_BASE_URL=$API_BASE
+          --dart-define=FCBAZ_APP_VERSION=${{ env.RELEASE_VERSION }}
           --dart-define=FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
           --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
           --dart-define=FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
@@ -187,28 +187,27 @@ jobs:
       - name: Prepare release files
         shell: bash
         run: |
-          cp build/app/outputs/flutter-apk/app-release.apk "FCBaz-v${{ inputs.version }}.apk"
-          cp build/app/outputs/bundle/release/app-release.aab "FCBaz-v${{ inputs.version }}.aab"
-          sha256sum "FCBaz-v${{ inputs.version }}.apk" "FCBaz-v${{ inputs.version }}.aab" > SHA256SUMS.txt
+          cp build/app/outputs/flutter-apk/app-release.apk "FCBaz-v${{ env.RELEASE_VERSION }}.apk"
+          cp build/app/outputs/bundle/release/app-release.aab "FCBaz-v${{ env.RELEASE_VERSION }}.aab"
+          sha256sum "FCBaz-v${{ env.RELEASE_VERSION }}.apk" "FCBaz-v${{ env.RELEASE_VERSION }}.aab" > SHA256SUMS.txt
 
-      - name: Upload signed release artifacts
+      - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FCBaz-v${{ inputs.version }}-release
+          name: FCBaz-v${{ env.RELEASE_VERSION }}-release
           path: |
-            FCBaz-v${{ inputs.version }}.apk
-            FCBaz-v${{ inputs.version }}.aab
+            FCBaz-v${{ env.RELEASE_VERSION }}.apk
+            FCBaz-v${{ env.RELEASE_VERSION }}.aab
             SHA256SUMS.txt
           if-no-files-found: error
 
       - name: Publish GitHub Release
-        if: ${{ inputs.publish_release }}
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v${{ inputs.version }}
-          name: FCBaz v${{ inputs.version }}
+          tag_name: v${{ env.RELEASE_VERSION }}
+          name: FCBaz v${{ env.RELEASE_VERSION }}
           generate_release_notes: true
           files: |
-            FCBaz-v${{ inputs.version }}.apk
-            FCBaz-v${{ inputs.version }}.aab
+            FCBaz-v${{ env.RELEASE_VERSION }}.apk
+            FCBaz-v${{ env.RELEASE_VERSION }}.aab
             SHA256SUMS.txt
