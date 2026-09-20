@@ -80,6 +80,49 @@ class SquadPlayerConfig {
       );
 }
 
+class TacticProfile {
+  const TacticProfile({
+    this.name = 'پلن اصلی',
+    this.code = '',
+    this.defensivePlan = '',
+    this.buildUpPlan = '',
+    this.attackingPlan = '',
+    this.notes = '',
+  });
+
+  final String name;
+  final String code;
+  final String defensivePlan;
+  final String buildUpPlan;
+  final String attackingPlan;
+  final String notes;
+
+  bool get isEmpty =>
+      code.trim().isEmpty &&
+      defensivePlan.trim().isEmpty &&
+      buildUpPlan.trim().isEmpty &&
+      attackingPlan.trim().isEmpty &&
+      notes.trim().isEmpty;
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'code': code,
+        'defensive_plan': defensivePlan,
+        'build_up_plan': buildUpPlan,
+        'attacking_plan': attackingPlan,
+        'notes': notes,
+      };
+
+  factory TacticProfile.fromJson(Map<String, dynamic> json) => TacticProfile(
+        name: (json['name'] ?? 'پلن اصلی').toString(),
+        code: (json['code'] ?? '').toString(),
+        defensivePlan: (json['defensive_plan'] ?? '').toString(),
+        buildUpPlan: (json['build_up_plan'] ?? '').toString(),
+        attackingPlan: (json['attacking_plan'] ?? '').toString(),
+        notes: (json['notes'] ?? '').toString(),
+      );
+}
+
 class SquadStateModel {
   const SquadStateModel({
     required this.id,
@@ -89,6 +132,7 @@ class SquadStateModel {
     this.playerConfigs = const {},
     this.bench = const [],
     this.manager,
+    this.tactics = const TacticProfile(),
   });
 
   final String id;
@@ -98,6 +142,7 @@ class SquadStateModel {
   final Map<String, SquadPlayerConfig> playerConfigs;
   final List<Player> bench;
   final ManagerProfile? manager;
+  final TacticProfile tactics;
 
   SquadStateModel copyWith({
     String? name,
@@ -107,6 +152,7 @@ class SquadStateModel {
     List<Player>? bench,
     ManagerProfile? manager,
     bool clearManager = false,
+    TacticProfile? tactics,
   }) {
     return SquadStateModel(
       id: id,
@@ -116,6 +162,7 @@ class SquadStateModel {
       playerConfigs: playerConfigs ?? this.playerConfigs,
       bench: bench ?? this.bench,
       manager: clearManager ? null : (manager ?? this.manager),
+      tactics: tactics ?? this.tactics,
     );
   }
 
@@ -132,6 +179,7 @@ class SquadStateModel {
         ),
         'bench': bench.map((p) => p.toJson()).toList(),
         'manager': manager?.toJson(),
+        'tactics': tactics.toJson(),
       };
 
   factory SquadStateModel.fromJson(Map<String, dynamic> map) {
@@ -177,6 +225,12 @@ class SquadStateModel {
       if (!parsed.isEmpty) manager = parsed;
     }
 
+    final tactics = map['tactics'] is Map
+        ? TacticProfile.fromJson(
+            Map<String, dynamic>.from(map['tactics'] as Map),
+          )
+        : const TacticProfile();
+
     return SquadStateModel(
       id: (map['id'] ?? '').toString(),
       name: (map['name'] ?? 'ترکیب من').toString(),
@@ -185,6 +239,7 @@ class SquadStateModel {
       playerConfigs: configs,
       bench: bench,
       manager: manager,
+      tactics: tactics,
     );
   }
 }
