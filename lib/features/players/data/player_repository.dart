@@ -26,6 +26,21 @@ class PlayerRepository {
   Future<List<Player>> search(String query) => api.searchPlayers(query);
   Future<Player> getPlayer(String id) => api.fetchPlayer(id);
 
+  Future<List<Player>> getVersions(String id) async {
+    final json = await api.getJson(
+      '/api/v1/players/' + Uri.encodeComponent(id) + '/versions',
+    );
+    final raw = json is Map ? (json['data'] ?? json['players'] ?? const []) : json;
+    if (raw is! List) {
+      throw const FCBazApiException('نسخه‌های دیگر بازیکن معتبر نیست.');
+    }
+    return raw
+        .whereType<Map>()
+        .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+        .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
+        .toList();
+  }
+
   List<Player> applyFilter(List<Player> source, PlayerFilter filter) {
     final result = source.where((p) {
       final positionOk = filter.position == null ||
