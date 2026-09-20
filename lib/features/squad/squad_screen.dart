@@ -130,10 +130,17 @@ class _SquadScreenState extends State<SquadScreen> {
       }
     }
 
+    final compatibleConfigs = <String, SquadPlayerConfig>{};
+    for (final slotId in compatible.keys) {
+      final config = squad.playerConfigs[slotId];
+      if (config != null) compatibleConfigs[slotId] = config;
+    }
+
     setState(() {
       squad = squad.copyWith(
         formationId: id,
         playersBySlot: compatible,
+        playerConfigs: compatibleConfigs,
       );
     });
     _refreshPrice();
@@ -462,8 +469,21 @@ class _SquadScreenState extends State<SquadScreen> {
       manager: squad.manager,
     );
 
+    final oldConfigsByPlayer = <String, SquadPlayerConfig>{};
+    for (final entry in squad.playersBySlot.entries) {
+      final config = squad.playerConfigs[entry.key];
+      if (config != null) oldConfigsByPlayer[entry.value.id] = config;
+    }
+
+    final remappedConfigs = <String, SquadPlayerConfig>{};
+    for (final entry in result.playersBySlot.entries) {
+      final config = oldConfigsByPlayer[entry.value.id];
+      if (config != null) remappedConfigs[entry.key] = config;
+    }
+
     setState(() => squad = squad.copyWith(
           playersBySlot: result.playersBySlot,
+          playerConfigs: remappedConfigs,
         ));
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -1149,7 +1169,9 @@ class _PlayerPickerState extends State<_PlayerPicker> {
                 children: [
                   Expanded(
                     child: Text(
-                      'انتخاب بازیکن برای ' + widget.slotPosition,
+                      widget.slotPosition.isEmpty
+                          ? 'انتخاب بازیکن نیمکت'
+                          : 'انتخاب بازیکن برای ' + widget.slotPosition,
                       style: Theme.of(context).textTheme.titleLarge,
                     ),
                   ),
@@ -1172,7 +1194,8 @@ class _PlayerPickerState extends State<_PlayerPicker> {
                   separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final player = players[index];
-                    final fit = player.position == widget.slotPosition ||
+                    final fit = widget.slotPosition.isEmpty ||
+                        player.position == widget.slotPosition ||
                         player.positions.contains(widget.slotPosition);
 
                     return Card(
@@ -1198,10 +1221,14 @@ class _PlayerPickerState extends State<_PlayerPicker> {
                               ' • ' +
                               player.clubName,
                         ),
-                        trailing: fit
-                            ? Icon(Icons.check_circle_rounded,
-                                color: Theme.of(context).colorScheme.primary)
-                            : const Icon(Icons.warning_amber_rounded),
+                        trailing: widget.slotPosition.isEmpty
+                            ? const Icon(Icons.add_rounded)
+                            : fit
+                                ? Icon(
+                                    Icons.check_circle_rounded,
+                                    color: Theme.of(context).colorScheme.primary,
+                                  )
+                                : const Icon(Icons.warning_amber_rounded),
                       ),
                     );
                   },
