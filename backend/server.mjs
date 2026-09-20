@@ -340,6 +340,35 @@ async function handler(req, res) {
       return send(res, 200, { data: normalizeHistory(raw), meta: { source: 'futbin-via-parse' } });
     }
 
+    if (path === '/api/v1/club/snapshot') {
+      const rawIds = (url.searchParams.get('player_ids') || '').trim();
+      const ids = [...new Set(rawIds.split(',').map((x) => x.trim()).filter((x) => /^\d+$/.test(x)))];
+      if (!ids.length) return send(res, 400, { error: 'player_ids_required' });
+      if (ids.length > 500) return send(res, 400, { error: 'too_many_player_ids', max: 500 });
+
+      const platform = url.searchParams.get('platform') === 'pc' ? 'pc' : 'ps';
+      const raw = await provider('get_fc27_market_snapshot', {
+        player_ids: ids.join(','),
+        year: 27,
+        platform,
+      }, { ttl: 45 });
+
+      const data = unwrap(raw);
+      const players = Array.isArray(data?.players) ? data.players : [];
+      return send(res, 200, {
+        data: players.map((p) => ({
+          player_id: String(p?.player_id ?? ''),
+          price: p?.price == null ? null : asInt(p.price),
+        })),
+        meta: {
+          source: 'futbin-via-parse',
+          game_year: 27,
+          platform,
+          timestamp: data?.timestamp ?? Date.now(),
+        },
+      });
+    }
+
     if (path === '/api/v1/market') {
       const raw = await provider('get_market_trends', {});
       const data = unwrap(raw);
