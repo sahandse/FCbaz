@@ -24,34 +24,37 @@ class MoreScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
+    final scheme = Theme.of(context).colorScheme;
 
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
       children: [
         Text(
-          'ابزارها',
+          'بیشتر',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 4),
         Text(
-          'بخش‌های اصلی FCBaz، بدون گزینه‌های نمایشی و ناقص',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-          ),
+          'ابزارهای اصلی، حساب و تنظیمات؛ بدون منوی شلوغ.',
+          style: TextStyle(color: scheme.onSurfaceVariant),
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 18),
+        Text(
+          'ابزارهای FC27',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 10),
         GridView.count(
           crossAxisCount: 2,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: 1.42,
+          childAspectRatio: 1.5,
           children: [
             _ToolCard(
               title: 'بازار',
-              subtitle: 'قیمت، تاریخچه و واچ‌لیست',
+              subtitle: 'قیمت و Watchlist',
               icon: Icons.query_stats_rounded,
               onTap: () => _open(context, const MarketScreen()),
             ),
@@ -63,87 +66,99 @@ class MoreScreen extends StatelessWidget {
             ),
             _ToolCard(
               title: 'Evolutions',
-              subtitle: 'Evo Lab و بازیکنان مناسب',
+              subtitle: 'Evo Lab',
               icon: Icons.auto_awesome_rounded,
               onTap: () => _open(context, const EvolutionsScreen()),
             ),
             _ToolCard(
               title: 'باشگاه من',
-              subtitle: 'بازیکنان و سرمایه باشگاه',
+              subtitle: 'کارت‌ها و ارزش باشگاه',
               icon: Icons.inventory_2_rounded,
               onTap: () => _open(context, const MyClubScreen()),
             ),
             _ToolCard(
               title: 'Meta',
-              subtitle: 'بهترین بازیکنان هر پست',
+              subtitle: 'بازیکنان برتر هر پست',
               icon: Icons.leaderboard_rounded,
               onTap: () => _open(context, const MetaScreen()),
             ),
             _ToolCard(
               title: 'Objectives',
-              subtitle: 'هدف‌ها و پاداش‌های زنده',
+              subtitle: 'هدف‌ها و پاداش‌ها',
               icon: Icons.flag_rounded,
               onTap: () => _open(context, const ObjectivesScreen()),
             ),
-            _ToolCard(
-              title: 'Consumables',
-              subtitle: 'Chemistry Styles و راهنما',
-              icon: Icons.auto_fix_high_rounded,
-              onTap: () => _open(context, const ConsumablesScreen()),
-            ),
-            _ToolCard(
-              title: 'حساب و Cloud',
-              subtitle: 'Login، Sync، Backup و Push',
-              icon: Icons.cloud_sync_rounded,
-              onTap: () => _open(
-                context,
-                const AccountScreen(),
-              ),
-            ),
-            _ToolCard(
-              title: 'پروفایل',
-              subtitle: 'Favorites، My Club، Squads و Watchlist',
-              icon: Icons.account_circle_rounded,
-              onTap: () => _open(
-                context,
-                const ProfileScreen(),
-              ),
-            ),
-            _ToolCard(
-              title: 'تنظیمات',
-              subtitle: 'تم، زبان، بازار و بروزرسانی',
-              icon: Icons.settings_rounded,
-              onTap: () => _open(
-                context,
-                SettingsScreen(
-                  settings: settings,
-                  onChanged: onSettingsChanged,
-                ),
-              ),
-            ),
-            _ToolCard(
-              title: 'اخبار FC27',
-              subtitle: 'Promo، SBC و Evo جدید',
-              icon: Icons.newspaper_rounded,
-              onTap: () => _open(context, const NewsScreen()),
-            ),
           ],
         ),
-        const SizedBox(height: 20),
+        const SizedBox(height: 22),
+        Text(
+          'حساب من',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 10),
+        Card(
+          child: Column(
+            children: [
+              _MenuTile(
+                icon: Icons.cloud_sync_rounded,
+                title: 'حساب و Cloud',
+                subtitle: 'Login، Sync، Backup و Push',
+                onTap: () => _open(context, const AccountScreen()),
+              ),
+              const Divider(),
+              _MenuTile(
+                icon: Icons.account_circle_rounded,
+                title: 'پروفایل',
+                subtitle: 'Favorites، My Club، Squads و Watchlist',
+                onTap: () => _open(context, const ProfileScreen()),
+              ),
+              const Divider(),
+              _MenuTile(
+                icon: Icons.settings_rounded,
+                title: 'تنظیمات',
+                subtitle: 'تم، بازار، اعلان و بروزرسانی',
+                onTap: () => _open(
+                  context,
+                  SettingsScreen(
+                    settings: settings,
+                    onChanged: onSettingsChanged,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 22),
+        Text(
+          'راهنما',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 10),
+        Card(
+          child: _MenuTile(
+            icon: Icons.auto_fix_high_rounded,
+            title: 'Consumables',
+            subtitle: 'Chemistry Styles و راهنمای مصرفی‌ها',
+            onTap: () => _open(context, const ConsumablesScreen()),
+          ),
+        ),
+        const SizedBox(height: 14),
         Container(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
-            color: primary.withValues(alpha: .07),
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: primary.withValues(alpha: .18)),
+            color: scheme.primary.withValues(alpha: .07),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: scheme.primary.withValues(alpha: .18),
+            ),
           ),
           child: const Row(
             children: [
-              Icon(Icons.info_outline_rounded),
+              Icon(Icons.verified_outlined),
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'ابزارهایی که داده واقعی یا منطق کامل ندارند فعلاً از منو حذف شده‌اند تا رابط کاربری تمیز بماند.',
+                  'FCBaz فقط قابلیت‌هایی را در این منو نگه می‌دارد که داده یا منطق قابل استفاده دارند.',
                 ),
               ),
             ],
@@ -182,7 +197,7 @@ class _ToolCard extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(15),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center,
@@ -197,9 +212,11 @@ class _ToolCard extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Icon(icon, color: scheme.primary, size: 21),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 9),
               Text(
                 title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontWeight: FontWeight.w900),
               ),
               const SizedBox(height: 3),
@@ -210,13 +227,45 @@ class _ToolCard extends StatelessWidget {
                 style: TextStyle(
                   color: scheme.onSurfaceVariant,
                   fontSize: 11,
-                  height: 1.35,
+                  height: 1.3,
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _MenuTile extends StatelessWidget {
+  const _MenuTile({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: onTap,
+      leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+      title: Text(
+        title,
+        style: const TextStyle(fontWeight: FontWeight.w900),
+      ),
+      subtitle: Text(
+        subtitle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      trailing: const Icon(Icons.chevron_left_rounded),
     );
   }
 }
