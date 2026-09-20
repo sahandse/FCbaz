@@ -22,6 +22,9 @@ class PlayerFacets {
     this.leagues = const [],
     this.clubs = const [],
     this.nations = const [],
+    this.playStyles = const [],
+    this.playStylesPlus = const [],
+    this.roles = const [],
   });
 
   final List<String> versions;
@@ -30,6 +33,9 @@ class PlayerFacets {
   final List<String> leagues;
   final List<String> clubs;
   final List<String> nations;
+  final List<String> playStyles;
+  final List<String> playStylesPlus;
+  final List<String> roles;
 
   factory PlayerFacets.fromJson(Map<String, dynamic> json) {
     List<String> list(dynamic value) => value is List
@@ -43,6 +49,9 @@ class PlayerFacets {
       leagues: list(json['leagues']),
       clubs: list(json['clubs']),
       nations: list(json['nations']),
+      playStyles: list(json['playstyles']),
+      playStylesPlus: list(json['playstyles_plus']),
+      roles: list(json['roles']),
     );
   }
 }
@@ -333,6 +342,17 @@ class PlayerRepository {
   Future<List<Player>> search(String query) => api.searchPlayers(query);
 
   Future<Player> getPlayer(String id) => api.fetchPlayer(id);
+
+  Future<List<Player>> getTrendingPlayers() async {
+    final json = await api.getJson('/api/v1/players/trending');
+    final raw = json is Map ? (json['data'] ?? const []) : json;
+    if (raw is! List) return const [];
+    return raw
+        .whereType<Map>()
+        .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+        .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
+        .toList();
+  }
 
   Future<List<Player>> getVersions(String id) async {
     final json = await api.getJson(
