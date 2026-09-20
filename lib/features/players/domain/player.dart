@@ -136,23 +136,45 @@ class Player {
     }
 
     return Player(
-      id: asString(json['id']),
-      name: asString(json['name']),
+      id: asString(
+        json['id'] ??
+            json['ID'] ??
+            json['player_id'] ??
+            json['playerid'] ??
+            json['resource_id'],
+      ),
+      name: asString(
+        json['name'] ??
+            json['playername'] ??
+            json['common_name'],
+      ),
       rating: asInt(json['rating'] ?? json['overall']),
       position: asString(json['position']),
-      positions: asStrings(json['positions'] ?? json['alternative_positions']),
+      positions: (() {
+        final value = json['positions'] ??
+            json['alternative_positions'] ??
+            json['pos_all'];
+        if (value is String) {
+          return value
+              .split(',')
+              .map((e) => e.trim())
+              .where((e) => e.isNotEmpty)
+              .toList();
+        }
+        return asStrings(value);
+      })(),
       clubName: asString(json['club_name'] ?? json['club']),
       leagueName: asString(json['league_name'] ?? json['league']),
       nationName: asString(json['nation_name'] ?? json['nation']),
       version: asString(json['version'] ?? json['rarity']),
       imageUrl: asString(json['image_url'] ?? json['image']),
       cardImageUrl: asString(json['card_image_url'] ?? json['card_image']),
-      pace: asInt(json['pace']),
-      shooting: asInt(json['shooting']),
-      passing: asInt(json['passing']),
-      dribbling: asInt(json['dribbling']),
-      defending: asInt(json['defending']),
-      physical: asInt(json['physical']),
+      pace: asInt(json['pace'] ?? json['pac']),
+      shooting: asInt(json['shooting'] ?? json['sho']),
+      passing: asInt(json['passing'] ?? json['pas']),
+      dribbling: asInt(json['dribbling'] ?? json['dri']),
+      defending: asInt(json['defending'] ?? json['def']),
+      physical: asInt(json['physical'] ?? json['phy']),
       skillMoves: asInt(json['skill_moves']),
       weakFoot: asInt(json['weak_foot']),
       playStyles: asStrings(json['playstyles'] ?? json['play_styles']),
@@ -167,10 +189,18 @@ class Player {
       foot: asString(json['foot'] ?? json['preferred_foot']),
       height: asString(json['height']),
       workRates: asString(json['work_rates'] ?? json['workrates']),
-      rarity: asString(json['rarity']),
+      rarity: asString(json['rarity'] ?? json['raretype']),
       cardType: asString(json['card_type'] ?? json['type']),
-      pricePs: asInt(json['price_ps'] ?? json['price_ps_coins']),
-      pricePc: asInt(json['price_pc'] ?? json['price_pc_coins']),
+      pricePs: asInt(
+        json['price_ps'] ??
+            json['price_ps_coins'] ??
+            json['ps_LCPrice'],
+      ),
+      pricePc: asInt(
+        json['price_pc'] ??
+            json['price_pc_coins'] ??
+            json['pc_LCPrice'],
+      ),
     );
   }
 }
