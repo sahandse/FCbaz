@@ -2,6 +2,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import '../../core/network/fcbaz_api.dart';
+import '../navigation/app_navigation_repository.dart';
 import '../settings/auth_repository.dart';
 import 'notification_repository.dart';
 
@@ -80,6 +81,7 @@ class FcmPushService {
   final FCBazApi api;
   final AuthRepository authRepository;
   final NotificationRepository notificationRepository;
+  final navigationRepository = AppNavigationRepository();
 
   bool _initialized = false;
 
@@ -98,10 +100,22 @@ class FcmPushService {
 
     if (!_initialized) {
       FirebaseMessaging.onMessage.listen(_onForegroundMessage);
+      FirebaseMessaging.onMessageOpenedApp.listen((message) async {
+        final playerId = message.data['player_id']?.toString() ?? '';
+        if (playerId.isNotEmpty) {
+          await navigationRepository.setPendingPlayer(playerId);
+        }
+      });
       FirebaseMessaging.instance.onTokenRefresh.listen((_) {
         registerCurrentDevice();
       });
       _initialized = true;
+    }
+
+    final initial = await FirebaseMessaging.instance.getInitialMessage();
+    final initialPlayerId = initial?.data['player_id']?.toString() ?? '';
+    if (initialPlayerId.isNotEmpty) {
+      await navigationRepository.setPendingPlayer(initialPlayerId);
     }
 
     return true;
