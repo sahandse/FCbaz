@@ -10,16 +10,32 @@ class FCBazApiException implements Exception {
   String toString() => message;
 }
 
+class _CacheEntry {
+  const _CacheEntry({
+    required this.value,
+    required this.createdAt,
+  });
+
+  final dynamic value;
+  final DateTime createdAt;
+}
+
 class FCBazApi {
   FCBazApi({HttpClient? client}) : _client = client ?? HttpClient();
 
   static const baseUrl = String.fromEnvironment('FCBAZ_API_BASE_URL');
   final HttpClient _client;
 
+  static final Map<String, _CacheEntry> _cache = {};
+
   bool get isConfigured => baseUrl.trim().isNotEmpty;
 
-  Future<List<Player>> fetchPlayers() async {
-    final json = await getJson('/api/v1/players');
+  Future<List<Player>> fetchPlayers({bool forceRefresh = false}) async {
+    final json = await getJson(
+      '/api/v1/players',
+      forceRefresh: forceRefresh,
+      cacheTtl: const Duration(seconds: 90),
+    );
     final raw = json is Map ? (json['data'] ?? json['players']) : json;
     if (raw is! List) {
       throw const FCBazApiException('پاسخ بازیکنان معتبر نیست.');
@@ -31,9 +47,16 @@ class FCBazApi {
         .toList();
   }
 
-  Future<List<Player>> searchPlayers(String query) async {
+  Future<List<Player>> searchPlayers(
+    String query, {
+    bool forceRefresh = false,
+  }) async {
     final encoded = Uri.encodeQueryComponent(query);
-    final json = await getJson('/api/v1/players/search?q=$encoded');
+    final json = await getJson(
+      '/api/v1/players/search?q=$encoded',
+      forceRefresh: forceRefresh,
+      cacheTtl: const Duration(seconds: 45),
+    );
     final raw = json is Map ? (json['data'] ?? json['players']) : json;
     if (raw is! List) {
       throw const FCBazApiException('پاسخ جستجو معتبر نیست.');
@@ -45,8 +68,15 @@ class FCBazApi {
         .toList();
   }
 
-  Future<Player> fetchPlayer(String id) async {
-    final json = await getJson('/api/v1/players/' + Uri.encodeComponent(id));
+  Future<Player> fetchPlayer(
+    String id, {
+    bool forceRefresh = false,
+  }) async {
+    final json = await getJson(
+      '/api/v1/players/' + Uri.encodeComponent(id),
+      forceRefresh: forceRefresh,
+      cacheTtl: const Duration(seconds: 90),
+    );
     final raw = json is Map ? (json['data'] ?? json['player'] ?? json) : json;
     if (raw is! Map) {
       throw const FCBazApiException('جزئیات بازیکن معتبر نیست.');
@@ -57,11 +87,15 @@ class FCBazApi {
   Future<dynamic> getJson(
     String path, {
     String? bearerToken,
+    bool forceRefresh = false,
+    Duration cacheTtl = const Duration(seconds: 60),
   }) =>
       _requestJson(
         method: 'GET',
         path: path,
         bearerToken: bearerToken,
+        forceRefresh: forceRefresh,
+        cacheTtl: cacheTtl,
       );
 
   Future<dynamic> postJson(
@@ -76,14 +110,35 @@ class FCBazApi {
         bearerToken: bearerToken,
       );
 
+  void clearPublicCache() => _cache.clear();
+
+  void invalidatePath(String pathPrefix) {
+    _cache.removeWhere((key, _) => key.startsWith(pathPrefix));
+  }
+
   Future<dynamic> _requestJson({
     required String method,
     required String path,
     Map<String, dynamic>? body,
     String? bearerToken,
+    bool forceRefresh = false,
+    Duration cacheTtl = Duration.zero,
   }) async {
     if (!isConfigured) {
       throw const FCBazApiException('Backend FCBaz هنوز متصل نشده است.');
+    }
+
+    final isPrivate = bearerToken != null ||
+        path.startsWith('/api/v1/account/') ||
+        path.startsWith('/api/v1/push/');
+    final cacheable = method == 'GET' && !isPrivate && cacheTtl > Duration.zero;
+
+    if (cacheable && !forceRefresh) {
+      final entry = _cache[path];
+      if (entry != null &&
+          DateTime.now().difference(entry.createdAt) < cacheTtl) {
+        return entry.value;
+      }
     }
 
     final uri = Uri.parse(baseUrl).resolve(path);
@@ -128,6 +183,13 @@ class FCBazApi {
         message?.isNotEmpty == true
             ? message!
             : 'خطای سرور (' + response.statusCode.toString() + ')',
+      );
+    }
+
+    if (cacheable) {
+      _cache[path] = _CacheEntry(
+        value: decoded,
+        createdAt: DateTime.now(),
       );
     }
 
