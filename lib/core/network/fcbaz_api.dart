@@ -54,27 +54,83 @@ class FCBazApi {
     return Player.fromJson(Map<String, dynamic>.from(raw));
   }
 
-  Future<dynamic> getJson(String path) async {
+  Future<dynamic> getJson(
+    String path, {
+    String? bearerToken,
+  }) =>
+      _requestJson(
+        method: 'GET',
+        path: path,
+        bearerToken: bearerToken,
+      );
+
+  Future<dynamic> postJson(
+    String path, {
+    Map<String, dynamic>? body,
+    String? bearerToken,
+  }) =>
+      _requestJson(
+        method: 'POST',
+        path: path,
+        body: body,
+        bearerToken: bearerToken,
+      );
+
+  Future<dynamic> _requestJson({
+    required String method,
+    required String path,
+    Map<String, dynamic>? body,
+    String? bearerToken,
+  }) async {
     if (!isConfigured) {
       throw const FCBazApiException('Backend FCBaz هنوز متصل نشده است.');
     }
 
     final uri = Uri.parse(baseUrl).resolve(path);
-    final request = await _client.getUrl(uri).timeout(const Duration(seconds: 8));
+    final request = await (method == 'POST'
+            ? _client.postUrl(uri)
+            : _client.getUrl(uri))
+        .timeout(const Duration(seconds: 8));
+
     request.headers.set(HttpHeaders.acceptHeader, 'application/json');
     request.headers.set('X-FCBaz-Game-Year', '27');
 
-    final response = await request.close().timeout(const Duration(seconds: 10));
-    final body = await utf8.decoder.bind(response).join();
+    if (body != null) {
+      request.headers.contentType = ContentType.json;
+      request.write(jsonEncode(body));
+    }
+
+    if (bearerToken != null && bearerToken.trim().isNotEmpty) {
+      request.headers.set(
+        HttpHeaders.authorizationHeader,
+        'Bearer ' + bearerToken.trim(),
+      );
+    }
+
+    final response =
+        await request.close().timeout(const Duration(seconds: 15));
+    final responseBody = await utf8.decoder.bind(response).join();
+
+    dynamic decoded;
+    if (responseBody.trim().isNotEmpty) {
+      try {
+        decoded = jsonDecode(responseBody);
+      } on FormatException {
+        throw const FCBazApiException('پاسخ سرور قابل خواندن نیست.');
+      }
+    }
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw FCBazApiException('خطای سرور (' + response.statusCode.toString() + ')');
+      final message = decoded is Map
+          ? (decoded['message'] ?? decoded['error'])?.toString()
+          : null;
+      throw FCBazApiException(
+        message?.isNotEmpty == true
+            ? message!
+            : 'خطای سرور (' + response.statusCode.toString() + ')',
+      );
     }
 
-    try {
-      return jsonDecode(body);
-    } on FormatException {
-      throw const FCBazApiException('پاسخ سرور قابل خواندن نیست.');
-    }
+    return decoded;
   }
 }
