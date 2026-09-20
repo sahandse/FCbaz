@@ -338,15 +338,8 @@ class _WatchlistCard extends StatelessWidget {
     final current = price?.current ?? 0;
     final reached = target != null && current > 0 && current <= target;
 
-    final price = platform == 'pc' ? player.pricePc : player.pricePs;
-
     return Card(
       child: ListTile(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PlayerDetailsScreen(player: player),
-          ),
-        ),
         leading: Icon(
           reached ? Icons.notifications_active_rounded : Icons.favorite_rounded,
           color: reached ? Theme.of(context).colorScheme.primary : Colors.redAccent,
