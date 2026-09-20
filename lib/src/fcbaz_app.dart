@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../features/navigation/main_shell.dart';
-import '../features/notifications/fcm_push_service.dart';
 import '../features/notifications/price_alert_service.dart';
 import '../features/settings/app_settings_repository.dart';
 import 'theme/fcbaz_theme.dart';
@@ -17,7 +16,6 @@ class FCBazApp extends StatefulWidget {
 class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
   final settingsRepository = AppSettingsRepository();
   final priceAlertService = PriceAlertService();
-  final fcmPushService = FcmPushService();
 
   AppSettings settings = const AppSettings();
   bool ready = false;
@@ -43,11 +41,6 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
       settings = loaded;
       ready = true;
     });
-
-    if (fcmPushService.configured) {
-      await fcmPushService.initialize();
-      await fcmPushService.registerCurrentDevice();
-    }
 
     if (loaded.priceAlertsEnabled) {
       await priceAlertService.checkNow();
