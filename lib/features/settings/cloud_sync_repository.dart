@@ -28,10 +28,13 @@ class CloudSyncRepository {
   final BackupRepository backupRepository;
 
   Future<CloudSyncResult> upload() async {
-    final session = await authRepository.currentSession();
-    if (session == null) {
+    final existing = await authRepository.currentSession();
+    if (existing == null) {
       throw const FCBazApiException('برای Cloud Sync ابتدا وارد حساب شو.');
     }
+    final session = existing.refreshToken.isNotEmpty
+        ? await authRepository.refreshSession()
+        : existing;
 
     final snapshot = await backupRepository.exportData();
     final json = await api.postJson(
@@ -46,10 +49,13 @@ class CloudSyncRepository {
   Future<CloudSyncResult> download({
     bool replaceExisting = true,
   }) async {
-    final session = await authRepository.currentSession();
-    if (session == null) {
+    final existing = await authRepository.currentSession();
+    if (existing == null) {
       throw const FCBazApiException('برای Cloud Sync ابتدا وارد حساب شو.');
     }
+    final session = existing.refreshToken.isNotEmpty
+        ? await authRepository.refreshSession()
+        : existing;
 
     final json = await api.getJson(
       '/api/v1/account/sync',
