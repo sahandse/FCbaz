@@ -4,6 +4,7 @@ import 'data/player_repository.dart';
 import 'domain/player.dart';
 import 'presentation/advanced_player_filter_sheet.dart';
 import 'presentation/player_card.dart';
+import '../settings/app_settings_repository.dart';
 
 class PlayersScreen extends StatefulWidget {
   const PlayersScreen({super.key});
@@ -14,6 +15,7 @@ class PlayersScreen extends StatefulWidget {
 
 class _PlayersScreenState extends State<PlayersScreen> {
   final repository = PlayerRepository();
+  final settingsRepository = AppSettingsRepository();
 
   List<Player> players = const [];
   PlayerFilter filter = const PlayerFilter();
@@ -25,7 +27,16 @@ class _PlayersScreenState extends State<PlayersScreen> {
   @override
   void initState() {
     super.initState();
-    _load();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    final settings = await settingsRepository.load();
+    if (!mounted) return;
+    setState(() {
+      filter = filter.copyWith(platform: settings.defaultPlatform);
+    });
+    await _load();
   }
 
   Future<void> _load() async {
