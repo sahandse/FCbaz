@@ -7,6 +7,7 @@ import '../players/domain/player.dart';
 import '../players/presentation/advanced_player_filter_sheet.dart';
 import '../players/presentation/player_card.dart';
 import 'search_history_repository.dart';
+import '../settings/app_settings_repository.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -18,6 +19,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   final repository = PlayerRepository();
   final historyRepository = SearchHistoryRepository();
+  final settingsRepository = AppSettingsRepository();
   final controller = TextEditingController();
 
   Timer? debounce;
@@ -37,7 +39,16 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   void initState() {
     super.initState();
-    _loadDiscovery();
+    _initialize();
+  }
+
+  Future<void> _initialize() async {
+    final settings = await settingsRepository.load();
+    if (!mounted) return;
+    setState(() {
+      filter = filter.copyWith(platform: settings.defaultPlatform);
+    });
+    await _loadDiscovery();
   }
 
   @override
