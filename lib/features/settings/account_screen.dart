@@ -140,6 +140,48 @@ class _AccountScreenState extends State<AccountScreen> {
     });
   }
 
+  Future<void> _deleteAccount() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('حذف دائمی حساب'),
+        content: const Text(
+          'حساب آنلاین و داده‌های Cloud مرتبط برای همیشه حذف می‌شوند. این عملیات قابل بازگشت نیست. داده‌های محلی روی گوشی حذف نمی‌شوند.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('انصراف'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: const Text('حذف دائمی'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true) return;
+
+    setState(() {
+      working = true;
+      status = null;
+    });
+
+    try {
+      await authRepository.deleteAccount();
+      if (!mounted) return;
+      setState(() {
+        session = null;
+        status = 'حساب آنلاین و داده‌های Cloud حذف شدند.';
+      });
+    } catch (e) {
+      if (mounted) setState(() => status = e.toString());
+    } finally {
+      if (mounted) setState(() => working = false);
+    }
+  }
+
   Future<void> _upload() async {
     setState(() {
       working = true;
@@ -364,6 +406,22 @@ class _AccountScreenState extends State<AccountScreen> {
               child: ListTile(
                 leading: const Icon(Icons.info_outline_rounded),
                 title: Text(status!),
+              ),
+            ),
+          ],
+          if (session != null) ...[
+            const SizedBox(height: 14),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.delete_forever_rounded),
+                title: const Text('حذف حساب آنلاین'),
+                subtitle: const Text(
+                  'حساب و داده‌های Cloud را برای همیشه حذف می‌کند.',
+                ),
+                trailing: TextButton(
+                  onPressed: working ? null : _deleteAccount,
+                  child: const Text('حذف'),
+                ),
               ),
             ),
           ],
