@@ -134,6 +134,54 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Repair launcher icon asset
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import struct, zlib
+          from pathlib import Path
+
+          w = h = 512
+          bg = (8, 11, 14)
+          green = (28, 255, 150)
+          white = (235, 245, 240)
+
+          pixels = [[bg for _ in range(w)] for _ in range(h)]
+
+          def rect(x0, y0, x1, y1, color):
+              for y in range(max(0,y0), min(h,y1)):
+                  row = pixels[y]
+                  for x in range(max(0,x0), min(w,x1)):
+                      row[x] = color
+
+          # Minimal FCBaz monogram: stylized F + C + B blocks.
+          rect(95, 110, 135, 400, green)
+          rect(95, 110, 245, 150, green)
+          rect(95, 235, 220, 275, green)
+
+          rect(265, 110, 305, 400, white)
+          rect(265, 110, 390, 150, white)
+          rect(265, 235, 380, 275, white)
+          rect(265, 360, 390, 400, white)
+          rect(350, 150, 390, 235, white)
+          rect(350, 275, 390, 360, white)
+
+          raw = b''.join(b'\x00' + bytes([v for rgb in row for v in rgb]) for row in pixels)
+
+          def chunk(t, d):
+              return struct.pack('>I', len(d)) + t + d + struct.pack('>I', zlib.crc32(t + d) & 0xffffffff)
+
+          png = b'\x89PNG\r\n\x1a\n'
+          png += chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0))
+          png += chunk(b'IDAT', zlib.compress(raw, 9))
+          png += chunk(b'IEND', b'')
+
+          path = Path('assets/icon/fcbaz_app_icon.png')
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_bytes(png)
+          print(f'Wrote valid PNG: {path} ({len(png)} bytes)')
+          PY
+
       - name: Generate launcher icon
         run: dart run flutter_launcher_icons
 
