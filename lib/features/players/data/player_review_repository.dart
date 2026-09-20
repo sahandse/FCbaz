@@ -71,7 +71,7 @@ class PlayerReviewRepository {
     final all = {...await _all()};
     all[playerId] = PlayerReview(
       playerId: playerId,
-      rating: rating.clamp(1, 5),
+      rating: rating.clamp(1, 5).toInt(),
       text: text.trim(),
       updatedAt: DateTime.now(),
     );
