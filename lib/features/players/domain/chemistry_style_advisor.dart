@@ -1,4 +1,4 @@
-import '../domain/player.dart';
+import 'player.dart';
 
 class ChemistryStyleSuggestion {
   const ChemistryStyleSuggestion({
