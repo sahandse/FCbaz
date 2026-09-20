@@ -37,14 +37,14 @@ class _HomeScreenState extends State<HomeScreen> {
     _load();
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool forceRefresh = false}) async {
     setState(() {
       loading = true;
       error = null;
     });
 
     try {
-      final data = await repository.getFeed();
+      final data = await repository.getFeed(forceRefresh: forceRefresh);
       if (!mounted) return;
       setState(() => feed = data);
     } catch (e) {
@@ -70,7 +70,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final data = feed;
 
     return RefreshIndicator(
-      onRefresh: _load,
+      onRefresh: () => _load(forceRefresh: true),
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
         children: [
