@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../market/presentation/player_market_panel.dart';
 import '../data/player_repository.dart';
+import '../data/player_review_repository.dart';
+import '../domain/chemistry_style_advisor.dart';
 import '../domain/player.dart';
 import 'player_compare_screen.dart';
 
@@ -19,8 +21,11 @@ class PlayerDetailsScreen extends StatefulWidget {
 
 class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
   final repository = PlayerRepository();
+  final reviewRepository = PlayerReviewRepository();
+  final chemistryAdvisor = const ChemistryStyleAdvisor();
 
   late Player player = widget.player;
+  PlayerReview? review;
   List<Player> versions = const [];
   bool loading = true;
   String? detailError;
@@ -29,6 +34,87 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
   void initState() {
     super.initState();
     _loadFullDetails();
+    _loadReview();
+  }
+
+  Future<void> _loadReview() async {
+    final data = await reviewRepository.get(widget.player.id);
+    if (!mounted) return;
+    setState(() => review = data);
+  }
+
+  Future<void> _editReview() async {
+    var rating = review?.rating ?? 5;
+    final controller = TextEditingController(text: review?.text ?? '');
+
+    final result = await showDialog<(int, String)>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: Text('نظر من درباره ' + player.name),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  for (var i = 1; i <= 5; i++)
+                    IconButton(
+                      onPressed: () => setDialogState(() => rating = i),
+                      icon: Icon(
+                        i <= rating
+                            ? Icons.star_rounded
+                            : Icons.star_border_rounded,
+                        color: Colors.amber,
+                      ),
+                    ),
+                ],
+              ),
+              TextField(
+                controller: controller,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  labelText: 'یادداشت یا Review شخصی',
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            if (review != null)
+              TextButton(
+                onPressed: () => Navigator.pop(context, (0, '')),
+                child: const Text('حذف'),
+              ),
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('انصراف'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(
+                context,
+                (rating, controller.text.trim()),
+              ),
+              child: const Text('ذخیره'),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    controller.dispose();
+    if (result == null) return;
+
+    if (result.$1 == 0) {
+      await reviewRepository.remove(player.id);
+    } else {
+      await reviewRepository.save(
+        playerId: player.id,
+        rating: result.$1,
+        text: result.$2,
+      );
+    }
+
+    await _loadReview();
   }
 
   Future<void> _loadFullDetails() async {
@@ -167,6 +253,23 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
               const SizedBox(height: 10),
               _InGameStats(stats: player.inGameStats),
             ],
+            const SizedBox(height: 18),
+            const _SectionHeader(title: 'Chemistry Style Advisor'),
+            const SizedBox(height: 10),
+            _ChemistryStyleSection(
+              suggestions: chemistryAdvisor.suggest(player),
+            ),
+            const SizedBox(height: 18),
+            _SectionHeader(
+              title: 'امتیاز و Review من',
+              trailing: TextButton.icon(
+                onPressed: _editReview,
+                icon: const Icon(Icons.edit_note_rounded, size: 18),
+                label: Text(review == null ? 'ثبت نظر' : 'ویرایش'),
+              ),
+            ),
+            const SizedBox(height: 10),
+            _ReviewCard(review: review),
             if (versions.isNotEmpty) ...[
               const SizedBox(height: 18),
               const _SectionHeader(title: 'نسخه‌های دیگر'),
@@ -187,6 +290,127 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
               playerId: player.id,
               playerName: player.name,
             ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+class _ChemistryStyleSection extends StatelessWidget {
+  const _ChemistryStyleSection({required this.suggestions});
+
+  final List<ChemistryStyleSuggestion> suggestions;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'پیشنهاد تحلیلی FCBaz بر اساس Position و Stat واقعی کارت',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 11,
+              ),
+            ),
+            const SizedBox(height: 12),
+            for (var i = 0; i < suggestions.length; i++) ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  CircleAvatar(
+                    radius: 18,
+                    child: Text((i + 1).toString()),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          suggestions[i].name,
+                          style: const TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                        const SizedBox(height: 3),
+                        Text(suggestions[i].reason),
+                        const SizedBox(height: 5),
+                        Wrap(
+                          spacing: 5,
+                          children: [
+                            for (final stat in suggestions[i].focus)
+                              Chip(
+                                visualDensity: VisualDensity.compact,
+                                label: Text(stat),
+                              ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              if (i != suggestions.length - 1)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 9),
+                  child: Divider(),
+                ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ReviewCard extends StatelessWidget {
+  const _ReviewCard({required this.review});
+
+  final PlayerReview? review;
+
+  @override
+  Widget build(BuildContext context) {
+    if (review == null) {
+      return const Card(
+        child: ListTile(
+          leading: Icon(Icons.rate_review_outlined),
+          title: Text('هنوز نظری ثبت نکرده‌ای'),
+          subtitle: Text('این امتیاز شخصی است و فقط روی دستگاه خودت ذخیره می‌شود.'),
+        ),
+      );
+    }
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                for (var i = 1; i <= 5; i++)
+                  Icon(
+                    i <= review!.rating
+                        ? Icons.star_rounded
+                        : Icons.star_border_rounded,
+                    color: Colors.amber,
+                    size: 22,
+                  ),
+                const Spacer(),
+                Text(
+                  review!.rating.toString() + '/5',
+                  style: const TextStyle(fontWeight: FontWeight.w900),
+                ),
+              ],
+            ),
+            if (review!.text.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              Text(review!.text),
+            ],
           ],
         ),
       ),
