@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../players/data/player_repository.dart';
+import '../players/presentation/player_details_screen.dart';
 import 'notification_repository.dart';
 import 'price_alert_service.dart';
 
@@ -14,6 +16,7 @@ class NotificationCenterScreen extends StatefulWidget {
 class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   final repository = NotificationRepository();
   final alertService = PriceAlertService();
+  final playerRepository = PlayerRepository();
 
   bool loading = true;
   bool checking = false;
@@ -141,6 +144,27 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
               for (final item in items) ...[
                 Card(
                   child: ListTile(
+                    onTap: item.playerId == null
+                        ? null
+                        : () async {
+                            try {
+                              final player = await playerRepository.getPlayer(
+                                item.playerId!,
+                              );
+                              if (!mounted) return;
+                              await Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (_) =>
+                                      PlayerDetailsScreen(player: player),
+                                ),
+                              );
+                            } catch (e) {
+                              if (!mounted) return;
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(e.toString())),
+                              );
+                            }
+                          },
                     leading: Icon(
                       item.type == 'price_alert'
                           ? Icons.price_check_rounded
