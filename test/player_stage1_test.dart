@@ -60,6 +60,6 @@ void main() {
       sort: PlayerSort.priceAsc,
     );
 
-    expect(filter.activeCount, 5);
+    expect(filter.activeCount, 6);
   });
 }
