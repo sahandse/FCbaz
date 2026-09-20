@@ -161,11 +161,6 @@ class MyClubService {
 
       if (selected.length != 11) continue;
 
-      final players = <String, dynamic>{
-        for (final entry in selected.entries)
-          entry.key: entry.value.toPlayer(),
-      }.cast<String, dynamic>();
-
       final typedPlayers = {
         for (final entry in selected.entries)
           entry.key: entry.value.toPlayer(),
