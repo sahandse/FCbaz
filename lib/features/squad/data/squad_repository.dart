@@ -78,6 +78,7 @@ class SquadRepository {
       playerConfigs: squad.playerConfigs,
       bench: squad.bench.take(7).toList(),
       manager: squad.manager,
+      tactics: squad.tactics,
     );
   }
 }
