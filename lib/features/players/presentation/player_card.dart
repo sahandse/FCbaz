@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../../search/search_history_repository.dart';
 import '../domain/player.dart';
 import 'player_details_screen.dart';
 
-class PlayerCard extends StatelessWidget {
+class PlayerCard extends StatefulWidget {
   const PlayerCard({
     required this.player,
     this.pricePlatform = 'console',
@@ -13,8 +14,36 @@ class PlayerCard extends StatelessWidget {
   final Player player;
   final String pricePlatform;
 
+  @override
+  State<PlayerCard> createState() => _PlayerCardState();
+}
+
+class _PlayerCardState extends State<PlayerCard> {
+  final history = SearchHistoryRepository();
+  bool favorite = false;
+
+  Player get player => widget.player;
+
   int get selectedPrice =>
-      pricePlatform == 'pc' ? player.pricePc : player.pricePs;
+      widget.pricePlatform == 'pc' ? player.pricePc : player.pricePs;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFavorite();
+  }
+
+  Future<void> _loadFavorite() async {
+    final value = await history.isFavorite(player.id);
+    if (!mounted) return;
+    setState(() => favorite = value);
+  }
+
+  Future<void> _toggleFavorite() async {
+    await history.toggleFavorite(player);
+    if (!mounted) return;
+    setState(() => favorite = !favorite);
+  }
 
   String _coins(int value) {
     if (value <= 0) return '—';
@@ -124,8 +153,21 @@ class PlayerCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        if (selectedPrice > 0) ...[
-                          const SizedBox(width: 8),
+                        IconButton(
+                          onPressed: _toggleFavorite,
+                          visualDensity: VisualDensity.compact,
+                          tooltip: favorite
+                              ? 'حذف از علاقه‌مندی‌ها'
+                              : 'افزودن به علاقه‌مندی‌ها',
+                          icon: Icon(
+                            favorite
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            color: favorite ? Colors.redAccent : null,
+                            size: 20,
+                          ),
+                        ),
+                        if (selectedPrice > 0)
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
@@ -136,12 +178,11 @@ class PlayerCard extends StatelessWidget {
                                 ),
                               ),
                               Text(
-                                pricePlatform == 'pc' ? 'PC' : 'Console',
+                                widget.pricePlatform == 'pc' ? 'PC' : 'Console',
                                 style: Theme.of(context).textTheme.labelSmall,
                               ),
                             ],
                           ),
-                        ],
                       ],
                     ),
                     const SizedBox(height: 5),
