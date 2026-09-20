@@ -21,13 +21,13 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
     _load();
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool forceRefresh = false}) async {
     setState(() {
       loading = true;
       error = null;
     });
     try {
-      final data = await repository.getObjectives();
+      final data = await repository.getObjectives(forceRefresh: forceRefresh);
       if (!mounted) return;
       setState(() => items = data);
     } catch (e) {
@@ -51,7 +51,7 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('Objectives')),
       body: RefreshIndicator(
-        onRefresh: _load,
+        onRefresh: () => _load(forceRefresh: true),
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
