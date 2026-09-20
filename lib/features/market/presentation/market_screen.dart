@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../players/domain/player.dart';
+import '../../players/presentation/player_details_screen.dart';
 import '../data/market_repository.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
@@ -260,7 +261,11 @@ class _MarketScreenState extends State<MarketScreen> {
               )
             else
               for (final player in cheapest.take(20)) ...[
-                _CheapPlayerCard(player: player),
+                _CheapPlayerCard(
+                  player: player,
+                  platform: platform,
+                  coins: _coins,
+                ),
                 const SizedBox(height: 8),
               ],
             const SizedBox(height: 22),
@@ -333,8 +338,15 @@ class _WatchlistCard extends StatelessWidget {
     final current = price?.current ?? 0;
     final reached = target != null && current > 0 && current <= target;
 
+    final price = platform == 'pc' ? player.pricePc : player.pricePs;
+
     return Card(
       child: ListTile(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PlayerDetailsScreen(player: player),
+          ),
+        ),
         leading: Icon(
           reached ? Icons.notifications_active_rounded : Icons.favorite_rounded,
           color: reached ? Theme.of(context).colorScheme.primary : Colors.redAccent,
@@ -430,14 +442,27 @@ class _CheapestFilters extends StatelessWidget {
 }
 
 class _CheapPlayerCard extends StatelessWidget {
-  const _CheapPlayerCard({required this.player});
+  const _CheapPlayerCard({
+    required this.player,
+    required this.platform,
+    required this.coins,
+  });
 
   final Player player;
+  final String platform;
+  final String Function(int) coins;
 
   @override
   Widget build(BuildContext context) {
+    final price = platform == 'pc' ? player.pricePc : player.pricePs;
+
     return Card(
       child: ListTile(
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PlayerDetailsScreen(player: player),
+          ),
+        ),
         leading: CircleAvatar(
           backgroundImage:
               player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
@@ -456,7 +481,22 @@ class _CheapPlayerCard extends StatelessWidget {
               ' • ' +
               player.clubName,
         ),
-        trailing: const Icon(Icons.chevron_left_rounded),
+        trailing: price > 0
+            ? Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    coins(price),
+                    style: const TextStyle(fontWeight: FontWeight.w900),
+                  ),
+                  Text(
+                    platform == 'pc' ? 'PC' : 'Console',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ],
+              )
+            : const Text('—'),
       ),
     );
   }
