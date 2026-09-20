@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../club/data/my_club_repository.dart';
 import '../data/evolution_repository.dart';
 import '../domain/evolution.dart';
+import '../domain/evolution_eligibility_engine.dart';
 
 class EvolutionsScreen extends StatefulWidget {
   const EvolutionsScreen({super.key});
@@ -100,15 +102,37 @@ class _EvolutionCard extends StatefulWidget {
 }
 
 class _EvolutionCardState extends State<_EvolutionCard> {
+  final clubRepository = MyClubRepository();
+  final eligibilityEngine = const EvolutionEligibilityEngine();
+
   bool loadingEligible = false;
-  List<Map<String, dynamic>> eligible = const [];
+  List<MyClubItem> eligible = const [];
+  List<MyClubItem> needsReview = const [];
 
   Future<void> _loadEligible() async {
     setState(() => loadingEligible = true);
     try {
-      final data = await widget.repository.eligiblePlayers(widget.item.id);
+      final club = await clubRepository.getAll();
+      final ok = <MyClubItem>[];
+      final review = <MyClubItem>[];
+
+      for (final item in club) {
+        final result = eligibilityEngine.evaluate(item, widget.item);
+        if (result.status == EvoEligibilityStatus.eligible) {
+          ok.add(item);
+        } else if (result.status == EvoEligibilityStatus.needsReview) {
+          review.add(item);
+        }
+      }
+
+      ok.sort((a, b) => b.rating.compareTo(a.rating));
+      review.sort((a, b) => b.rating.compareTo(a.rating));
+
       if (!mounted) return;
-      setState(() => eligible = data);
+      setState(() {
+        eligible = ok;
+        needsReview = review;
+      });
     } finally {
       if (mounted) setState(() => loadingEligible = false);
     }
@@ -193,19 +217,66 @@ class _EvolutionCardState extends State<_EvolutionCard> {
               icon: loadingEligible
                   ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
                   : const Icon(Icons.person_search_rounded),
-              label: const Text('بازیکنان مناسب'),
+              label: const Text('بررسی کارت‌های باشگاه من'),
             ),
           ),
           if (eligible.isNotEmpty) ...[
             const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                'واجد شرایط قطعی: ' + eligible.length.toString(),
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ),
+            const SizedBox(height: 6),
             for (final player in eligible.take(8))
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 dense: true,
-                leading: const Icon(Icons.person_rounded),
-                title: Text((player['name'] ?? 'بازیکن').toString()),
-                subtitle: Text((player['rating'] ?? '').toString()),
+                leading: Icon(
+                  Icons.check_circle_rounded,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
+                title: Text(player.playerName),
+                subtitle: Text(
+                  player.rating.toString() + ' • ' + player.position,
+                ),
               ),
+          ],
+          if (needsReview.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                'نیاز به بررسی شرط ناشناخته: ' +
+                    needsReview.length.toString(),
+                style: const TextStyle(fontWeight: FontWeight.w800),
+              ),
+            ),
+            const SizedBox(height: 6),
+            for (final player in needsReview.take(5))
+              ListTile(
+                contentPadding: EdgeInsets.zero,
+                dense: true,
+                leading: const Icon(Icons.help_outline_rounded),
+                title: Text(player.playerName),
+                subtitle: const Text(
+                  'FCBaz این کارت را بدون تشخیص کامل همه شروط تأیید نمی‌کند.',
+                ),
+              ),
+          ],
+          if (!loadingEligible &&
+              eligible.isEmpty &&
+              needsReview.isEmpty) ...[
+            const SizedBox(height: 10),
+            const Align(
+              alignment: Alignment.centerRight,
+              child: Text('کارت مناسبی در My Club پیدا نشد.'),
+            ),
           ],
         ],
       ),
