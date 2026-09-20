@@ -27,6 +27,10 @@ class Player {
     this.foot = '',
     this.height = '',
     this.workRates = '',
+    this.rarity = '',
+    this.cardType = '',
+    this.pricePs = 0,
+    this.pricePc = 0,
   });
 
   final String id;
@@ -56,6 +60,10 @@ class Player {
   final String foot;
   final String height;
   final String workRates;
+  final String rarity;
+  final String cardType;
+  final int pricePs;
+  final int pricePc;
 
   factory Player.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic value) =>
@@ -125,6 +133,10 @@ class Player {
       foot: asString(json['foot'] ?? json['preferred_foot']),
       height: asString(json['height']),
       workRates: asString(json['work_rates'] ?? json['workrates']),
+      rarity: asString(json['rarity']),
+      cardType: asString(json['card_type'] ?? json['type']),
+      pricePs: asInt(json['price_ps'] ?? json['price_ps_coins']),
+      pricePc: asInt(json['price_pc'] ?? json['price_pc_coins']),
     );
   }
 }
