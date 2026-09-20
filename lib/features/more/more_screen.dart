@@ -5,7 +5,6 @@ import '../evolutions/presentation/evolutions_screen.dart';
 import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
 import '../meta/presentation/meta_screen.dart';
-import '../notifications/notification_center_screen.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import '../settings/account_screen.dart';
 import '../settings/app_settings_repository.dart';
@@ -91,15 +90,6 @@ class MoreScreen extends StatelessWidget {
               subtitle: 'Chemistry Styles و راهنما',
               icon: Icons.auto_fix_high_rounded,
               onTap: () => _open(context, const ConsumablesScreen()),
-            ),
-            _ToolCard(
-              title: 'اعلان‌ها',
-              subtitle: 'Price Alert و Notification Center',
-              icon: Icons.notifications_active_outlined,
-              onTap: () => _open(
-                context,
-                const NotificationCenterScreen(),
-              ),
             ),
             _ToolCard(
               title: 'حساب و Cloud',
