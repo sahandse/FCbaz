@@ -7,6 +7,7 @@ import '../market/presentation/market_screen.dart';
 import '../meta/presentation/meta_screen.dart';
 import '../notifications/notification_center_screen.dart';
 import '../sbc/presentation/sbc_screen.dart';
+import '../settings/account_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../settings/profile_screen.dart';
 import '../settings/settings_screen.dart';
@@ -98,6 +99,15 @@ class MoreScreen extends StatelessWidget {
               onTap: () => _open(
                 context,
                 const NotificationCenterScreen(),
+              ),
+            ),
+            _ToolCard(
+              title: 'حساب و Cloud',
+              subtitle: 'Login، Sync، Backup و Push',
+              icon: Icons.cloud_sync_rounded,
+              onTap: () => _open(
+                context,
+                const AccountScreen(),
               ),
             ),
             _ToolCard(
