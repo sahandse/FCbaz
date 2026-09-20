@@ -48,26 +48,72 @@ class SbcChallenge {
   }
 }
 
+class SbcSolutionPlayer {
+  const SbcSolutionPlayer({
+    required this.playerId,
+    required this.name,
+    required this.rating,
+    required this.price,
+  });
+
+  final String playerId;
+  final String name;
+  final int rating;
+  final int price;
+
+  factory SbcSolutionPlayer.fromJson(Map<String, dynamic> json) =>
+      SbcSolutionPlayer(
+        playerId: (json['player_id'] ?? '').toString(),
+        name: (json['name'] ?? '').toString(),
+        rating: json['rating'] is int
+            ? json['rating'] as int
+            : int.tryParse((json['rating'] ?? '0').toString()) ?? 0,
+        price: json['price'] is int
+            ? json['price'] as int
+            : int.tryParse((json['price'] ?? '0').toString()) ?? 0,
+      );
+}
+
 class SbcSolution {
   const SbcSolution({
     required this.totalCost,
+    required this.remainingCost,
     required this.playerIds,
+    required this.players,
+    required this.ownedPlayerIds,
     required this.notes,
     required this.itemScore,
   });
 
   final int totalCost;
+  final int remainingCost;
   final List<String> playerIds;
+  final List<SbcSolutionPlayer> players;
+  final List<String> ownedPlayerIds;
   final List<String> notes;
   final int? itemScore;
 
   factory SbcSolution.fromJson(Map<String, dynamic> json) {
-    final raw = json['player_ids'] ?? json['players'] ?? const [];
+    final ids = json['player_ids'] ?? const [];
+    final playersRaw = json['players'] ?? const [];
+    final ownedRaw = json['owned_player_ids'] ?? const [];
+
     return SbcSolution(
       totalCost: json['total_cost'] is int
           ? json['total_cost'] as int
           : int.tryParse((json['total_cost'] ?? '0').toString()) ?? 0,
-      playerIds: raw is List ? raw.map((e) => e.toString()).toList() : const [],
+      remainingCost: json['remaining_cost'] is int
+          ? json['remaining_cost'] as int
+          : int.tryParse((json['remaining_cost'] ?? '0').toString()) ?? 0,
+      playerIds: ids is List ? ids.map((e) => e.toString()).toList() : const [],
+      players: playersRaw is List
+          ? playersRaw
+              .whereType<Map>()
+              .map((e) => SbcSolutionPlayer.fromJson(Map<String, dynamic>.from(e)))
+              .toList()
+          : const [],
+      ownedPlayerIds:
+          ownedRaw is List ? ownedRaw.map((e) => e.toString()).toList() : const [],
       notes: json['notes'] is List
           ? (json['notes'] as List).map((e) => e.toString()).toList()
           : const [],
