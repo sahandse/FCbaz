@@ -28,6 +28,7 @@ class Evolution {
     required this.description,
     required this.cost,
     required this.requirements,
+    required this.requirementData,
     required this.upgrades,
     required this.expiresAt,
     required this.steps,
@@ -38,6 +39,7 @@ class Evolution {
   final String description;
   final int cost;
   final List<String> requirements;
+  final List<Map<String, dynamic>> requirementData;
   final List<String> upgrades;
   final DateTime? expiresAt;
   final List<EvolutionStep> steps;
@@ -50,6 +52,7 @@ class Evolution {
         value is List ? value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList() : const [];
 
     final rawSteps = json['steps'] ?? json['chain'] ?? const [];
+    final rawReq = json['requirements_raw'] ?? const [];
 
     return Evolution(
       id: (json['id'] ?? '').toString(),
@@ -57,6 +60,12 @@ class Evolution {
       description: (json['description'] ?? '').toString(),
       cost: asInt(json['cost']),
       requirements: asStrings(json['requirements']),
+      requirementData: rawReq is List
+          ? rawReq
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList()
+          : const [],
       upgrades: asStrings(json['upgrades']),
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
       steps: rawSteps is List
