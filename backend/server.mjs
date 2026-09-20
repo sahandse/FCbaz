@@ -96,9 +96,47 @@ async function provider(endpoint, params = {}, { ttl = CACHE_TTL } = {}) {
   return body;
 }
 
+function stringList(value) {
+  if (!Array.isArray(value)) return [];
+  return value.map((x) => {
+    if (x && typeof x === 'object') {
+      return String(x.name ?? x.title ?? x.label ?? '');
+    }
+    return String(x ?? '');
+  }).filter(Boolean);
+}
+
+function flattenNumericStats(value) {
+  const out = {};
+  if (!value || typeof value !== 'object') return out;
+
+  for (const [key, raw] of Object.entries(value)) {
+    if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+      for (const [childKey, childValue] of Object.entries(raw)) {
+        const n = asInt(childValue);
+        if (n > 0) out[childKey] = n;
+      }
+    } else {
+      const n = asInt(raw);
+      if (n > 0) out[key] = n;
+    }
+  }
+  return out;
+}
+
 function normalizePlayer(raw) {
   const stats = raw?.stats || raw?.face_stats || {};
   const positions = raw?.alternative_positions || raw?.positions || [];
+  const playStylesRaw = raw?.playstyles || raw?.play_styles || raw?.playStyles || [];
+  const playStylesPlusRaw = raw?.playstyles_plus || raw?.play_styles_plus || raw?.playStylesPlus || [];
+  const rolesRaw = raw?.roles || raw?.player_roles || raw?.role_plus || [];
+  const inGameRaw =
+    raw?.in_game_stats ||
+    raw?.detailed_stats ||
+    raw?.attributes ||
+    raw?.stats_detail ||
+    {};
+
   return {
     id: String(raw?.id ?? raw?.player_id ?? ''),
     name: String(raw?.name ?? ''),
@@ -110,7 +148,7 @@ function normalizePlayer(raw) {
     nation_name: String(raw?.nation ?? raw?.nation_name ?? ''),
     version: String(raw?.version ?? raw?.rarity ?? ''),
     image_url: String(raw?.image_large ?? raw?.image ?? ''),
-    card_image_url: String(raw?.card_image_large_url ?? raw?.card_image_url ?? ''),
+    card_image_url: String(raw?.card_image_large_url ?? raw?.card_image_url ?? raw?.card_image ?? ''),
     pace: asInt(stats.PAC ?? stats.pace ?? raw?.pace),
     shooting: asInt(stats.SHO ?? stats.shooting ?? raw?.shooting),
     passing: asInt(stats.PAS ?? stats.passing ?? raw?.passing),
@@ -119,6 +157,14 @@ function normalizePlayer(raw) {
     physical: asInt(stats.PHY ?? stats.physical ?? raw?.physical),
     skill_moves: asInt(raw?.skill_moves),
     weak_foot: asInt(raw?.weak_foot),
+    playstyles: stringList(playStylesRaw),
+    playstyles_plus: stringList(playStylesPlusRaw),
+    roles: stringList(rolesRaw),
+    in_game_stats: flattenNumericStats(inGameRaw),
+    traits: stringList(raw?.traits || []),
+    foot: String(raw?.preferred_foot ?? raw?.foot ?? ''),
+    height: String(raw?.height ?? ''),
+    work_rates: String(raw?.work_rates ?? raw?.workrates ?? ''),
     price_ps: asInt(raw?.price_ps_coins ?? raw?.price_ps),
     price_pc: asInt(raw?.price_pc_coins ?? raw?.price_pc),
     trend_ps: raw?.trend_ps ?? null,
@@ -290,6 +336,48 @@ async function handler(req, res) {
         page: url.searchParams.get('page') || 1,
       });
       return send(res, 200, { data: playerArray(raw), meta: { source: 'futbin-via-parse', game_year: 27 } });
+    }
+
+    const playerVersions = path.match(/^\/api\/v1\/players\/([^/]+)\/versions$/);
+    if (playerVersions) {
+      const id = decodeURIComponent(playerVersions[1]);
+      const detailRaw = await provider('get_player_details', { player_id: id, year: 27 });
+      const detailData = unwrap(detailRaw);
+      const base = detailData?.player ?? detailData;
+      const embedded =
+        detailData?.versions ||
+        detailData?.other_versions ||
+        detailData?.related_cards ||
+        detailData?.cards ||
+        [];
+
+      let versions = Array.isArray(embedded)
+        ? embedded.map(normalizePlayer).filter((p) => p.id && p.name)
+        : [];
+
+      if (!versions.length && base?.name) {
+        const searchRaw = await provider('search_players_fc27', {
+          query: String(base.name),
+          page: 1,
+        });
+        versions = playerArray(searchRaw).filter((p) =>
+          p.name.toLowerCase() === String(base.name).toLowerCase()
+        );
+      }
+
+      const unique = [];
+      const seen = new Set();
+      for (const item of versions) {
+        if (!item.id || seen.has(item.id)) continue;
+        seen.add(item.id);
+        unique.push(item);
+      }
+
+      unique.sort((a, b) => b.rating - a.rating);
+      return send(res, 200, {
+        data: unique,
+        meta: { source: 'futbin-via-parse', game_year: 27 },
+      });
     }
 
     const playerMatch = path.match(/^\/api\/v1\/players\/([^/]+)$/);
