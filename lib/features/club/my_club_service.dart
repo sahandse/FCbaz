@@ -221,44 +221,44 @@ class MyClubService {
   }
 
   double _roleScore(MyClubItem item, String slot) {
-    if (slot == 'GK') return item.rating * 10;
+    if (slot == 'GK') return (item.rating * 10).toDouble();
     if (slot == 'CB') {
-      return item.defending * 6 + item.physical * 4 + item.pace * 2;
+      return (item.defending * 6 + item.physical * 4 + item.pace * 2).toDouble();
     }
     if (slot == 'LB' || slot == 'RB') {
-      return item.pace * 4 +
+      return (item.pace * 4 +
           item.defending * 4 +
           item.passing * 2 +
-          item.physical * 2;
+          item.physical * 2).toDouble();
     }
     if (slot == 'CDM') {
-      return item.defending * 4 +
+      return (item.defending * 4 +
           item.physical * 3 +
           item.passing * 3 +
-          item.dribbling;
+          item.dribbling).toDouble();
     }
     if (slot == 'CM') {
-      return item.passing * 4 +
+      return (item.passing * 4 +
           item.dribbling * 3 +
           item.physical * 2 +
           item.defending * 2 +
-          item.shooting;
+          item.shooting).toDouble();
     }
     if (slot == 'CAM') {
-      return item.passing * 4 +
+      return (item.passing * 4 +
           item.dribbling * 4 +
           item.shooting * 3 +
-          item.pace;
+          item.pace).toDouble();
     }
     if (slot == 'LW' || slot == 'RW' || slot == 'LM' || slot == 'RM') {
-      return item.pace * 4 +
+      return (item.pace * 4 +
           item.dribbling * 4 +
           item.passing * 2 +
-          item.shooting * 2;
+          item.shooting * 2).toDouble();
     }
-    return item.shooting * 4 +
+    return (item.shooting * 4 +
         item.pace * 3 +
         item.dribbling * 2 +
-        item.physical * 2;
+        item.physical * 2).toDouble();
   }
 }
