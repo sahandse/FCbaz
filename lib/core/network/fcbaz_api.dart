@@ -19,7 +19,7 @@ class FCBazApi {
   bool get isConfigured => baseUrl.trim().isNotEmpty;
 
   Future<List<Player>> fetchPlayers() async {
-    final json = await _get('/api/v1/players');
+    final json = await getJson('/api/v1/players');
     final raw = json is Map ? (json['data'] ?? json['players']) : json;
     if (raw is! List) {
       throw const FCBazApiException('پاسخ بازیکنان معتبر نیست.');
@@ -33,7 +33,7 @@ class FCBazApi {
 
   Future<List<Player>> searchPlayers(String query) async {
     final encoded = Uri.encodeQueryComponent(query);
-    final json = await _get('/api/v1/players/search?q=$encoded');
+    final json = await getJson('/api/v1/players/search?q=$encoded');
     final raw = json is Map ? (json['data'] ?? json['players']) : json;
     if (raw is! List) {
       throw const FCBazApiException('پاسخ جستجو معتبر نیست.');
@@ -46,7 +46,7 @@ class FCBazApi {
   }
 
   Future<Player> fetchPlayer(String id) async {
-    final json = await _get('/api/v1/players/' + Uri.encodeComponent(id));
+    final json = await getJson('/api/v1/players/' + Uri.encodeComponent(id));
     final raw = json is Map ? (json['data'] ?? json['player'] ?? json) : json;
     if (raw is! Map) {
       throw const FCBazApiException('جزئیات بازیکن معتبر نیست.');
@@ -54,7 +54,7 @@ class FCBazApi {
     return Player.fromJson(Map<String, dynamic>.from(raw));
   }
 
-  Future<dynamic> _get(String path) async {
+  Future<dynamic> getJson(String path) async {
     if (!isConfigured) {
       throw const FCBazApiException('Backend FCBaz هنوز متصل نشده است.');
     }
