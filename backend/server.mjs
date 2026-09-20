@@ -785,6 +785,120 @@ async function handler(req, res) {
       return send(res, 200, { data: active, meta: { source: 'futbin-via-parse' } });
     }
 
+    if (path === '/api/v1/objectives') {
+      const raw = await provider('get_objectives', {
+        page: url.searchParams.get('page') || 1,
+      }, { ttl: 90 });
+      const data = unwrap(raw);
+      const list =
+        data?.objectives ||
+        data?.items ||
+        data?.results ||
+        (Array.isArray(data) ? data : []);
+
+      const objectives = Array.isArray(list)
+        ? list.map((x, index) => ({
+            id: String(x?.id ?? x?.objective_id ?? index),
+            title: String(x?.name ?? x?.title ?? ''),
+            description: String(x?.description ?? ''),
+            reward: String(
+              x?.reward?.name ??
+              x?.reward_description ??
+              x?.reward ??
+              ''
+            ),
+            expires_at: x?.expires ?? x?.expires_at ?? null,
+            task_count: asInt(x?.task_count ?? x?.tasks_count ?? x?.tasks?.length),
+            category: String(x?.category ?? x?.group ?? 'Objective'),
+            source: 'futbin-via-parse',
+          })).filter((x) => x.title)
+        : [];
+
+      return send(res, 200, {
+        data: objectives,
+        meta: {
+          source: 'futbin-via-parse',
+          game_year: 27,
+        },
+      });
+    }
+
+    if (path === '/api/v1/home') {
+      const [trendRaw, sbcRaw, evoRaw, objectiveRaw] = await Promise.all([
+        provider('get_market_trends', {}, { ttl: 60 }),
+        provider('get_sbcs', { page: 1 }, { ttl: 120 }),
+        provider('get_evos', {}, { ttl: 120 }),
+        provider('get_objectives', { page: 1 }, { ttl: 90 }),
+      ]);
+
+      const trendData = unwrap(trendRaw);
+      const moversRaw = Array.isArray(trendData?.top_movers)
+        ? trendData.top_movers
+        : [];
+
+      const moverIds = [];
+      for (const row of moversRaw) {
+        const id = String(row?.player_id ?? row?.id ?? '');
+        if (id && /^\d+$/.test(id) && !moverIds.includes(id)) {
+          moverIds.push(id);
+        }
+        if (moverIds.length >= 8) break;
+      }
+
+      const moverDetails = await Promise.all(
+        moverIds.map(async (id) => {
+          try {
+            const detailRaw = await provider(
+              'get_player_details',
+              { player_id: id, year: 27 },
+              { ttl: 120 },
+            );
+            const detailData = unwrap(detailRaw);
+            return normalizePlayer(detailData?.player ?? detailData);
+          } catch {
+            return null;
+          }
+        }),
+      );
+
+      const objectiveData = unwrap(objectiveRaw);
+      const objectiveList =
+        objectiveData?.objectives ||
+        objectiveData?.items ||
+        objectiveData?.results ||
+        (Array.isArray(objectiveData) ? objectiveData : []);
+
+      const objectives = Array.isArray(objectiveList)
+        ? objectiveList.slice(0, 6).map((x, index) => ({
+            id: String(x?.id ?? x?.objective_id ?? index),
+            title: String(x?.name ?? x?.title ?? ''),
+            description: String(x?.description ?? ''),
+            reward: String(
+              x?.reward?.name ??
+              x?.reward_description ??
+              x?.reward ??
+              ''
+            ),
+            expires_at: x?.expires ?? x?.expires_at ?? null,
+            task_count: asInt(x?.task_count ?? x?.tasks_count ?? x?.tasks?.length),
+          })).filter((x) => x.title)
+        : [];
+
+      return send(res, 200, {
+        data: {
+          trending_players: moverDetails.filter((p) => p && p.id && p.name),
+          market_movers: moversRaw.slice(0, 8),
+          sbcs: normalizeSbcList(sbcRaw).slice(0, 6),
+          evolutions: normalizeEvolutionList(evoRaw).slice(0, 6),
+          objectives,
+        },
+        meta: {
+          source: 'futbin-via-parse',
+          game_year: 27,
+        },
+      });
+    }
+
     if (path === '/api/v1/whats-hot') {
       const [sbcRaw, evoRaw, objRaw] = await Promise.all([
         provider('get_sbcs', { page: 1 }, { ttl: 120 }),
