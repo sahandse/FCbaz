@@ -244,7 +244,7 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
               const SizedBox(height: 10),
               _ChipSection(
                 items: player.roles,
-                icon: Icons.tactic_rounded,
+                icon: Icons.schema_rounded,
               ),
             ],
             if (player.inGameStats.isNotEmpty) ...[
