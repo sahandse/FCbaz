@@ -1,11 +1,15 @@
 import '../../../core/network/fcbaz_api.dart';
+import '../../players/domain/player.dart';
 import '../domain/player_price.dart';
 
 class MarketRepository {
   MarketRepository({FCBazApi? api}) : api = api ?? FCBazApi();
   final FCBazApi api;
 
-  Future<PlayerPrice> getPlayerPrice(String playerId, {String platform = 'console'}) async {
+  Future<PlayerPrice> getPlayerPrice(
+    String playerId, {
+    String platform = 'console',
+  }) async {
     final path = '/api/v1/market/players/' +
         Uri.encodeComponent(playerId) +
         '?platform=' +
@@ -45,6 +49,46 @@ class MarketRepository {
     final json = await api.getJson('/api/v1/market');
     final raw = json is Map ? (json['data'] ?? json['items'] ?? []) : json;
     if (raw is! List) return const [];
-    return raw.whereType<Map>().map((e) => Map<String, dynamic>.from(e)).toList();
+    return raw
+        .whereType<Map>()
+        .map((e) => Map<String, dynamic>.from(e))
+        .toList();
+  }
+
+  Future<List<Player>> getCheapestPlayers({
+    int minRating = 75,
+    int maxRating = 99,
+    String? position,
+    String platform = 'console',
+    int page = 1,
+  }) async {
+    final params = <String, String>{
+      'min_rating': minRating.toString(),
+      'max_rating': maxRating.toString(),
+      'platform': platform,
+      'page': page.toString(),
+    };
+    if (position != null && position.isNotEmpty) {
+      params['position'] = position;
+    }
+
+    final query = params.entries
+        .map((e) =>
+            Uri.encodeQueryComponent(e.key) +
+            '=' +
+            Uri.encodeQueryComponent(e.value))
+        .join('&');
+
+    final json = await api.getJson('/api/v1/market/cheapest?' + query);
+    final raw = json is Map ? (json['data'] ?? json['players'] ?? []) : json;
+    if (raw is! List) {
+      throw const FCBazApiException('لیست ارزان‌ترین بازیکنان معتبر نیست.');
+    }
+
+    return raw
+        .whereType<Map>()
+        .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+        .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
+        .toList();
   }
 }
