@@ -38,3 +38,11 @@ flutter build apk --debug --dart-define=FCBAZ_API_BASE_URL=https://example.com
 `ir.fcbaz.app`
 
 FCBaz یک پروژه مستقل است و وابستگی رسمی به FUTBIN یا EA SPORTS FC ندارد.
+
+
+## Production release
+
+FCBaz uses a strict production-only release flow. Debug/preview builds are not
+intended for public distribution. Before publishing, follow
+`RELEASE_CHECKLIST.md` and configure the real FC27 backend, Supabase account
+sync, Firebase Cloud Messaging, and Android signing credentials.
