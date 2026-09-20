@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 import '../club/presentation/my_club_screen.dart';
 import '../evolutions/presentation/evolutions_screen.dart';
+import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
 import '../meta/presentation/meta_screen.dart';
 import '../sbc/presentation/sbc_screen.dart';
+import 'consumables_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({super.key});
@@ -65,6 +67,18 @@ class MoreScreen extends StatelessWidget {
               subtitle: 'بهترین بازیکنان هر پست',
               icon: Icons.leaderboard_rounded,
               onTap: () => _open(context, const MetaScreen()),
+            ),
+            _ToolCard(
+              title: 'Objectives',
+              subtitle: 'هدف‌ها و پاداش‌های زنده',
+              icon: Icons.flag_rounded,
+              onTap: () => _open(context, const ObjectivesScreen()),
+            ),
+            _ToolCard(
+              title: 'Consumables',
+              subtitle: 'Chemistry Styles و راهنما',
+              icon: Icons.auto_fix_high_rounded,
+              onTap: () => _open(context, const ConsumablesScreen()),
             ),
             _ToolCard(
               title: 'اخبار FC27',
