@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/player.dart';
+import '../../market/presentation/player_market_panel.dart';
 
 class PlayerDetailsScreen extends StatelessWidget {
   const PlayerDetailsScreen({required this.player, super.key});
@@ -100,6 +101,11 @@ class PlayerDetailsScreen extends StatelessWidget {
                 subtitle: Text(player.positions.join('، ')),
               ),
             ),
+          const SizedBox(height: 12),
+          PlayerMarketPanel(
+            playerId: player.id,
+            playerName: player.name,
+          ),
         ],
       ),
     );
