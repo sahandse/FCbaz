@@ -83,8 +83,8 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'FCBaz',
-      locale: Locale(settings.localeCode),
-      supportedLocales: const [Locale('fa'), Locale('en')],
+      locale: const Locale('fa'),
+      supportedLocales: const [Locale('fa')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
