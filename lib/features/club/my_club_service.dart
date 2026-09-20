@@ -63,6 +63,7 @@ class MyClubService {
   Future<ClubValuation> valueClub(
     List<MyClubItem> items, {
     String platform = 'console',
+    bool forceRefresh = false,
   }) async {
     if (items.isEmpty) {
       return const ClubValuation(
@@ -81,6 +82,8 @@ class MyClubService {
           Uri.encodeQueryComponent(ids) +
           '&platform=' +
           platformParam,
+      forceRefresh: forceRefresh,
+      cacheTtl: const Duration(seconds: 45),
     );
 
     final raw = json is Map ? (json['data'] ?? const []) : json;
