@@ -23,3 +23,16 @@ alter table public.fcbaz_devices enable row level security;
 
 -- App requests go through the FCBaz backend. The backend uses the service role,
 -- so no direct public table policies are required.
+
+
+create table if not exists public.fcbaz_push_alert_state (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  player_id text not null,
+  target_price bigint not null,
+  reached boolean not null default false,
+  last_price bigint,
+  updated_at timestamptz not null default now(),
+  primary key (user_id, player_id, target_price)
+);
+
+alter table public.fcbaz_push_alert_state enable row level security;
