@@ -63,6 +63,8 @@ jobs:
           sed -i 's/applicationId = "ir.fcbaz.fcbaz"/applicationId = "ir.fcbaz.app"/' android/app/build.gradle.kts
           sed -i 's/namespace = "ir.fcbaz.fcbaz"/namespace = "ir.fcbaz.app"/' android/app/build.gradle.kts || true
           sed -i 's/android:label="fcbaz"/android:label="FCBaz"/' android/app/src/main/AndroidManifest.xml
+          sed -i 's/package ir.fcbaz.fcbaz/package ir.fcbaz.app/' android/app/src/main/kotlin/ir/fcbaz/fcbaz/MainActivity.kt || true
+          sed -i '/<manifest/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>' android/app/src/main/AndroidManifest.xml
 
       - name: Configure release signing
         shell: bash
@@ -163,16 +165,16 @@ jobs:
           --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
           --dart-define=FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
           --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
-          --dart-define=FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
-          --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
-          --dart-define=FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
-          --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
 
       - name: Build signed release AAB
         run: >
           flutter build appbundle --release
           --dart-define=FCBAZ_API_BASE_URL=${{ inputs.api_base_url }}
           --dart-define=FCBAZ_APP_VERSION=${{ inputs.version }}
+          --dart-define=FIREBASE_API_KEY=${{ secrets.FIREBASE_API_KEY }}
+          --dart-define=FIREBASE_APP_ID=${{ secrets.FIREBASE_APP_ID }}
+          --dart-define=FIREBASE_MESSAGING_SENDER_ID=${{ secrets.FIREBASE_MESSAGING_SENDER_ID }}
+          --dart-define=FIREBASE_PROJECT_ID=${{ secrets.FIREBASE_PROJECT_ID }}
 
       - name: Prepare release files
         shell: bash
