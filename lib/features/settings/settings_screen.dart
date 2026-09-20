@@ -96,20 +96,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ],
             ),
           ),
-          const SizedBox(height: 12),
-          DropdownButtonFormField<String>(
-            initialValue: settings.localeCode,
-            decoration: const InputDecoration(labelText: 'زبان رابط'),
-            items: const [
-              DropdownMenuItem(value: 'fa', child: Text('فارسی')),
-              DropdownMenuItem(value: 'en', child: Text('English')),
-            ],
-            onChanged: (value) {
-              if (value != null) {
-                _apply(settings.copyWith(localeCode: value));
-              }
-            },
-          ),
           const SizedBox(height: 20),
           Text(
             'بازار و اعلان',
