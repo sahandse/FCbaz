@@ -211,6 +211,43 @@ class _ActiveFilters extends StatelessWidget {
             '–' +
             (filter.maxPrice?.toString() ?? '∞'),
       if (filter.platform == 'pc') 'PC',
+      if (filter.playStyle != null) 'PS ' + filter.playStyle!,
+      if (filter.playStylePlus != null) 'PS+ ' + filter.playStylePlus!,
+      if (filter.role != null) 'Role ' + filter.role!,
+      if (filter.minSkillMoves != null)
+        'SM ' + filter.minSkillMoves.toString() + '★+',
+      if (filter.minWeakFoot != null)
+        'WF ' + filter.minWeakFoot.toString() + '★+',
+      if (filter.minPace != null || filter.maxPace != null)
+        'PAC ' +
+            (filter.minPace?.toString() ?? '0') +
+            '–' +
+            (filter.maxPace?.toString() ?? '99'),
+      if (filter.minShooting != null || filter.maxShooting != null)
+        'SHO ' +
+            (filter.minShooting?.toString() ?? '0') +
+            '–' +
+            (filter.maxShooting?.toString() ?? '99'),
+      if (filter.minPassing != null || filter.maxPassing != null)
+        'PAS ' +
+            (filter.minPassing?.toString() ?? '0') +
+            '–' +
+            (filter.maxPassing?.toString() ?? '99'),
+      if (filter.minDribbling != null || filter.maxDribbling != null)
+        'DRI ' +
+            (filter.minDribbling?.toString() ?? '0') +
+            '–' +
+            (filter.maxDribbling?.toString() ?? '99'),
+      if (filter.minDefending != null || filter.maxDefending != null)
+        'DEF ' +
+            (filter.minDefending?.toString() ?? '0') +
+            '–' +
+            (filter.maxDefending?.toString() ?? '99'),
+      if (filter.minPhysical != null || filter.maxPhysical != null)
+        'PHY ' +
+            (filter.minPhysical?.toString() ?? '0') +
+            '–' +
+            (filter.maxPhysical?.toString() ?? '99'),
     ];
 
     return SizedBox(
