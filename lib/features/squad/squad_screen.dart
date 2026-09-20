@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../market/data/market_repository.dart';
 import '../players/data/player_repository.dart';
 import '../players/domain/player.dart';
 import 'data/squad_repository.dart';
 import 'domain/chemistry_engine.dart';
+import 'domain/squad_chemistry_optimizer.dart';
 import 'domain/squad_models.dart';
 
 class SquadScreen extends StatefulWidget {
@@ -19,6 +21,7 @@ class _SquadScreenState extends State<SquadScreen> {
   final playerRepository = PlayerRepository();
   final marketRepository = MarketRepository();
   final chemistryEngine = const ChemistryEngineFC27();
+  final chemistryOptimizer = const SquadChemistryOptimizer();
 
   List<SquadStateModel> savedSquads = const [];
   late SquadStateModel squad;
@@ -30,6 +33,7 @@ class _SquadScreenState extends State<SquadScreen> {
   ChemistryResult get chemistry => chemistryEngine.calculate(
         formation: formation,
         playersBySlot: squad.playersBySlot,
+        manager: squad.manager,
       );
 
   @override
@@ -171,8 +175,304 @@ class _SquadScreenState extends State<SquadScreen> {
 
   Future<void> _removePlayer(String slotId) async {
     final players = Map<String, Player>.from(squad.playersBySlot)..remove(slotId);
-    setState(() => squad = squad.copyWith(playersBySlot: players));
+    final configs = Map<String, SquadPlayerConfig>.from(squad.playerConfigs)
+      ..remove(slotId);
+    setState(() => squad = squad.copyWith(
+          playersBySlot: players,
+          playerConfigs: configs,
+        ));
     await _refreshPrice();
+  }
+
+  Future<void> _editManager() async {
+    final current = squad.manager;
+    final name = TextEditingController(text: current?.name ?? '');
+    final nation = TextEditingController(text: current?.nationName ?? '');
+    final league = TextEditingController(text: current?.leagueName ?? '');
+
+    final result = await showDialog<ManagerProfile?>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Manager'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: name,
+              decoration: const InputDecoration(labelText: 'نام Manager'),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: nation,
+              decoration: const InputDecoration(labelText: 'Nation واقعی'),
+            ),
+            const SizedBox(height: 10),
+            TextField(
+              controller: league,
+              decoration: const InputDecoration(labelText: 'League فعال Manager'),
+            ),
+          ],
+        ),
+        actions: [
+          if (current != null)
+            TextButton(
+              onPressed: () => Navigator.pop(context, const ManagerProfile(
+                name: '',
+                nationName: '',
+                leagueName: '',
+              )),
+              child: const Text('حذف'),
+            ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('انصراف'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(
+              context,
+              ManagerProfile(
+                name: name.text.trim(),
+                nationName: nation.text.trim(),
+                leagueName: league.text.trim(),
+              ),
+            ),
+            child: const Text('ذخیره'),
+          ),
+        ],
+      ),
+    );
+
+    name.dispose();
+    nation.dispose();
+    league.dispose();
+
+    if (result == null) return;
+    setState(() {
+      squad = result.isEmpty
+          ? squad.copyWith(clearManager: true)
+          : squad.copyWith(manager: result);
+    });
+  }
+
+  Future<void> _configurePlayer(FormationSlot slot, Player player) async {
+    final current = squad.playerConfigs[slot.id] ?? const SquadPlayerConfig();
+    final focusController = TextEditingController(text: current.focus);
+    var style = current.chemistryStyle;
+    var role = current.role;
+
+    const styles = [
+      'Basic', 'Sniper', 'Finisher', 'Deadeye', 'Marksman', 'Hawk',
+      'Artist', 'Architect', 'Powerhouse', 'Maestro', 'Engine',
+      'Sentinel', 'Guardian', 'Gladiator', 'Backbone', 'Anchor',
+      'Hunter', 'Catalyst', 'Shadow', 'GK Basic', 'Wall', 'Shield',
+      'Cat', 'Glove',
+    ];
+
+    final result = await showModalBottomSheet<SquadPlayerConfig>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setSheetState) => SafeArea(
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(
+              16, 4, 16, 16 + MediaQuery.viewInsetsOf(context).bottom,
+            ),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                Text(
+                  player.name + ' • ' + slot.position,
+                  style: Theme.of(context).textTheme.titleLarge,
+                ),
+                const SizedBox(height: 14),
+                DropdownButtonFormField<String>(
+                  initialValue: styles.contains(style) ? style : 'Basic',
+                  decoration: const InputDecoration(
+                    labelText: 'Chemistry Style',
+                  ),
+                  items: [
+                    for (final item in styles)
+                      DropdownMenuItem(value: item, child: Text(item)),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) setSheetState(() => style = value);
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<String>(
+                  initialValue: role.isEmpty || !player.roles.contains(role)
+                      ? null
+                      : role,
+                  decoration: const InputDecoration(
+                    labelText: 'Role واقعی کارت',
+                  ),
+                  items: [
+                    const DropdownMenuItem<String>(
+                      value: '',
+                      child: Text('بدون انتخاب'),
+                    ),
+                    for (final item in player.roles)
+                      DropdownMenuItem(value: item, child: Text(item)),
+                  ],
+                  onChanged: (value) {
+                    setSheetState(() => role = value ?? '');
+                  },
+                ),
+                if (player.roles.isEmpty) ...[
+                  const SizedBox(height: 6),
+                  Text(
+                    'منبع این کارت Role قابل استفاده‌ای برنگردانده است.',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 12),
+                TextField(
+                  controller: focusController,
+                  decoration: const InputDecoration(
+                    labelText: 'Focus',
+                    hintText: 'Focus واقعی که داخل بازی استفاده می‌کنی',
+                  ),
+                ),
+                const SizedBox(height: 16),
+                FilledButton(
+                  onPressed: () => Navigator.pop(
+                    context,
+                    SquadPlayerConfig(
+                      chemistryStyle: style,
+                      role: role,
+                      focus: focusController.text.trim(),
+                    ),
+                  ),
+                  child: const Text('اعمال'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+
+    focusController.dispose();
+    if (result == null) return;
+
+    final configs = Map<String, SquadPlayerConfig>.from(squad.playerConfigs)
+      ..[slot.id] = result;
+    setState(() => squad = squad.copyWith(playerConfigs: configs));
+  }
+
+  Future<void> _addBenchPlayer() async {
+    if (squad.bench.length >= 7) return;
+
+    List<Player> players;
+    try {
+      players = await playerRepository.getPlayers();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.toString())),
+      );
+      return;
+    }
+
+    if (!mounted) return;
+
+    final used = {
+      ...squad.playersBySlot.values.map((e) => e.id),
+      ...squad.bench.map((e) => e.id),
+    };
+
+    final selected = await showModalBottomSheet<Player>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => _PlayerPicker(
+        players: players,
+        slotPosition: '',
+        selectedIds: used,
+      ),
+    );
+
+    if (selected == null) return;
+    setState(() => squad = squad.copyWith(
+          bench: [...squad.bench, selected].take(7).toList(),
+        ));
+  }
+
+  void _removeBenchPlayer(String id) {
+    setState(() => squad = squad.copyWith(
+          bench: squad.bench.where((e) => e.id != id).toList(),
+        ));
+  }
+
+  Future<void> _exportSquad() async {
+    final raw = squadRepository.exportSquad(squad);
+    await Clipboard.setData(ClipboardData(text: raw));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('کد ترکیب در Clipboard کپی شد')),
+    );
+  }
+
+  Future<void> _importSquad() async {
+    final data = await Clipboard.getData(Clipboard.kTextPlain);
+    final raw = data?.text?.trim() ?? '';
+    if (raw.isEmpty) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Clipboard خالی است')),
+      );
+      return;
+    }
+
+    try {
+      final imported = squadRepository.importSquad(raw);
+      await squadRepository.upsert(imported);
+      final all = await squadRepository.getAll();
+      if (!mounted) return;
+      setState(() {
+        squad = imported;
+        savedSquads = all;
+      });
+      await _refreshPrice();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Import ناموفق: ' + e.toString())),
+      );
+    }
+  }
+
+  void _optimizeChemistry() {
+    if (squad.playersBySlot.length != 11) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('برای Optimize باید Starting XI کامل باشد')),
+      );
+      return;
+    }
+
+    final before = chemistry.total;
+    final result = chemistryOptimizer.optimize(
+      formation: formation,
+      current: squad.playersBySlot,
+      engine: chemistryEngine,
+      manager: squad.manager,
+    );
+
+    setState(() => squad = squad.copyWith(
+          playersBySlot: result.playersBySlot,
+        ));
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          'Chemistry: ' + before.toString() + ' → ' + result.chemistry.total.toString(),
+        ),
+      ),
+    );
   }
 
   Future<void> _refreshPrice() async {
