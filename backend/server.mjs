@@ -6,6 +6,7 @@ const API_KEY = process.env.PARSE_API_KEY || '';
 const SCRAPER_ID = process.env.PARSE_SCRAPER_ID || '21963078-8a17-40ff-a896-9b0b0ec3e828';
 const CACHE_TTL = Math.max(10, Number(process.env.CACHE_TTL_SECONDS || 60));
 const PROVIDER_BASE = 'https://api.parse.bot/scraper/' + SCRAPER_ID + '/';
+const FUTBIN_PUBLIC_BASE = 'https://www.futbin.org/futbin/api/';
 const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
@@ -256,8 +257,253 @@ function unwrap(payload) {
   return payload;
 }
 
+async function futbinPublicGet(endpoint, params = {}, { ttl = CACHE_TTL } = {}) {
+  const url = new URL(FUTBIN_PUBLIC_BASE + endpoint);
+  for (const [key, value] of Object.entries(params)) {
+    if (value === undefined || value === null || value === '') continue;
+    url.searchParams.set(key, String(value));
+  }
+
+  const key = 'public:' + url.toString();
+  const cached = cache.get(key);
+  const now = Date.now();
+  if (cached && now - cached.at < ttl * 1000) return cached.value;
+
+  const response = await fetch(url, {
+    headers: {
+      'Accept': 'application/json, text/plain, */*',
+      'Accept-Language': 'en-US,en;q=0.9',
+      'Referer': 'https://www.futbin.com/',
+      'Origin': 'https://www.futbin.com',
+      'User-Agent': 'Mozilla/5.0 FCBaz/1.0',
+    },
+    signal: AbortSignal.timeout(20000),
+  });
+
+  const text = await response.text();
+  let body;
+  try {
+    body = JSON.parse(text);
+  } catch {
+    throw Object.assign(new Error('futbin_public_invalid_json'), { status: 502 });
+  }
+
+  if (!response.ok) {
+    const error = new Error(body?.message || body?.error || ('futbin_public_http_' + response.status));
+    error.status = response.status === 429 ? 429 : 502;
+    throw error;
+  }
+
+  cache.set(key, { at: now, value: body });
+  return body;
+}
+
+function publicPlatform(value) {
+  return String(value || '').toLowerCase() === 'pc' ? 'PC' : 'PS';
+}
+
+function publicFilterParams(params = {}) {
+  const out = {
+    platform: publicPlatform(params.platform),
+    page: params.page || 1,
+  };
+  const direct = [
+    'version',
+    'nation_id',
+    'league_id',
+    'club_id',
+    'min_rating',
+    'max_rating',
+    'min_price',
+    'max_price',
+    'min_pace',
+    'max_pace',
+    'min_shooting',
+    'max_shooting',
+    'min_passing',
+    'max_passing',
+    'min_dribbling',
+    'max_dribbling',
+    'min_defending',
+    'max_defending',
+    'min_physical',
+    'max_physical',
+    'min_skills',
+    'max_skills',
+    'min_weak_foot',
+    'max_weak_foot',
+  ];
+  for (const key of direct) {
+    if (params[key] !== undefined && params[key] !== null && params[key] !== '') {
+      out[key] = params[key];
+    }
+  }
+  if (params.position) out.position = params.position;
+  return out;
+}
+
+async function publicFindPlayerById(playerId) {
+  const id = String(playerId);
+  for (let page = 1; page <= 20; page++) {
+    const raw = await futbinPublicGet(
+      'getFilteredPlayers',
+      { platform: 'PS', page },
+      { ttl: 180 },
+    );
+    const list = Array.isArray(raw?.data) ? raw.data : [];
+    const found = list.find((item) =>
+      String(item?.ID ?? '') === id ||
+      String(item?.playerid ?? '') === id ||
+      String(item?.resource_id ?? '') === id
+    );
+    if (found) return found;
+    if (!list.length) break;
+  }
+  return null;
+}
+
+async function publicSearchPlayers(query, page = 1) {
+  const q = String(query || '').trim().toLowerCase();
+  const matches = [];
+  const start = Math.max(1, Number(page) || 1);
+  const maxPages = start === 1 ? 16 : 8;
+
+  for (let offset = 0; offset < maxPages; offset++) {
+    const current = start + offset;
+    const raw = await futbinPublicGet(
+      'getFilteredPlayers',
+      { platform: 'PS', page: current },
+      { ttl: 180 },
+    );
+    const list = Array.isArray(raw?.data) ? raw.data : [];
+    if (!list.length) break;
+
+    for (const item of list) {
+      const name = String(item?.playername ?? item?.name ?? item?.common_name ?? '').toLowerCase();
+      if (name.includes(q)) matches.push(item);
+    }
+    if (matches.length >= 30) break;
+  }
+
+  return { data: matches.slice(0, 30), meta: { source: 'futbin-public', query: q } };
+}
+
+async function publicProvider(endpoint, params = {}, { ttl = CACHE_TTL } = {}) {
+  if (endpoint === 'list_fc27_players') {
+    return futbinPublicGet('getFilteredPlayers', publicFilterParams(params), { ttl });
+  }
+
+  if (endpoint === 'search_players_fc27') {
+    return publicSearchPlayers(params.query, params.page || 1);
+  }
+
+  if (endpoint === 'get_player_details') {
+    const found = await publicFindPlayerById(params.player_id);
+    if (!found) {
+      throw Object.assign(new Error('player_not_found'), { status: 404 });
+    }
+    return { data: found, meta: { source: 'futbin-public' } };
+  }
+
+  if (endpoint === 'get_fc27_player_price') {
+    const id = String(params.player_id || '');
+    const platform = publicPlatform(params.platform);
+    const raw = await futbinPublicGet(
+      'getPlayersPrice',
+      { player_ids: id, platform },
+      { ttl: Math.min(ttl, 60) },
+    );
+    const p = raw?.[id]?.prices?.[platform] || {};
+    return {
+      data: {
+        player_id: id,
+        price: asInt(p?.LCPrice),
+        current: asInt(p?.LCPrice),
+        price_range: {
+          min: asInt(p?.MinPrice),
+          max: asInt(p?.MaxPrice),
+        },
+        updated: String(p?.updated ?? ''),
+      },
+      meta: { source: 'futbin-public', platform },
+    };
+  }
+
+  if (endpoint === 'get_market_trends') {
+    const raw = await futbinPublicGet('getPopularPlayers', {}, { ttl });
+    return {
+      data: {
+        top_movers: Array.isArray(raw?.data) ? raw.data : [],
+      },
+      meta: { source: 'futbin-public' },
+    };
+  }
+
+  if (endpoint === 'get_fc27_market_snapshot') {
+    const ids = String(params.player_ids || '')
+      .split(',')
+      .map((x) => x.trim())
+      .filter(Boolean);
+    const platform = publicPlatform(params.platform);
+    if (!ids.length) return { data: { players: [] } };
+
+    const raw = await futbinPublicGet(
+      'getPlayersPrice',
+      { player_ids: ids.join(','), platform },
+      { ttl: Math.min(ttl, 60) },
+    );
+
+    return {
+      data: {
+        players: ids.map((id) => ({
+          player_id: id,
+          price: asInt(raw?.[id]?.prices?.[platform]?.LCPrice),
+        })),
+        timestamp: Date.now(),
+      },
+      meta: { source: 'futbin-public', platform },
+    };
+  }
+
+  if (endpoint === 'get_player_price_history') {
+    return {
+      data: { history: [] },
+      meta: { source: 'none', status: 'unavailable', reason: 'price_history_not_exposed_by_public_source' },
+    };
+  }
+
+  if (endpoint === 'get_sbcs') {
+    return { data: { sbcs: [] }, meta: { source: 'none', status: 'unavailable' } };
+  }
+
+  if (endpoint === 'get_evos') {
+    return { data: { evolutions: [] }, meta: { source: 'none', status: 'unavailable' } };
+  }
+
+  if (endpoint === 'get_objectives') {
+    return { data: { objectives: [] }, meta: { source: 'none', status: 'unavailable' } };
+  }
+
+  if (endpoint === 'fc27_sbc_solver') {
+    return {
+      data: {
+        players: [],
+        total_cost: 0,
+        message: 'SBC solver unavailable from current real-data source.',
+        search_complete: false,
+        proven_optimal: false,
+      },
+      meta: { source: 'none', status: 'unavailable' },
+    };
+  }
+
+  throw Object.assign(new Error('unsupported_public_provider_endpoint'), { status: 501 });
+}
+
 async function provider(endpoint, params = {}, { ttl = CACHE_TTL } = {}) {
-  if (!API_KEY) throw Object.assign(new Error('provider_not_configured'), { status: 503 });
+  if (!API_KEY) {
+    return publicProvider(endpoint, params, { ttl });
+  }
 
   const url = new URL(PROVIDER_BASE + endpoint);
   for (const [key, value] of Object.entries(params)) {
@@ -340,25 +586,30 @@ function normalizePlayer(raw) {
     {};
 
   return {
-    id: String(raw?.id ?? raw?.player_id ?? ''),
-    name: String(raw?.name ?? ''),
+    id: String(raw?.id ?? raw?.ID ?? raw?.player_id ?? raw?.playerid ?? raw?.resource_id ?? ''),
+    name: String(raw?.name ?? raw?.playername ?? raw?.common_name ?? ''),
     rating: asInt(raw?.rating ?? raw?.overall),
     position: String(raw?.position ?? '').replaceAll('+', ''),
-    positions: Array.isArray(positions) ? positions.map(String) : [],
-    club_name: String(raw?.club ?? raw?.club_name ?? ''),
-    league_name: String(raw?.league ?? raw?.league_name ?? ''),
-    nation_name: String(raw?.nation ?? raw?.nation_name ?? ''),
+    positions: Array.isArray(positions)
+      ? positions.map(String)
+      : String(raw?.pos_all ?? positions ?? '')
+          .split(',')
+          .map((x) => x.trim())
+          .filter(Boolean),
+    club_name: String(raw?.club_name ?? raw?.club ?? ''),
+    league_name: String(raw?.league_name ?? raw?.league ?? ''),
+    nation_name: String(raw?.nation_name ?? raw?.nation ?? ''),
     version: String(raw?.version ?? raw?.rarity ?? ''),
     rarity: String(raw?.rarity ?? raw?.rarity_name ?? ''),
     card_type: String(raw?.card_type ?? raw?.type ?? raw?.quality ?? ''),
     image_url: String(raw?.image_large ?? raw?.image ?? ''),
     card_image_url: String(raw?.card_image_large_url ?? raw?.card_image_url ?? raw?.card_image ?? ''),
-    pace: asInt(stats.PAC ?? stats.pace ?? raw?.pace),
-    shooting: asInt(stats.SHO ?? stats.shooting ?? raw?.shooting),
-    passing: asInt(stats.PAS ?? stats.passing ?? raw?.passing),
-    dribbling: asInt(stats.DRI ?? stats.dribbling ?? raw?.dribbling),
-    defending: asInt(stats.DEF ?? stats.defending ?? raw?.defending),
-    physical: asInt(stats.PHY ?? stats.physical ?? raw?.physical),
+    pace: asInt(stats.PAC ?? stats.pace ?? raw?.pace ?? raw?.pac),
+    shooting: asInt(stats.SHO ?? stats.shooting ?? raw?.shooting ?? raw?.sho),
+    passing: asInt(stats.PAS ?? stats.passing ?? raw?.passing ?? raw?.pas),
+    dribbling: asInt(stats.DRI ?? stats.dribbling ?? raw?.dribbling ?? raw?.dri),
+    defending: asInt(stats.DEF ?? stats.defending ?? raw?.defending ?? raw?.def),
+    physical: asInt(stats.PHY ?? stats.physical ?? raw?.physical ?? raw?.phy),
     skill_moves: asInt(raw?.skill_moves),
     weak_foot: asInt(raw?.weak_foot),
     playstyles: stringList(playStylesRaw),
@@ -369,11 +620,11 @@ function normalizePlayer(raw) {
     foot: String(raw?.preferred_foot ?? raw?.foot ?? ''),
     height: String(raw?.height ?? ''),
     work_rates: String(raw?.work_rates ?? raw?.workrates ?? ''),
-    price_ps: asInt(raw?.price_ps_coins ?? raw?.price_ps),
-    price_pc: asInt(raw?.price_pc_coins ?? raw?.price_pc),
+    price_ps: asInt(raw?.price_ps_coins ?? raw?.price_ps ?? raw?.ps_LCPrice),
+    price_pc: asInt(raw?.price_pc_coins ?? raw?.price_pc ?? raw?.pc_LCPrice),
     trend_ps: raw?.trend_ps ?? null,
     trend_pc: raw?.trend_pc ?? null,
-    source: 'futbin-via-parse',
+    source: API_KEY ? 'futbin-via-parse' : 'futbin-public',
     game_year: 27,
   };
 }
