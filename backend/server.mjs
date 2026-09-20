@@ -1,10 +1,19 @@
 import http from 'node:http';
+import { GoogleAuth } from 'google-auth-library';
 
 const PORT = Number(process.env.PORT || 8787);
 const API_KEY = process.env.PARSE_API_KEY || '';
 const SCRAPER_ID = process.env.PARSE_SCRAPER_ID || '21963078-8a17-40ff-a896-9b0b0ec3e828';
 const CACHE_TTL = Math.max(10, Number(process.env.CACHE_TTL_SECONDS || 60));
 const PROVIDER_BASE = 'https://api.parse.bot/scraper/' + SCRAPER_ID + '/';
+const SUPABASE_URL = (process.env.SUPABASE_URL || '').replace(/\/$/, '');
+const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || '';
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+const FIREBASE_PROJECT_ID = process.env.FIREBASE_PROJECT_ID || '';
+const FIREBASE_CLIENT_EMAIL = process.env.FIREBASE_CLIENT_EMAIL || '';
+const FIREBASE_PRIVATE_KEY = (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n');
+const CRON_SECRET = process.env.CRON_SECRET || '';
+
 
 const cache = new Map();
 
@@ -17,6 +26,172 @@ function send(res, status, body, extraHeaders = {}) {
     ...extraHeaders,
   });
   res.end(payload);
+}
+
+async function readJsonBody(req) {
+  const chunks = [];
+  for await (const chunk of req) chunks.push(chunk);
+  const raw = Buffer.concat(chunks).toString('utf8').trim();
+  if (!raw) return {};
+  try {
+    return JSON.parse(raw);
+  } catch {
+    throw Object.assign(new Error('invalid_json_body'), { status: 400 });
+  }
+}
+
+function cloudConfigured() {
+  return Boolean(SUPABASE_URL && SUPABASE_ANON_KEY && SUPABASE_SERVICE_ROLE_KEY);
+}
+
+async function supabaseAuth(path, { method = 'GET', body, bearer } = {}) {
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    throw Object.assign(new Error('account_backend_not_configured'), { status: 503 });
+  }
+
+  const response = await fetch(SUPABASE_URL + '/auth/v1' + path, {
+    method,
+    headers: {
+      'apikey': SUPABASE_ANON_KEY,
+      'Authorization': 'Bearer ' + (bearer || SUPABASE_ANON_KEY),
+      'Content-Type': 'application/json',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(12000),
+  });
+
+  const text = await response.text();
+  let json = {};
+  try { json = text ? JSON.parse(text) : {}; } catch {}
+
+  if (!response.ok) {
+    const error = new Error(
+      json?.msg || json?.message || json?.error_description || json?.error || 'auth_failed'
+    );
+    error.status = response.status;
+    throw error;
+  }
+
+  return json;
+}
+
+async function requireUser(req) {
+  const auth = String(req.headers.authorization || '');
+  if (!auth.startsWith('Bearer ')) {
+    throw Object.assign(new Error('authentication_required'), { status: 401 });
+  }
+  const token = auth.slice(7).trim();
+  if (!token) {
+    throw Object.assign(new Error('authentication_required'), { status: 401 });
+  }
+  const user = await supabaseAuth('/user', { bearer: token });
+  return { user, token };
+}
+
+async function supabaseRest(path, { method = 'GET', body, prefer } = {}) {
+  if (!cloudConfigured()) {
+    throw Object.assign(new Error('cloud_sync_not_configured'), { status: 503 });
+  }
+
+  const response = await fetch(SUPABASE_URL + '/rest/v1/' + path, {
+    method,
+    headers: {
+      'apikey': SUPABASE_SERVICE_ROLE_KEY,
+      'Authorization': 'Bearer ' + SUPABASE_SERVICE_ROLE_KEY,
+      'Content-Type': 'application/json',
+      ...(prefer ? { 'Prefer': prefer } : {}),
+    },
+    body: body ? JSON.stringify(body) : undefined,
+    signal: AbortSignal.timeout(12000),
+  });
+
+  const text = await response.text();
+  let json = null;
+  try { json = text ? JSON.parse(text) : null; } catch {}
+
+  if (!response.ok) {
+    const error = new Error(json?.message || json?.hint || 'cloud_request_failed');
+    error.status = response.status;
+    throw error;
+  }
+  return json;
+}
+
+async function registerDevice(userId, token, platform = 'android') {
+  if (!token) return;
+  await supabaseRest('fcbaz_devices?on_conflict=token', {
+    method: 'POST',
+    prefer: 'resolution=merge-duplicates,return=minimal',
+    body: {
+      user_id: userId,
+      token,
+      platform,
+      updated_at: new Date().toISOString(),
+    },
+  });
+}
+
+let firebaseAuthClient = null;
+async function fcmAccessToken() {
+  if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
+    throw Object.assign(new Error('firebase_not_configured'), { status: 503 });
+  }
+
+  if (!firebaseAuthClient) {
+    const auth = new GoogleAuth({
+      credentials: {
+        client_email: FIREBASE_CLIENT_EMAIL,
+        private_key: FIREBASE_PRIVATE_KEY,
+      },
+      scopes: ['https://www.googleapis.com/auth/firebase.messaging'],
+    });
+    firebaseAuthClient = await auth.getClient();
+  }
+
+  const token = await firebaseAuthClient.getAccessToken();
+  return typeof token === 'string' ? token : token?.token;
+}
+
+async function sendFcm(token, { title, body, data = {} }) {
+  const accessToken = await fcmAccessToken();
+  const response = await fetch(
+    'https://fcm.googleapis.com/v1/projects/' +
+      encodeURIComponent(FIREBASE_PROJECT_ID) +
+      '/messages:send',
+    {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + accessToken,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: {
+          token,
+          notification: { title, body },
+          data: Object.fromEntries(
+            Object.entries(data).map(([k, v]) => [k, String(v)])
+          ),
+          android: {
+            priority: 'high',
+            notification: {
+              channel_id: 'price_alerts',
+            },
+          },
+        },
+      }),
+      signal: AbortSignal.timeout(12000),
+    },
+  );
+
+  const text = await response.text();
+  let json = {};
+  try { json = text ? JSON.parse(text) : {}; } catch {}
+  if (!response.ok) {
+    const error = new Error(json?.error?.message || 'fcm_send_failed');
+    error.status = response.status;
+    throw error;
+  }
+  return json;
 }
 
 function providerNotConfigured(res) {
@@ -292,8 +467,8 @@ async function handler(req, res) {
   if (req.method === 'OPTIONS') {
     res.writeHead(204, {
       'access-control-allow-origin': '*',
-      'access-control-allow-methods': 'GET,OPTIONS',
-      'access-control-allow-headers': 'content-type',
+      'access-control-allow-methods': 'GET,POST,OPTIONS',
+      'access-control-allow-headers': 'content-type,authorization',
     });
     return res.end();
   }
@@ -308,6 +483,191 @@ async function handler(req, res) {
         provider_configured: Boolean(API_KEY),
         game_year: 27,
       });
+    }
+
+    if (path === '/api/v1/account/register' && req.method === 'POST') {
+      const body = await readJsonBody(req);
+      const email = String(body?.email || '').trim();
+      const password = String(body?.password || '');
+
+      if (!email || password.length < 8) {
+        return send(res, 400, {
+          error: 'invalid_credentials',
+          message: 'Email and password with at least 8 characters are required.',
+        });
+      }
+
+      const data = await supabaseAuth('/signup', {
+        method: 'POST',
+        body: { email, password },
+      });
+
+      return send(res, 200, {
+        data: {
+          access_token: data?.access_token || '',
+          refresh_token: data?.refresh_token || '',
+          user: data?.user || null,
+          email_confirmation_required: !data?.access_token,
+        },
+      });
+    }
+
+    if (path === '/api/v1/account/login' && req.method === 'POST') {
+      const body = await readJsonBody(req);
+      const email = String(body?.email || '').trim();
+      const password = String(body?.password || '');
+
+      const data = await supabaseAuth('/token?grant_type=password', {
+        method: 'POST',
+        body: { email, password },
+      });
+
+      return send(res, 200, {
+        data: {
+          access_token: data?.access_token || '',
+          refresh_token: data?.refresh_token || '',
+          user: data?.user || null,
+        },
+      });
+    }
+
+    if (path === '/api/v1/account/me' && req.method === 'GET') {
+      const { user } = await requireUser(req);
+      return send(res, 200, {
+        data: {
+          id: user?.id || '',
+          email: user?.email || '',
+          created_at: user?.created_at || null,
+        },
+      });
+    }
+
+    if (path === '/api/v1/account/sync' && req.method === 'POST') {
+      const { user } = await requireUser(req);
+      const body = await readJsonBody(req);
+      const snapshot = body?.snapshot;
+
+      if (!snapshot || typeof snapshot !== 'object') {
+        return send(res, 400, { error: 'snapshot_required' });
+      }
+
+      const updatedAt = new Date().toISOString();
+      await supabaseRest('fcbaz_user_sync?on_conflict=user_id', {
+        method: 'POST',
+        prefer: 'resolution=merge-duplicates,return=minimal',
+        body: {
+          user_id: user.id,
+          snapshot,
+          updated_at: updatedAt,
+        },
+      });
+
+      return send(res, 200, {
+        data: {
+          updated_at: updatedAt,
+          item_count: Object.keys(snapshot?.data || {}).length,
+        },
+      });
+    }
+
+    if (path === '/api/v1/account/sync' && req.method === 'GET') {
+      const { user } = await requireUser(req);
+      const rows = await supabaseRest(
+        'fcbaz_user_sync?user_id=eq.' +
+          encodeURIComponent(user.id) +
+          '&select=snapshot,updated_at&limit=1'
+      );
+
+      const row = Array.isArray(rows) ? rows[0] : null;
+      return send(res, 200, { data: row || null });
+    }
+
+    if (path === '/api/v1/push/register-device' && req.method === 'POST') {
+      const { user } = await requireUser(req);
+      const body = await readJsonBody(req);
+      const token = String(body?.token || '').trim();
+
+      if (!token) return send(res, 400, { error: 'device_token_required' });
+
+      await registerDevice(user.id, token, String(body?.platform || 'android'));
+      return send(res, 200, { data: { registered: true } });
+    }
+
+    if (path === '/api/v1/push/check-price-alerts' && req.method === 'POST') {
+      const secret = String(req.headers['x-cron-secret'] || '');
+      if (!CRON_SECRET || secret !== CRON_SECRET) {
+        return send(res, 401, { error: 'invalid_cron_secret' });
+      }
+
+      if (!API_KEY) return providerNotConfigured(res);
+      if (!cloudConfigured()) {
+        return send(res, 503, { error: 'cloud_sync_not_configured' });
+      }
+
+      const syncRows = await supabaseRest(
+        'fcbaz_user_sync?select=user_id,snapshot&limit=1000'
+      );
+      let checked = 0;
+      let pushed = 0;
+
+      for (const row of Array.isArray(syncRows) ? syncRows : []) {
+        const rawWatchlist = row?.snapshot?.data?.fcbaz_market_watchlist;
+        if (!rawWatchlist || typeof rawWatchlist !== 'string') continue;
+
+        let watchlist = [];
+        try { watchlist = JSON.parse(rawWatchlist); } catch { continue; }
+        if (!Array.isArray(watchlist)) continue;
+
+        const devices = await supabaseRest(
+          'fcbaz_devices?user_id=eq.' +
+            encodeURIComponent(String(row.user_id)) +
+            '&select=token'
+        );
+        const tokens = (Array.isArray(devices) ? devices : [])
+          .map((d) => String(d?.token || ''))
+          .filter(Boolean);
+        if (!tokens.length) continue;
+
+        for (const item of watchlist) {
+          const playerId = String(item?.player_id || '');
+          const target = asInt(item?.target_price);
+          if (!playerId || !target) continue;
+
+          try {
+            const marketRaw = await provider(
+              'get_fc27_player_price',
+              { player_id: playerId, platform: 'ps' },
+              { ttl: 45 },
+            );
+            const price = normalizePrice(marketRaw, playerId, 'console');
+            checked++;
+
+            if (price.current > 0 && price.current <= target) {
+              for (const token of tokens) {
+                try {
+                  await sendFcm(token, {
+                    title: 'FCBaz • قیمت هدف رسید',
+                    body:
+                      String(item?.player_name || 'بازیکن') +
+                      ' به ' +
+                      price.current +
+                      ' Coins رسید.',
+                    data: {
+                      type: 'price_alert',
+                      player_id: playerId,
+                      price: price.current,
+                      target_price: target,
+                    },
+                  });
+                  pushed++;
+                } catch {}
+              }
+            }
+          } catch {}
+        }
+      }
+
+      return send(res, 200, { data: { checked, pushed } });
     }
 
     if (!API_KEY) return providerNotConfigured(res);
