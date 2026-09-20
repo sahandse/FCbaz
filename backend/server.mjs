@@ -413,10 +413,34 @@ async function handler(req, res) {
         max_age_minutes: url.searchParams.get('max_age_minutes') || 10,
       }, { ttl: 30 });
       const data = unwrap(raw);
+      const ownedIds = new Set(
+        (url.searchParams.get('owned_ids') || '')
+          .split(',')
+          .map((x) => x.trim())
+          .filter(Boolean),
+      );
+      const solutionPlayers = Array.isArray(data?.players)
+        ? data.players.map((p) => ({
+            player_id: String(p?.player_id ?? p?.id ?? ''),
+            name: String(p?.name ?? ''),
+            rating: asInt(p?.rating),
+            price: asInt(p?.first_market_price ?? p?.price),
+          })).filter((p) => p.player_id)
+        : [];
+      const ownedSolutionIds = solutionPlayers
+        .filter((p) => ownedIds.has(p.player_id))
+        .map((p) => p.player_id);
+      const remainingCost = solutionPlayers
+        .filter((p) => !ownedIds.has(p.player_id))
+        .reduce((sum, p) => sum + p.price, 0);
+
       return send(res, 200, {
         data: {
           total_cost: asInt(data?.total_cost),
-          player_ids: Array.isArray(data?.players) ? data.players.map((p) => String(p?.player_id ?? p?.id ?? '')).filter(Boolean) : [],
+          remaining_cost: remainingCost,
+          player_ids: solutionPlayers.map((p) => p.player_id),
+          players: solutionPlayers,
+          owned_player_ids: ownedSolutionIds,
           notes: [
             data?.message,
             data?.solution_status,
