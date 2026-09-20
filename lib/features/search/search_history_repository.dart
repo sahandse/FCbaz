@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../../players/data/player_repository.dart';
-import '../../players/domain/player.dart';
+import '../players/data/player_repository.dart';
+import '../players/domain/player.dart';
 
 class SavedPlayerFilter {
   const SavedPlayerFilter({
