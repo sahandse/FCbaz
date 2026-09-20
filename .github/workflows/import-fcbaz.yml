@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - '.import/FCbaz.zip.b64'
+      - '.import/READY'
   workflow_dispatch:
 
 jobs:
@@ -18,12 +18,12 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Decode project archive
+      - name: Rebuild project archive
         shell: bash
         run: |
           set -euo pipefail
-          test -f .import/FCbaz.zip.b64
-          base64 -d .import/FCbaz.zip.b64 > /tmp/FCbaz.zip
+          test -f .import/READY
+          cat .import/part*.b64 | base64 -d > /tmp/FCbaz.zip
           rm -rf /tmp/fcbaz-import
           mkdir -p /tmp/fcbaz-import
           unzip -q /tmp/FCbaz.zip -d /tmp/fcbaz-import
