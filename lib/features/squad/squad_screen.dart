@@ -8,6 +8,7 @@ import 'data/squad_repository.dart';
 import 'domain/chemistry_engine.dart';
 import 'domain/squad_chemistry_optimizer.dart';
 import 'domain/squad_models.dart';
+import 'presentation/squad_insights_panel.dart';
 
 class SquadScreen extends StatefulWidget {
   const SquadScreen({super.key});
@@ -189,6 +190,141 @@ class _SquadScreenState extends State<SquadScreen> {
           playerConfigs: configs,
         ));
     await _refreshPrice();
+  }
+
+  Future<void> _editTactics() async {
+    final current = squad.tactics;
+    final name = TextEditingController(text: current.name);
+    final code = TextEditingController(text: current.code);
+    final defensive = TextEditingController(text: current.defensivePlan);
+    final buildUp = TextEditingController(text: current.buildUpPlan);
+    final attacking = TextEditingController(text: current.attackingPlan);
+    final notes = TextEditingController(text: current.notes);
+
+    final result = await showModalBottomSheet<TacticProfile>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(
+            16,
+            4,
+            16,
+            16 + MediaQuery.viewInsetsOf(context).bottom,
+          ),
+          child: ListView(
+            shrinkWrap: true,
+            children: [
+              Text(
+                'Tactics',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'مقادیر دقیق Tactics را مطابق تنظیم واقعی خودت وارد کن؛ FCBaz چیزی را حدس نمی‌زند.',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 11,
+                ),
+              ),
+              const SizedBox(height: 14),
+              TextField(
+                controller: name,
+                decoration: const InputDecoration(labelText: 'نام پلن'),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: code,
+                decoration: const InputDecoration(
+                  labelText: 'Tactics Code',
+                  hintText: 'کد واقعی داخل بازی',
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: defensive,
+                decoration: const InputDecoration(
+                  labelText: 'Defensive Plan',
+                  hintText: 'تنظیم دفاعی واقعی',
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: buildUp,
+                decoration: const InputDecoration(
+                  labelText: 'Build-up Plan',
+                  hintText: 'تنظیم Build-up واقعی',
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: attacking,
+                decoration: const InputDecoration(
+                  labelText: 'Attacking Plan',
+                  hintText: 'تنظیم حمله واقعی',
+                ),
+              ),
+              const SizedBox(height: 10),
+              TextField(
+                controller: notes,
+                maxLines: 3,
+                decoration: const InputDecoration(
+                  labelText: 'یادداشت',
+                ),
+              ),
+              const SizedBox(height: 16),
+              FilledButton(
+                onPressed: () => Navigator.pop(
+                  context,
+                  TacticProfile(
+                    name: name.text.trim().isEmpty
+                        ? 'پلن اصلی'
+                        : name.text.trim(),
+                    code: code.text.trim(),
+                    defensivePlan: defensive.text.trim(),
+                    buildUpPlan: buildUp.text.trim(),
+                    attackingPlan: attacking.text.trim(),
+                    notes: notes.text.trim(),
+                  ),
+                ),
+                child: const Text('ذخیره Tactics'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    name.dispose();
+    code.dispose();
+    defensive.dispose();
+    buildUp.dispose();
+    attacking.dispose();
+    notes.dispose();
+
+    if (result == null) return;
+    setState(() => squad = squad.copyWith(tactics: result));
+  }
+
+  Future<void> _replacePlayer(String slotId, Player replacement) async {
+    final players = Map<String, Player>.from(squad.playersBySlot)
+      ..[slotId] = replacement;
+
+    final configs = Map<String, SquadPlayerConfig>.from(squad.playerConfigs)
+      ..remove(slotId);
+
+    setState(() => squad = squad.copyWith(
+          playersBySlot: players,
+          playerConfigs: configs,
+        ));
+
+    await _refreshPrice();
+
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(replacement.name + ' جایگزین شد')),
+    );
   }
 
   Future<void> _editManager() async {
@@ -563,6 +699,7 @@ class _SquadScreenState extends State<SquadScreen> {
                 if (value == 'save') _save();
                 if (value == 'rename') _rename();
                 if (value == 'manager') _editManager();
+                if (value == 'tactics') _editTactics();
                 if (value == 'optimize') _optimizeChemistry();
                 if (value == 'export') _exportSquad();
                 if (value == 'import') _importSquad();
@@ -572,6 +709,7 @@ class _SquadScreenState extends State<SquadScreen> {
                 PopupMenuItem(value: 'save', child: Text('ذخیره')),
                 PopupMenuItem(value: 'rename', child: Text('تغییر نام')),
                 PopupMenuItem(value: 'manager', child: Text('Manager')),
+                PopupMenuItem(value: 'tactics', child: Text('Tactics')),
                 PopupMenuItem(value: 'optimize', child: Text('Optimize Chemistry')),
                 PopupMenuItem(value: 'export', child: Text('Export / Share')),
                 PopupMenuItem(value: 'import', child: Text('Import از Clipboard')),
@@ -624,6 +762,35 @@ class _SquadScreenState extends State<SquadScreen> {
                       squad.manager!.nationName,
                       squad.manager!.leagueName,
                     ].where((e) => e.isNotEmpty).join(' • '),
+            ),
+            trailing: const Icon(Icons.edit_rounded),
+          ),
+        ),
+        const SizedBox(height: 10),
+        Card(
+          child: ListTile(
+            onTap: _editTactics,
+            leading: Icon(
+              Icons.tune_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            title: Text(
+              squad.tactics.name,
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
+            subtitle: Text(
+              squad.tactics.isEmpty
+                  ? 'Tactics واقعی تیم را ثبت کن'
+                  : [
+                      if (squad.tactics.code.isNotEmpty)
+                        'Code ' + squad.tactics.code,
+                      if (squad.tactics.defensivePlan.isNotEmpty)
+                        squad.tactics.defensivePlan,
+                      if (squad.tactics.buildUpPlan.isNotEmpty)
+                        squad.tactics.buildUpPlan,
+                    ].join(' • '),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
             trailing: const Icon(Icons.edit_rounded),
           ),
@@ -688,6 +855,20 @@ class _SquadScreenState extends State<SquadScreen> {
           onTapEmptySlot: _pickPlayer,
           onConfigurePlayer: _configurePlayer,
           onRemovePlayer: _removePlayer,
+        ),
+        const SizedBox(height: 20),
+        SquadInsightsPanel(
+          key: ValueKey(
+            squad.id +
+                '-' +
+                squad.playersBySlot.values.map((e) => e.id).join(',') +
+                '-' +
+                result.total.toString(),
+          ),
+          squad: squad,
+          formation: formation,
+          chemistry: result,
+          onReplace: _replacePlayer,
         ),
         const SizedBox(height: 18),
         Row(
