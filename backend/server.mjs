@@ -785,6 +785,47 @@ async function handler(req, res) {
       return send(res, 200, { data: active, meta: { source: 'futbin-via-parse' } });
     }
 
+    if (path === '/api/v1/app/latest-release') {
+      const releaseRepo = process.env.GITHUB_RELEASE_REPO || 'sahandse/FCbaz';
+      const releaseUrl = 'https://api.github.com/repos/' + releaseRepo + '/releases/latest';
+
+      const response = await fetch(releaseUrl, {
+        headers: {
+          'Accept': 'application/vnd.github+json',
+          'User-Agent': 'FCBaz-Backend/1.0',
+          'X-GitHub-Api-Version': '2022-11-28',
+        },
+        signal: AbortSignal.timeout(10000),
+      });
+
+      if (response.status === 404) {
+        return send(res, 200, {
+          data: null,
+          meta: { repository: releaseRepo, has_release: false },
+        });
+      }
+
+      if (!response.ok) {
+        return send(res, 502, {
+          error: 'github_release_lookup_failed',
+          status: response.status,
+        });
+      }
+
+      const release = await response.json();
+      return send(res, 200, {
+        data: {
+          tag_name: String(release?.tag_name ?? ''),
+          name: String(release?.name ?? ''),
+          html_url: String(release?.html_url ?? ''),
+          published_at: release?.published_at ?? null,
+          prerelease: release?.prerelease === true,
+          draft: release?.draft === true,
+        },
+        meta: { repository: releaseRepo, has_release: true },
+      });
+    }
+
     if (path === '/api/v1/objectives') {
       const raw = await provider('get_objectives', {
         page: url.searchParams.get('page') || 1,
