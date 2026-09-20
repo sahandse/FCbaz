@@ -117,6 +117,36 @@ async function supabaseRest(path, { method = 'GET', body, prefer } = {}) {
   return json;
 }
 
+async function deleteSupabaseUser(userId) {
+  if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+    throw Object.assign(new Error('cloud_sync_not_configured'), { status: 503 });
+  }
+
+  const response = await fetch(
+    SUPABASE_URL + '/auth/v1/admin/users/' + encodeURIComponent(userId),
+    {
+      method: 'DELETE',
+      headers: {
+        'apikey': SUPABASE_SERVICE_ROLE_KEY,
+        'Authorization': 'Bearer ' + SUPABASE_SERVICE_ROLE_KEY,
+      },
+      signal: AbortSignal.timeout(12000),
+    },
+  );
+
+  const text = await response.text();
+  let json = {};
+  try { json = text ? JSON.parse(text) : {}; } catch {}
+
+  if (!response.ok) {
+    const error = new Error(json?.message || json?.error || 'account_delete_failed');
+    error.status = response.status;
+    throw error;
+  }
+
+  return json;
+}
+
 async function registerDevice(userId, token, platform = 'android') {
   if (!token) return;
   await supabaseRest('fcbaz_devices?on_conflict=token', {
@@ -546,6 +576,14 @@ async function handler(req, res) {
           refresh_token: data?.refresh_token || '',
           user: data?.user || null,
         },
+      });
+    }
+
+    if (path === '/api/v1/account/delete' && req.method === 'POST') {
+      const { user } = await requireUser(req);
+      await deleteSupabaseUser(user.id);
+      return send(res, 200, {
+        data: { deleted: true },
       });
     }
 
