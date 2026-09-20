@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../home/home_screen.dart';
+import '../players/data/player_repository.dart';
+import '../players/presentation/player_details_screen.dart';
+import 'app_navigation_repository.dart';
 import '../more/more_screen.dart';
 import '../notifications/notification_center_screen.dart';
 import '../notifications/notification_repository.dart';
@@ -25,6 +28,8 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> {
   final notificationRepository = NotificationRepository();
+  final navigationRepository = AppNavigationRepository();
+  final playerRepository = PlayerRepository();
 
   int index = 0;
   int unread = 0;
@@ -32,7 +37,41 @@ class _MainShellState extends State<MainShell> {
   @override
   void initState() {
     super.initState();
+    _initializeNavigation();
     _refreshUnread();
+  }
+
+  Future<void> _initializeNavigation() async {
+    final saved = await navigationRepository.loadTab();
+    if (!mounted) return;
+    setState(() => index = saved);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _openPendingPlayer();
+    });
+  }
+
+  Future<void> _selectTab(int value) async {
+    if (!mounted) return;
+    setState(() => index = value);
+    await navigationRepository.saveTab(value);
+  }
+
+  Future<void> _openPendingPlayer() async {
+    final playerId = await navigationRepository.takePendingPlayer();
+    if (playerId == null || playerId.isEmpty || !mounted) return;
+
+    try {
+      final player = await playerRepository.getPlayer(playerId);
+      if (!mounted) return;
+      await Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (_) => PlayerDetailsScreen(player: player),
+        ),
+      );
+    } catch (_) {
+      // If the player cannot be fetched, keep the app usable without fake data.
+    }
   }
 
   Future<void> _refreshUnread() async {
@@ -54,10 +93,10 @@ class _MainShellState extends State<MainShell> {
   Widget build(BuildContext context) {
     final pages = [
       HomeScreen(
-        onOpenPlayers: () => setState(() => index = 1),
-        onOpenSearch: () => setState(() => index = 2),
-        onOpenSquad: () => setState(() => index = 3),
-        onOpenMore: () => setState(() => index = 4),
+        onOpenPlayers: () => _selectTab(1),
+        onOpenSearch: () => _selectTab(2),
+        onOpenSquad: () => _selectTab(3),
+        onOpenMore: () => _selectTab(4),
       ),
       const PlayersScreen(),
       const SearchScreen(),
@@ -68,7 +107,14 @@ class _MainShellState extends State<MainShell> {
       ),
     ];
 
-    return Scaffold(
+    return PopScope(
+      canPop: index == 0,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop && index != 0) {
+          _selectTab(0);
+        }
+      },
+      child: Scaffold(
       appBar: AppBar(
         toolbarHeight: 62,
         titleSpacing: 16,
@@ -130,7 +176,7 @@ class _MainShellState extends State<MainShell> {
         top: false,
         child: NavigationBar(
           selectedIndex: index,
-          onDestinationSelected: (value) => setState(() => index = value),
+          onDestinationSelected: _selectTab,
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
@@ -159,6 +205,7 @@ class _MainShellState extends State<MainShell> {
           ],
         ),
       ),
+    ),
     );
   }
 }
