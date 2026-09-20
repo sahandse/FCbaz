@@ -65,6 +65,40 @@ class Player {
   final int pricePs;
   final int pricePc;
 
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'rating': rating,
+        'position': position,
+        'positions': positions,
+        'club_name': clubName,
+        'league_name': leagueName,
+        'nation_name': nationName,
+        'version': version,
+        'image_url': imageUrl,
+        'card_image_url': cardImageUrl,
+        'pace': pace,
+        'shooting': shooting,
+        'passing': passing,
+        'dribbling': dribbling,
+        'defending': defending,
+        'physical': physical,
+        'skill_moves': skillMoves,
+        'weak_foot': weakFoot,
+        'playstyles': playStyles,
+        'playstyles_plus': playStylesPlus,
+        'roles': roles,
+        'in_game_stats': inGameStats,
+        'traits': traits,
+        'foot': foot,
+        'height': height,
+        'work_rates': workRates,
+        'rarity': rarity,
+        'card_type': cardType,
+        'price_ps': pricePs,
+        'price_pc': pricePc,
+      };
+
   factory Player.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic value) =>
         value is int ? value : int.tryParse(value?.toString() ?? '') ?? 0;
