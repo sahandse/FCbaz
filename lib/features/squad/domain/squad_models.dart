@@ -26,29 +26,165 @@ class FormationDefinition {
   final List<FormationSlot> slots;
 }
 
+class ManagerProfile {
+  const ManagerProfile({
+    required this.name,
+    required this.nationName,
+    required this.leagueName,
+  });
+
+  final String name;
+  final String nationName;
+  final String leagueName;
+
+  bool get isEmpty =>
+      name.trim().isEmpty &&
+      nationName.trim().isEmpty &&
+      leagueName.trim().isEmpty;
+
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        'nation_name': nationName,
+        'league_name': leagueName,
+      };
+
+  factory ManagerProfile.fromJson(Map<String, dynamic> json) => ManagerProfile(
+        name: (json['name'] ?? '').toString(),
+        nationName: (json['nation_name'] ?? '').toString(),
+        leagueName: (json['league_name'] ?? '').toString(),
+      );
+}
+
+class SquadPlayerConfig {
+  const SquadPlayerConfig({
+    this.chemistryStyle = 'Basic',
+    this.role = '',
+    this.focus = '',
+  });
+
+  final String chemistryStyle;
+  final String role;
+  final String focus;
+
+  Map<String, dynamic> toJson() => {
+        'chemistry_style': chemistryStyle,
+        'role': role,
+        'focus': focus,
+      };
+
+  factory SquadPlayerConfig.fromJson(Map<String, dynamic> json) =>
+      SquadPlayerConfig(
+        chemistryStyle: (json['chemistry_style'] ?? 'Basic').toString(),
+        role: (json['role'] ?? '').toString(),
+        focus: (json['focus'] ?? '').toString(),
+      );
+}
+
 class SquadStateModel {
   const SquadStateModel({
     required this.id,
     required this.name,
     required this.formationId,
     required this.playersBySlot,
+    this.playerConfigs = const {},
+    this.bench = const [],
+    this.manager,
   });
 
   final String id;
   final String name;
   final String formationId;
   final Map<String, Player> playersBySlot;
+  final Map<String, SquadPlayerConfig> playerConfigs;
+  final List<Player> bench;
+  final ManagerProfile? manager;
 
   SquadStateModel copyWith({
     String? name,
     String? formationId,
     Map<String, Player>? playersBySlot,
+    Map<String, SquadPlayerConfig>? playerConfigs,
+    List<Player>? bench,
+    ManagerProfile? manager,
+    bool clearManager = false,
   }) {
     return SquadStateModel(
       id: id,
       name: name ?? this.name,
       formationId: formationId ?? this.formationId,
       playersBySlot: playersBySlot ?? this.playersBySlot,
+      playerConfigs: playerConfigs ?? this.playerConfigs,
+      bench: bench ?? this.bench,
+      manager: clearManager ? null : (manager ?? this.manager),
+    );
+  }
+
+  Map<String, dynamic> toJson() => {
+        'schema_version': 2,
+        'id': id,
+        'name': name,
+        'formation_id': formationId,
+        'players': playersBySlot.map(
+          (slot, player) => MapEntry(slot, player.toJson()),
+        ),
+        'player_configs': playerConfigs.map(
+          (slot, config) => MapEntry(slot, config.toJson()),
+        ),
+        'bench': bench.map((p) => p.toJson()).toList(),
+        'manager': manager?.toJson(),
+      };
+
+  factory SquadStateModel.fromJson(Map<String, dynamic> map) {
+    final players = <String, Player>{};
+    final rawPlayers = map['players'];
+    if (rawPlayers is Map) {
+      for (final item in rawPlayers.entries) {
+        if (item.value is Map) {
+          players[item.key.toString()] = Player.fromJson(
+            Map<String, dynamic>.from(item.value as Map),
+          );
+        }
+      }
+    }
+
+    final configs = <String, SquadPlayerConfig>{};
+    final rawConfigs = map['player_configs'];
+    if (rawConfigs is Map) {
+      for (final item in rawConfigs.entries) {
+        if (item.value is Map) {
+          configs[item.key.toString()] = SquadPlayerConfig.fromJson(
+            Map<String, dynamic>.from(item.value as Map),
+          );
+        }
+      }
+    }
+
+    final rawBench = map['bench'];
+    final bench = rawBench is List
+        ? rawBench
+            .whereType<Map>()
+            .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+            .where((e) => e.id.isNotEmpty)
+            .take(7)
+            .toList()
+        : const <Player>[];
+
+    ManagerProfile? manager;
+    if (map['manager'] is Map) {
+      final parsed = ManagerProfile.fromJson(
+        Map<String, dynamic>.from(map['manager'] as Map),
+      );
+      if (!parsed.isEmpty) manager = parsed;
+    }
+
+    return SquadStateModel(
+      id: (map['id'] ?? '').toString(),
+      name: (map['name'] ?? 'ترکیب من').toString(),
+      formationId: (map['formation_id'] ?? '433').toString(),
+      playersBySlot: players,
+      playerConfigs: configs,
+      bench: bench,
+      manager: manager,
     );
   }
 }
