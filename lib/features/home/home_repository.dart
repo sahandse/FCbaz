@@ -55,8 +55,12 @@ class HomeRepository {
   HomeRepository({FCBazApi? api}) : api = api ?? FCBazApi();
   final FCBazApi api;
 
-  Future<HomeFeed> getFeed() async {
-    final json = await api.getJson('/api/v1/home');
+  Future<HomeFeed> getFeed({bool forceRefresh = false}) async {
+    final json = await api.getJson(
+      '/api/v1/home',
+      forceRefresh: forceRefresh,
+      cacheTtl: const Duration(seconds: 60),
+    );
     final data = json is Map && json['data'] is Map
         ? Map<String, dynamic>.from(json['data'] as Map)
         : const <String, dynamic>{};
@@ -86,8 +90,12 @@ class HomeRepository {
     );
   }
 
-  Future<List<HomeObjective>> getObjectives() async {
-    final json = await api.getJson('/api/v1/objectives');
+  Future<List<HomeObjective>> getObjectives({bool forceRefresh = false}) async {
+    final json = await api.getJson(
+      '/api/v1/objectives',
+      forceRefresh: forceRefresh,
+      cacheTtl: const Duration(seconds: 90),
+    );
     final raw = json is Map ? (json['data'] ?? const []) : json;
     if (raw is! List) {
       throw const FCBazApiException('پاسخ Objectives معتبر نیست.');
