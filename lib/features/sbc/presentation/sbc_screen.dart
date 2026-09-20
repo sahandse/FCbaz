@@ -196,6 +196,23 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                   Text(sbc.description.isEmpty ? 'بدون توضیح' : sbc.description),
                   const SizedBox(height: 14),
                   Text('پاداش: ' + (sbc.reward.isEmpty ? '—' : sbc.reward)),
+                  if (sbc.itemScore != null) ...[
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Icon(
+                          Icons.stars_rounded,
+                          size: 18,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 6),
+                        Text(
+                          'Item Score موردنیاز: ' + sbc.itemScore.toString(),
+                          style: const TextStyle(fontWeight: FontWeight.w900),
+                        ),
+                      ],
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -213,6 +230,39 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                   title: Text(req),
                 ),
               ),
+          if (sbc.guideFa.isNotEmpty) ...[
+            const SizedBox(height: 14),
+            Text('راهنمای فارسی', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: 8),
+            Card(
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    for (var i = 0; i < sbc.guideFa.length; i++) ...[
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CircleAvatar(
+                            radius: 12,
+                            child: Text(
+                              (i + 1).toString(),
+                              style: const TextStyle(fontSize: 10),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Expanded(child: Text(sbc.guideFa[i])),
+                        ],
+                      ),
+                      if (i != sbc.guideFa.length - 1)
+                        const SizedBox(height: 10),
+                    ],
+                  ],
+                ),
+              ),
+            ),
+          ],
           const SizedBox(height: 14),
           FilledButton.icon(
             onPressed: solving ? null : _solve,
@@ -241,6 +291,13 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                     Text('هزینه کل: ' + solution!.totalCost.toString() + ' Coins'),
                     const SizedBox(height: 8),
                     Text('بازیکنان: ' + solution!.playerIds.length.toString()),
+                    if (solution!.itemScore != null) ...[
+                      const SizedBox(height: 8),
+                      Text(
+                        'Item Score راه‌حل: ' + solution!.itemScore.toString(),
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                    ],
                     if (solution!.notes.isNotEmpty) ...[
                       const SizedBox(height: 10),
                       for (final note in solution!.notes) Text('• ' + note),
