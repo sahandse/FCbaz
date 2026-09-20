@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../club/data/my_club_repository.dart';
 import '../data/sbc_repository.dart';
 import '../domain/sbc.dart';
 
@@ -156,6 +157,7 @@ class SbcDetailScreen extends StatefulWidget {
 
 class _SbcDetailScreenState extends State<SbcDetailScreen> {
   final repository = SbcRepository();
+  final clubRepository = MyClubRepository();
   SbcSolution? solution;
   bool solving = false;
   String? solveError;
@@ -166,7 +168,11 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
       solveError = null;
     });
     try {
-      final data = await repository.getCheapestSolution(widget.sbc.id);
+      final ownedIds = await clubRepository.getPlayerIds();
+      final data = await repository.getCheapestSolution(
+        widget.sbc.id,
+        ownedPlayerIds: ownedIds,
+      );
       if (!mounted) return;
       setState(() => solution = data);
     } catch (e) {
@@ -289,6 +295,23 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                     Text('راه‌حل پیشنهادی', style: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 8),
                     Text('هزینه کل: ' + solution!.totalCost.toString() + ' Coins'),
+                    const SizedBox(height: 6),
+                    Text(
+                      'از باشگاه من: ' +
+                          solution!.ownedPlayerIds.length.toString() +
+                          ' کارت',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      'هزینه باقی‌مانده: ' +
+                          solution!.remainingCost.toString() +
+                          ' Coins',
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
                     const SizedBox(height: 8),
                     Text('بازیکنان: ' + solution!.playerIds.length.toString()),
                     if (solution!.itemScore != null) ...[
@@ -297,6 +320,37 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                         'Item Score راه‌حل: ' + solution!.itemScore.toString(),
                         style: const TextStyle(fontWeight: FontWeight.w800),
                       ),
+                    ],
+                    if (solution!.players.isNotEmpty) ...[
+                      const SizedBox(height: 10),
+                      for (final player in solution!.players)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          dense: true,
+                          leading: Icon(
+                            solution!.ownedPlayerIds.contains(player.playerId)
+                                ? Icons.inventory_2_rounded
+                                : Icons.shopping_cart_outlined,
+                            color: solution!.ownedPlayerIds.contains(player.playerId)
+                                ? Theme.of(context).colorScheme.primary
+                                : null,
+                          ),
+                          title: Text(
+                            player.name.isEmpty
+                                ? player.playerId
+                                : player.name,
+                          ),
+                          subtitle: Text(
+                            player.rating.toString() +
+                                ' • ' +
+                                player.price.toString() +
+                                ' Coins',
+                          ),
+                          trailing:
+                              solution!.ownedPlayerIds.contains(player.playerId)
+                                  ? const Chip(label: Text('دارم'))
+                                  : null,
+                        ),
                     ],
                     if (solution!.notes.isNotEmpty) ...[
                       const SizedBox(height: 10),
