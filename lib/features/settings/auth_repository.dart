@@ -140,6 +140,25 @@ class AuthRepository {
     return session;
   }
 
+  Future<void> deleteAccount() async {
+    final current = await currentSession();
+    if (current == null) {
+      throw const FCBazApiException('حساب فعالی برای حذف وجود ندارد.');
+    }
+
+    final session = current.refreshToken.isNotEmpty
+        ? await refreshSession()
+        : current;
+
+    await api.postJson(
+      '/api/v1/account/delete',
+      bearerToken: session.accessToken,
+      body: const {},
+    );
+
+    await signOut();
+  }
+
   Future<void> signOut() async {
     await Future.wait([
       storage.delete(key: _accessKey),
