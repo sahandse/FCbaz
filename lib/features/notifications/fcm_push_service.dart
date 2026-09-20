@@ -135,7 +135,10 @@ class FcmPushService {
       );
     }
 
-    final session = await authRepository.currentSession();
+    final existing = await authRepository.currentSession();
+    final session = existing != null && existing.refreshToken.isNotEmpty
+        ? await authRepository.refreshSession()
+        : existing;
     final token = await FirebaseMessaging.instance.getToken();
 
     if (session == null || token == null || token.isEmpty) {
