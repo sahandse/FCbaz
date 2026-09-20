@@ -1,4 +1,5 @@
 import '../../../core/network/fcbaz_api.dart';
+import '../../../core/network/public_fc_data.dart';
 import '../domain/player.dart';
 
 enum PlayerSort {
@@ -333,40 +334,79 @@ class PlayerSearchResult {
 }
 
 class PlayerRepository {
-  PlayerRepository({FCBazApi? api}) : api = api ?? FCBazApi();
+  PlayerRepository({
+    FCBazApi? api,
+    PublicFcData? publicData,
+  })  : api = api ?? FCBazApi(),
+        publicData = publicData ?? PublicFcData();
 
   final FCBazApi api;
+  final PublicFcData publicData;
 
-  Future<List<Player>> getPlayers() => api.fetchPlayers();
+  Future<List<Player>> getPlayers() async {
+    try {
+      final data = await api.fetchPlayers();
+      if (data.isNotEmpty) return data;
+    } catch (_) {}
+    return publicData.getPlayers();
+  }
 
-  Future<List<Player>> search(String query) => api.searchPlayers(query);
+  Future<List<Player>> search(String query) async {
+    try {
+      final data = await api.searchPlayers(query);
+      if (data.isNotEmpty) return data;
+    } catch (_) {}
+    return publicData.search(query);
+  }
 
-  Future<Player> getPlayer(String id) => api.fetchPlayer(id);
+  Future<Player> getPlayer(String id) async {
+    try {
+      final player = await api.fetchPlayer(id);
+      if (player.id.isNotEmpty && player.name.isNotEmpty) return player;
+    } catch (_) {}
+
+    final player = await publicData.getPlayer(id);
+    if (player != null) return player;
+    throw const FCBazApiException('بازیکن پیدا نشد.');
+  }
 
   Future<List<Player>> getTrendingPlayers() async {
-    final json = await api.getJson('/api/v1/players/trending');
-    final raw = json is Map ? (json['data'] ?? const []) : json;
-    if (raw is! List) return const [];
-    return raw
-        .whereType<Map>()
-        .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-        .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
-        .toList();
+    try {
+      final json = await api.getJson('/api/v1/players/trending');
+      final raw = json is Map ? (json['data'] ?? const []) : json;
+      if (raw is List) {
+        final data = raw
+            .whereType<Map>()
+            .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+            .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
+            .toList();
+        if (data.isNotEmpty) return data;
+      }
+    } catch (_) {}
+
+    return publicData.getTrending();
   }
 
   Future<List<Player>> getVersions(String id) async {
-    final json = await api.getJson(
-      '/api/v1/players/' + Uri.encodeComponent(id) + '/versions',
-    );
-    final raw = json is Map ? (json['data'] ?? json['players'] ?? const []) : json;
-    if (raw is! List) {
-      throw const FCBazApiException('نسخه‌های دیگر بازیکن معتبر نیست.');
-    }
-    return raw
-        .whereType<Map>()
-        .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-        .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
-        .toList();
+    try {
+      final json = await api.getJson(
+        '/api/v1/players/' + Uri.encodeComponent(id) + '/versions',
+      );
+      final raw = json is Map
+          ? (json['data'] ?? json['players'] ?? const [])
+          : json;
+      if (raw is List) {
+        final data = raw
+            .whereType<Map>()
+            .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+            .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
+            .toList();
+        if (data.isNotEmpty) return data;
+      }
+    } catch (_) {}
+
+    final player = await publicData.getPlayer(id);
+    return player == null ? const [] : [player];
   }
 
   Future<PlayerSearchResult> advanced(
@@ -414,39 +454,63 @@ class PlayerRepository {
     add('min_physical', filter.minPhysical);
     add('max_physical', filter.maxPhysical);
 
-    final query = params.entries
-        .map(
-          (e) =>
-              Uri.encodeQueryComponent(e.key) +
-              '=' +
-              Uri.encodeQueryComponent(e.value),
-        )
-        .join('&');
+    try {
+      final query = params.entries
+          .map(
+            (e) =>
+                Uri.encodeQueryComponent(e.key) +
+                '=' +
+                Uri.encodeQueryComponent(e.value),
+          )
+          .join('&');
 
-    final json = await api.getJson('/api/v1/players/advanced?' + query);
-    final raw = json is Map ? (json['data'] ?? const []) : json;
+      final json = await api.getJson('/api/v1/players/advanced?' + query);
+      final raw = json is Map ? (json['data'] ?? const []) : json;
 
-    if (raw is! List) {
-      throw const FCBazApiException('پاسخ فیلتر پیشرفته معتبر نیست.');
-    }
+      if (raw is List) {
+        final players = raw
+            .whereType<Map>()
+            .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+            .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
+            .toList();
 
-    final players = raw
-        .whereType<Map>()
-        .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-        .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
-        .toList();
+        if (players.isNotEmpty) {
+          final meta = json is Map && json['meta'] is Map
+              ? Map<String, dynamic>.from(json['meta'] as Map)
+              : const <String, dynamic>{};
+          final facetsRaw = meta['facets'] is Map
+              ? Map<String, dynamic>.from(meta['facets'] as Map)
+              : const <String, dynamic>{};
 
-    final meta = json is Map && json['meta'] is Map
-        ? Map<String, dynamic>.from(json['meta'] as Map)
-        : const <String, dynamic>{};
+          return PlayerSearchResult(
+            players: players,
+            facets: PlayerFacets.fromJson(facetsRaw),
+          );
+        }
+      }
+    } catch (_) {}
 
-    final facetsRaw = meta['facets'] is Map
-        ? Map<String, dynamic>.from(meta['facets'] as Map)
-        : const <String, dynamic>{};
-
+    final players = await publicData.getFiltered(params: params);
     return PlayerSearchResult(
       players: players,
-      facets: PlayerFacets.fromJson(facetsRaw),
+      facets: _facetsFromPlayers(players),
+    );
+  }
+
+  PlayerFacets _facetsFromPlayers(List<Player> players) {
+    List<String> values(Iterable<String> source) =>
+        source.where((e) => e.trim().isNotEmpty).toSet().toList()..sort();
+
+    return PlayerFacets(
+      versions: values(players.map((e) => e.version)),
+      rarities: values(players.map((e) => e.rarity)),
+      cardTypes: values(players.map((e) => e.cardType)),
+      leagues: values(players.map((e) => e.leagueName)),
+      clubs: values(players.map((e) => e.clubName)),
+      nations: values(players.map((e) => e.nationName)),
+      playStyles: values(players.expand((e) => e.playStyles)),
+      playStylesPlus: values(players.expand((e) => e.playStylesPlus)),
+      roles: values(players.expand((e) => e.roles)),
     );
   }
 
