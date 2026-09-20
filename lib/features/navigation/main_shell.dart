@@ -2,26 +2,53 @@ import 'package:flutter/material.dart';
 
 import '../home/home_screen.dart';
 import '../more/more_screen.dart';
+import '../notifications/notification_center_screen.dart';
+import '../notifications/notification_repository.dart';
 import '../players/players_screen.dart';
 import '../search/search_screen.dart';
+import '../settings/app_settings_repository.dart';
 import '../squad/squad_screen.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({
-    required this.themeMode,
-    required this.onToggleTheme,
+    required this.settings,
+    required this.onSettingsChanged,
     super.key,
   });
 
-  final ThemeMode themeMode;
-  final VoidCallback onToggleTheme;
+  final AppSettings settings;
+  final ValueChanged<AppSettings> onSettingsChanged;
 
   @override
   State<MainShell> createState() => _MainShellState();
 }
 
 class _MainShellState extends State<MainShell> {
+  final notificationRepository = NotificationRepository();
+
   int index = 0;
+  int unread = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _refreshUnread();
+  }
+
+  Future<void> _refreshUnread() async {
+    final count = await notificationRepository.unreadCount();
+    if (!mounted) return;
+    setState(() => unread = count);
+  }
+
+  Future<void> _openNotifications() async {
+    await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => const NotificationCenterScreen(),
+      ),
+    );
+    await _refreshUnread();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +62,10 @@ class _MainShellState extends State<MainShell> {
       const PlayersScreen(),
       const SearchScreen(),
       const SquadScreen(),
-      const MoreScreen(),
+      MoreScreen(
+        settings: widget.settings,
+        onSettingsChanged: widget.onSettingsChanged,
+      ),
     ];
 
     return Scaffold(
@@ -70,20 +100,26 @@ class _MainShellState extends State<MainShell> {
             const Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text('FCBaz', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 19)),
-                Text('همراه فارسی FC27', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600)),
+                Text(
+                  'FCBaz',
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 19),
+                ),
+                Text(
+                  'همراه فارسی FC27',
+                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                ),
               ],
             ),
           ],
         ),
         actions: [
-          IconButton(
-            onPressed: widget.onToggleTheme,
-            tooltip: widget.themeMode == ThemeMode.dark ? 'حالت روشن' : 'حالت تاریک',
-            icon: Icon(
-              widget.themeMode == ThemeMode.dark
-                  ? Icons.light_mode_rounded
-                  : Icons.dark_mode_rounded,
+          Badge(
+            isLabelVisible: unread > 0,
+            label: Text(unread > 99 ? '99+' : unread.toString()),
+            child: IconButton(
+              onPressed: _openNotifications,
+              icon: const Icon(Icons.notifications_none_rounded),
+              tooltip: 'اعلان‌ها',
             ),
           ),
           const SizedBox(width: 4),
