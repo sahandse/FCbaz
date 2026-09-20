@@ -60,7 +60,7 @@ class _MarketScreenState extends State<MarketScreen> {
     await _loadCheapest();
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool forceRefresh = false}) async {
     setState(() {
       loading = true;
       error = null;
@@ -68,7 +68,7 @@ class _MarketScreenState extends State<MarketScreen> {
 
     try {
       final result = await Future.wait([
-        market.getMarketFeed(),
+        market.getMarketFeed(forceRefresh: forceRefresh),
         watchlist.getAll(),
       ]);
 
@@ -80,7 +80,7 @@ class _MarketScreenState extends State<MarketScreen> {
         saved = watchItems;
       });
 
-      await _refreshSavedPrices(watchItems);
+      await _refreshSavedPrices(watchItems, forceRefresh: forceRefresh);
     } catch (e) {
       if (!mounted) return;
       setState(() => error = e.toString());
@@ -89,23 +89,37 @@ class _MarketScreenState extends State<MarketScreen> {
     }
   }
 
-  Future<void> _refreshSavedPrices(List<WatchlistItem> items) async {
+  Future<void> _refreshSavedPrices(
+    List<WatchlistItem> items, {
+    bool forceRefresh = false,
+  }) async {
     savedPrices.clear();
 
-    for (final item in items) {
-      try {
-        final price = await market.getPlayerPrice(item.playerId, platform: platform);
-        if (!mounted) return;
-        savedPrices[item.playerId] = price;
-      } catch (_) {
-        // A failed card stays unavailable; no guessed price is displayed.
-      }
-    }
+    final results = await Future.wait(
+      items.map((item) async {
+        try {
+          final price = await market.getPlayerPrice(
+            item.playerId,
+            platform: platform,
+            forceRefresh: forceRefresh,
+          );
+          return (item.playerId, price);
+        } catch (_) {
+          return null;
+        }
+      }),
+    );
 
-    if (mounted) setState(() {});
+    if (!mounted) return;
+
+    for (final result in results) {
+      if (result == null) continue;
+      savedPrices[result.$1] = result.$2;
+    }
+    setState(() {});
   }
 
-  Future<void> _loadCheapest() async {
+  Future<void> _loadCheapest({bool forceRefresh = false}) async {
     setState(() {
       loadingCheapest = true;
       cheapestError = null;
@@ -117,6 +131,7 @@ class _MarketScreenState extends State<MarketScreen> {
         maxRating: maxRating,
         position: position,
         platform: platform,
+        forceRefresh: forceRefresh,
       );
       if (!mounted) return;
       setState(() => cheapest = data);
@@ -154,8 +169,10 @@ class _MarketScreenState extends State<MarketScreen> {
       appBar: AppBar(title: const Text('بازار و قیمت‌ها')),
       body: RefreshIndicator(
         onRefresh: () async {
-          await _load();
-          await _loadCheapest();
+          await Future.wait([
+            _load(forceRefresh: true),
+            _loadCheapest(forceRefresh: true),
+          ]);
         },
         child: ListView(
           padding: const EdgeInsets.all(16),
