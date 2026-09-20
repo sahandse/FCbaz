@@ -8,6 +8,7 @@ import '../meta/presentation/meta_screen.dart';
 import '../notifications/notification_center_screen.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import '../settings/app_settings_repository.dart';
+import '../settings/profile_screen.dart';
 import '../settings/settings_screen.dart';
 import 'consumables_screen.dart';
 
@@ -97,6 +98,15 @@ class MoreScreen extends StatelessWidget {
               onTap: () => _open(
                 context,
                 const NotificationCenterScreen(),
+              ),
+            ),
+            _ToolCard(
+              title: 'پروفایل',
+              subtitle: 'Favorites، My Club، Squads و Watchlist',
+              icon: Icons.account_circle_rounded,
+              onTap: () => _open(
+                context,
+                const ProfileScreen(),
               ),
             ),
             _ToolCard(
