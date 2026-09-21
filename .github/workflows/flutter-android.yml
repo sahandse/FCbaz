@@ -11,7 +11,7 @@ on:
       - 'v*'
 
 env:
-  RELEASE_VERSION: "1.0.2"
+  RELEASE_VERSION: "1.0.3"
   # Optional backend; empty string keeps the public free-data path in the app.
   FCBAZ_API_BASE_URL: ""
 
@@ -54,9 +54,23 @@ jobs:
           sed -i 's/applicationId = "ir.fcbaz.fcbaz"/applicationId = "ir.fcbaz.app"/' android/app/build.gradle.kts
           sed -i 's/namespace = "ir.fcbaz.fcbaz"/namespace = "ir.fcbaz.app"/' android/app/build.gradle.kts || true
           sed -i 's/android:label="fcbaz"/android:label="FCBaz"/' android/app/src/main/AndroidManifest.xml
-          sed -i 's/package ir.fcbaz.fcbaz/package ir.fcbaz.app/' android/app/src/main/kotlin/ir/fcbaz/fcbaz/MainActivity.kt || true
+
+          # Keep MainActivity package aligned with applicationId/namespace.
+          mkdir -p android/app/src/main/kotlin/ir/fcbaz/app
+          cat > android/app/src/main/kotlin/ir/fcbaz/app/MainActivity.kt <<'EOF'
+          package ir.fcbaz.app
+
+          import io.flutter.embedding.android.FlutterActivity
+
+          class MainActivity : FlutterActivity()
+          EOF
+          rm -rf android/app/src/main/kotlin/ir/fcbaz/fcbaz
+
           if ! grep -q POST_NOTIFICATIONS android/app/src/main/AndroidManifest.xml; then
             sed -i '/<manifest/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>' android/app/src/main/AndroidManifest.xml
+          fi
+          if ! grep -q 'android.permission.INTERNET' android/app/src/main/AndroidManifest.xml; then
+            sed -i '/<manifest/a\    <uses-permission android:name="android.permission.INTERNET"/>' android/app/src/main/AndroidManifest.xml
           fi
 
       - name: Restore persistent release signing material
