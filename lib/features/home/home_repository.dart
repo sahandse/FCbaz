@@ -1,4 +1,5 @@
 import '../../core/network/fcbaz_api.dart';
+import '../../core/network/free_github_content.dart';
 import '../../core/network/public_fc_data.dart';
 import '../evolutions/domain/evolution.dart';
 import '../players/domain/player.dart';
@@ -56,11 +57,14 @@ class HomeRepository {
   HomeRepository({
     FCBazApi? api,
     PublicFcData? publicData,
+    FreeGithubContent? freeContent,
   })  : api = api ?? FCBazApi(),
-        publicData = publicData ?? PublicFcData();
+        publicData = publicData ?? PublicFcData(),
+        freeContent = freeContent ?? FreeGithubContent();
 
   final FCBazApi api;
   final PublicFcData publicData;
+  final FreeGithubContent freeContent;
 
   Future<HomeFeed> getFeed({bool forceRefresh = false}) async {
     try {
@@ -80,7 +84,7 @@ class HomeRepository {
               .toList()
           : const [];
 
-      final feed = HomeFeed(
+      var feed = HomeFeed(
         trendingPlayers: maps(data['trending_players'])
             .map(Player.fromJson)
             .where((e) => e.id.isNotEmpty)
@@ -101,6 +105,43 @@ class HomeRepository {
       );
 
       if (feed.trendingPlayers.isNotEmpty || feed.marketMovers.isNotEmpty) {
+        if (feed.sbcs.isEmpty ||
+            feed.evolutions.isEmpty ||
+            feed.objectives.isEmpty) {
+          final freeSbcs =
+              feed.sbcs.isEmpty ? await freeContent.sbcs() : <Map<String, dynamic>>[];
+          final freeEvos = feed.evolutions.isEmpty
+              ? await freeContent.evolutions()
+              : <Map<String, dynamic>>[];
+          final freeObjectives = feed.objectives.isEmpty
+              ? await freeContent.objectives()
+              : <Map<String, dynamic>>[];
+          feed = HomeFeed(
+            trendingPlayers: feed.trendingPlayers,
+            marketMovers: feed.marketMovers,
+            sbcs: feed.sbcs.isNotEmpty
+                ? feed.sbcs
+                : freeSbcs
+                    .map(SbcChallenge.fromJson)
+                    .where((e) => e.id.isNotEmpty)
+                    .take(6)
+                    .toList(),
+            evolutions: feed.evolutions.isNotEmpty
+                ? feed.evolutions
+                : freeEvos
+                    .map(Evolution.fromJson)
+                    .where((e) => e.id.isNotEmpty)
+                    .take(6)
+                    .toList(),
+            objectives: feed.objectives.isNotEmpty
+                ? feed.objectives
+                : freeObjectives
+                    .map(HomeObjective.fromJson)
+                    .where((e) => e.title.isNotEmpty)
+                    .take(6)
+                    .toList(),
+          );
+        }
         return feed;
       }
     } catch (_) {}
@@ -115,18 +156,35 @@ class HomeRepository {
               'rating': p.rating,
               'price_ps': p.pricePs,
               'price_pc': p.pricePc,
-              'source': p.version == 'FIFA World Cup 2026'
-                  ? 'github-fifa-wc2026'
-                  : 'futbin-public',
+              'change': p.rating.toString() + ' OVR • ' + p.position,
+              'source': p.pricePs > 0 || p.pricePc > 0
+                  ? 'live-market'
+                  : 'fc26-free-catalog',
             })
         .toList();
+
+    final freeSbcs = await freeContent.sbcs();
+    final freeEvos = await freeContent.evolutions();
+    final freeObjectives = await freeContent.objectives();
 
     return HomeFeed(
       trendingPlayers: trending.take(10).toList(),
       marketMovers: movers,
-      sbcs: const [],
-      evolutions: const [],
-      objectives: const [],
+      sbcs: freeSbcs
+          .map(SbcChallenge.fromJson)
+          .where((e) => e.id.isNotEmpty)
+          .take(6)
+          .toList(),
+      evolutions: freeEvos
+          .map(Evolution.fromJson)
+          .where((e) => e.id.isNotEmpty)
+          .take(6)
+          .toList(),
+      objectives: freeObjectives
+          .map(HomeObjective.fromJson)
+          .where((e) => e.title.isNotEmpty)
+          .take(6)
+          .toList(),
     );
   }
 
@@ -141,16 +199,21 @@ class HomeRepository {
       );
       final raw = json is Map ? (json['data'] ?? const []) : json;
       if (raw is List) {
-        return raw
+        final items = raw
             .whereType<Map>()
             .map((e) => HomeObjective.fromJson(
                   Map<String, dynamic>.from(e),
                 ))
             .where((e) => e.title.isNotEmpty)
             .toList();
+        if (items.isNotEmpty) return items;
       }
     } catch (_) {}
 
-    return const [];
+    final free = await freeContent.objectives(forceRefresh: forceRefresh);
+    return free
+        .map(HomeObjective.fromJson)
+        .where((e) => e.title.isNotEmpty)
+        .toList();
   }
 }

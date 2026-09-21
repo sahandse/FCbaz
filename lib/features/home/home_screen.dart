@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../evolutions/presentation/evolutions_screen.dart';
 import '../players/presentation/player_details_screen.dart';
+import '../players/presentation/player_portrait.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import 'home_repository.dart';
 import 'objectives_screen.dart';
+import '../evolutions/presentation/evolutions_hub_screen.dart';
+import '../sbc/presentation/sbc_hub_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -63,6 +65,19 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return '—';
+  }
+
+  String _formatCoins(int value) {
+    if (value <= 0) return '—';
+    if (value >= 1000000) {
+      final n = value / 1000000;
+      return n.toStringAsFixed(n >= 10 ? 0 : 1) + 'M';
+    }
+    if (value >= 1000) {
+      final n = value / 1000;
+      return n.toStringAsFixed(n >= 100 ? 0 : 1) + 'K';
+    }
+    return value.toString();
   }
 
   @override
@@ -133,8 +148,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.trendingPlayers.isNotEmpty) ...[
               const SizedBox(height: 24),
               const _SectionTitle(
-                title: 'Trending Players',
-                subtitle: 'بر اساس داده زنده بازار FC27',
+                title: 'بازیکنان برتر',
+                subtitle: 'از دیتابیس رایگان واقعی یا منبع زنده بازار',
               ),
               const SizedBox(height: 10),
               SizedBox(
@@ -160,14 +175,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.all(10),
                             child: Column(
                               children: [
-                                CircleAvatar(
-                                  radius: 32,
-                                  backgroundImage: player.imageUrl.isEmpty
-                                      ? null
-                                      : NetworkImage(player.imageUrl),
-                                  child: player.imageUrl.isEmpty
-                                      ? Text(player.rating.toString())
-                                      : null,
+                                PlayerPortrait(
+                                  player: player,
+                                  width: 64,
+                                  height: 64,
+                                  borderRadius: 32,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
@@ -185,14 +197,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   style:
                                       Theme.of(context).textTheme.labelSmall,
                                 ),
-                                if (player.version.isNotEmpty)
-                                  Text(
-                                    player.version,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
+                                Text(
+                                  player.pricePs > 0
+                                      ? _formatCoins(player.pricePs)
+                                      : (player.pricePc > 0
+                                          ? _formatCoins(player.pricePc)
+                                          : 'قیمت —'),
+                                  style:
+                                      Theme.of(context).textTheme.labelSmall,
+                                ),
                               ],
                             ),
                           ),
@@ -206,8 +219,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.marketMovers.isNotEmpty) ...[
               const SizedBox(height: 24),
               const _SectionTitle(
-                title: 'Market Movers',
-                subtitle: 'حرکت‌های مهم بازار از منبع زنده',
+                title: 'بازار',
+                subtitle: 'نمای کلی کارت‌های داغ؛ قیمت سکه فقط وقتی منبع زنده جواب بدهد',
               ),
               const SizedBox(height: 10),
               SizedBox(
@@ -266,10 +279,10 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 24),
               _SectionTitle(
                 title: 'SBCهای جدید',
-                subtitle: 'چالش‌های فعال FC27',
+                subtitle: 'راهنماهای رایگان + منبع زنده',
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SbcScreen()),
+                    MaterialPageRoute(builder: (_) => const SbcHubScreen()),
                   ),
                   child: const Text('همه'),
                 ),
@@ -307,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const EvolutionsScreen(),
+                      builder: (_) => const EvolutionsHubScreen(),
                     ),
                   ),
                   child: const Text('همه'),
@@ -328,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: InkWell(
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => const EvolutionsScreen(),
+                              builder: (_) => const EvolutionsHubScreen(),
                             ),
                           ),
                           borderRadius: BorderRadius.circular(18),
@@ -453,7 +466,7 @@ class _HeroCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(99),
             ),
             child: Text(
-              'FC27 • Ultimate Team',
+              'فارسی • دیتای رایگان واقعی',
               style: TextStyle(
                 color: scheme.primary,
                 fontWeight: FontWeight.w900,
@@ -471,7 +484,7 @@ class _HeroCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'ترند بازار، بازیکنان، SBC، Evo، Objectives و ابزارهای Squad در یک داشبورد فارسی.',
+            'دیتابیس بازیکن، فیلتر، قیمت زنده بازار، تیم‌ساز و ابزارهای باشگاه — فارسی، بدون ثبت‌نام و بدون داده ساختگی.',
             style: TextStyle(
               color: scheme.onSurfaceVariant,
               height: 1.6,
@@ -538,7 +551,7 @@ class _DataStatusCard extends StatelessWidget {
           Expanded(
             child: Text(
               hasFeed
-                  ? 'Home Feed از داده واقعی FC27 دریافت شده است.'
+                  ? 'دیتابیس بازیکن از منبع رایگان واقعی بارگذاری شده است. قیمت سکه فقط از منبع زنده عمومی می‌آید.'
                   : 'اگر منبع واقعی در دسترس نباشد، FCBaz داده ساختگی جایگزین نمی‌کند.',
               style: const TextStyle(fontWeight: FontWeight.w800),
             ),

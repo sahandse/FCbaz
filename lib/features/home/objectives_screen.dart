@@ -55,10 +55,10 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text('Objectives زنده FC27', style: Theme.of(context).textTheme.headlineSmall),
+            Text('Objectives رایگان FCBaz', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 4),
             Text(
-              'هدف‌ها، پاداش‌ها و زمان پایان از منبع واقعی خوانده می‌شوند.',
+              'چک‌لیست‌های کاربردی از محتوای رایگان GitHub. وقتی منبع زنده Objectives باشد، همان جایگزین می‌شود.',
               style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 16),
@@ -81,6 +81,9 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
                 child: ListTile(
                   leading: Icon(Icons.flag_outlined),
                   title: Text('Objective فعالی پیدا نشد'),
+                  subtitle: Text(
+                    'محتوای رایگان GitHub هم خالی بود. بعداً دوباره تلاش کنید.',
+                  ),
                 ),
               )
             else

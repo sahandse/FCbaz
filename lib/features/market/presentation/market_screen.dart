@@ -6,6 +6,9 @@ import '../data/market_repository.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
 import '../../settings/app_settings_repository.dart';
+import 'fodder_screen.dart';
+import 'tax_calculator_screen.dart';
+import 'pack_value_screen.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -184,10 +187,40 @@ class _MarketScreenState extends State<MarketScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'قیمت‌ها مستقیم از منبع زنده FC27 بررسی می‌شوند.',
+              'قیمت‌ها از منبع زنده عمومی خوانده می‌شوند؛ اگر قطع باشد عدد جعلی نشان داده نمی‌شود.',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ActionChip(
+                  avatar: const Icon(Icons.local_offer_outlined, size: 18),
+                  label: const Text('Fodder'),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const FodderScreen()),
+                  ),
+                ),
+                ActionChip(
+                  avatar: const Icon(Icons.calculate_outlined, size: 18),
+                  label: const Text('مالیات ۵٪'),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => const TaxCalculatorScreen(),
+                    ),
+                  ),
+                ),
+                ActionChip(
+                  avatar: const Icon(Icons.inventory_outlined, size: 18),
+                  label: const Text('ارزش پک'),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const PackValueScreen()),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 10),
             if (saved.isEmpty)

@@ -1,28 +1,23 @@
 # FCBaz
 
-FCBaz یک اپلیکیشن Android مبتنی بر Flutter برای کاربران فارسی‌زبان EA SPORTS FC Ultimate Team است. هدف پروژه ارائه تجربه‌ای سریع، مینیمال و مستقل برای مشاهده بازیکنان، قیمت‌ها، تیم‌ساز، SBC، Evolutions و ابزارهای مرتبط است.
+FCBaz یک اپلیکیشن Android مبتنی بر Flutter است؛ همراه فارسی و RTL برای
+بازیکنان EA SPORTS FC Ultimate Team با **دیتای رایگان و واقعی**.
 
-## وضعیت فعلی
+## چه چیزی می‌دهد؟
 
-- Flutter + Material 3
-- فارسی و RTL به‌صورت پیش‌فرض
-- Dark / Light Theme
-- Players + Search + Filters + Player Details
-- Market + Price History + Watchlist
-- Backend-ready via `FCBAZ_API_BASE_URL`
-- Android CI + APK artifact
-- بدون جایگزینی داده ساختگی به‌جای داده واقعی FC27
+- دیتابیس بازیکن با ریتینگ و اَتربیوت واقعی
+- عکس کارت بازیکن از CDN عمومی
+- جستجو، فیلتر پیشرفته، جزئیات بازیکن، مقایسه
+- قیمت زنده سکه وقتی منبع بازار در دسترس باشد
+- تیم‌ساز / Chemistry، Market، Watchlist، Meta، My Club
+- بدون ثبت‌نام اجباری
 
-## نقشه توسعه
+## سیاست داده
 
-1. Players / Search / Filters / Details
-2. Market / Prices / History / Watchlist
-3. Squad Builder / Chemistry / Squad Price
-4. SBC Center
-5. Evolutions / Evo Lab
-6. SBC Solver / Cheapest Players
-7. My Club / Price Alerts / Notifications
-8. Meta / Best Players / News
+- دادهٔ ساختگی به‌جای کارت/قیمت واقعی نمایش داده نمی‌شود.
+- اگر قیمت زنده در دسترس نباشد، قیمت خالی می‌ماند (نه عدد جعلی).
+- منبع اصلی دیتابیس: کاتالوگ community (`assets/data/players_fc26.json.gz`).
+- Backend اختیاری (`FCBAZ_API_BASE_URL`) فقط اگر خودتان بالا آورده باشید.
 
 ## Build
 
@@ -30,19 +25,9 @@ FCBaz یک اپلیکیشن Android مبتنی بر Flutter برای کاربر�
 flutter pub get
 flutter analyze
 flutter test
-flutter build apk --debug --dart-define=FCBAZ_API_BASE_URL=https://example.com
+flutter build apk --release
 ```
 
-## Android package
+پکیج: `ir.fcbaz.app`
 
-`ir.fcbaz.app`
-
-FCBaz یک پروژه مستقل است و وابستگی رسمی به FUTBIN یا EA SPORTS FC ندارد.
-
-
-## Production release
-
-FCBaz uses a strict production-only release flow. Debug/preview builds are not
-intended for public distribution. Before publishing, follow
-`RELEASE_CHECKLIST.md` and configure the real FC27 backend, Supabase account
-sync, Firebase Cloud Messaging, and Android signing credentials.
+FCBaz یک پروژه مستقل است و وابستگی رسمی به EA SPORTS FC ندارد.

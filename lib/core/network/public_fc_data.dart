@@ -1,43 +1,54 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:flutter/services.dart';
 
 import '../../features/players/domain/player.dart';
+import 'player_media.dart';
 
+/// Free real-data layer for FCBaz.
+///
+/// Priority:
+/// 1. Live public market endpoints when reachable (prices / trending).
+/// 2. Bundled FC26 community player catalog (real ratings/stats).
+///
+/// Never invents coin prices or player cards.
 class PublicFcData {
-  PublicFcData({HttpClient? client}) : _client = client ?? HttpClient();
+  PublicFcData({
+    HttpClient? client,
+    Uint8List? catalogBytes,
+  })  : _client = client ?? HttpClient(),
+        _injectedCatalogBytes = catalogBytes;
 
   final HttpClient _client;
+  final Uint8List? _injectedCatalogBytes;
 
-  static const _futbinBase = 'https://www.futbin.org/futbin/api/';
-  static const _githubFallback =
-      'https://raw.githubusercontent.com/matyuschenko/fifa-wc2026-players/main/data/players.tsv';
+  static const _marketApiBase = 'https://www.futbin.org/futbin/api/';
+  static const _catalogAsset = 'assets/data/players_fc26.json.gz';
+  static const _catalogRemote =
+      'https://raw.githubusercontent.com/ismailoksuz/EAFC26-DataHub/main/data/players.json.gz';
 
   static final Map<String, _PublicCacheEntry> _cache = {};
+  static List<Player>? _catalog;
 
   Future<List<Player>> getPlayers({
     int page = 1,
     String platform = 'console',
   }) async {
-    try {
-      final json = await _getFutbin(
-        'getFilteredPlayers',
-        {
-          'platform': platform == 'pc' ? 'PC' : 'PS',
-          'page': page.toString(),
-        },
-      );
-      final data = json is Map ? json['data'] : null;
-      if (data is List) {
-        final players = data
-            .whereType<Map>()
-            .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-            .where((e) => e.id.isNotEmpty && e.name.isNotEmpty)
-            .toList();
-        if (players.isNotEmpty) return players;
-      }
-    } catch (_) {}
+    final live = await _marketPlayers(page: page, platform: platform);
+    if (live.isNotEmpty) {
+      return enrichWithPrices(live, platform: platform);
+    }
 
-    return _githubPlayers();
+    final catalog = await _loadCatalog();
+    const pageSize = 40;
+    final start = (page < 1 ? 0 : page - 1) * pageSize;
+    if (start >= catalog.length) return const [];
+    return enrichWithPrices(
+      catalog.skip(start).take(pageSize).toList(),
+      platform: platform,
+    );
   }
 
   Future<List<Player>> search(
@@ -47,83 +58,63 @@ class PublicFcData {
     final q = query.trim().toLowerCase();
     if (q.length < 2) return const [];
 
-    final found = <Player>[];
-    final seen = <String>{};
+    final live = await _marketSearch(q, platform: platform);
+    if (live.isNotEmpty) {
+      return enrichWithPrices(live, platform: platform);
+    }
 
-    try {
-      for (var page = 1; page <= 12; page++) {
-        final json = await _getFutbin(
-          'getFilteredPlayers',
-          {
-            'platform': platform == 'pc' ? 'PC' : 'PS',
-            'page': page.toString(),
-          },
-          ttl: const Duration(minutes: 5),
-        );
-        final data = json is Map ? json['data'] : null;
-        if (data is! List || data.isEmpty) break;
-
-        for (final raw in data.whereType<Map>()) {
-          final player = Player.fromJson(Map<String, dynamic>.from(raw));
-          if (player.id.isEmpty || player.name.isEmpty) continue;
-          if (!player.name.toLowerCase().contains(q)) continue;
-          if (seen.add(player.id)) found.add(player);
-        }
-        if (found.length >= 30) break;
-      }
-    } catch (_) {}
-
-    if (found.isNotEmpty) return found;
-
-    final fallback = await _githubPlayers();
-    return fallback
+    final catalog = await _loadCatalog();
+    final found = catalog
         .where((e) => e.name.toLowerCase().contains(q))
-        .take(30)
+        .take(40)
         .toList();
+    return enrichWithPrices(found, platform: platform);
   }
 
   Future<Player?> getPlayer(
     String id, {
     String platform = 'console',
   }) async {
-    try {
-      for (var page = 1; page <= 20; page++) {
-        final json = await _getFutbin(
-          'getFilteredPlayers',
-          {
-            'platform': platform == 'pc' ? 'PC' : 'PS',
-            'page': page.toString(),
-          },
-          ttl: const Duration(minutes: 5),
-        );
-        final data = json is Map ? json['data'] : null;
-        if (data is! List || data.isEmpty) break;
+    final live = await _marketFindById(id, platform: platform);
+    if (live != null) {
+      final enriched = await enrichWithPrices([live], platform: platform);
+      return enriched.isEmpty ? live : enriched.first;
+    }
 
-        for (final raw in data.whereType<Map>()) {
-          final map = Map<String, dynamic>.from(raw);
-          final rawId = (map['ID'] ??
-                  map['id'] ??
-                  map['playerid'] ??
-                  map['resource_id'] ??
-                  '')
-              .toString();
-          if (rawId == id) return Player.fromJson(map);
-        }
+    final catalog = await _loadCatalog();
+    for (final player in catalog) {
+      if (player.id == id) {
+        final enriched = await enrichWithPrices([player], platform: platform);
+        return enriched.isEmpty ? player : enriched.first;
       }
-    } catch (_) {}
-
-    final fallback = await _githubPlayers();
-    for (final player in fallback) {
-      if (player.id == id) return player;
     }
     return null;
+  }
+
+  Future<List<Player>> getPlayersByIds(
+    Iterable<String> ids, {
+    String platform = 'console',
+    int limit = 40,
+  }) async {
+    final wanted = ids.map((e) => e.trim()).where((e) => e.isNotEmpty).toSet();
+    if (wanted.isEmpty) return const [];
+
+    final catalog = await _loadCatalog();
+    final byId = {for (final p in catalog) p.id: p};
+    final found = <Player>[];
+    for (final id in wanted) {
+      final player = byId[id];
+      if (player != null) found.add(player);
+      if (found.length >= limit) break;
+    }
+    return enrichWithPrices(found, platform: platform);
   }
 
   Future<List<Player>> getTrending({
     String platform = 'console',
   }) async {
     try {
-      final json = await _getFutbin(
+      final json = await _getMarketApi(
         'getPopularPlayers',
         const {},
         ttl: const Duration(minutes: 2),
@@ -133,22 +124,27 @@ class PublicFcData {
         final players = data
             .whereType<Map>()
             .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-            .where((e) => e.id.isNotEmpty && e.name.isNotEmpty)
+            .where((e) => e.id.isNotEmpty && e.name.isNotEmpty && e.rating > 0)
+            .map(_withPortrait)
             .toList();
-        if (players.isNotEmpty) return players;
+        if (players.isNotEmpty) {
+          return enrichWithPrices(players, platform: platform);
+        }
       }
     } catch (_) {}
 
-    return getPlayers(platform: platform);
+    final catalog = await _loadCatalog();
+    return enrichWithPrices(catalog.take(24).toList(), platform: platform);
   }
 
   Future<List<Player>> getFiltered({
     required Map<String, String> params,
   }) async {
+    final platform = params['platform'] == 'pc' ? 'pc' : 'console';
     try {
-      final platform = params['platform'] == 'pc' ? 'PC' : 'PS';
+      final apiPlatform = platform == 'pc' ? 'PC' : 'PS';
       final apiParams = <String, String>{
-        'platform': platform,
+        'platform': apiPlatform,
         'page': params['page'] ?? '1',
       };
 
@@ -185,7 +181,7 @@ class PublicFcData {
         if (value != null && value.isNotEmpty) apiParams[key] = value;
       }
 
-      final json = await _getFutbin(
+      final json = await _getMarketApi(
         'getFilteredPlayers',
         apiParams,
         ttl: const Duration(minutes: 2),
@@ -195,84 +191,295 @@ class PublicFcData {
         var players = data
             .whereType<Map>()
             .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-            .where((e) => e.id.isNotEmpty && e.name.isNotEmpty)
+            .where((e) => e.id.isNotEmpty && e.name.isNotEmpty && e.rating > 0)
+            .map(_withPortrait)
             .toList();
 
         final q = (params['q'] ?? '').trim().toLowerCase();
         if (q.isNotEmpty) {
-          players = players
-              .where((e) => e.name.toLowerCase().contains(q))
-              .toList();
+          players =
+              players.where((e) => e.name.toLowerCase().contains(q)).toList();
         }
 
         players = _textFilter(players, params);
         _sort(players, params['sort'] ?? 'rating_desc', params['platform']);
-        if (players.isNotEmpty) return players;
+        if (players.isNotEmpty) {
+          return enrichWithPrices(players, platform: platform);
+        }
       }
     } catch (_) {}
 
-    var fallback = await _githubPlayers();
-    fallback = _textFilter(fallback, params);
+    var catalog = await _loadCatalog();
+    catalog = _textFilter(List<Player>.from(catalog), params);
 
     final q = (params['q'] ?? '').trim().toLowerCase();
     if (q.isNotEmpty) {
-      fallback =
-          fallback.where((e) => e.name.toLowerCase().contains(q)).toList();
+      catalog = catalog.where((e) => e.name.toLowerCase().contains(q)).toList();
     }
 
-    return fallback;
+    final minPace = int.tryParse(params['min_pace'] ?? '');
+    final maxPace = int.tryParse(params['max_pace'] ?? '');
+    final minSho = int.tryParse(params['min_shooting'] ?? '');
+    final maxSho = int.tryParse(params['max_shooting'] ?? '');
+    final minPas = int.tryParse(params['min_passing'] ?? '');
+    final maxPas = int.tryParse(params['max_passing'] ?? '');
+    final minDri = int.tryParse(params['min_dribbling'] ?? '');
+    final maxDri = int.tryParse(params['max_dribbling'] ?? '');
+    final minDef = int.tryParse(params['min_defending'] ?? '');
+    final maxDef = int.tryParse(params['max_defending'] ?? '');
+    final minPhy = int.tryParse(params['min_physical'] ?? '');
+    final maxPhy = int.tryParse(params['max_physical'] ?? '');
+    final minSkills = int.tryParse(params['min_skills'] ?? '');
+    final minWf = int.tryParse(params['min_weak_foot'] ?? '');
+
+    catalog = catalog.where((p) {
+      if (minPace != null && p.pace < minPace) return false;
+      if (maxPace != null && p.pace > maxPace) return false;
+      if (minSho != null && p.shooting < minSho) return false;
+      if (maxSho != null && p.shooting > maxSho) return false;
+      if (minPas != null && p.passing < minPas) return false;
+      if (maxPas != null && p.passing > maxPas) return false;
+      if (minDri != null && p.dribbling < minDri) return false;
+      if (maxDri != null && p.dribbling > maxDri) return false;
+      if (minDef != null && p.defending < minDef) return false;
+      if (maxDef != null && p.defending > maxDef) return false;
+      if (minPhy != null && p.physical < minPhy) return false;
+      if (maxPhy != null && p.physical > maxPhy) return false;
+      if (minSkills != null && p.skillMoves < minSkills) return false;
+      if (minWf != null && p.weakFoot < minWf) return false;
+      return true;
+    }).toList();
+
+    _sort(catalog, params['sort'] ?? 'rating_desc', params['platform']);
+
+    final page = int.tryParse(params['page'] ?? '1') ?? 1;
+    const pageSize = 40;
+    final start = (page - 1).clamp(0, 100000) * pageSize;
+    if (start >= catalog.length) return const [];
+    return enrichWithPrices(
+      catalog.skip(start).take(pageSize).toList(),
+      platform: platform,
+    );
   }
 
   Future<Map<String, dynamic>?> getPrice(
     String playerId, {
     String platform = 'console',
   }) async {
-    try {
-      final p = platform == 'pc' ? 'PC' : 'PS';
-      final json = await _getFutbin(
-        'getPlayersPrice',
-        {
-          'player_ids': playerId,
-          'platform': p,
-        },
-        ttl: const Duration(seconds: 45),
-      );
-
-      if (json is! Map) return null;
-      final player = json[playerId];
-      if (player is! Map) return null;
-      final prices = player['prices'];
-      if (prices is! Map) return null;
-      final raw = prices[p];
-      if (raw is! Map) return null;
-
-      return {
-        'player_id': playerId,
-        'platform': platform,
-        'current': _coin(raw['LCPrice']),
-        'low': _coin(raw['MinPrice']),
-        'high': _coin(raw['MaxPrice']),
-        'change_24h_percent': 0,
-        'updated_text': (raw['updated'] ?? '').toString(),
-        'source': 'futbin-public',
-      };
-    } catch (_) {
-      return null;
-    }
+    final batch = await getPricesBatch([playerId], platform: platform);
+    return batch[playerId];
   }
 
-  Future<dynamic> _getFutbin(
+  Future<Map<String, Map<String, dynamic>>> getPricesBatch(
+    List<String> playerIds, {
+    String platform = 'console',
+  }) async {
+    final ids = playerIds
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toSet()
+        .toList();
+    if (ids.isEmpty) return const {};
+
+    final out = <String, Map<String, dynamic>>{};
+    final p = platform == 'pc' ? 'PC' : 'PS';
+
+    for (var i = 0; i < ids.length; i += 20) {
+      final chunk = ids.skip(i).take(20).toList();
+      try {
+        final json = await _getMarketApi(
+          'getPlayersPrice',
+          {
+            'player_ids': chunk.join(','),
+            'platform': p,
+          },
+          ttl: const Duration(seconds: 45),
+        );
+        if (json is! Map) continue;
+
+        for (final id in chunk) {
+          final player = json[id];
+          if (player is! Map) continue;
+          final prices = player['prices'];
+          if (prices is! Map) continue;
+          final raw = prices[p];
+          if (raw is! Map) continue;
+          final current = _coin(raw['LCPrice']);
+          if (current <= 0) continue;
+          final bins = <int>[
+            current,
+            _coin(raw['LCPrice2']),
+            _coin(raw['LCPrice3']),
+            _coin(raw['LCPrice4']),
+            _coin(raw['LCPrice5']),
+          ].where((e) => e > 0).toSet().toList()
+            ..sort();
+          out[id] = {
+            'player_id': id,
+            'platform': platform,
+            'current': current,
+            'low': _coin(raw['MinPrice']),
+            'high': _coin(raw['MaxPrice']),
+            'lowest_bins': bins.take(3).toList(),
+            'updated_text': (raw['updated'] ?? '').toString(),
+            'source': 'live-market',
+          };
+        }
+      } catch (_) {}
+    }
+
+    return out;
+  }
+
+  Future<List<Player>> enrichWithPrices(
+    List<Player> players, {
+    String platform = 'console',
+  }) async {
+    if (players.isEmpty) return players;
+    final withImages = players.map(_withPortrait).toList();
+    final needsPrice = withImages
+        .where((p) => (platform == 'pc' ? p.pricePc : p.pricePs) <= 0)
+        .map((p) => p.id)
+        .toList();
+    if (needsPrice.isEmpty) return withImages;
+
+    final prices = await getPricesBatch(needsPrice, platform: platform);
+    if (prices.isEmpty) return withImages;
+
+    return withImages.map((player) {
+      final price = prices[player.id];
+      if (price == null) return player;
+      final current = price['current'];
+      final value = current is int ? current : int.tryParse('$current') ?? 0;
+      if (value <= 0) return player;
+      if (platform == 'pc') {
+        return player.copyWith(pricePc: value);
+      }
+      return player.copyWith(pricePs: value);
+    }).toList();
+  }
+
+  Player _withPortrait(Player player) {
+    final resolved = PlayerMedia.resolve(player.id, player.imageUrl);
+    if (resolved == player.imageUrl && player.cardImageUrl.isNotEmpty) {
+      return player;
+    }
+    return player.copyWith(
+      imageUrl: resolved,
+      cardImageUrl:
+          player.cardImageUrl.isEmpty ? resolved : player.cardImageUrl,
+    );
+  }
+
+  Future<List<Player>> _marketPlayers({
+    required int page,
+    required String platform,
+  }) async {
+    try {
+      final json = await _getMarketApi(
+        'getFilteredPlayers',
+        {
+          'platform': platform == 'pc' ? 'PC' : 'PS',
+          'page': page.toString(),
+        },
+      );
+      final data = json is Map ? json['data'] : null;
+      if (data is List) {
+        final players = data
+            .whereType<Map>()
+            .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+            .where((e) => e.id.isNotEmpty && e.name.isNotEmpty && e.rating > 0)
+            .map(_withPortrait)
+            .toList();
+        if (players.isNotEmpty) return players;
+      }
+    } catch (_) {}
+    return const [];
+  }
+
+  Future<List<Player>> _marketSearch(
+    String q, {
+    required String platform,
+  }) async {
+    final found = <Player>[];
+    final seen = <String>{};
+
+    try {
+      for (var page = 1; page <= 8; page++) {
+        final json = await _getMarketApi(
+          'getFilteredPlayers',
+          {
+            'platform': platform == 'pc' ? 'PC' : 'PS',
+            'page': page.toString(),
+          },
+          ttl: const Duration(minutes: 5),
+        );
+        final data = json is Map ? json['data'] : null;
+        if (data is! List || data.isEmpty) break;
+
+        for (final raw in data.whereType<Map>()) {
+          final player = _withPortrait(
+            Player.fromJson(Map<String, dynamic>.from(raw)),
+          );
+          if (player.id.isEmpty || player.name.isEmpty || player.rating <= 0) {
+            continue;
+          }
+          if (!player.name.toLowerCase().contains(q)) continue;
+          if (seen.add(player.id)) found.add(player);
+        }
+        if (found.length >= 30) break;
+      }
+    } catch (_) {}
+
+    return found;
+  }
+
+  Future<Player?> _marketFindById(
+    String id, {
+    required String platform,
+  }) async {
+    try {
+      for (var page = 1; page <= 12; page++) {
+        final json = await _getMarketApi(
+          'getFilteredPlayers',
+          {
+            'platform': platform == 'pc' ? 'PC' : 'PS',
+            'page': page.toString(),
+          },
+          ttl: const Duration(minutes: 5),
+        );
+        final data = json is Map ? json['data'] : null;
+        if (data is! List || data.isEmpty) break;
+
+        for (final raw in data.whereType<Map>()) {
+          final map = Map<String, dynamic>.from(raw);
+          final rawId = (map['ID'] ??
+                  map['id'] ??
+                  map['playerid'] ??
+                  map['resource_id'] ??
+                  '')
+              .toString();
+          if (rawId == id) {
+            final player = _withPortrait(Player.fromJson(map));
+            if (player.rating > 0) return player;
+          }
+        }
+      }
+    } catch (_) {}
+    return null;
+  }
+
+  Future<dynamic> _getMarketApi(
     String endpoint,
     Map<String, String> params, {
     Duration ttl = const Duration(seconds: 90),
   }) async {
-    final uri = Uri.parse(_futbinBase + endpoint).replace(
+    final uri = Uri.parse(_marketApiBase + endpoint).replace(
       queryParameters: params.isEmpty ? null : params,
     );
     final key = uri.toString();
     final cached = _cache[key];
-    if (cached != null &&
-        DateTime.now().difference(cached.at) < ttl) {
+    if (cached != null && DateTime.now().difference(cached.at) < ttl) {
       return cached.value;
     }
 
@@ -301,84 +508,154 @@ class PublicFcData {
     return json;
   }
 
-  Future<List<Player>> _githubPlayers() async {
-    const cacheKey = 'github:fifa-wc2026-players';
-    final cached = _cache[cacheKey];
-    if (cached != null &&
-        DateTime.now().difference(cached.at) < const Duration(hours: 12)) {
-      return List<Player>.from(cached.value as List);
+  Future<List<Player>> _loadCatalog() async {
+    if (_catalog != null) return _catalog!;
+
+    Uint8List? bytes = _injectedCatalogBytes;
+    if (bytes == null) {
+      try {
+        final data = await rootBundle.load(_catalogAsset);
+        bytes = data.buffer.asUint8List();
+      } catch (_) {
+        bytes = await _downloadRemoteCatalog();
+      }
+    }
+
+    if (bytes == null || bytes.isEmpty) {
+      _catalog = const [];
+      return _catalog!;
     }
 
     try {
-      final request = await _client.getUrl(Uri.parse(_githubFallback));
-      request.headers.set(
-        HttpHeaders.userAgentHeader,
-        'FCBaz/1.0',
-      );
-      final response = await request.close().timeout(
-            const Duration(seconds: 15),
-          );
-      if (response.statusCode != 200) return const [];
-
-      final body = await utf8.decoder.bind(response).join();
-      final lines = const LineSplitter().convert(body);
-      if (lines.length < 2) return const [];
-
-      final headers = lines.first.split('\t');
-      final index = <String, int>{};
-      for (var i = 0; i < headers.length; i++) {
-        index[headers[i].trim().toUpperCase()] = i;
-      }
-
-      String cell(List<String> row, String key) {
-        final i = index[key];
-        return i == null || i >= row.length ? '' : row[i].trim();
-      }
-
+      final decoded = gzip.decode(bytes);
+      final raw = jsonDecode(utf8.decode(decoded));
       final players = <Player>[];
-      for (var i = 1; i < lines.length; i++) {
-        final row = lines[i].split('\t');
-        final name = cell(row, 'PLAYER NAME');
-        if (name.isEmpty) continue;
 
-        final team = cell(row, 'TEAM');
-        final club = cell(row, 'CLUB');
-        final pos = _mapWorldCupPosition(cell(row, 'POS'));
-        final height = cell(row, 'HEIGHT (CM)');
-
-        players.add(
-          Player(
-            id: 'wc2026-' + i.toString(),
-            name: name,
-            rating: 0,
-            position: pos,
-            positions: [pos],
-            clubName: club,
-            leagueName: '',
-            nationName: team,
-            version: 'FIFA World Cup 2026',
-            imageUrl: '',
-            pace: 0,
-            shooting: 0,
-            passing: 0,
-            dribbling: 0,
-            defending: 0,
-            physical: 0,
-            skillMoves: 0,
-            weakFoot: 0,
-            height: height,
-            rarity: 'Public Dataset',
-            cardType: 'Reference',
-          ),
-        );
+      if (raw is List) {
+        for (final item in raw.whereType<Map>()) {
+          final player = _playerFromCatalog(Map<String, dynamic>.from(item));
+          if (player != null) players.add(_withPortrait(player));
+        }
       }
 
-      _cache[cacheKey] =
-          _PublicCacheEntry(value: players, at: DateTime.now());
+      players.sort((a, b) {
+        final byRating = b.rating.compareTo(a.rating);
+        if (byRating != 0) return byRating;
+        return a.name.compareTo(b.name);
+      });
+
+      _catalog = players;
       return players;
     } catch (_) {
-      return const [];
+      _catalog = const [];
+      return _catalog!;
     }
+  }
+
+  Future<Uint8List?> _downloadRemoteCatalog() async {
+    try {
+      final request = await _client.getUrl(Uri.parse(_catalogRemote));
+      request.headers.set(HttpHeaders.userAgentHeader, 'FCBaz/1.0');
+      final response = await request.close().timeout(
+            const Duration(seconds: 45),
+          );
+      if (response.statusCode != 200) return null;
+      final builder = BytesBuilder(copy: false);
+      await for (final chunk in response) {
+        builder.add(chunk);
+      }
+      return builder.takeBytes();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Player? _playerFromCatalog(Map<String, dynamic> json) {
+    if (json.containsKey('n') || json.containsKey('r')) {
+      final id = (json['id'] ?? '').toString();
+      final name = (json['n'] ?? json['ln'] ?? '').toString();
+      final rating = _asInt(json['r']);
+      if (id.isEmpty || name.isEmpty || rating <= 0) return null;
+
+      final positions = (json['ps'] is List)
+          ? (json['ps'] as List)
+              .map((e) => e.toString())
+              .where((e) => e.isNotEmpty)
+              .toList()
+          : <String>[];
+      final position = (json['p'] ??
+              (positions.isNotEmpty ? positions.first : 'CM'))
+          .toString();
+      final image = PlayerMedia.resolve(id, (json['img'] ?? '').toString());
+
+      return Player(
+        id: id,
+        name: name,
+        rating: rating,
+        position: position,
+        positions: positions.isEmpty ? [position] : positions,
+        clubName: (json['c'] ?? '').toString(),
+        leagueName: (json['l'] ?? '').toString(),
+        nationName: (json['na'] ?? '').toString(),
+        version: 'Gold',
+        imageUrl: image,
+        cardImageUrl: image,
+        pace: _asInt(json['pac']),
+        shooting: _asInt(json['sho']),
+        passing: _asInt(json['pas']),
+        dribbling: _asInt(json['dri']),
+        defending: _asInt(json['defe']),
+        physical: _asInt(json['phy']),
+        skillMoves: _asInt(json['sm']),
+        weakFoot: _asInt(json['wf']),
+        rarity: 'Rare',
+        cardType: 'Gold',
+      );
+    }
+
+    final id = (json['player_id'] ?? json['id'] ?? '').toString();
+    final name =
+        (json['short_name'] ?? json['long_name'] ?? json['name'] ?? '')
+            .toString();
+    final rating = _asInt(json['overall'] ?? json['rating']);
+    if (id.isEmpty || name.isEmpty || rating <= 0) return null;
+
+    final posRaw =
+        (json['player_positions'] ?? json['position'] ?? 'CM').toString();
+    final positions = posRaw
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    final image = PlayerMedia.resolve(
+      id,
+      (json['player_face_url'] ?? json['image_url'] ?? '').toString(),
+    );
+
+    return Player(
+      id: id,
+      name: name,
+      rating: rating,
+      position: positions.isNotEmpty ? positions.first : 'CM',
+      positions: positions.isEmpty ? const ['CM'] : positions,
+      clubName: (json['club_name'] ?? '').toString(),
+      leagueName: (json['league_name'] ?? '').toString(),
+      nationName:
+          (json['nationality_name'] ?? json['nation_name'] ?? '').toString(),
+      version: 'Gold',
+      imageUrl: image,
+      cardImageUrl: image,
+      pace: _asInt(json['pace']),
+      shooting: _asInt(json['shooting']),
+      passing: _asInt(json['passing']),
+      dribbling: _asInt(json['dribbling']),
+      defending: _asInt(json['defending']),
+      physical: _asInt(json['physic'] ?? json['physical']),
+      skillMoves: _asInt(json['skill_moves']),
+      weakFoot: _asInt(json['weak_foot']),
+      rarity: 'Rare',
+      cardType: 'Gold',
+    );
   }
 
   List<Player> _textFilter(
@@ -400,10 +677,8 @@ class PublicFcData {
           !p.positions.contains(position)) {
         return false;
       }
-      if (p.rating > 0) {
-        if (minRating != null && p.rating < minRating) return false;
-        if (maxRating != null && p.rating > maxRating) return false;
-      }
+      if (minRating != null && p.rating < minRating) return false;
+      if (maxRating != null && p.rating > maxRating) return false;
       if (!contains(p.leagueName, params['league'])) return false;
       if (!contains(p.clubName, params['club'])) return false;
       if (!contains(p.nationName, params['nation'])) return false;
@@ -460,7 +735,8 @@ class PublicFcData {
 
   int _coin(dynamic value) {
     if (value is num) return value.round();
-    final raw = (value ?? '').toString().trim().toUpperCase().replaceAll(',', '');
+    final raw =
+        (value ?? '').toString().trim().toUpperCase().replaceAll(',', '');
     if (raw.isEmpty) return 0;
     var multiplier = 1.0;
     var number = raw;
@@ -474,19 +750,17 @@ class PublicFcData {
     return ((double.tryParse(number) ?? 0) * multiplier).round();
   }
 
-  String _mapWorldCupPosition(String value) {
-    switch (value.toUpperCase()) {
-      case 'GK':
-        return 'GK';
-      case 'DF':
-        return 'CB';
-      case 'MF':
-        return 'CM';
-      case 'FW':
-        return 'ST';
-      default:
-        return value.toUpperCase();
+  int _asInt(dynamic value) {
+    if (value is int) return value;
+    if (value is double) {
+      if (value.isNaN) return 0;
+      return value.round();
     }
+    return int.tryParse((value ?? '').toString().split('.').first) ?? 0;
+  }
+
+  static void debugResetCatalog() {
+    _catalog = null;
   }
 }
 

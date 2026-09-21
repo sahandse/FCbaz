@@ -1,7 +1,7 @@
 name: fcbaz
-description: FCBaz - Persian FC27 companion for Android
+description: FCBaz - Persian FUTBIN-style companion with free real data
 publish_to: "none"
-version: 0.2.0+2
+version: 1.0.6+7
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
@@ -23,11 +23,13 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/fcbaz_app_icon.png
+    - assets/data/players_fc26.json.gz
+    - assets/data/free_content.json
 
 flutter_launcher_icons:
   android: true
   image_path: assets/icon/fcbaz_app_icon.png
   min_sdk_android: 21
-  adaptive_icon_background: "#080B0F"
+  adaptive_icon_background: "#000000"
   adaptive_icon_foreground: assets/icon/fcbaz_app_icon.png
   remove_alpha_ios: true

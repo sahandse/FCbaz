@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/market/tax_calculator.dart';
 import '../data/market_repository.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
+import '../domain/player_price_ext.dart';
 import 'price_history_chart.dart';
+import 'tax_calculator_screen.dart';
 
 class PlayerMarketPanel extends StatefulWidget {
   const PlayerMarketPanel({
     required this.playerId,
     required this.playerName,
+    this.seedPricePs = 0,
+    this.seedPricePc = 0,
     super.key,
   });
 
   final String playerId;
   final String playerName;
+  final int seedPricePs;
+  final int seedPricePc;
 
   @override
   State<PlayerMarketPanel> createState() => _PlayerMarketPanelState();
@@ -58,7 +65,25 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => error = e.toString());
+      final seed = widget.seedPricePs > 0
+          ? widget.seedPricePs
+          : widget.seedPricePc;
+      if (seed > 0) {
+        setState(() {
+          price = PlayerPrice(
+            playerId: widget.playerId,
+            platform: widget.seedPricePs > 0 ? 'console' : 'pc',
+            current: seed,
+            low: 0,
+            high: 0,
+            change24hPercent: 0,
+            updatedAt: null,
+          );
+          error = null;
+        });
+      } else {
+        setState(() => error = 'قیمت زنده فعلاً در دسترس نیست.');
+      }
     } finally {
       if (mounted) setState(() => loading = false);
     }
@@ -234,7 +259,15 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
                   .headlineSmall
                   ?.copyWith(fontWeight: FontWeight.w900),
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 4),
+            Text(
+              'بعد از مالیات: ${_coins(current.netAfterTax)}  ·  مالیات: ${_coins(current.taxAmount)}',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 10),
             Row(
               children: [
                 _Metric(label: 'Low', value: _coins(current.low)),
@@ -243,25 +276,72 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
                 const SizedBox(width: 8),
                 _Metric(
                   label: '24h',
-                  value: (positive ? '+' : '') +
-                      current.change24hPercent.toStringAsFixed(1) +
-                      '%',
+                  value: current.change24hPercent == 0
+                      ? '—'
+                      : ((positive ? '+' : '') +
+                          current.change24hPercent.toStringAsFixed(1) +
+                          '%'),
                 ),
               ],
             ),
+            if (current.displayBins.isNotEmpty) ...[
+              const SizedBox(height: 12),
+              Text(
+                'Lowest BIN',
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
+              ),
+              const SizedBox(height: 8),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (var i = 0; i < current.displayBins.length; i++)
+                    Chip(
+                      label: Text(
+                        '#${i + 1}  ${_coins(current.displayBins[i])}',
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
+                    ),
+                ],
+              ),
+            ],
             const SizedBox(height: 14),
             PriceHistoryChart(
               points: history,
               rangeLabel: range == '24h' ? '۲۴ ساعت' : '۷ روز',
             ),
             const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: FilledButton.tonalIcon(
-                onPressed: _setAlert,
-                icon: const Icon(Icons.notifications_active_outlined),
-                label: const Text('تنظیم هشدار قیمت'),
-              ),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton.tonalIcon(
+                    onPressed: _setAlert,
+                    icon: const Icon(Icons.notifications_active_outlined),
+                    label: const Text('هشدار قیمت'),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: OutlinedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => TaxCalculatorScreen(
+                            initialPrice: current.current,
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.calculate_outlined),
+                    label: Text(
+                      'حداکثر خرید ${_coins(TaxCalculator.maxBuyForProfit(current.current))}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

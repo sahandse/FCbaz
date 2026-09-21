@@ -6,7 +6,9 @@ import '../domain/evolution.dart';
 import '../domain/evolution_eligibility_engine.dart';
 
 class EvolutionsScreen extends StatefulWidget {
-  const EvolutionsScreen({super.key});
+  const EvolutionsScreen({this.embedded = false, super.key});
+
+  final bool embedded;
 
   @override
   State<EvolutionsScreen> createState() => _EvolutionsScreenState();
@@ -43,50 +45,62 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('Evolutions')),
-      body: RefreshIndicator(
-        onRefresh: _load,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
+    final content = RefreshIndicator(
+      onRefresh: _load,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (!widget.embedded) ...[
             Text('Evo Lab', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 4),
             Text(
               'مسیرهای ارتقا، شرایط و بازیکنان واجد شرایط',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 16),
-            if (loading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 72),
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else if (error != null)
-              Card(
-                child: ListTile(
-                  leading: const Icon(Icons.cloud_off_rounded),
-                  title: const Text('Evolutions در دسترس نیست'),
-                  subtitle: Text(error!),
-                  trailing: IconButton(onPressed: _load, icon: const Icon(Icons.refresh_rounded)),
-                ),
-              )
-            else if (items.isEmpty)
-              const Card(
-                child: ListTile(
-                  leading: Icon(Icons.auto_awesome_rounded),
-                  title: Text('Evolution فعالی پیدا نشد'),
-                  subtitle: Text('این بخش فقط از داده واقعی FC27 استفاده می‌کند.'),
-                ),
-              )
-            else
-              for (final item in items) ...[
-                _EvolutionCard(item: item, repository: repository),
-                const SizedBox(height: 10),
-              ],
           ],
-        ),
+          if (loading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 72),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (error != null)
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.cloud_off_rounded),
+                title: const Text('Evolutions در دسترس نیست'),
+                subtitle: Text(error!),
+                trailing: IconButton(
+                  onPressed: _load,
+                  icon: const Icon(Icons.refresh_rounded),
+                ),
+              ),
+            )
+          else if (items.isEmpty)
+            const Card(
+              child: ListTile(
+                leading: Icon(Icons.auto_awesome_rounded),
+                title: Text('Evolution فعالی پیدا نشد'),
+                subtitle: Text(
+                  'لیست زنده وقتی منبع داده باشد پر می‌شود. از تب My Evo برای پیگیری شخصی استفاده کنید.',
+                ),
+              ),
+            )
+          else
+            for (final item in items) ...[
+              _EvolutionCard(item: item, repository: repository),
+              const SizedBox(height: 10),
+            ],
+        ],
       ),
+    );
+
+    if (widget.embedded) return content;
+    return Scaffold(
+      appBar: AppBar(title: const Text('Evolutions')),
+      body: content,
     );
   }
 }
