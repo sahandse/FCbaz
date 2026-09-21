@@ -1,7 +1,7 @@
 name: fcbaz
 description: FCBaz - Persian FUTBIN-style companion with free real data
 publish_to: "none"
-version: 1.0.3+4
+version: 1.0.4+5
 
 environment:
   sdk: ">=3.9.0 <4.0.0"

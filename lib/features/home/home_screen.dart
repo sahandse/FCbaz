@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../evolutions/presentation/evolutions_screen.dart';
 import '../players/presentation/player_details_screen.dart';
+import '../players/presentation/player_portrait.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import 'home_repository.dart';
 import 'objectives_screen.dart';
@@ -63,6 +64,19 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     }
     return '—';
+  }
+
+  String _formatCoins(int value) {
+    if (value <= 0) return '—';
+    if (value >= 1000000) {
+      final n = value / 1000000;
+      return n.toStringAsFixed(n >= 10 ? 0 : 1) + 'M';
+    }
+    if (value >= 1000) {
+      final n = value / 1000;
+      return n.toStringAsFixed(n >= 100 ? 0 : 1) + 'K';
+    }
+    return value.toString();
   }
 
   @override
@@ -160,14 +174,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             padding: const EdgeInsets.all(10),
                             child: Column(
                               children: [
-                                CircleAvatar(
-                                  radius: 32,
-                                  backgroundImage: player.imageUrl.isEmpty
-                                      ? null
-                                      : NetworkImage(player.imageUrl),
-                                  child: player.imageUrl.isEmpty
-                                      ? Text(player.rating.toString())
-                                      : null,
+                                PlayerPortrait(
+                                  player: player,
+                                  width: 64,
+                                  height: 64,
+                                  borderRadius: 32,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
@@ -185,14 +196,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   style:
                                       Theme.of(context).textTheme.labelSmall,
                                 ),
-                                if (player.version.isNotEmpty)
-                                  Text(
-                                    player.version,
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
-                                  ),
+                                Text(
+                                  player.pricePs > 0
+                                      ? _formatCoins(player.pricePs)
+                                      : (player.pricePc > 0
+                                          ? _formatCoins(player.pricePc)
+                                          : 'قیمت —'),
+                                  style:
+                                      Theme.of(context).textTheme.labelSmall,
+                                ),
                               ],
                             ),
                           ),
@@ -471,7 +483,7 @@ class _HeroCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'نسخه فارسی تجربه‌ای شبیه FUTBIN: دیتابیس بازیکن، فیلتر، قیمت زنده در صورت دسترسی، تیم‌ساز و ابزارهای باشگاه — بدون ثبت‌نام و بدون داده ساختگی.',
+            'دیتابیس بازیکن، فیلتر، قیمت زنده بازار، تیم‌ساز و ابزارهای باشگاه — فارسی، بدون ثبت‌نام و بدون داده ساختگی.',
             style: TextStyle(
               color: scheme.onSurfaceVariant,
               height: 1.6,

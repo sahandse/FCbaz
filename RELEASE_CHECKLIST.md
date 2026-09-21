@@ -1,6 +1,6 @@
 # FCBaz Production Release Checklist
 
-نسخهٔ عمومی فعلی: FUTBIN-style فارسی با دیتای رایگان واقعی و بدون حساب ابری.
+نسخهٔ عمومی فعلی: اپ فارسی Ultimate Team با دیتای رایگان واقعی و بدون حساب ابری.
 
 ## 1. Production data
 

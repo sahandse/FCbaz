@@ -9,11 +9,15 @@ class PlayerMarketPanel extends StatefulWidget {
   const PlayerMarketPanel({
     required this.playerId,
     required this.playerName,
+    this.seedPricePs = 0,
+    this.seedPricePc = 0,
     super.key,
   });
 
   final String playerId;
   final String playerName;
+  final int seedPricePs;
+  final int seedPricePc;
 
   @override
   State<PlayerMarketPanel> createState() => _PlayerMarketPanelState();
@@ -58,7 +62,25 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
       });
     } catch (e) {
       if (!mounted) return;
-      setState(() => error = e.toString());
+      final seed = widget.seedPricePs > 0
+          ? widget.seedPricePs
+          : widget.seedPricePc;
+      if (seed > 0) {
+        setState(() {
+          price = PlayerPrice(
+            playerId: widget.playerId,
+            platform: widget.seedPricePs > 0 ? 'console' : 'pc',
+            current: seed,
+            low: 0,
+            high: 0,
+            change24hPercent: 0,
+            updatedAt: null,
+          );
+          error = null;
+        });
+      } else {
+        setState(() => error = 'قیمت زنده فعلاً در دسترس نیست.');
+      }
     } finally {
       if (mounted) setState(() => loading = false);
     }

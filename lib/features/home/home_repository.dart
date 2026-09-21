@@ -117,7 +117,7 @@ class HomeRepository {
               'price_pc': p.pricePc,
               'change': p.rating.toString() + ' OVR • ' + p.position,
               'source': p.pricePs > 0 || p.pricePc > 0
-                  ? 'futbin-public'
+                  ? 'live-market'
                   : 'fc26-free-catalog',
             })
         .toList();

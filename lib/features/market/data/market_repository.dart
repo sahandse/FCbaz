@@ -106,7 +106,7 @@ class MarketRepository {
               'rating': p.rating,
               'price_ps': p.pricePs,
               'price_pc': p.pricePc,
-              'source': 'futbin-public',
+              'source': 'live-market',
             })
         .toList();
   }

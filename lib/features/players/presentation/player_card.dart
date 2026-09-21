@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../search/search_history_repository.dart';
 import '../domain/player.dart';
 import 'player_details_screen.dart';
+import 'player_portrait.dart';
 
 class PlayerCard extends StatefulWidget {
   const PlayerCard({
@@ -87,31 +88,8 @@ class _PlayerCardState extends State<PlayerCard> {
               Container(
                 width: 70,
                 height: 88,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(17),
-                  color: scheme.primary.withValues(alpha: .10),
-                ),
                 alignment: Alignment.center,
-                child: player.imageUrl.isEmpty
-                    ? Icon(
-                        Icons.person_rounded,
-                        size: 36,
-                        color: scheme.primary,
-                      )
-                    : ClipRRect(
-                        borderRadius: BorderRadius.circular(17),
-                        child: Image.network(
-                          player.imageUrl,
-                          fit: BoxFit.cover,
-                          width: 70,
-                          height: 88,
-                          errorBuilder: (_, __, ___) => Icon(
-                            Icons.person_rounded,
-                            size: 36,
-                            color: scheme.primary,
-                          ),
-                        ),
-                      ),
+                child: PlayerPortrait(player: player),
               ),
               const SizedBox(width: 13),
               Expanded(

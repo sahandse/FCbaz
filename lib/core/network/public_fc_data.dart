@@ -5,12 +5,13 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart';
 
 import '../../features/players/domain/player.dart';
+import 'player_media.dart';
 
-/// Free real-data layer for FCBaz (Persian FUTBIN-style companion).
+/// Free real-data layer for FCBaz.
 ///
 /// Priority:
-/// 1. Live public FUTBIN endpoints when reachable (prices / trending).
-/// 2. Bundled FC26 community player catalog (real ratings/stats, no fabrications).
+/// 1. Live public market endpoints when reachable (prices / trending).
+/// 2. Bundled FC26 community player catalog (real ratings/stats).
 ///
 /// Never invents coin prices or player cards.
 class PublicFcData {
@@ -23,7 +24,7 @@ class PublicFcData {
   final HttpClient _client;
   final Uint8List? _injectedCatalogBytes;
 
-  static const _futbinBase = 'https://www.futbin.org/futbin/api/';
+  static const _marketApiBase = 'https://www.futbin.org/futbin/api/';
   static const _catalogAsset = 'assets/data/players_fc26.json.gz';
   static const _catalogRemote =
       'https://raw.githubusercontent.com/ismailoksuz/EAFC26-DataHub/main/data/players.json.gz';
@@ -35,14 +36,19 @@ class PublicFcData {
     int page = 1,
     String platform = 'console',
   }) async {
-    final live = await _futbinPlayers(page: page, platform: platform);
-    if (live.isNotEmpty) return live;
+    final live = await _marketPlayers(page: page, platform: platform);
+    if (live.isNotEmpty) {
+      return enrichWithPrices(live, platform: platform);
+    }
 
     final catalog = await _loadCatalog();
     const pageSize = 40;
     final start = (page < 1 ? 0 : page - 1) * pageSize;
     if (start >= catalog.length) return const [];
-    return catalog.skip(start).take(pageSize).toList();
+    return enrichWithPrices(
+      catalog.skip(start).take(pageSize).toList(),
+      platform: platform,
+    );
   }
 
   Future<List<Player>> search(
@@ -52,26 +58,35 @@ class PublicFcData {
     final q = query.trim().toLowerCase();
     if (q.length < 2) return const [];
 
-    final live = await _futbinSearch(q, platform: platform);
-    if (live.isNotEmpty) return live;
+    final live = await _marketSearch(q, platform: platform);
+    if (live.isNotEmpty) {
+      return enrichWithPrices(live, platform: platform);
+    }
 
     final catalog = await _loadCatalog();
-    return catalog
+    final found = catalog
         .where((e) => e.name.toLowerCase().contains(q))
         .take(40)
         .toList();
+    return enrichWithPrices(found, platform: platform);
   }
 
   Future<Player?> getPlayer(
     String id, {
     String platform = 'console',
   }) async {
-    final live = await _futbinFindById(id, platform: platform);
-    if (live != null) return live;
+    final live = await _marketFindById(id, platform: platform);
+    if (live != null) {
+      final enriched = await enrichWithPrices([live], platform: platform);
+      return enriched.isEmpty ? live : enriched.first;
+    }
 
     final catalog = await _loadCatalog();
     for (final player in catalog) {
-      if (player.id == id) return player;
+      if (player.id == id) {
+        final enriched = await enrichWithPrices([player], platform: platform);
+        return enriched.isEmpty ? player : enriched.first;
+      }
     }
     return null;
   }
@@ -80,7 +95,7 @@ class PublicFcData {
     String platform = 'console',
   }) async {
     try {
-      final json = await _getFutbin(
+      final json = await _getMarketApi(
         'getPopularPlayers',
         const {},
         ttl: const Duration(minutes: 2),
@@ -91,22 +106,26 @@ class PublicFcData {
             .whereType<Map>()
             .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
             .where((e) => e.id.isNotEmpty && e.name.isNotEmpty && e.rating > 0)
+            .map(_withPortrait)
             .toList();
-        if (players.isNotEmpty) return players;
+        if (players.isNotEmpty) {
+          return enrichWithPrices(players, platform: platform);
+        }
       }
     } catch (_) {}
 
     final catalog = await _loadCatalog();
-    return catalog.take(24).toList();
+    return enrichWithPrices(catalog.take(24).toList(), platform: platform);
   }
 
   Future<List<Player>> getFiltered({
     required Map<String, String> params,
   }) async {
+    final platform = params['platform'] == 'pc' ? 'pc' : 'console';
     try {
-      final platform = params['platform'] == 'pc' ? 'PC' : 'PS';
+      final apiPlatform = platform == 'pc' ? 'PC' : 'PS';
       final apiParams = <String, String>{
-        'platform': platform,
+        'platform': apiPlatform,
         'page': params['page'] ?? '1',
       };
 
@@ -143,7 +162,7 @@ class PublicFcData {
         if (value != null && value.isNotEmpty) apiParams[key] = value;
       }
 
-      final json = await _getFutbin(
+      final json = await _getMarketApi(
         'getFilteredPlayers',
         apiParams,
         ttl: const Duration(minutes: 2),
@@ -154,6 +173,7 @@ class PublicFcData {
             .whereType<Map>()
             .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
             .where((e) => e.id.isNotEmpty && e.name.isNotEmpty && e.rating > 0)
+            .map(_withPortrait)
             .toList();
 
         final q = (params['q'] ?? '').trim().toLowerCase();
@@ -164,7 +184,9 @@ class PublicFcData {
 
         players = _textFilter(players, params);
         _sort(players, params['sort'] ?? 'rating_desc', params['platform']);
-        if (players.isNotEmpty) return players;
+        if (players.isNotEmpty) {
+          return enrichWithPrices(players, platform: platform);
+        }
       }
     } catch (_) {}
 
@@ -215,56 +237,119 @@ class PublicFcData {
     const pageSize = 40;
     final start = (page - 1).clamp(0, 100000) * pageSize;
     if (start >= catalog.length) return const [];
-    return catalog.skip(start).take(pageSize).toList();
+    return enrichWithPrices(
+      catalog.skip(start).take(pageSize).toList(),
+      platform: platform,
+    );
   }
 
   Future<Map<String, dynamic>?> getPrice(
     String playerId, {
     String platform = 'console',
   }) async {
-    try {
-      final p = platform == 'pc' ? 'PC' : 'PS';
-      final json = await _getFutbin(
-        'getPlayersPrice',
-        {
-          'player_ids': playerId,
-          'platform': p,
-        },
-        ttl: const Duration(seconds: 45),
-      );
-
-      if (json is! Map) return null;
-      final player = json[playerId];
-      if (player is! Map) return null;
-      final prices = player['prices'];
-      if (prices is! Map) return null;
-      final raw = prices[p];
-      if (raw is! Map) return null;
-
-      final current = _coin(raw['LCPrice']);
-      if (current <= 0) return null;
-
-      return {
-        'player_id': playerId,
-        'platform': platform,
-        'current': current,
-        'low': _coin(raw['MinPrice']),
-        'high': _coin(raw['MaxPrice']),
-        'change_24h_percent': 0,
-        'updated_text': (raw['updated'] ?? '').toString(),
-        'source': 'futbin-public',
-      };
-    } catch (_) {
-      return null;
-    }
+    final batch = await getPricesBatch([playerId], platform: platform);
+    return batch[playerId];
   }
 
-  Future<List<Player>> _futbinPlayers({
+  Future<Map<String, Map<String, dynamic>>> getPricesBatch(
+    List<String> playerIds, {
+    String platform = 'console',
+  }) async {
+    final ids = playerIds
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toSet()
+        .toList();
+    if (ids.isEmpty) return const {};
+
+    final out = <String, Map<String, dynamic>>{};
+    final p = platform == 'pc' ? 'PC' : 'PS';
+
+    for (var i = 0; i < ids.length; i += 20) {
+      final chunk = ids.skip(i).take(20).toList();
+      try {
+        final json = await _getMarketApi(
+          'getPlayersPrice',
+          {
+            'player_ids': chunk.join(','),
+            'platform': p,
+          },
+          ttl: const Duration(seconds: 45),
+        );
+        if (json is! Map) continue;
+
+        for (final id in chunk) {
+          final player = json[id];
+          if (player is! Map) continue;
+          final prices = player['prices'];
+          if (prices is! Map) continue;
+          final raw = prices[p];
+          if (raw is! Map) continue;
+          final current = _coin(raw['LCPrice']);
+          if (current <= 0) continue;
+          out[id] = {
+            'player_id': id,
+            'platform': platform,
+            'current': current,
+            'low': _coin(raw['MinPrice']),
+            'high': _coin(raw['MaxPrice']),
+            'change_24h_percent': 0,
+            'updated_text': (raw['updated'] ?? '').toString(),
+            'source': 'live-market',
+          };
+        }
+      } catch (_) {}
+    }
+
+    return out;
+  }
+
+  Future<List<Player>> enrichWithPrices(
+    List<Player> players, {
+    String platform = 'console',
+  }) async {
+    if (players.isEmpty) return players;
+    final withImages = players.map(_withPortrait).toList();
+    final needsPrice = withImages
+        .where((p) => (platform == 'pc' ? p.pricePc : p.pricePs) <= 0)
+        .map((p) => p.id)
+        .toList();
+    if (needsPrice.isEmpty) return withImages;
+
+    final prices = await getPricesBatch(needsPrice, platform: platform);
+    if (prices.isEmpty) return withImages;
+
+    return withImages.map((player) {
+      final price = prices[player.id];
+      if (price == null) return player;
+      final current = price['current'];
+      final value = current is int ? current : int.tryParse('$current') ?? 0;
+      if (value <= 0) return player;
+      if (platform == 'pc') {
+        return player.copyWith(pricePc: value);
+      }
+      return player.copyWith(pricePs: value);
+    }).toList();
+  }
+
+  Player _withPortrait(Player player) {
+    final resolved = PlayerMedia.resolve(player.id, player.imageUrl);
+    if (resolved == player.imageUrl && player.cardImageUrl.isNotEmpty) {
+      return player;
+    }
+    return player.copyWith(
+      imageUrl: resolved,
+      cardImageUrl:
+          player.cardImageUrl.isEmpty ? resolved : player.cardImageUrl,
+    );
+  }
+
+  Future<List<Player>> _marketPlayers({
     required int page,
     required String platform,
   }) async {
     try {
-      final json = await _getFutbin(
+      final json = await _getMarketApi(
         'getFilteredPlayers',
         {
           'platform': platform == 'pc' ? 'PC' : 'PS',
@@ -277,6 +362,7 @@ class PublicFcData {
             .whereType<Map>()
             .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
             .where((e) => e.id.isNotEmpty && e.name.isNotEmpty && e.rating > 0)
+            .map(_withPortrait)
             .toList();
         if (players.isNotEmpty) return players;
       }
@@ -284,7 +370,7 @@ class PublicFcData {
     return const [];
   }
 
-  Future<List<Player>> _futbinSearch(
+  Future<List<Player>> _marketSearch(
     String q, {
     required String platform,
   }) async {
@@ -293,7 +379,7 @@ class PublicFcData {
 
     try {
       for (var page = 1; page <= 8; page++) {
-        final json = await _getFutbin(
+        final json = await _getMarketApi(
           'getFilteredPlayers',
           {
             'platform': platform == 'pc' ? 'PC' : 'PS',
@@ -305,7 +391,9 @@ class PublicFcData {
         if (data is! List || data.isEmpty) break;
 
         for (final raw in data.whereType<Map>()) {
-          final player = Player.fromJson(Map<String, dynamic>.from(raw));
+          final player = _withPortrait(
+            Player.fromJson(Map<String, dynamic>.from(raw)),
+          );
           if (player.id.isEmpty || player.name.isEmpty || player.rating <= 0) {
             continue;
           }
@@ -319,13 +407,13 @@ class PublicFcData {
     return found;
   }
 
-  Future<Player?> _futbinFindById(
+  Future<Player?> _marketFindById(
     String id, {
     required String platform,
   }) async {
     try {
       for (var page = 1; page <= 12; page++) {
-        final json = await _getFutbin(
+        final json = await _getMarketApi(
           'getFilteredPlayers',
           {
             'platform': platform == 'pc' ? 'PC' : 'PS',
@@ -345,7 +433,7 @@ class PublicFcData {
                   '')
               .toString();
           if (rawId == id) {
-            final player = Player.fromJson(map);
+            final player = _withPortrait(Player.fromJson(map));
             if (player.rating > 0) return player;
           }
         }
@@ -354,12 +442,12 @@ class PublicFcData {
     return null;
   }
 
-  Future<dynamic> _getFutbin(
+  Future<dynamic> _getMarketApi(
     String endpoint,
     Map<String, String> params, {
     Duration ttl = const Duration(seconds: 90),
   }) async {
-    final uri = Uri.parse(_futbinBase + endpoint).replace(
+    final uri = Uri.parse(_marketApiBase + endpoint).replace(
       queryParameters: params.isEmpty ? null : params,
     );
     final key = uri.toString();
@@ -419,7 +507,7 @@ class PublicFcData {
       if (raw is List) {
         for (final item in raw.whereType<Map>()) {
           final player = _playerFromCatalog(Map<String, dynamic>.from(item));
-          if (player != null) players.add(player);
+          if (player != null) players.add(_withPortrait(player));
         }
       }
 
@@ -456,7 +544,6 @@ class PublicFcData {
   }
 
   Player? _playerFromCatalog(Map<String, dynamic> json) {
-    // Slim bundled format.
     if (json.containsKey('n') || json.containsKey('r')) {
       final id = (json['id'] ?? '').toString();
       final name = (json['n'] ?? json['ln'] ?? '').toString();
@@ -472,6 +559,7 @@ class PublicFcData {
       final position = (json['p'] ??
               (positions.isNotEmpty ? positions.first : 'CM'))
           .toString();
+      final image = PlayerMedia.resolve(id, (json['img'] ?? '').toString());
 
       return Player(
         id: id,
@@ -482,8 +570,9 @@ class PublicFcData {
         clubName: (json['c'] ?? '').toString(),
         leagueName: (json['l'] ?? '').toString(),
         nationName: (json['na'] ?? '').toString(),
-        version: 'FC26',
-        imageUrl: (json['img'] ?? '').toString(),
+        version: 'Gold',
+        imageUrl: image,
+        cardImageUrl: image,
         pace: _asInt(json['pac']),
         shooting: _asInt(json['sho']),
         passing: _asInt(json['pas']),
@@ -492,28 +581,29 @@ class PublicFcData {
         physical: _asInt(json['phy']),
         skillMoves: _asInt(json['sm']),
         weakFoot: _asInt(json['wf']),
-        rarity: 'Database',
-        cardType: 'FC26',
+        rarity: 'Rare',
+        cardType: 'Gold',
       );
     }
 
-    // Upstream EAFC26-DataHub / Sofifa-style objects.
     final id = (json['player_id'] ?? json['id'] ?? '').toString();
-    final name = (json['short_name'] ??
-            json['long_name'] ??
-            json['name'] ??
-            '')
-        .toString();
+    final name =
+        (json['short_name'] ?? json['long_name'] ?? json['name'] ?? '')
+            .toString();
     final rating = _asInt(json['overall'] ?? json['rating']);
     if (id.isEmpty || name.isEmpty || rating <= 0) return null;
 
-    final posRaw = (json['player_positions'] ?? json['position'] ?? 'CM')
-        .toString();
+    final posRaw =
+        (json['player_positions'] ?? json['position'] ?? 'CM').toString();
     final positions = posRaw
         .split(',')
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
         .toList();
+    final image = PlayerMedia.resolve(
+      id,
+      (json['player_face_url'] ?? json['image_url'] ?? '').toString(),
+    );
 
     return Player(
       id: id,
@@ -523,10 +613,11 @@ class PublicFcData {
       positions: positions.isEmpty ? const ['CM'] : positions,
       clubName: (json['club_name'] ?? '').toString(),
       leagueName: (json['league_name'] ?? '').toString(),
-      nationName: (json['nationality_name'] ?? json['nation_name'] ?? '')
-          .toString(),
-      version: 'FC26',
-      imageUrl: (json['player_face_url'] ?? json['image_url'] ?? '').toString(),
+      nationName:
+          (json['nationality_name'] ?? json['nation_name'] ?? '').toString(),
+      version: 'Gold',
+      imageUrl: image,
+      cardImageUrl: image,
       pace: _asInt(json['pace']),
       shooting: _asInt(json['shooting']),
       passing: _asInt(json['passing']),
@@ -535,8 +626,8 @@ class PublicFcData {
       physical: _asInt(json['physic'] ?? json['physical']),
       skillMoves: _asInt(json['skill_moves']),
       weakFoot: _asInt(json['weak_foot']),
-      rarity: 'Database',
-      cardType: 'FC26',
+      rarity: 'Rare',
+      cardType: 'Gold',
     );
   }
 
@@ -641,7 +732,6 @@ class PublicFcData {
     return int.tryParse((value ?? '').toString().split('.').first) ?? 0;
   }
 
-  /// Test helper to clear the in-memory catalog cache.
   static void debugResetCatalog() {
     _catalog = null;
   }

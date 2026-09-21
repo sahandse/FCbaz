@@ -65,6 +65,84 @@ class Player {
   final int pricePs;
   final int pricePc;
 
+  String get displayImageUrl {
+    final current = imageUrl.trim();
+    if (current.contains('cdn.futbin.com/content/fifa') &&
+        current.endsWith('.png')) {
+      return current;
+    }
+    if (id.trim().isEmpty) return current;
+    return 'https://cdn.futbin.com/content/fifa26/img/players/${id.trim()}.png';
+  }
+
+  Player copyWith({
+    String? id,
+    String? name,
+    int? rating,
+    String? position,
+    List<String>? positions,
+    String? clubName,
+    String? leagueName,
+    String? nationName,
+    String? version,
+    String? imageUrl,
+    String? cardImageUrl,
+    int? pace,
+    int? shooting,
+    int? passing,
+    int? dribbling,
+    int? defending,
+    int? physical,
+    int? skillMoves,
+    int? weakFoot,
+    List<String>? playStyles,
+    List<String>? playStylesPlus,
+    List<String>? roles,
+    Map<String, int>? inGameStats,
+    List<String>? traits,
+    String? foot,
+    String? height,
+    String? workRates,
+    String? rarity,
+    String? cardType,
+    int? pricePs,
+    int? pricePc,
+  }) {
+    return Player(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      rating: rating ?? this.rating,
+      position: position ?? this.position,
+      positions: positions ?? this.positions,
+      clubName: clubName ?? this.clubName,
+      leagueName: leagueName ?? this.leagueName,
+      nationName: nationName ?? this.nationName,
+      version: version ?? this.version,
+      imageUrl: imageUrl ?? this.imageUrl,
+      cardImageUrl: cardImageUrl ?? this.cardImageUrl,
+      pace: pace ?? this.pace,
+      shooting: shooting ?? this.shooting,
+      passing: passing ?? this.passing,
+      dribbling: dribbling ?? this.dribbling,
+      defending: defending ?? this.defending,
+      physical: physical ?? this.physical,
+      skillMoves: skillMoves ?? this.skillMoves,
+      weakFoot: weakFoot ?? this.weakFoot,
+      playStyles: playStyles ?? this.playStyles,
+      playStylesPlus: playStylesPlus ?? this.playStylesPlus,
+      roles: roles ?? this.roles,
+      inGameStats: inGameStats ?? this.inGameStats,
+      traits: traits ?? this.traits,
+      foot: foot ?? this.foot,
+      height: height ?? this.height,
+      workRates: workRates ?? this.workRates,
+      rarity: rarity ?? this.rarity,
+      cardType: cardType ?? this.cardType,
+      pricePs: pricePs ?? this.pricePs,
+      pricePc: pricePc ?? this.pricePc,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,
@@ -135,14 +213,27 @@ class Player {
       return out;
     }
 
+    final id = asString(
+      json['id'] ??
+          json['ID'] ??
+          json['player_id'] ??
+          json['playerid'] ??
+          json['resource_id'],
+    );
+    final rawImage = asString(
+      json['image_url'] ??
+          json['image'] ??
+          json['image_large'] ??
+          json['player_face_url'],
+    );
+    final image = rawImage.contains('cdn.futbin.com/content/fifa')
+        ? rawImage
+        : (id.isEmpty
+            ? rawImage
+            : 'https://cdn.futbin.com/content/fifa26/img/players/$id.png');
+
     return Player(
-      id: asString(
-        json['id'] ??
-            json['ID'] ??
-            json['player_id'] ??
-            json['playerid'] ??
-            json['resource_id'],
-      ),
+      id: id,
       name: asString(
         json['name'] ??
             json['playername'] ??
@@ -171,17 +262,18 @@ class Player {
         json['nation_name'] ?? json['nation'] ?? json['nationality_name'],
       ),
       version: asString(json['version'] ?? json['rarity']),
-      imageUrl: asString(
-        json['image_url'] ??
-            json['image'] ??
-            json['image_large'] ??
-            json['player_face_url'],
-      ),
+      imageUrl: image,
       cardImageUrl: asString(
         json['card_image_url'] ??
             json['card_image'] ??
             json['card_image_large_url'],
-      ),
+      ).isNotEmpty
+          ? asString(
+              json['card_image_url'] ??
+                  json['card_image'] ??
+                  json['card_image_large_url'],
+            )
+          : image,
       pace: asInt(
         json['pace'] ??
             json['pac'] ??

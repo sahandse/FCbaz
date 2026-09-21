@@ -70,7 +70,7 @@ class MetaRepository {
         'price_ps': p.pricePs,
         'price_pc': p.pricePc,
         'source': p.pricePs > 0 || p.pricePc > 0
-            ? 'futbin-public'
+            ? 'live-market'
             : 'fc26-free-catalog',
       };
 }

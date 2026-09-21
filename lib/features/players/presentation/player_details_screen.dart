@@ -6,6 +6,7 @@ import '../data/player_review_repository.dart';
 import '../domain/chemistry_style_advisor.dart';
 import '../domain/player.dart';
 import 'player_compare_screen.dart';
+import 'player_portrait.dart';
 
 class PlayerDetailsScreen extends StatefulWidget {
   const PlayerDetailsScreen({
@@ -289,6 +290,8 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
             PlayerMarketPanel(
               playerId: player.id,
               playerName: player.name,
+              seedPricePs: player.pricePs,
+              seedPricePc: player.pricePc,
             ),
           ],
         ),
@@ -425,8 +428,6 @@ class _PlayerHero extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final displayImage =
-        player.cardImageUrl.isNotEmpty ? player.cardImageUrl : player.imageUrl;
 
     return Container(
       padding: const EdgeInsets.all(20),
@@ -446,34 +447,12 @@ class _PlayerHero extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Container(
+          PlayerPortrait(
+            player: player,
             width: 118,
             height: 150,
-            decoration: BoxDecoration(
-              color: scheme.surfaceContainerHighest,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            alignment: Alignment.center,
-            child: displayImage.isEmpty
-                ? Icon(
-                    Icons.person_rounded,
-                    size: 58,
-                    color: scheme.primary,
-                  )
-                : ClipRRect(
-                    borderRadius: BorderRadius.circular(20),
-                    child: Image.network(
-                      displayImage,
-                      fit: BoxFit.contain,
-                      width: 118,
-                      height: 150,
-                      errorBuilder: (_, __, ___) => Icon(
-                        Icons.person_rounded,
-                        size: 58,
-                        color: scheme.primary,
-                      ),
-                    ),
-                  ),
+            borderRadius: 20,
+            fit: BoxFit.contain,
           ),
           const SizedBox(width: 16),
           Expanded(
