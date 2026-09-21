@@ -276,9 +276,11 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
                 const SizedBox(width: 8),
                 _Metric(
                   label: '24h',
-                  value: (positive ? '+' : '') +
-                      current.change24hPercent.toStringAsFixed(1) +
-                      '%',
+                  value: current.change24hPercent == 0
+                      ? '—'
+                      : ((positive ? '+' : '') +
+                          current.change24hPercent.toStringAsFixed(1) +
+                          '%'),
                 ),
               ],
             ),

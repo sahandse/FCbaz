@@ -1,0 +1,268 @@
+{
+  "version": 1,
+  "source": "fcbaz-github-free",
+  "game": "FC26",
+  "updated_at": "2026-09-21",
+  "news": [
+    {
+      "id": "news-tax-5",
+      "title": "مالیات فروش بازار ۵٪ است",
+      "summary": "برای سود واقعی، قیمت فروش را با ماشین‌حساب مالیات FCBaz چک کنید. حداکثر خرید امن معمولاً کمی کمتر از دریافتی بعد از مالیات است.",
+      "category": "بازار",
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "news-fodder",
+      "title": "Fodder برای SBC",
+      "summary": "برای چالش‌های Rated، اول تب Fodder را ببینید؛ ارزان‌ترین کارت هر ریتینگ از کاتالوگ رایگان و قیمت زنده (در صورت دسترسی) مرتب می‌شود.",
+      "category": "SBC",
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "news-chem",
+      "title": "شیمی تیم و استایل‌ها",
+      "summary": "Chemistry Styles در بخش Consumables آمده‌اند. برای تیم‌ساز از باشگاه من و Squad استفاده کنید؛ اعداد شیمی ساختگی نیستند.",
+      "category": "تیم",
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "news-catalog",
+      "title": "کاتالوگ رایگان FC26",
+      "summary": "حدود ۱۸ هزار کارت واقعی از منبع community روی GitHub داخل اپ است. قیمت سکه فقط وقتی API عمومی بازار جواب بدهد نمایش داده می‌شود.",
+      "category": "داده",
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "news-portraits",
+      "title": "عکس کارت‌ها",
+      "summary": "پرتره از Sofifa و CDN عمومی لود می‌شود. اگر یکی قطع باشد، اپ به‌صورت خودکار منبع بعدی را امتحان می‌کند.",
+      "category": "داده",
+      "source": "fcbaz-free-guide"
+    }
+  ],
+  "objectives": [
+    {
+      "id": "obj-watchlist-5",
+      "title": "۵ کارت در واچ‌لیست",
+      "description": "از صفحه بازیکن، حداقل ۵ کارت را برای پیگیری قیمت ذخیره کنید.",
+      "reward": "پیگیری بازار روی دستگاه",
+      "task_count": 5,
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "obj-tax-calc",
+      "title": "یک معامله را با مالیات حساب کن",
+      "description": "از ابزار مالیات ۵٪ برای یک کارت واچ‌لیست، حداکثر خرید امن را به‌دست بیاور.",
+      "reward": "تصمیم خرید دقیق‌تر",
+      "task_count": 1,
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "obj-fodder-tier",
+      "title": "یک ریتینگ Fodder را مرور کن",
+      "description": "در Fodder یک ریتینگ (مثلاً ۸۴) را باز کن و سه کارت ارزان را مقایسه کن.",
+      "reward": "آمادگی برای SBC",
+      "task_count": 1,
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "obj-squad-chem",
+      "title": "یک اسکادر بساز",
+      "description": "در تیم‌ساز حداقل ۱۱ کارت بگذار و شیمی را ببین.",
+      "reward": "آشنایی با Chemistry",
+      "task_count": 1,
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "obj-pack-value",
+      "title": "ارزش یک پک را حساب کن",
+      "description": "کارت‌های یک پک را در ابزار ارزش پک اضافه کن و مجموع بعد از مالیات را ببین.",
+      "reward": "تخمین ارزش پک",
+      "task_count": 1,
+      "source": "fcbaz-free-guide"
+    }
+  ],
+  "sbcs": [
+    {
+      "id": "guide-rated-82",
+      "title": "راهنمای Rated 82",
+      "category": "راهنمای رایگان",
+      "description": "الگوی رایگان برای اسکادر با میانگین ۸۲. پاداش EA نیست؛ برای تمرین ترکیب ریتینگ است.",
+      "reward": "آموزش ترکیب ریتینگ",
+      "requirements": [
+        "Squad Rating حداقل ۸۲",
+        "۱۱ بازیکن",
+        "ترجیحاً از Fodder ۸۱–۸۳"
+      ],
+      "repeatable": true,
+      "guide_fa": [
+        "از تب ترکیب ریتینگ هدف ۸۲ را بسازید.",
+        "ارزان‌ترین کارت‌ها را در Fodder پیدا کنید.",
+        "قبل از خرید، باشگاه من را چک کنید."
+      ],
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "guide-rated-84",
+      "title": "راهنمای Rated 84",
+      "category": "راهنمای رایگان",
+      "description": "الگوی رایگان اسکادر ۸۴ برای Upgradeهای رایج.",
+      "reward": "آموزش Fodder ۸۴",
+      "requirements": [
+        "Squad Rating حداقل ۸۴",
+        "۱۱ بازیکن"
+      ],
+      "repeatable": true,
+      "guide_fa": [
+        "ترکیب‌های کم‌دورریز را از تب Rating Combo بگیرید.",
+        "کارت‌های ۸۴ و ۸۳ را با قیمت زنده مقایسه کنید.",
+        "اگر قیمت زنده نبود، فقط ریتینگ را مبنا بگیرید؛ عدد سکه جعلی نشان داده نمی‌شود."
+      ],
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "guide-rated-86",
+      "title": "راهنمای Rated 86",
+      "category": "راهنمای رایگان",
+      "description": "الگوی اسکادر ۸۶ برای چالش‌های بالاتر.",
+      "reward": "آموزش ترکیب سنگین",
+      "requirements": [
+        "Squad Rating حداقل ۸۶",
+        "۱۱ بازیکن"
+      ],
+      "repeatable": true,
+      "guide_fa": [
+        "چند کارت ۸۷–۸۸ هزینه را بالا می‌برد؛ ترکیب متعادل‌تر معمولاً ارزان‌تر است.",
+        "از Meta و Fodder برای انتخاب پست‌های گران کمک بگیرید."
+      ],
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "guide-league-chem",
+      "title": "راهنمای Chemistry لیگ",
+      "category": "راهنمای رایگان",
+      "description": "چگونه با یک لیگ مشترک شیمی اسکادر را بالا نگه دارید.",
+      "reward": "آموزش شیمی",
+      "requirements": [
+        "حداقل ۸ بازیکن از یک لیگ",
+        "پست درست"
+      ],
+      "repeatable": true,
+      "guide_fa": [
+        "در فیلتر بازیکنان لیگ را محدود کنید.",
+        "در تیم‌ساز کارت‌های هم‌لیگ را کنار هم بگذارید.",
+        "مدیر هم‌لیگ می‌تواند شیمی را کامل کند."
+      ],
+      "source": "fcbaz-free-guide"
+    }
+  ],
+  "evolutions": [
+    {
+      "id": "evo-pace-path",
+      "title": "مسیر Pace (برنامه‌ریز)",
+      "description": "الگوی رایگان برای پیگیری Evolutionهای سرعت. لیست EA زنده نیست؛ پیشرفت را در My Evo ثبت کنید.",
+      "cost": 0,
+      "requirements": [
+        "بازیکن پایه با پست مناسب",
+        "ثبت مراحل در My Evo"
+      ],
+      "upgrades": [
+        "تمرکز روی PAC",
+        "پیگیری مرحله‌به‌مرحله روی دستگاه"
+      ],
+      "steps": [
+        {
+          "title": "مرحله ۱ — انتخاب پایه",
+          "requirements": ["کارت را در باشگاه من یا Favorites ذخیره کنید"],
+          "upgrades": ["آماده‌سازی مسیر"]
+        },
+        {
+          "title": "مرحله ۲ — ثبت Evo",
+          "requirements": ["عنوان و تعداد مراحل واقعی را در My Evo بنویسید"],
+          "upgrades": ["یادآوری ددلاین"]
+        },
+        {
+          "title": "مرحله ۳ — تکمیل",
+          "requirements": ["بعد از هر مرحله بازی، شمارنده را بالا ببرید"],
+          "upgrades": ["کارت نهایی شخصی"]
+        }
+      ],
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "evo-def-path",
+      "title": "مسیر Defending (برنامه‌ریز)",
+      "description": "الگوی رایگان برای CB/FBهایی که مسیر دفاعی می‌روند.",
+      "cost": 0,
+      "requirements": [
+        "پست CB / LB / RB",
+        "ثبت در My Evo"
+      ],
+      "upgrades": [
+        "تمرکز DEF / PHY",
+        "پیگیری محلی بدون حساب ابری"
+      ],
+      "steps": [
+        {
+          "title": "انتخاب مدافع پایه",
+          "requirements": ["ریتینگ و پست را با شرایط Evo واقعی بازی چک کنید"],
+          "upgrades": ["شروع مسیر"]
+        },
+        {
+          "title": "پیگیری مراحل",
+          "requirements": ["هر هدف بازی را در یادداشت My Evo بنویسید"],
+          "upgrades": ["جلوگیری از فراموشی"]
+        }
+      ],
+      "source": "fcbaz-free-guide"
+    },
+    {
+      "id": "evo-shooting-path",
+      "title": "مسیر Shooting (برنامه‌ریز)",
+      "description": "الگوی رایگان برای ST/CF. داده ساختگی پاداش EA نیست.",
+      "cost": 0,
+      "requirements": ["پست حمله", "My Evo"],
+      "upgrades": ["SHO / PAC"],
+      "steps": [
+        {
+          "title": "پایه حمله",
+          "requirements": ["کارت ST یا CF را انتخاب کنید"],
+          "upgrades": ["شروع"]
+        },
+        {
+          "title": "تکمیل مسیر",
+          "requirements": ["مراحل را تا پایان در My Evo جلو ببرید"],
+          "upgrades": ["کارت شخصی"]
+        }
+      ],
+      "source": "fcbaz-free-guide"
+    }
+  ],
+  "scout_lists": [
+    {
+      "id": "fastest",
+      "title": "سریع‌ترین‌ها",
+      "url": "https://raw.githubusercontent.com/ismailoksuz/EAFC26-DataHub/main/output/json/fastest_100_players.json"
+    },
+    {
+      "id": "best_defenders",
+      "title": "بهترین مدافعان",
+      "url": "https://raw.githubusercontent.com/ismailoksuz/EAFC26-DataHub/main/output/json/best_defenders.json"
+    },
+    {
+      "id": "best_dribblers",
+      "title": "بهترین دریبلرها",
+      "url": "https://raw.githubusercontent.com/ismailoksuz/EAFC26-DataHub/main/output/json/best_dribblers.json"
+    },
+    {
+      "id": "wonderkids",
+      "title": "Wonderkids",
+      "url": "https://raw.githubusercontent.com/ismailoksuz/EAFC26-DataHub/main/output/json/top_200_wonderkids_u21.json"
+    },
+    {
+      "id": "5star_skills",
+      "title": "۵ ستاره مهارت",
+      "url": "https://raw.githubusercontent.com/ismailoksuz/EAFC26-DataHub/main/output/json/5_star_skillers.json"
+    }
+  ]
+}

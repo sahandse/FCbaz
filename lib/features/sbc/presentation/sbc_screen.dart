@@ -55,12 +55,12 @@ class _SbcScreenState extends State<SbcScreen> {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 4),
-            Text(
-              'SBCهای فعال با هزینه، پاداش و راه‌حل واقعی وقتی منبع زنده باشد',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              Text(
+                'SBCهای فعال با هزینه، پاداش و راه‌حل واقعی وقتی منبع زنده باشد. در حالت رایگان، راهنماهای GitHub نمایش داده می‌شوند.',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
-            ),
             const SizedBox(height: 16),
           ],
           if (loading)

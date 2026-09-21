@@ -23,8 +23,8 @@ class PlayerPortrait extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     final candidates = <String>[
-      if (player.displayImageUrl.isNotEmpty) player.displayImageUrl,
-      ...PlayerMedia.portraitCandidates(player.id),
+      ...PlayerMedia.portraitCandidates(player.id, player.imageUrl),
+      if (player.cardImageUrl.trim().isNotEmpty) player.cardImageUrl.trim(),
     ];
     final unique = <String>[];
     for (final url in candidates) {

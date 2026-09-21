@@ -91,6 +91,25 @@ class PublicFcData {
     return null;
   }
 
+  Future<List<Player>> getPlayersByIds(
+    Iterable<String> ids, {
+    String platform = 'console',
+    int limit = 40,
+  }) async {
+    final wanted = ids.map((e) => e.trim()).where((e) => e.isNotEmpty).toSet();
+    if (wanted.isEmpty) return const [];
+
+    final catalog = await _loadCatalog();
+    final byId = {for (final p in catalog) p.id: p};
+    final found = <Player>[];
+    for (final id in wanted) {
+      final player = byId[id];
+      if (player != null) found.add(player);
+      if (found.length >= limit) break;
+    }
+    return enrichWithPrices(found, platform: platform);
+  }
+
   Future<List<Player>> getTrending({
     String platform = 'console',
   }) async {
@@ -302,7 +321,6 @@ class PublicFcData {
             'low': _coin(raw['MinPrice']),
             'high': _coin(raw['MaxPrice']),
             'lowest_bins': bins.take(3).toList(),
-            'change_24h_percent': 0,
             'updated_text': (raw['updated'] ?? '').toString(),
             'source': 'live-market',
           };

@@ -187,7 +187,7 @@ class _MarketScreenState extends State<MarketScreen> {
             ),
             const SizedBox(height: 4),
             Text(
-              'قیمت‌ها مستقیم از منبع زنده FC27 بررسی می‌شوند.',
+              'قیمت‌ها از منبع زنده عمومی خوانده می‌شوند؛ اگر قطع باشد عدد جعلی نشان داده نمی‌شود.',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),

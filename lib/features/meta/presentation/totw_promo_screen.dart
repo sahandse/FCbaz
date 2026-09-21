@@ -18,8 +18,11 @@ class _TotwPromoScreenState extends State<TotwPromoScreen> {
   final metaRepo = MetaRepository();
 
   bool loading = true;
+  String scoutTitle = 'هایلایت رایگان GitHub';
   List<Player> highlights = const [];
   List<Map<String, dynamic>> news = const [];
+  List<Map<String, dynamic>> scoutLists = const [];
+  String selectedList = 'fastest';
 
   @override
   void initState() {
@@ -30,12 +33,27 @@ class _TotwPromoScreenState extends State<TotwPromoScreen> {
   Future<void> _load() async {
     setState(() => loading = true);
     try {
-      final trending = await playersRepo.getTrendingPlayers();
+      final lists = await metaRepo.freeContent.scoutLists();
       final newsItems = await metaRepo.getNews();
+      final scout = await metaRepo.getScoutHighlight(
+        listId: selectedList,
+        limit: 24,
+      );
+      var cards = scout;
+      if (cards.isEmpty) {
+        cards = await playersRepo.getTrendingPlayers();
+      }
       if (!mounted) return;
+      final matched = lists.where((e) => (e['id'] ?? '').toString() == selectedList);
+      final title = matched.isEmpty
+          ? null
+          : (matched.first['title'] ?? '').toString();
       setState(() {
-        highlights = trending.take(20).toList();
+        scoutLists = lists;
         news = newsItems;
+        highlights = cards.take(24).toList();
+        scoutTitle =
+            (title != null && title.isNotEmpty) ? title : 'هایلایت رایگان GitHub';
       });
     } finally {
       if (mounted) setState(() => loading = false);
@@ -52,13 +70,30 @@ class _TotwPromoScreenState extends State<TotwPromoScreen> {
           padding: const EdgeInsets.fromLTRB(16, 12, 16, 28),
           children: [
             Text(
-              'هایلایت کارت‌های داغ و اخبار پرومو. اگر منبع خبر زنده نباشد، لیست خبر خالی می‌ماند.',
+              'لیست‌های رایگان از GitHub (EAFC26-DataHub) به‌همراه راهنماهای FCBaz. قیمت جعلی ساخته نمی‌شود.',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
               ),
             ),
+            const SizedBox(height: 12),
+            if (scoutLists.isNotEmpty)
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  for (final item in scoutLists)
+                    ChoiceChip(
+                      label: Text('${item['title'] ?? item['id']}'),
+                      selected: selectedList == '${item['id']}',
+                      onSelected: (_) async {
+                        setState(() => selectedList = '${item['id']}');
+                        await _load();
+                      },
+                    ),
+                ],
+              ),
             const SizedBox(height: 16),
-            Text('کارت‌های داغ / Meta', style: Theme.of(context).textTheme.titleLarge),
+            Text(scoutTitle, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             if (loading) const Center(child: CircularProgressIndicator()),
             if (!loading && highlights.isEmpty)
@@ -76,7 +111,7 @@ class _TotwPromoScreenState extends State<TotwPromoScreen> {
                   ),
                   title: Text(player.name),
                   subtitle: Text(
-                    '${player.rating} • ${player.position} • ${player.version}',
+                    '${player.rating} • ${player.position} • ${player.clubName}',
                   ),
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute(
@@ -86,23 +121,22 @@ class _TotwPromoScreenState extends State<TotwPromoScreen> {
                 ),
               ),
             const SizedBox(height: 18),
-            Text('اخبار', style: Theme.of(context).textTheme.titleLarge),
+            Text('اخبار و راهنما', style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 8),
             if (news.isEmpty)
               const Card(
                 child: ListTile(
                   leading: Icon(Icons.newspaper_rounded),
-                  title: Text('خبر زنده‌ای نیست'),
-                  subtitle: Text(
-                    'وقتی منبع News پیکربندی شود، Promo و TOTW اینجا می‌آیند.',
-                  ),
+                  title: Text('خبری نیست'),
                 ),
               ),
             for (final item in news)
               Card(
                 child: ListTile(
                   title: Text('${item['title'] ?? item['name'] ?? 'خبر'}'),
-                  subtitle: Text('${item['summary'] ?? item['description'] ?? ''}'),
+                  subtitle: Text(
+                    '${item['summary'] ?? item['description'] ?? ''}',
+                  ),
                 ),
               ),
           ],

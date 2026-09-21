@@ -1,3 +1,5 @@
+import '../../../core/network/player_media.dart';
+
 class Player {
   const Player({
     required this.id,
@@ -67,12 +69,10 @@ class Player {
 
   String get displayImageUrl {
     final current = imageUrl.trim();
-    if (current.contains('cdn.futbin.com/content/fifa') &&
-        current.endsWith('.png')) {
-      return current;
-    }
-    if (id.trim().isEmpty) return current;
-    return 'https://cdn.futbin.com/content/fifa26/img/players/${id.trim()}.png';
+    if (current.startsWith('http')) return current;
+    final card = cardImageUrl.trim();
+    if (card.startsWith('http')) return card;
+    return PlayerMedia.sofifa(id);
   }
 
   Player copyWith({

@@ -1,4 +1,5 @@
 import '../../../core/network/fcbaz_api.dart';
+import '../../../core/network/free_github_content.dart';
 import '../../../core/network/public_fc_data.dart';
 import '../../players/domain/player.dart';
 
@@ -6,11 +7,14 @@ class MetaRepository {
   MetaRepository({
     FCBazApi? api,
     PublicFcData? publicData,
+    FreeGithubContent? freeContent,
   })  : api = api ?? FCBazApi(),
-        publicData = publicData ?? PublicFcData();
+        publicData = publicData ?? PublicFcData(),
+        freeContent = freeContent ?? FreeGithubContent();
 
   final FCBazApi api;
   final PublicFcData publicData;
+  final FreeGithubContent freeContent;
 
   Future<List<Map<String, dynamic>>> getBestPlayers({
     String? position,
@@ -20,7 +24,8 @@ class MetaRepository {
           ? ''
           : '?position=' + Uri.encodeQueryComponent(position);
       final json = await api.getJson('/api/v1/meta/players' + suffix);
-      final raw = json is Map ? (json['data'] ?? json['items'] ?? const []) : json;
+      final raw =
+          json is Map ? (json['data'] ?? json['items'] ?? const []) : json;
       if (raw is List) {
         final items = raw
             .whereType<Map>()
@@ -42,14 +47,46 @@ class MetaRepository {
     }
 
     final players = await publicData.getFiltered(params: params);
-    return players
-        .take(30)
-        .map((p) => _playerMap(p))
-        .toList();
+    return players.take(30).map(_playerMap).toList();
   }
 
   Future<List<Map<String, dynamic>>> getNews() async {
-    return const [];
+    return freeContent.news();
+  }
+
+  /// Free GitHub scout lists (EAFC26-DataHub) mapped onto the local catalog.
+  Future<List<Player>> getScoutHighlight({
+    String listId = 'fastest',
+    int limit = 24,
+  }) async {
+    final lists = await freeContent.scoutLists();
+    Map<String, dynamic>? selected;
+    for (final item in lists) {
+      if ((item['id'] ?? '').toString() == listId) {
+        selected = item;
+        break;
+      }
+    }
+    selected ??= lists.isEmpty ? null : lists.first;
+    if (selected == null) return const [];
+
+    final url = (selected['url'] ?? '').toString();
+    if (url.isEmpty) return const [];
+
+    final rows = await freeContent.fetchScoutList(url);
+    if (rows.isEmpty) return const [];
+
+    final wanted = <String>[];
+    final seen = <String>{};
+    for (final row in rows) {
+      final id = (row['player_id'] ?? row['id'] ?? '').toString();
+      if (id.isEmpty || !seen.add(id)) continue;
+      wanted.add(id);
+      if (wanted.length >= limit * 3) break;
+    }
+    if (wanted.isEmpty) return const [];
+
+    return publicData.getPlayersByIds(wanted, limit: limit);
   }
 
   Map<String, dynamic> _playerMap(Player p) => {

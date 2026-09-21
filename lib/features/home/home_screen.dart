@@ -279,7 +279,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 24),
               _SectionTitle(
                 title: 'SBCهای جدید',
-                subtitle: 'چالش‌های فعال FC27',
+                subtitle: 'راهنماهای رایگان + منبع زنده',
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const SbcHubScreen()),

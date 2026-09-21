@@ -11,7 +11,7 @@ on:
       - 'v*'
 
 env:
-  RELEASE_VERSION: "1.0.5"
+  RELEASE_VERSION: "1.0.6"
   # Optional backend; empty string keeps the public free-data path in the app.
   FCBAZ_API_BASE_URL: ""
 

@@ -45,7 +45,7 @@ class MoreScreen extends StatelessWidget {
         ),
         const SizedBox(height: 18),
         Text(
-          'ابزارهای FC27',
+          'ابزارهای Ultimate Team',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 10),
