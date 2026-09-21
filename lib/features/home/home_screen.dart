@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 
-import '../evolutions/presentation/evolutions_screen.dart';
 import '../players/presentation/player_details_screen.dart';
 import '../players/presentation/player_portrait.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import 'home_repository.dart';
 import 'objectives_screen.dart';
+import '../evolutions/presentation/evolutions_hub_screen.dart';
+import '../sbc/presentation/sbc_hub_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({
@@ -281,7 +282,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 subtitle: 'چالش‌های فعال FC27',
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SbcScreen()),
+                    MaterialPageRoute(builder: (_) => const SbcHubScreen()),
                   ),
                   child: const Text('همه'),
                 ),
@@ -319,7 +320,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
-                      builder: (_) => const EvolutionsScreen(),
+                      builder: (_) => const EvolutionsHubScreen(),
                     ),
                   ),
                   child: const Text('همه'),
@@ -340,7 +341,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: InkWell(
                           onTap: () => Navigator.of(context).push(
                             MaterialPageRoute(
-                              builder: (_) => const EvolutionsScreen(),
+                              builder: (_) => const EvolutionsHubScreen(),
                             ),
                           ),
                           borderRadius: BorderRadius.circular(18),

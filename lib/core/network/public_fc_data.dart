@@ -287,12 +287,21 @@ class PublicFcData {
           if (raw is! Map) continue;
           final current = _coin(raw['LCPrice']);
           if (current <= 0) continue;
+          final bins = <int>[
+            current,
+            _coin(raw['LCPrice2']),
+            _coin(raw['LCPrice3']),
+            _coin(raw['LCPrice4']),
+            _coin(raw['LCPrice5']),
+          ].where((e) => e > 0).toSet().toList()
+            ..sort();
           out[id] = {
             'player_id': id,
             'platform': platform,
             'current': current,
             'low': _coin(raw['MinPrice']),
             'high': _coin(raw['MaxPrice']),
+            'lowest_bins': bins.take(3).toList(),
             'change_24h_percent': 0,
             'updated_text': (raw['updated'] ?? '').toString(),
             'source': 'live-market',

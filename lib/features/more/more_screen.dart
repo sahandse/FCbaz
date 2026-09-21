@@ -1,11 +1,20 @@
 import 'package:flutter/material.dart';
 
 import '../club/presentation/my_club_screen.dart';
+import '../evolutions/presentation/evolutions_hub_screen.dart';
+import '../home/objectives_screen.dart';
+import '../market/presentation/fodder_screen.dart';
 import '../market/presentation/market_screen.dart';
+import '../market/presentation/pack_value_screen.dart';
+import '../market/presentation/tax_calculator_screen.dart';
 import '../meta/presentation/meta_screen.dart';
+import '../meta/presentation/totw_promo_screen.dart';
+import '../sbc/presentation/sbc_hub_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../settings/profile_screen.dart';
 import '../settings/settings_screen.dart';
+import '../squad/presentation/tactics_builder_screen.dart';
+import '../squad/squad_screen.dart';
 import 'consumables_screen.dart';
 
 class MoreScreen extends StatelessWidget {
@@ -46,7 +55,7 @@ class MoreScreen extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: 1.5,
+          childAspectRatio: 1.45,
           children: [
             _ToolCard(
               title: 'بازار',
@@ -55,16 +64,70 @@ class MoreScreen extends StatelessWidget {
               onTap: () => _open(context, const MarketScreen()),
             ),
             _ToolCard(
+              title: 'Fodder',
+              subtitle: 'ارزان‌ترین هر ریتینگ',
+              icon: Icons.local_offer_rounded,
+              onTap: () => _open(context, const FodderScreen()),
+            ),
+            _ToolCard(
+              title: 'مالیات ۵٪',
+              subtitle: 'سود واقعی فروش',
+              icon: Icons.calculate_rounded,
+              onTap: () => _open(context, const TaxCalculatorScreen()),
+            ),
+            _ToolCard(
+              title: 'ارزش پک',
+              subtitle: 'جمع کارت‌های پک',
+              icon: Icons.inventory_rounded,
+              onTap: () => _open(context, const PackValueScreen()),
+            ),
+            _ToolCard(
+              title: 'SBC Center',
+              subtitle: 'چالش + ترکیب ریتینگ',
+              icon: Icons.extension_rounded,
+              onTap: () => _open(context, const SbcHubScreen()),
+            ),
+            _ToolCard(
+              title: 'Evolutions',
+              subtitle: 'فعال + My Evo',
+              icon: Icons.auto_awesome_rounded,
+              onTap: () => _open(context, const EvolutionsHubScreen()),
+            ),
+            _ToolCard(
+              title: 'TOTW / News',
+              subtitle: 'پرومو و هایلایت',
+              icon: Icons.newspaper_rounded,
+              onTap: () => _open(context, const TotwPromoScreen()),
+            ),
+            _ToolCard(
+              title: 'Meta',
+              subtitle: 'برترین‌ها هر پست',
+              icon: Icons.leaderboard_rounded,
+              onTap: () => _open(context, const MetaScreen()),
+            ),
+            _ToolCard(
+              title: 'تیم‌ساز',
+              subtitle: 'Squad + Chemistry',
+              icon: Icons.stadium_rounded,
+              onTap: () => _open(context, const SquadScreen()),
+            ),
+            _ToolCard(
+              title: 'Tactics',
+              subtitle: 'کد و پلن تاکتیک',
+              icon: Icons.sports_soccer_rounded,
+              onTap: () => _open(context, const TacticsBuilderScreen()),
+            ),
+            _ToolCard(
               title: 'باشگاه من',
-              subtitle: 'کارت‌ها و ارزش باشگاه',
+              subtitle: 'کارت‌ها و ارزش',
               icon: Icons.inventory_2_rounded,
               onTap: () => _open(context, const MyClubScreen()),
             ),
             _ToolCard(
-              title: 'Meta',
-              subtitle: 'بازیکنان برتر هر پست',
-              icon: Icons.leaderboard_rounded,
-              onTap: () => _open(context, const MetaScreen()),
+              title: 'اهداف',
+              subtitle: 'Objectives',
+              icon: Icons.flag_rounded,
+              onTap: () => _open(context, const ObjectivesScreen()),
             ),
           ],
         ),
@@ -217,9 +280,9 @@ class _MenuTile extends StatelessWidget {
     required this.onTap,
   });
 
-  final IconData icon;
   final String title;
   final String subtitle;
+  final IconData icon;
   final VoidCallback onTap;
 
   @override

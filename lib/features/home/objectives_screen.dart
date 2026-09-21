@@ -81,6 +81,9 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
                 child: ListTile(
                   leading: Icon(Icons.flag_outlined),
                   title: Text('Objective فعالی پیدا نشد'),
+                  subtitle: Text(
+                    'وقتی منبع زنده Objectives در دسترس باشد، هدف‌ها و پاداش‌ها اینجا می‌آیند. داده ساختگی نمایش داده نمی‌شود.',
+                  ),
                 ),
               )
             else

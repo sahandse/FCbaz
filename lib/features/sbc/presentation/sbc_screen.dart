@@ -5,7 +5,9 @@ import '../data/sbc_repository.dart';
 import '../domain/sbc.dart';
 
 class SbcScreen extends StatefulWidget {
-  const SbcScreen({super.key});
+  const SbcScreen({this.embedded = false, super.key});
+
+  final bool embedded;
 
   @override
   State<SbcScreen> createState() => _SbcScreenState();
@@ -42,49 +44,57 @@ class _SbcScreenState extends State<SbcScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: const Text('SBC')),
-      body: RefreshIndicator(
-        onRefresh: _load,
-        child: ListView(
-          padding: const EdgeInsets.all(16),
-          children: [
+    final content = RefreshIndicator(
+      onRefresh: _load,
+      child: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          if (!widget.embedded) ...[
             Text(
               'چالش‌های ساخت ترکیب',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 4),
             Text(
-              'SBCهای فعال FC27 با هزینه، پاداش و راه‌حل واقعی',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              'SBCهای فعال با هزینه، پاداش و راه‌حل واقعی وقتی منبع زنده باشد',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 16),
-            if (loading)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 72),
-                child: Center(child: CircularProgressIndicator()),
-              )
-            else if (error != null)
-              _StateCard(
-                icon: Icons.cloud_off_rounded,
-                title: 'SBC در دسترس نیست',
-                subtitle: error!,
-                action: _load,
-              )
-            else if (items.isEmpty)
-              const _StateCard(
-                icon: Icons.extension_off_rounded,
-                title: 'SBC فعالی پیدا نشد',
-                subtitle: 'وقتی Backend داده واقعی FC27 داشته باشد اینجا نمایش داده می‌شود.',
-              )
-            else
-              for (final item in items) ...[
-                _SbcCard(item: item),
-                const SizedBox(height: 10),
-              ],
           ],
-        ),
+          if (loading)
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 72),
+              child: Center(child: CircularProgressIndicator()),
+            )
+          else if (error != null)
+            _StateCard(
+              icon: Icons.cloud_off_rounded,
+              title: 'SBC در دسترس نیست',
+              subtitle: error!,
+              action: _load,
+            )
+          else if (items.isEmpty)
+            const _StateCard(
+              icon: Icons.extension_off_rounded,
+              title: 'SBC فعالی پیدا نشد',
+              subtitle:
+                  'لیست زنده وقتی منبع داده در دسترس باشد پر می‌شود. از تب ترکیب ریتینگ برای ساخت اسکادر Rated استفاده کنید.',
+            )
+          else
+            for (final item in items) ...[
+              _SbcCard(item: item),
+              const SizedBox(height: 10),
+            ],
+        ],
       ),
+    );
+
+    if (widget.embedded) return content;
+    return Scaffold(
+      appBar: AppBar(title: const Text('SBC')),
+      body: content,
     );
   }
 }

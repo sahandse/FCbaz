@@ -47,7 +47,7 @@ class UpdateRepository {
   final FCBazApi api;
 
   static const currentVersion =
-      String.fromEnvironment('FCBAZ_APP_VERSION', defaultValue: '0.2.0');
+      String.fromEnvironment('FCBAZ_APP_VERSION', defaultValue: '1.0.5');
 
   Future<UpdateCheckResult> check() async {
     final json = await api.getJson('/api/v1/app/latest-release');
