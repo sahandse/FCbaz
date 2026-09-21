@@ -14,3 +14,8 @@ ios/.symlinks/
 linux/flutter/ephemeral/
 macos/Flutter/ephemeral/
 windows/flutter/ephemeral/
+android/
+ios/
+.metadata
+fcbaz.iml
+.idea/
