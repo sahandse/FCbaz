@@ -2,13 +2,18 @@ name: FCBaz Android Final Release
 
 permissions:
   contents: write
+  actions: read
 
 on:
   workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
 
 env:
   RELEASE_VERSION: "1.0.2"
-  FCBAZ_API_BASE_URL: "https://selfreliant-welcome-clients--sahandrezvanaza.replit.app"
+  # Optional backend; empty string keeps the public free-data path in the app.
+  FCBAZ_API_BASE_URL: ""
 
 jobs:
   release:
@@ -18,6 +23,15 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Resolve release version from tag
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" && "${GITHUB_REF_NAME}" == v* ]]; then
+            echo "RELEASE_VERSION=${GITHUB_REF_NAME#v}" >> "$GITHUB_ENV"
+          else
+            echo "RELEASE_VERSION=${{ env.RELEASE_VERSION }}" >> "$GITHUB_ENV"
+          fi
 
       - name: Setup Java
         uses: actions/setup-java@v4
@@ -45,13 +59,39 @@ jobs:
             sed -i '/<manifest/a\    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>' android/app/src/main/AndroidManifest.xml
           fi
 
-      - name: Generate persistent release signing material for this release
+      - name: Restore persistent release signing material
+        env:
+          GH_TOKEN: ${{ github.token }}
         shell: bash
         run: |
-          STORE_PASSWORD=$(openssl rand -hex 16)
-          KEY_PASSWORD="$STORE_PASSWORD"
-          KEY_ALIAS=fcbaz
-          keytool -genkeypair -v             -keystore android/app/fcbaz-release.jks             -alias "$KEY_ALIAS"             -keyalg RSA -keysize 2048 -validity 10000             -storepass "$STORE_PASSWORD"             -keypass "$KEY_PASSWORD"             -dname "CN=FCBaz, OU=Android, O=FCBaz, L=Tehran, ST=Tehran, C=IR"
+          set -euo pipefail
+          mkdir -p /tmp/signing-restore
+          ARTIFACT_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
+            --jq '.artifacts[] | select(.name | test("signing-backup")) | select(.expired==false) | .id' \
+            | head -n 1)
+
+          if [ -z "${ARTIFACT_ID}" ]; then
+            echo "No previous signing-backup artifact found."
+            exit 1
+          fi
+
+          echo "Using signing artifact id=${ARTIFACT_ID}"
+          gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/signing-restore/signing.zip
+          unzip -o /tmp/signing-restore/signing.zip -d /tmp/signing-restore
+
+          JKS=$(find /tmp/signing-restore -name 'fcbaz-release.jks' | head -n 1)
+          INFO=$(find /tmp/signing-restore -name 'signing-key-info.txt' | head -n 1)
+          if [ -z "$JKS" ] || [ -z "$INFO" ]; then
+            echo "Signing files missing from artifact"
+            exit 1
+          fi
+
+          cp "$JKS" android/app/fcbaz-release.jks
+          cp "$INFO" signing-key-info.txt
+
+          STORE_PASSWORD=$(awk -F= '/^storePassword=/{print $2}' signing-key-info.txt)
+          KEY_PASSWORD=$(awk -F= '/^keyPassword=/{print $2}' signing-key-info.txt)
+          KEY_ALIAS=$(awk -F= '/^keyAlias=/{print $2}' signing-key-info.txt)
 
           cat > android/key.properties <<EOF
           storePassword=$STORE_PASSWORD
@@ -59,14 +99,6 @@ jobs:
           keyAlias=$KEY_ALIAS
           storeFile=fcbaz-release.jks
           EOF
-
-          {
-            echo "IMPORTANT: Keep this file and fcbaz-release.jks private."
-            echo "Future Android updates must use the same keystore."
-            echo "storePassword=$STORE_PASSWORD"
-            echo "keyPassword=$KEY_PASSWORD"
-            echo "keyAlias=$KEY_ALIAS"
-          } > signing-key-info.txt
 
           python3 - <<'PY'
           from pathlib import Path
@@ -76,18 +108,20 @@ jobs:
           if 'import java.util.Properties' not in s:
               s = 'import java.util.Properties\nimport java.io.FileInputStream\n' + s
 
-          anchor = 'android {'
-          setup = '''val keystoreProperties = Properties()
+          if 'val keystoreProperties = Properties()' not in s:
+              anchor = 'android {'
+              setup = '''val keystoreProperties = Properties()
           val keystorePropertiesFile = rootProject.file("key.properties")
           if (keystorePropertiesFile.exists()) {
               keystoreProperties.load(FileInputStream(keystorePropertiesFile))
           }
 
           '''
-          s = s.replace(anchor, setup + anchor, 1)
+              s = s.replace(anchor, setup + anchor, 1)
 
-          signing_anchor = 'buildTypes {'
-          signing = '''signingConfigs {
+          if 'create("release")' not in s:
+              signing_anchor = 'buildTypes {'
+              signing = '''signingConfigs {
                   create("release") {
                       keyAlias = keystoreProperties["keyAlias"] as String
                       keyPassword = keystoreProperties["keyPassword"] as String
@@ -97,7 +131,8 @@ jobs:
               }
 
               '''
-          s = s.replace(signing_anchor, signing + signing_anchor, 1)
+              s = s.replace(signing_anchor, signing + signing_anchor, 1)
+
           s = s.replace(
               'signingConfig = signingConfigs.getByName("debug")',
               'signingConfig = signingConfigs.getByName("release")'
@@ -110,14 +145,16 @@ jobs:
         run: |
           python3 - <<'PY'
           from pathlib import Path
-          version = "${{ env.RELEASE_VERSION }}"
+          import os
+          version = os.environ["RELEASE_VERSION"]
+          run_number = os.environ.get("GITHUB_RUN_NUMBER", "1")
           p = Path("pubspec.yaml")
           lines = p.read_text().splitlines()
           out = []
           changed = False
           for line in lines:
               if line.startswith("version:"):
-                  out.append("version: " + version + "+${{ github.run_number }}")
+                  out.append(f"version: {version}+{run_number}")
                   changed = True
               else:
                   out.append(line)
@@ -156,9 +193,20 @@ jobs:
       - name: Prepare release files
         shell: bash
         run: |
-          cp build/app/outputs/flutter-apk/app-release.apk "FCBaz-v${{ env.RELEASE_VERSION }}.apk"
-          cp build/app/outputs/bundle/release/app-release.aab "FCBaz-v${{ env.RELEASE_VERSION }}.aab"
-          sha256sum "FCBaz-v${{ env.RELEASE_VERSION }}.apk" "FCBaz-v${{ env.RELEASE_VERSION }}.aab" > SHA256SUMS.txt
+          cp build/app/outputs/flutter-apk/app-release.apk "FCBaz-v${RELEASE_VERSION}.apk"
+          cp build/app/outputs/bundle/release/app-release.aab "FCBaz-v${RELEASE_VERSION}.aab"
+          sha256sum "FCBaz-v${RELEASE_VERSION}.apk" "FCBaz-v${RELEASE_VERSION}.aab" > SHA256SUMS.txt
+          cat > RELEASE_NOTES.md <<EOF
+          ## FCBaz v${RELEASE_VERSION}
+
+          انتشار رسمی فارسی شبیه FUTBIN با دیتای رایگان واقعی.
+
+          - لوگوی رسمی FCBaz به‌عنوان آیکون اپ
+          - دیتابیس آفلاین واقعی بازیکنان (~۱۸ هزار کارت)
+          - بدون ثبت‌نام اجباری
+          - بدون جایگزین‌کردن داده ساختگی به‌جای قیمت/کارت
+          - امضای اندروید همان هویت نسخهٔ ۱.۰.۱ (آپدیت روی نصب قبلی ممکن است)
+          EOF
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
@@ -168,6 +216,7 @@ jobs:
             FCBaz-v${{ env.RELEASE_VERSION }}.apk
             FCBaz-v${{ env.RELEASE_VERSION }}.aab
             SHA256SUMS.txt
+            RELEASE_NOTES.md
           if-no-files-found: error
 
       - name: Upload signing backup artifact
@@ -185,6 +234,7 @@ jobs:
         with:
           tag_name: v${{ env.RELEASE_VERSION }}
           name: FCBaz v${{ env.RELEASE_VERSION }}
+          body_path: RELEASE_NOTES.md
           generate_release_notes: true
           files: |
             FCBaz-v${{ env.RELEASE_VERSION }}.apk

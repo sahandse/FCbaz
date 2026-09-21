@@ -19,3 +19,9 @@ ios/
 .metadata
 fcbaz.iml
 .idea/
+signing/
+signing/
+**/fcbaz-release.jks
+**/key.properties
+**/signing-key-info.txt
+android/
