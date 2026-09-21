@@ -23,6 +23,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/fcbaz_app_icon.png
+    - assets/data/players_fc26.json.gz
 
 flutter_launcher_icons:
   android: true

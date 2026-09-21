@@ -52,26 +52,30 @@ class MarketRepository {
     String range = '7d',
     bool forceRefresh = false,
   }) async {
-    final path = '/api/v1/market/players/' +
-        Uri.encodeComponent(playerId) +
-        '/history?platform=' +
-        Uri.encodeQueryComponent(platform) +
-        '&range=' +
-        Uri.encodeQueryComponent(range);
-    final json = await api.getJson(
-      path,
-      forceRefresh: forceRefresh,
-      cacheTtl: const Duration(minutes: 2),
-    );
-    final raw = json is Map ? (json['data'] ?? json['history'] ?? []) : json;
-    if (raw is! List) {
-      throw const FCBazApiException('تاریخچه قیمت معتبر نیست.');
-    }
-    return raw
-        .whereType<Map>()
-        .map((e) => PricePoint.fromJson(Map<String, dynamic>.from(e)))
-        .where((e) => e.price > 0)
-        .toList();
+    try {
+      final path = '/api/v1/market/players/' +
+          Uri.encodeComponent(playerId) +
+          '/history?platform=' +
+          Uri.encodeQueryComponent(platform) +
+          '&range=' +
+          Uri.encodeQueryComponent(range);
+      final json = await api.getJson(
+        path,
+        forceRefresh: forceRefresh,
+        cacheTtl: const Duration(minutes: 2),
+      );
+      final raw = json is Map ? (json['data'] ?? json['history'] ?? []) : json;
+      if (raw is List) {
+        return raw
+            .whereType<Map>()
+            .map((e) => PricePoint.fromJson(Map<String, dynamic>.from(e)))
+            .where((e) => e.price > 0)
+            .toList();
+      }
+    } catch (_) {}
+
+    // Public free sources do not expose a reliable history series.
+    return const [];
   }
 
   Future<List<Map<String, dynamic>>> getMarketFeed({

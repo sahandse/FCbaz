@@ -133,8 +133,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.trendingPlayers.isNotEmpty) ...[
               const SizedBox(height: 24),
               const _SectionTitle(
-                title: 'Trending Players',
-                subtitle: 'بر اساس داده زنده بازار FC27',
+                title: 'بازیکنان برتر',
+                subtitle: 'از دیتابیس رایگان واقعی یا منبع زنده بازار',
               ),
               const SizedBox(height: 10),
               SizedBox(
@@ -206,8 +206,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.marketMovers.isNotEmpty) ...[
               const SizedBox(height: 24),
               const _SectionTitle(
-                title: 'Market Movers',
-                subtitle: 'حرکت‌های مهم بازار از منبع زنده',
+                title: 'بازار',
+                subtitle: 'نمای کلی کارت‌های داغ؛ قیمت سکه فقط وقتی منبع زنده جواب بدهد',
               ),
               const SizedBox(height: 10),
               SizedBox(
@@ -453,7 +453,7 @@ class _HeroCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(99),
             ),
             child: Text(
-              'FC27 • Ultimate Team',
+              'فارسی • دیتای رایگان واقعی',
               style: TextStyle(
                 color: scheme.primary,
                 fontWeight: FontWeight.w900,
@@ -471,7 +471,7 @@ class _HeroCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'ترند بازار، بازیکنان، SBC، Evo، Objectives و ابزارهای Squad در یک داشبورد فارسی.',
+            'نسخه فارسی تجربه‌ای شبیه FUTBIN: دیتابیس بازیکن، فیلتر، قیمت زنده در صورت دسترسی، تیم‌ساز و ابزارهای باشگاه — بدون ثبت‌نام و بدون داده ساختگی.',
             style: TextStyle(
               color: scheme.onSurfaceVariant,
               height: 1.6,
@@ -538,7 +538,7 @@ class _DataStatusCard extends StatelessWidget {
           Expanded(
             child: Text(
               hasFeed
-                  ? 'Home Feed از داده واقعی FC27 دریافت شده است.'
+                  ? 'دیتابیس بازیکن از منبع رایگان واقعی بارگذاری شده است. قیمت سکه فقط از منبع زنده عمومی می‌آید.'
                   : 'اگر منبع واقعی در دسترس نباشد، FCBaz داده ساختگی جایگزین نمی‌کند.',
               style: const TextStyle(fontWeight: FontWeight.w800),
             ),

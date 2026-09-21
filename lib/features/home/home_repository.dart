@@ -115,9 +115,10 @@ class HomeRepository {
               'rating': p.rating,
               'price_ps': p.pricePs,
               'price_pc': p.pricePc,
-              'source': p.version == 'FIFA World Cup 2026'
-                  ? 'github-fifa-wc2026'
-                  : 'futbin-public',
+              'change': p.rating.toString() + ' OVR • ' + p.position,
+              'source': p.pricePs > 0 || p.pricePc > 0
+                  ? 'futbin-public'
+                  : 'fc26-free-catalog',
             })
         .toList();
 

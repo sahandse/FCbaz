@@ -1,105 +1,63 @@
 # FCBaz Production Release Checklist
 
-This checklist is intentionally strict. A public release should not be published
-until every required item below is verified.
+نسخهٔ عمومی فعلی: FUTBIN-style فارسی با دیتای رایگان واقعی و بدون حساب ابری.
 
 ## 1. Production data
 
-- Configure a production `FCBAZ_API_BASE_URL`.
-- Configure `PARSE_API_KEY` and verify all FC27 provider endpoints return real data.
-- Confirm player, price, SBC, Evolution, Objective, market and news endpoints do not fall back to fabricated data.
-- Confirm Console and PC prices are mapped correctly.
+- کاتالوگ `assets/data/players_fc26.json.gz` در بیلد هست و ریتینگ/اَتربیوت واقعی دارد.
+- روی دستگاه واقعی smoke-test کنید: Home، Players، Search، Player Details، Market، Squad.
+- تأیید کنید وقتی API عمومی قیمت در دسترس نیست، قیمت جعلی نشان داده نمی‌شود.
+- اگر `FCBAZ_API_BASE_URL` ست می‌کنید، endpointها دادهٔ واقعی برگردانند (نه mock).
 
-## 2. Supabase
+## 2. Optional live market
 
-Run `backend/SUPABASE_SCHEMA.sql` in the production Supabase project.
+اگر می‌خواهید قیمت زنده پایدارتر باشد:
 
-Backend environment:
+- یک backend با منبع واقعی بالا بیاورید و `FCBAZ_API_BASE_URL` را ست کنید.
+- Secretهای provider فقط روی سرور بمانند.
 
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
+حساب کاربری / Supabase / FCM برای نسخهٔ عمومی فعلی لازم نیست.
 
-Verify:
+## 3. Android signing
 
-- Registration and login work.
-- Email confirmation behavior matches the production Supabase Auth configuration.
-- Access-token refresh works.
-- Cloud backup upload works.
-- Restore works on a second test account/device.
-- Service-role key exists only on the backend.
-
-## 3. Firebase Cloud Messaging
-
-Backend environment:
-
-- `FIREBASE_PROJECT_ID`
-- `FIREBASE_CLIENT_EMAIL`
-- `FIREBASE_PRIVATE_KEY`
-- `CRON_SECRET`
-
-GitHub Actions secrets:
-
-- `FIREBASE_API_KEY`
-- `FIREBASE_APP_ID`
-- `FIREBASE_MESSAGING_SENDER_ID`
-- `FIREBASE_PROJECT_ID`
-
-Verify the Firebase Android app is registered with package:
-
-`ir.fcbaz.app`
-
-Verify:
-
-- Android notification permission appears on supported Android versions.
-- Device token registration succeeds after login.
-- Foreground messages appear in Notification Center.
-- Background/terminated push is delivered on a physical device.
-- Price alerts trigger once on crossing the target and do not repeatedly spam.
-
-## 4. Android signing
-
-Required GitHub Actions secrets:
+Required GitHub Actions secrets (ترجیحاً یک keystore ثابت برای همهٔ آپدیت‌ها):
 
 - `ANDROID_KEYSTORE_BASE64`
 - `ANDROID_KEYSTORE_PASSWORD`
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-Keep the original keystore permanently backed up offline. Future updates must use
-the same signing identity.
+keystore را آفلاین بکاپ بگیرید. آپدیت‌های بعدی باید همان هویت امضا را داشته باشند.
 
-## 5. Privacy and account behavior
+> هشدار: تولید keystore تصادفی در هر run باعث می‌شود آپدیت روی نصب قبلی نصب نشود.
 
-- Auth tokens must remain in secure storage and must not be exported in backups.
-- Account/Cloud API responses must use `Cache-Control: no-store`.
-- Local backup must export only FCBaz-owned preferences.
-- Verify account logout removes local auth credentials.
-- Verify destructive Cloud Restore requires confirmation.
+## 4. Privacy and local data
 
-## 6. UI and data integrity
+- فقط دادهٔ محلی FCBaz (Favorites، Watchlist، Squads، My Club، Backup) روی دستگاه است.
+- Backup فقط preferenceهای متعلق به FCBaz را export کند.
+- سیاست حریم خصوصی استور با نسخهٔ بدون حساب هم‌خوان باشد.
 
-- Test Persian RTL on small and large Android screens.
-- Test English mode for layout overflow even if Persian remains the primary experience.
-- Verify Dark, Light and System theme persistence.
-- Verify empty, loading and network-error states.
-- Verify all images have fallback states.
-- Verify no placeholder/fake player, market or SBC data is displayed.
+## 5. UI and data integrity
 
-## 7. Final release gate
+- RTL فارسی روی صفحه کوچک و بزرگ
+- Dark / Light / System
+- empty / loading / network-error
+- fallback تصویر بازیکن
+- هیچ placeholder جعلی برای بازیکن یا قیمت
 
-Only when Sahand explicitly requests a new release:
+## 6. Final release gate
 
-1. Run `flutter pub get`.
-2. Run `flutter analyze`.
-3. Run the full `flutter test` suite.
-4. Fix every release-blocking error.
-5. Build signed release APK.
-6. Build signed release AAB.
-7. Record SHA256 hashes.
-8. Install the release APK on a physical Android device.
-9. Smoke-test Login, Home, Search, Player Details, Market, Squad, My Club,
-   Cloud Sync, Notification Center and Update Checker.
-10. Publish the GitHub Release only after the smoke test passes.
+فقط وقتی Sahand صریحاً ریلیز جدید بخواهد:
 
-No debug/preview APK should be published as a public FCBaz release.
+1. `flutter pub get`
+2. `flutter analyze`
+3. `flutter test`
+4. رفع خطاهای blocking
+5. Build signed release APK
+6. Build signed release AAB
+7. ثبت SHA256
+8. نصب روی دستگاه واقعی
+9. Smoke-test: Home، Search، Players، Details، Market، Squad، My Club، Backup
+10. Publish GitHub Release بعد از smoke test
+
+APK دیباگ/پیش‌نمایش را به‌عنوان ریلیز عمومی منتشر نکنید.

@@ -18,7 +18,7 @@ void main() {
     await tester.pump();
 
     expect(find.text('FCBaz'), findsOneWidget);
-    expect(find.text('FC27 • Ultimate Team'), findsOneWidget);
+    expect(find.text('فارسی • دیتای رایگان واقعی'), findsOneWidget);
     expect(find.text('بازیکنان'), findsWidgets);
 
     await tester.scrollUntilVisible(
