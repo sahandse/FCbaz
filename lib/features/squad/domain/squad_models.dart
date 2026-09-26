@@ -84,14 +84,33 @@ class TacticProfile {
   const TacticProfile({
     this.name = 'پلن اصلی',
     this.code = '',
+    this.buildUpStyle = '',
+    this.defensiveApproach = '',
+    this.lineHeight,
     this.defensivePlan = '',
     this.buildUpPlan = '',
     this.attackingPlan = '',
     this.notes = '',
   });
 
+  static const buildUpStyles = <String>[
+    'Balanced',
+    'Counter',
+    'Short Passing',
+  ];
+
+  static const defensiveApproaches = <String>[
+    'Deep',
+    'Balanced',
+    'High',
+    'Aggressive',
+  ];
+
   final String name;
   final String code;
+  final String buildUpStyle;
+  final String defensiveApproach;
+  final int? lineHeight;
   final String defensivePlan;
   final String buildUpPlan;
   final String attackingPlan;
@@ -99,28 +118,72 @@ class TacticProfile {
 
   bool get isEmpty =>
       code.trim().isEmpty &&
+      buildUpStyle.trim().isEmpty &&
+      defensiveApproach.trim().isEmpty &&
+      lineHeight == null &&
       defensivePlan.trim().isEmpty &&
       buildUpPlan.trim().isEmpty &&
       attackingPlan.trim().isEmpty &&
       notes.trim().isEmpty;
 
+  bool get hasStructuredTactics =>
+      buildUpStyle.isNotEmpty || defensiveApproach.isNotEmpty || lineHeight != null;
+
+  TacticProfile copyWith({
+    String? name,
+    String? code,
+    String? buildUpStyle,
+    String? defensiveApproach,
+    int? lineHeight,
+    bool clearLineHeight = false,
+    String? defensivePlan,
+    String? buildUpPlan,
+    String? attackingPlan,
+    String? notes,
+  }) {
+    return TacticProfile(
+      name: name ?? this.name,
+      code: code ?? this.code,
+      buildUpStyle: buildUpStyle ?? this.buildUpStyle,
+      defensiveApproach: defensiveApproach ?? this.defensiveApproach,
+      lineHeight: clearLineHeight ? null : (lineHeight ?? this.lineHeight),
+      defensivePlan: defensivePlan ?? this.defensivePlan,
+      buildUpPlan: buildUpPlan ?? this.buildUpPlan,
+      attackingPlan: attackingPlan ?? this.attackingPlan,
+      notes: notes ?? this.notes,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'name': name,
         'code': code,
+        'build_up_style': buildUpStyle,
+        'defensive_approach': defensiveApproach,
+        'line_height': lineHeight,
         'defensive_plan': defensivePlan,
         'build_up_plan': buildUpPlan,
         'attacking_plan': attackingPlan,
         'notes': notes,
       };
 
-  factory TacticProfile.fromJson(Map<String, dynamic> json) => TacticProfile(
-        name: (json['name'] ?? 'پلن اصلی').toString(),
-        code: (json['code'] ?? '').toString(),
-        defensivePlan: (json['defensive_plan'] ?? '').toString(),
-        buildUpPlan: (json['build_up_plan'] ?? '').toString(),
-        attackingPlan: (json['attacking_plan'] ?? '').toString(),
-        notes: (json['notes'] ?? '').toString(),
-      );
+  factory TacticProfile.fromJson(Map<String, dynamic> json) {
+    final rawLineHeight = json['line_height'];
+    final parsedLineHeight = rawLineHeight is int
+        ? rawLineHeight
+        : int.tryParse((rawLineHeight ?? '').toString());
+
+    return TacticProfile(
+      name: (json['name'] ?? 'پلن اصلی').toString(),
+      code: (json['code'] ?? '').toString(),
+      buildUpStyle: (json['build_up_style'] ?? '').toString(),
+      defensiveApproach: (json['defensive_approach'] ?? '').toString(),
+      lineHeight: parsedLineHeight?.clamp(1, 100),
+      defensivePlan: (json['defensive_plan'] ?? '').toString(),
+      buildUpPlan: (json['build_up_plan'] ?? '').toString(),
+      attackingPlan: (json['attacking_plan'] ?? '').toString(),
+      notes: (json['notes'] ?? '').toString(),
+    );
+  }
 }
 
 class SquadStateModel {
@@ -167,7 +230,7 @@ class SquadStateModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'schema_version': 2,
+        'schema_version': 3,
         'id': id,
         'name': name,
         'formation_id': formationId,
@@ -247,25 +310,8 @@ class SquadStateModel {
 class Formations {
   static const all = <FormationDefinition>[
     FormationDefinition(
-      id: '433',
-      name: '4-3-3',
-      slots: [
-        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
-        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
-        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
-        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
-        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
-        FormationSlot(id: 'lcm', position: 'CM', x: .25, y: .50),
-        FormationSlot(id: 'cm', position: 'CM', x: .50, y: .56),
-        FormationSlot(id: 'rcm', position: 'CM', x: .75, y: .50),
-        FormationSlot(id: 'lw', position: 'LW', x: .18, y: .23),
-        FormationSlot(id: 'st', position: 'ST', x: .50, y: .16),
-        FormationSlot(id: 'rw', position: 'RW', x: .82, y: .23),
-      ],
-    ),
-    FormationDefinition(
-      id: '442',
-      name: '4-4-2',
+      id: '4411',
+      name: '4-4-1-1',
       slots: [
         FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
         FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
@@ -276,8 +322,25 @@ class Formations {
         FormationSlot(id: 'lcm', position: 'CM', x: .40, y: .53),
         FormationSlot(id: 'rcm', position: 'CM', x: .60, y: .53),
         FormationSlot(id: 'rm', position: 'RM', x: .86, y: .48),
-        FormationSlot(id: 'lst', position: 'ST', x: .38, y: .20),
-        FormationSlot(id: 'rst', position: 'ST', x: .62, y: .20),
+        FormationSlot(id: 'cam', position: 'CAM', x: .50, y: .31),
+        FormationSlot(id: 'st', position: 'ST', x: .50, y: .15),
+      ],
+    ),
+    FormationDefinition(
+      id: '4213',
+      name: '4-2-1-3',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'lcdm', position: 'CDM', x: .36, y: .56),
+        FormationSlot(id: 'rcdm', position: 'CDM', x: .64, y: .56),
+        FormationSlot(id: 'cam', position: 'CAM', x: .50, y: .38),
+        FormationSlot(id: 'lw', position: 'LW', x: .18, y: .22),
+        FormationSlot(id: 'st', position: 'ST', x: .50, y: .14),
+        FormationSlot(id: 'rw', position: 'RW', x: .82, y: .22),
       ],
     ),
     FormationDefinition(
@@ -298,8 +361,42 @@ class Formations {
       ],
     ),
     FormationDefinition(
+      id: '442',
+      name: '4-4-2',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'lm', position: 'LM', x: .14, y: .48),
+        FormationSlot(id: 'lcm', position: 'CM', x: .40, y: .53),
+        FormationSlot(id: 'rcm', position: 'CM', x: .60, y: .53),
+        FormationSlot(id: 'rm', position: 'RM', x: .86, y: .48),
+        FormationSlot(id: 'lst', position: 'ST', x: .38, y: .20),
+        FormationSlot(id: 'rst', position: 'ST', x: .62, y: .20),
+      ],
+    ),
+    FormationDefinition(
+      id: '433a',
+      name: '4-3-3 Attack',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'lcm', position: 'CM', x: .31, y: .52),
+        FormationSlot(id: 'rcm', position: 'CM', x: .69, y: .52),
+        FormationSlot(id: 'cam', position: 'CAM', x: .50, y: .39),
+        FormationSlot(id: 'lw', position: 'LW', x: .18, y: .22),
+        FormationSlot(id: 'st', position: 'ST', x: .50, y: .14),
+        FormationSlot(id: 'rw', position: 'RW', x: .82, y: .22),
+      ],
+    ),
+    FormationDefinition(
       id: '41212',
-      name: '4-1-2-1-2',
+      name: '4-1-2-1-2 Narrow',
       slots: [
         FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
         FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
@@ -312,6 +409,142 @@ class Formations {
         FormationSlot(id: 'cam', position: 'CAM', x: .50, y: .34),
         FormationSlot(id: 'lst', position: 'ST', x: .37, y: .16),
         FormationSlot(id: 'rst', position: 'ST', x: .63, y: .16),
+      ],
+    ),
+    FormationDefinition(
+      id: '433h',
+      name: '4-3-3 Holding',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'cdm', position: 'CDM', x: .50, y: .59),
+        FormationSlot(id: 'lcm', position: 'CM', x: .30, y: .47),
+        FormationSlot(id: 'rcm', position: 'CM', x: .70, y: .47),
+        FormationSlot(id: 'lw', position: 'LW', x: .18, y: .22),
+        FormationSlot(id: 'st', position: 'ST', x: .50, y: .14),
+        FormationSlot(id: 'rw', position: 'RW', x: .82, y: .22),
+      ],
+    ),
+    FormationDefinition(
+      id: '4312',
+      name: '4-3-1-2',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'lcm', position: 'CM', x: .25, y: .52),
+        FormationSlot(id: 'cm', position: 'CM', x: .50, y: .58),
+        FormationSlot(id: 'rcm', position: 'CM', x: .75, y: .52),
+        FormationSlot(id: 'cam', position: 'CAM', x: .50, y: .36),
+        FormationSlot(id: 'lst', position: 'ST', x: .37, y: .16),
+        FormationSlot(id: 'rst', position: 'ST', x: .63, y: .16),
+      ],
+    ),
+    FormationDefinition(
+      id: '433',
+      name: '4-3-3',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'lcm', position: 'CM', x: .25, y: .50),
+        FormationSlot(id: 'cm', position: 'CM', x: .50, y: .56),
+        FormationSlot(id: 'rcm', position: 'CM', x: .75, y: .50),
+        FormationSlot(id: 'lw', position: 'LW', x: .18, y: .23),
+        FormationSlot(id: 'st', position: 'ST', x: .50, y: .16),
+        FormationSlot(id: 'rw', position: 'RW', x: .82, y: .23),
+      ],
+    ),
+    FormationDefinition(
+      id: '4321',
+      name: '4-3-2-1',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'lcm', position: 'CM', x: .25, y: .52),
+        FormationSlot(id: 'cm', position: 'CM', x: .50, y: .57),
+        FormationSlot(id: 'rcm', position: 'CM', x: .75, y: .52),
+        FormationSlot(id: 'lf', position: 'LW', x: .28, y: .25),
+        FormationSlot(id: 'st', position: 'ST', x: .50, y: .14),
+        FormationSlot(id: 'rf', position: 'RW', x: .72, y: .25),
+      ],
+    ),
+    FormationDefinition(
+      id: '4222',
+      name: '4-2-2-2',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'lcdm', position: 'CDM', x: .36, y: .55),
+        FormationSlot(id: 'rcdm', position: 'CDM', x: .64, y: .55),
+        FormationSlot(id: 'lcam', position: 'CAM', x: .25, y: .35),
+        FormationSlot(id: 'rcam', position: 'CAM', x: .75, y: .35),
+        FormationSlot(id: 'lst', position: 'ST', x: .38, y: .17),
+        FormationSlot(id: 'rst', position: 'ST', x: .62, y: .17),
+      ],
+    ),
+    FormationDefinition(
+      id: '4141',
+      name: '4-1-4-1',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lb', position: 'LB', x: .14, y: .70),
+        FormationSlot(id: 'lcb', position: 'CB', x: .38, y: .75),
+        FormationSlot(id: 'rcb', position: 'CB', x: .62, y: .75),
+        FormationSlot(id: 'rb', position: 'RB', x: .86, y: .70),
+        FormationSlot(id: 'cdm', position: 'CDM', x: .50, y: .60),
+        FormationSlot(id: 'lm', position: 'LM', x: .14, y: .44),
+        FormationSlot(id: 'lcm', position: 'CM', x: .38, y: .48),
+        FormationSlot(id: 'rcm', position: 'CM', x: .62, y: .48),
+        FormationSlot(id: 'rm', position: 'RM', x: .86, y: .44),
+        FormationSlot(id: 'st', position: 'ST', x: .50, y: .16),
+      ],
+    ),
+    FormationDefinition(
+      id: '352',
+      name: '3-5-2',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lcb', position: 'CB', x: .25, y: .72),
+        FormationSlot(id: 'cb', position: 'CB', x: .50, y: .77),
+        FormationSlot(id: 'rcb', position: 'CB', x: .75, y: .72),
+        FormationSlot(id: 'lm', position: 'LM', x: .12, y: .48),
+        FormationSlot(id: 'lcdm', position: 'CDM', x: .36, y: .56),
+        FormationSlot(id: 'rcdm', position: 'CDM', x: .64, y: .56),
+        FormationSlot(id: 'rm', position: 'RM', x: .88, y: .48),
+        FormationSlot(id: 'cam', position: 'CAM', x: .50, y: .35),
+        FormationSlot(id: 'lst', position: 'ST', x: .38, y: .16),
+        FormationSlot(id: 'rst', position: 'ST', x: .62, y: .16),
+      ],
+    ),
+    FormationDefinition(
+      id: '5212',
+      name: '5-2-1-2',
+      slots: [
+        FormationSlot(id: 'gk', position: 'GK', x: .50, y: .91),
+        FormationSlot(id: 'lwb', position: 'LWB', x: .10, y: .62),
+        FormationSlot(id: 'lcb', position: 'CB', x: .31, y: .73),
+        FormationSlot(id: 'cb', position: 'CB', x: .50, y: .77),
+        FormationSlot(id: 'rcb', position: 'CB', x: .69, y: .73),
+        FormationSlot(id: 'rwb', position: 'RWB', x: .90, y: .62),
+        FormationSlot(id: 'lcm', position: 'CM', x: .34, y: .49),
+        FormationSlot(id: 'rcm', position: 'CM', x: .66, y: .49),
+        FormationSlot(id: 'cam', position: 'CAM', x: .50, y: .34),
+        FormationSlot(id: 'lst', position: 'ST', x: .38, y: .16),
+        FormationSlot(id: 'rst', position: 'ST', x: .62, y: .16),
       ],
     ),
   ];
