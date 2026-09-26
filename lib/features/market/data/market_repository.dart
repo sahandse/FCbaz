@@ -18,29 +18,32 @@ class MarketRepository {
     String platform = 'console',
     bool forceRefresh = false,
   }) async {
-    try {
-      final path = '/api/v1/players/' +
-          Uri.encodeComponent(playerId) +
-          '/price?platform=' +
-          Uri.encodeQueryComponent(platform);
-      final json = await api.getJson(
-        path,
-        forceRefresh: forceRefresh,
-        cacheTtl: const Duration(seconds: 30),
-      );
-      final raw = json is Map ? (json['data'] ?? json['price'] ?? json) : json;
-      if (raw is Map) {
-        final parsed = PlayerPrice.fromJson(Map<String, dynamic>.from(raw));
-        if (parsed.current > 0) return parsed;
-      }
-    } catch (_) {}
+    if (api.isConfigured) {
+      try {
+        final path = '/api/v1/players/' +
+            Uri.encodeComponent(playerId) +
+            '/price?platform=' +
+            Uri.encodeQueryComponent(platform);
+        final json = await api.getJson(
+          path,
+          forceRefresh: forceRefresh,
+          cacheTtl: const Duration(seconds: 30),
+        );
+        final raw = json is Map ? (json['data'] ?? json['price'] ?? json) : json;
+        if (raw is Map) {
+          final parsed = PlayerPrice.fromJson(Map<String, dynamic>.from(raw));
+          if (parsed.current > 0) return parsed;
+        }
+      } catch (_) {}
+    }
 
     final direct = await publicData.getPrice(
       playerId,
       platform: platform,
     );
     if (direct != null) {
-      return PlayerPrice.fromJson(direct);
+      final parsed = PlayerPrice.fromJson(direct);
+      if (parsed.current > 0) return parsed;
     }
 
     throw const FCBazApiException('قیمت زنده برای این کارت در دسترس نیست.');
@@ -52,6 +55,12 @@ class MarketRepository {
     String range = '7d',
     bool forceRefresh = false,
   }) async {
+    if (!api.isConfigured) {
+      throw const FCBazApiException(
+        'تاریخچه قیمت فقط وقتی نمایش داده می‌شود که منبع واقعی History متصل باشد.',
+      );
+    }
+
     final path = '/api/v1/players/' +
         Uri.encodeComponent(playerId) +
         '/price-history?platform=' +
@@ -77,34 +86,54 @@ class MarketRepository {
   Future<List<Map<String, dynamic>>> getMarketFeed({
     bool forceRefresh = false,
   }) async {
-    try {
-      final json = await api.getJson(
-        '/api/v1/market',
-        forceRefresh: forceRefresh,
-        cacheTtl: const Duration(seconds: 30),
-      );
-      final raw = json is Map ? (json['data'] ?? json['items'] ?? []) : json;
-      if (raw is List) {
-        final items = raw
-            .whereType<Map>()
-            .map((e) => Map<String, dynamic>.from(e))
-            .toList();
-        if (items.isNotEmpty) return items;
-      }
-    } catch (_) {}
+    if (api.isConfigured) {
+      try {
+        final json = await api.getJson(
+          '/api/v1/market',
+          forceRefresh: forceRefresh,
+          cacheTtl: const Duration(seconds: 30),
+        );
+        final raw = json is Map ? (json['data'] ?? json['items'] ?? []) : json;
+        if (raw is List) {
+          final items = raw
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .where(_hasRealMarketValue)
+              .toList();
+          if (items.isNotEmpty) return items;
+        }
+      } catch (_) {}
+    }
 
-    final players = await publicData.getTrending();
-    return players
-        .map((p) => {
-              'player_id': p.id,
-              'id': p.id,
-              'name': p.name,
-              'rating': p.rating,
-              'price_ps': p.pricePs,
-              'price_pc': p.pricePc,
-              'source': 'futbin-public',
-            })
-        .toList();
+    // A popularity list is not a market feed. Without real price values there
+    // is intentionally no fallback row here.
+    final popular = await publicData.getTrending();
+    final priced = <Map<String, dynamic>>[];
+    for (final player in popular.take(12)) {
+      final price = await publicData.getPrice(player.id);
+      if (price == null || (price['current'] as int? ?? 0) <= 0) continue;
+      priced.add({
+        'player_id': player.id,
+        'id': player.id,
+        'name': player.name,
+        'rating': player.rating,
+        'price': price['current'],
+        'current': price['current'],
+        'low': price['low'],
+        'high': price['high'],
+        'change_24h_percent': null,
+        'source': price['source'],
+        'source_url': price['source_url'],
+      });
+    }
+    return priced;
+  }
+
+  bool _hasRealMarketValue(Map<String, dynamic> item) {
+    int value(dynamic raw) =>
+        raw is num ? raw.round() : int.tryParse((raw ?? '').toString()) ?? 0;
+    return value(item['price'] ?? item['current'] ?? item['price_ps']) > 0 ||
+        value(item['price_pc']) > 0;
   }
 
   Future<List<Player>> getCheapestPlayers({
@@ -126,30 +155,33 @@ class MarketRepository {
       params['position'] = position;
     }
 
-    try {
-      final query = params.entries
-          .map((e) =>
-              Uri.encodeQueryComponent(e.key) +
-              '=' +
-              Uri.encodeQueryComponent(e.value))
-          .join('&');
+    if (api.isConfigured) {
+      try {
+        final query = params.entries
+            .map((e) =>
+                '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}')
+            .join('&');
 
-      final json = await api.getJson(
-        '/api/v1/market/cheapest?' + query,
-        forceRefresh: forceRefresh,
-        cacheTtl: const Duration(seconds: 45),
-      );
-      final raw = json is Map ? (json['data'] ?? json['players'] ?? []) : json;
+        final json = await api.getJson(
+          '/api/v1/market/cheapest?$query',
+          forceRefresh: forceRefresh,
+          cacheTtl: const Duration(seconds: 45),
+        );
+        final raw = json is Map ? (json['data'] ?? json['players'] ?? []) : json;
 
-      if (raw is List) {
-        final players = raw
-            .whereType<Map>()
-            .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-            .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
-            .toList();
-        if (players.isNotEmpty) return players;
-      }
-    } catch (_) {}
+        if (raw is List) {
+          final players = raw
+              .whereType<Map>()
+              .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+              .where((p) =>
+                  p.id.isNotEmpty &&
+                  p.name.isNotEmpty &&
+                  (platform == 'pc' ? p.pricePc : p.pricePs) > 0)
+              .toList();
+          if (players.isNotEmpty) return players;
+        }
+      } catch (_) {}
+    }
 
     final direct = await publicData.getFiltered(params: params);
     final pc = platform == 'pc';
