@@ -7,6 +7,7 @@ This release moves the app from a generic Material companion look to a distinct 
 - Reduced rounded-corner usage; more angular item silhouettes and compact controls.
 - Player items are the primary visual object, not generic list cards.
 - Persian RTL chrome; player names and game terminology remain original where appropriate.
+- Floating bottom navigation dock and compact FC-branded app header.
 
 ## Player items
 - Large portrait area.
