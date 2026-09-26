@@ -30,170 +30,241 @@ class PlayerItemVisual extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final t = _VisualTheme.fromPlayer(player);
-    final image = player.cardImageUrl.isNotEmpty ? player.cardImageUrl : player.imageUrl;
     final version = player.version.isNotEmpty
         ? player.version
         : (player.rarity.isNotEmpty ? player.rarity : player.cardType);
 
     return AspectRatio(
-      aspectRatio: compact ? .76 : .69,
-      child: ClipPath(
-        clipper: const _ItemClipper(),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: t.gradient,
-              stops: const [0, .54, 1],
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: t.glow.withValues(alpha: .22),
-                blurRadius: 26,
-                spreadRadius: -8,
-                offset: const Offset(0, 12),
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              Positioned.fill(child: CustomPaint(painter: _Pattern(t))),
-              Positioned(
-                top: compact ? 9 : 12,
-                left: compact ? 10 : 14,
-                child: Column(
-                  children: [
-                    Text(
-                      player.rating > 0 ? '${player.rating}' : '—',
-                      style: TextStyle(
-                        color: t.text,
-                        fontWeight: FontWeight.w900,
-                        fontSize: compact ? 27 : 34,
-                        height: .9,
-                        letterSpacing: -1.6,
-                      ),
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      player.position.isEmpty ? '—' : player.position,
-                      textDirection: TextDirection.ltr,
-                      style: TextStyle(
-                        color: t.text.withValues(alpha: .9),
-                        fontWeight: FontWeight.w900,
-                        fontSize: compact ? 10 : 12,
-                      ),
-                    ),
-                  ],
+      aspectRatio: compact ? .72 : .70,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final w = constraints.maxWidth;
+          final h = constraints.maxHeight;
+          final imageTop = h * .12;
+          final imageHeight = h * (compact ? .43 : .46);
+          final panelHeight = h * (showPrices ? .43 : .35);
+
+          return ClipPath(
+            clipper: const _ItemClipper(),
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: t.gradient,
+                  stops: const [0, .55, 1],
                 ),
               ),
-              Positioned(
-                top: compact ? 29 : 34,
-                left: compact ? 29 : 36,
-                right: compact ? 10 : 15,
-                height: compact ? 120 : 164,
-                child: image.isEmpty
-                    ? Icon(Icons.person_rounded, size: compact ? 88 : 118, color: t.text.withValues(alpha: .25))
-                    : Image.network(
-                        image,
-                        fit: BoxFit.contain,
-                        alignment: Alignment.bottomCenter,
-                        errorBuilder: (_, __, ___) => Icon(
-                          Icons.person_rounded,
-                          size: compact ? 88 : 118,
-                          color: t.text.withValues(alpha: .25),
-                        ),
-                      ),
-              ),
-              Positioned(
-                left: compact ? 10 : 13,
-                right: compact ? 10 : 13,
-                bottom: compact ? 9 : 12,
-                child: Container(
-                  padding: EdgeInsets.fromLTRB(
-                    compact ? 8 : 11,
-                    compact ? 7 : 9,
-                    compact ? 8 : 11,
-                    compact ? 7 : 9,
-                  ),
-                  decoration: BoxDecoration(
-                    color: t.panel.withValues(alpha: .80),
-                    borderRadius: BorderRadius.circular(compact ? 9 : 11),
-                    border: Border.all(color: t.text.withValues(alpha: .10)),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        player.name,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textAlign: TextAlign.center,
-                        textDirection: TextDirection.ltr,
-                        style: TextStyle(
-                          color: t.text,
-                          fontSize: compact ? 12 : 15,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        [
-                          if (player.clubName.isNotEmpty) player.clubName,
-                          if (player.nationName.isNotEmpty) player.nationName,
-                        ].join(' • '),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        textDirection: TextDirection.ltr,
-                        style: TextStyle(
-                          color: t.text.withValues(alpha: .62),
-                          fontSize: compact ? 7 : 8.5,
-                          fontWeight: FontWeight.w800,
-                        ),
-                      ),
-                      const SizedBox(height: 7),
-                      Row(children: [
-                        _Stat('PAC', player.pace, t.text),
-                        _Stat('SHO', player.shooting, t.text),
-                        _Stat('PAS', player.passing, t.text),
-                      ]),
-                      const SizedBox(height: 3),
-                      Row(children: [
-                        _Stat('DRI', player.dribbling, t.text),
-                        _Stat('DEF', player.defending, t.text),
-                        _Stat('PHY', player.physical, t.text),
-                      ]),
-                      if (showPrices) ...[
-                        const SizedBox(height: 7),
-                        Row(children: [
-                          Expanded(child: _Price(label: 'Console', value: _coins(player.pricePs), t: t)),
-                          const SizedBox(width: 5),
-                          Expanded(child: _Price(label: 'PC', value: _coins(player.pricePc), t: t)),
-                        ]),
-                      ],
-                      if (version.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        Text(
-                          version.toUpperCase(),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textDirection: TextDirection.ltr,
-                          style: TextStyle(
-                            color: t.text.withValues(alpha: .82),
-                            fontSize: compact ? 7 : 8,
-                            fontWeight: FontWeight.w900,
+              child: Stack(
+                clipBehavior: Clip.hardEdge,
+                children: [
+                  Positioned.fill(child: CustomPaint(painter: _Pattern(t))),
+                  Positioned(
+                    top: h * .045,
+                    left: w * .055,
+                    child: SizedBox(
+                      width: w * .19,
+                      child: Column(
+                        children: [
+                          FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              player.rating > 0 ? '${player.rating}' : '—',
+                              style: TextStyle(
+                                color: t.text,
+                                fontWeight: FontWeight.w900,
+                                fontSize: compact ? 31 : 38,
+                                height: .88,
+                                letterSpacing: -1.8,
+                              ),
+                            ),
                           ),
-                        ),
-                      ],
-                    ],
+                          const SizedBox(height: 4),
+                          Text(
+                            player.position.isEmpty ? '—' : player.position,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            textDirection: TextDirection.ltr,
+                            style: TextStyle(
+                              color: t.text.withValues(alpha: .92),
+                              fontWeight: FontWeight.w900,
+                              fontSize: compact ? 10 : 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                ),
+                  Positioned(
+                    top: imageTop,
+                    left: w * .16,
+                    right: w * .07,
+                    height: imageHeight,
+                    child: _PlayerImage(
+                      primaryUrl: player.imageUrl,
+                      fallbackUrl: player.cardImageUrl,
+                      color: t.text.withValues(alpha: .24),
+                      compact: compact,
+                    ),
+                  ),
+                  Positioned(
+                    left: w * .05,
+                    right: w * .05,
+                    bottom: h * .035,
+                    height: panelHeight,
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(
+                        compact ? 8 : 11,
+                        compact ? 7 : 10,
+                        compact ? 8 : 11,
+                        compact ? 7 : 9,
+                      ),
+                      decoration: BoxDecoration(
+                        color: t.panel.withValues(alpha: .86),
+                        borderRadius: BorderRadius.circular(compact ? 10 : 12),
+                        border: Border.all(color: t.text.withValues(alpha: .10)),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SizedBox(
+                                height: compact ? 18 : 21,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                    player.name,
+                                    maxLines: 1,
+                                    textAlign: TextAlign.center,
+                                    textDirection: TextDirection.ltr,
+                                    style: TextStyle(
+                                      color: t.text,
+                                      fontSize: compact ? 13 : 16,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(height: 2),
+                              Text(
+                                [
+                                  if (player.clubName.isNotEmpty) player.clubName,
+                                  if (player.nationName.isNotEmpty) player.nationName,
+                                ].join(' • '),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                textDirection: TextDirection.ltr,
+                                style: TextStyle(
+                                  color: t.text.withValues(alpha: .64),
+                                  fontSize: compact ? 7.5 : 9,
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Row(children: [
+                                _Stat('PAC', player.pace, t.text),
+                                _Stat('SHO', player.shooting, t.text),
+                                _Stat('PAS', player.passing, t.text),
+                              ]),
+                              const SizedBox(height: 3),
+                              Row(children: [
+                                _Stat('DRI', player.dribbling, t.text),
+                                _Stat('DEF', player.defending, t.text),
+                                _Stat('PHY', player.physical, t.text),
+                              ]),
+                            ],
+                          ),
+                          if (showPrices)
+                            Row(children: [
+                              Expanded(child: _Price(label: 'Console', value: _coins(player.pricePs), t: t)),
+                              const SizedBox(width: 5),
+                              Expanded(child: _Price(label: 'PC', value: _coins(player.pricePc), t: t)),
+                            ]),
+                          if (version.isNotEmpty)
+                            Container(
+                              constraints: const BoxConstraints(maxWidth: 120),
+                              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: t.accent.withValues(alpha: .13),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: Text(
+                                version.toUpperCase(),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                textAlign: TextAlign.center,
+                                textDirection: TextDirection.ltr,
+                                style: TextStyle(
+                                  color: t.text.withValues(alpha: .84),
+                                  fontSize: compact ? 7 : 8,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
+}
+
+class _PlayerImage extends StatelessWidget {
+  const _PlayerImage({
+    required this.primaryUrl,
+    required this.fallbackUrl,
+    required this.color,
+    required this.compact,
+  });
+
+  final String primaryUrl;
+  final String fallbackUrl;
+  final Color color;
+  final bool compact;
+
+  @override
+  Widget build(BuildContext context) {
+    if (primaryUrl.isEmpty && fallbackUrl.isEmpty) return _placeholder();
+    return Image.network(
+      primaryUrl.isNotEmpty ? primaryUrl : fallbackUrl,
+      fit: BoxFit.contain,
+      alignment: Alignment.bottomCenter,
+      filterQuality: FilterQuality.medium,
+      errorBuilder: (_, __, ___) {
+        if (primaryUrl.isNotEmpty && fallbackUrl.isNotEmpty && fallbackUrl != primaryUrl) {
+          return Image.network(
+            fallbackUrl,
+            fit: BoxFit.contain,
+            alignment: Alignment.bottomCenter,
+            filterQuality: FilterQuality.medium,
+            errorBuilder: (_, __, ___) => _placeholder(),
+          );
+        }
+        return _placeholder();
+      },
+    );
+  }
+
+  Widget _placeholder() => Center(
+        child: Icon(
+          Icons.person_rounded,
+          size: compact ? 72 : 104,
+          color: color,
+        ),
+      );
 }
 
 class _Price extends StatelessWidget {
@@ -204,7 +275,7 @@ class _Price extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 4),
+        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
         decoration: BoxDecoration(
           color: t.text.withValues(alpha: .08),
           borderRadius: BorderRadius.circular(6),
@@ -228,25 +299,29 @@ class _Stat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Expanded(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              value > 0 ? '$value' : '—',
-              style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 9.5),
-            ),
-            const SizedBox(width: 2),
-            Text(
-              label,
-              style: TextStyle(color: color.withValues(alpha: .48), fontSize: 6.5, fontWeight: FontWeight.w900),
-            ),
-          ],
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                value > 0 ? '$value' : '—',
+                style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 9.5),
+              ),
+              const SizedBox(width: 2),
+              Text(
+                label,
+                style: TextStyle(color: color.withValues(alpha: .48), fontSize: 6.5, fontWeight: FontWeight.w900),
+              ),
+            ],
+          ),
         ),
       );
 }
 
 class _ItemClipper extends CustomClipper<Path> {
   const _ItemClipper();
+
   @override
   Path getClip(Size s) => Path()
     ..moveTo(s.width * .17, 0)
@@ -258,6 +333,7 @@ class _ItemClipper extends CustomClipper<Path> {
     ..lineTo(s.width * .04, s.height * .88)
     ..lineTo(0, s.height * .10)
     ..close();
+
   @override
   bool shouldReclip(covariant CustomClipper<Path> oldClipper) => false;
 }
@@ -265,16 +341,18 @@ class _ItemClipper extends CustomClipper<Path> {
 class _Pattern extends CustomPainter {
   const _Pattern(this.t);
   final _VisualTheme t;
+
   @override
   void paint(Canvas canvas, Size size) {
     final p = Paint()
-      ..color = t.text.withValues(alpha: .06)
+      ..color = t.text.withValues(alpha: .055)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1;
     canvas.drawLine(Offset(size.width * .12, size.height * .18), Offset(size.width * .88, size.height * .06), p);
     canvas.drawLine(Offset(size.width * .04, size.height * .52), Offset(size.width * .96, size.height * .34), p);
     canvas.drawCircle(Offset(size.width * .72, size.height * .25), size.width * .28, p);
   }
+
   @override
   bool shouldRepaint(covariant _Pattern oldDelegate) => oldDelegate.t != t;
 }
