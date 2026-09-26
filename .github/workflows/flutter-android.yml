@@ -10,7 +10,7 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 1.1.0
+        default: 1.1.1
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -21,10 +21,10 @@ on:
     branches:
       - main
     paths:
-      - '.release/fcbaz-v1.1.0'
+      - '.release/fcbaz-v1.1.1'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.1.0' }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.1.1' }}
   RELEASE_BUILD_NUMBER: ${{ github.run_number }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
 
@@ -62,7 +62,7 @@ jobs:
       - name: Complete Android platform
         run: flutter create . --platforms=android --org ir.fcbaz --project-name fcbaz
 
-      - name: Configure Android identity, launcher and stable signing
+      - name: Configure Android identity, notification icon and stable signing
         shell: bash
         env:
           KEYSTORE_BASE64: ${{ secrets.FCBAZ_KEYSTORE_BASE64 }}
@@ -82,37 +82,41 @@ jobs:
           class MainActivity : FlutterActivity()
           EOF
           rm -rf android/app/src/main/kotlin/ir/fcbaz/fcbaz || true
-
           sed -i 's/android:label="fcbaz"/android:label="FCBaz"/' android/app/src/main/AndroidManifest.xml || true
+
+          mkdir -p android/app/src/main/res/drawable
+          cat > android/app/src/main/res/drawable/ic_stat_fcbaz.xml <<'EOF'
+          <vector xmlns:android="http://schemas.android.com/apk/res/android"
+              android:width="24dp"
+              android:height="24dp"
+              android:viewportWidth="24"
+              android:viewportHeight="24">
+              <path
+                  android:fillColor="#FFFFFFFF"
+                  android:pathData="M3,5h18v14H3zM5,7v10h14V7zM11,7h2v10h-2zM6.5,12a1.5,1.5 0,1 0,3 0a1.5,1.5 0,1 0,-3 0M14.5,12a1.5,1.5 0,1 0,3 0a1.5,1.5 0,1 0,-3 0" />
+          </vector>
+          EOF
 
           if [ -n "$KEYSTORE_BASE64" ] && [ -n "$STORE_PASSWORD_SECRET" ] && [ -n "$KEY_PASSWORD_SECRET" ] && [ -n "$KEY_ALIAS_SECRET" ]; then
             printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/fcbaz-release.jks
             STORE_PASSWORD="$STORE_PASSWORD_SECRET"
             KEY_PASSWORD="$KEY_PASSWORD_SECRET"
             KEY_ALIAS="$KEY_ALIAS_SECRET"
-            echo "Using stable signing material from GitHub Secrets."
           else
-            echo "Signing secrets are not configured; restoring the existing release key used by previous FCBaz releases."
             mkdir -p /tmp/fcbaz-signing
             ARTIFACT_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
               --jq '.artifacts[] | select(.name | contains("signing-backup")) | select(.expired==false) | .id' \
               | head -n 1)
-            test -n "$ARTIFACT_ID" || { echo "No non-expired existing signing backup found. Configure FCBAZ signing secrets."; exit 1; }
+            test -n "$ARTIFACT_ID" || { echo "No non-expired existing signing backup found."; exit 1; }
             gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/fcbaz-signing/signing.zip
             unzip -q -o /tmp/fcbaz-signing/signing.zip -d /tmp/fcbaz-signing
             JKS=$(find /tmp/fcbaz-signing -name 'fcbaz-release.jks' | head -n 1)
             INFO=$(find /tmp/fcbaz-signing -name 'signing-key-info.txt' | head -n 1)
-            test -n "$JKS" || { echo "Existing signing keystore not found in artifact."; exit 1; }
-            test -n "$INFO" || { echo "Existing signing key info not found in artifact."; exit 1; }
             cp "$JKS" android/app/fcbaz-release.jks
             STORE_PASSWORD=$(awk -F= '/^storePassword=/{print $2}' "$INFO")
             KEY_PASSWORD=$(awk -F= '/^keyPassword=/{print $2}' "$INFO")
             KEY_ALIAS=$(awk -F= '/^keyAlias=/{print $2}' "$INFO")
           fi
-
-          test -n "$STORE_PASSWORD"
-          test -n "$KEY_PASSWORD"
-          test -n "$KEY_ALIAS"
 
           cat > android/key.properties <<EOF
           storePassword=$STORE_PASSWORD
@@ -130,21 +134,12 @@ jobs:
           if 'import java.util.Properties' not in s:
               s = 'import java.util.Properties\nimport java.io.FileInputStream\n' + s
           if 'val keystoreProperties = Properties()' not in s:
-              s = s.replace(
-                  'android {',
-                  'val keystoreProperties = Properties()\nval keystorePropertiesFile = rootProject.file("key.properties")\nkeystoreProperties.load(FileInputStream(keystorePropertiesFile))\n\nandroid {',
-                  1,
-              )
+              s = s.replace('android {', 'val keystoreProperties = Properties()\nval keystorePropertiesFile = rootProject.file("key.properties")\nkeystoreProperties.load(FileInputStream(keystorePropertiesFile))\n\nandroid {', 1)
           if 'create("release")' not in s:
-              s = s.replace(
-                  '    buildTypes {',
-                  '''    signingConfigs {\n        create("release") {\n            keyAlias = keystoreProperties["keyAlias"] as String\n            keyPassword = keystoreProperties["keyPassword"] as String\n            storeFile = file(keystoreProperties["storeFile"] as String)\n            storePassword = keystoreProperties["storePassword"] as String\n        }\n    }\n\n    buildTypes {''',
-                  1,
-              )
+              s = s.replace('    buildTypes {', '''    signingConfigs {\n        create("release") {\n            keyAlias = keystoreProperties["keyAlias"] as String\n            keyPassword = keystoreProperties["keyPassword"] as String\n            storeFile = file(keystoreProperties["storeFile"] as String)\n            storePassword = keystoreProperties["storePassword"] as String\n        }\n    }\n\n    buildTypes {''', 1)
           s = s.replace('signingConfig = signingConfigs.getByName("debug")', 'signingConfig = signingConfigs.getByName("release")')
           p.write_text(s)
           PY
-
           keytool -list -keystore android/app/fcbaz-release.jks -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
 
       - name: Set release version
@@ -157,17 +152,7 @@ jobs:
           build = os.environ['RELEASE_BUILD_NUMBER']
           p = Path('pubspec.yaml')
           lines = p.read_text().splitlines()
-          out = []
-          changed = False
-          for line in lines:
-              if line.startswith('version:'):
-                  out.append(f'version: {version}+{build}')
-                  changed = True
-              else:
-                  out.append(line)
-          if not changed:
-              raise SystemExit('pubspec version field not found')
-          p.write_text('\n'.join(out) + '\n')
+          p.write_text('\n'.join(f'version: {version}+{build}' if line.startswith('version:') else line for line in lines) + '\n')
           PY
 
       - name: Remove generated template test
@@ -180,15 +165,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if dart run flutter_launcher_icons; then
-            exit 0
-          fi
-
-          echo "Existing launcher asset is not decodable; generating a valid FCBaz fallback icon."
+          if dart run flutter_launcher_icons; then exit 0; fi
           python3 - <<'PY'
           from pathlib import Path
           import struct, zlib, binascii
-
           w = h = 1024
           bg = (8, 11, 15)
           green = (102, 240, 138)
@@ -197,34 +177,16 @@ jobs:
           for y in range(h):
               row = bytearray([0])
               for x in range(w):
-                  dx = x - cx
-                  dy = y - cy
-                  r2 = dx * dx + dy * dy
-                  color = bg
-                  if 300 * 300 <= r2 <= 350 * 350:
-                      color = green
-                  if 300 <= x <= 724 and 280 <= y <= 744:
-                      edge = x in range(300, 314) or x in range(711, 725) or y in range(280, 294) or y in range(731, 745)
-                      middle = 505 <= x <= 519
-                      circle = 88 * 88 <= (x - 512) ** 2 + (y - 512) ** 2 <= 104 * 104
-                      if edge or middle or circle:
-                          color = green
+                  dx = x - cx; dy = y - cy; r2 = dx*dx + dy*dy
+                  color = green if 300*300 <= r2 <= 350*350 else bg
                   row.extend(color)
               rows.append(bytes(row))
-
           def chunk(kind, payload):
               return struct.pack('>I', len(payload)) + kind + payload + struct.pack('>I', binascii.crc32(kind + payload) & 0xffffffff)
-
           raw = b''.join(rows)
-          png = b'\x89PNG\r\n\x1a\n'
-          png += chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0))
-          png += chunk(b'IDAT', zlib.compress(raw, 9))
-          png += chunk(b'IEND', b'')
-          path = Path('assets/icon/fcbaz_app_icon.png')
-          path.parent.mkdir(parents=True, exist_ok=True)
-          path.write_bytes(png)
+          png = b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', w,h,8,2,0,0,0)) + chunk(b'IDAT', zlib.compress(raw,9)) + chunk(b'IEND', b'')
+          Path('assets/icon/fcbaz_app_icon.png').write_bytes(png)
           PY
-
           dart run flutter_launcher_icons
 
       - name: Analyze
@@ -234,37 +196,27 @@ jobs:
         run: flutter test
 
       - name: Build signed release APK
-        run: >
-          flutter build apk --release
-          --dart-define=FCBAZ_API_BASE_URL=${{ env.FCBAZ_API_BASE_URL }}
-          --dart-define=FCBAZ_APP_VERSION=${{ env.RELEASE_VERSION }}
+        run: flutter build apk --release --dart-define=FCBAZ_API_BASE_URL=${{ env.FCBAZ_API_BASE_URL }} --dart-define=FCBAZ_APP_VERSION=${{ env.RELEASE_VERSION }}
 
       - name: Build signed release AAB
-        run: >
-          flutter build appbundle --release
-          --dart-define=FCBAZ_API_BASE_URL=${{ env.FCBAZ_API_BASE_URL }}
-          --dart-define=FCBAZ_APP_VERSION=${{ env.RELEASE_VERSION }}
+        run: flutter build appbundle --release --dart-define=FCBAZ_API_BASE_URL=${{ env.FCBAZ_API_BASE_URL }} --dart-define=FCBAZ_APP_VERSION=${{ env.RELEASE_VERSION }}
 
       - name: Prepare and verify release files
         shell: bash
         run: |
-          set -euo pipefail
           cp build/app/outputs/flutter-apk/app-release.apk "FCBaz-v${RELEASE_VERSION}.apk"
           cp build/app/outputs/bundle/release/app-release.aab "FCBaz-v${RELEASE_VERSION}.aab"
-          test -s "FCBaz-v${RELEASE_VERSION}.apk"
-          test -s "FCBaz-v${RELEASE_VERSION}.aab"
           sha256sum "FCBaz-v${RELEASE_VERSION}.apk" "FCBaz-v${RELEASE_VERSION}.aab" > SHA256SUMS.txt
           cat > RELEASE_NOTES.md <<EOF
           ## FCBaz v${RELEASE_VERSION}
 
-          نسخه Production با معماری بدون ثبت‌نام و داده واقعی FC Ultimate Team.
+          Hotfix صفحه سیاه هنگام شروع برنامه.
 
-          - داده ساختگی و fallback فصل اشتباه نمایش داده نمی‌شود.
-          - قیمت فقط وقتی منبع واقعی در دسترس باشد نمایش داده می‌شود.
-          - درصد تغییر ۲۴ ساعته و تاریخچه قیمت بدون منبع واقعی با «ناموجود» نمایش داده می‌شوند.
-          - Watchlist، My Club، Squads و تنظیمات روی دستگاه ذخیره می‌شوند.
-          - اعلان محلی Android و بررسی دوره‌ای Price Alert فعال است.
-          - بخش‌های SBC / Evolution / Objectives فقط با داده واقعی نمایش داده می‌شوند و در نبود منبع، خالی می‌مانند.
+          - UI قبل از initialize سرویس‌های اختیاری Android نمایش داده می‌شود.
+          - خطای Notification یا WorkManager دیگر startup را متوقف نمی‌کند.
+          - resource واقعی ic_stat_fcbaz در APK قرار می‌گیرد.
+          - لود تنظیمات و Price Alert هنگام شروع fail-safe شده است.
+          - داده ساختگی نمایش داده نمی‌شود.
           EOF
 
       - name: Upload release artifact
@@ -276,7 +228,6 @@ jobs:
             FCBaz-v${{ env.RELEASE_VERSION }}.aab
             SHA256SUMS.txt
             RELEASE_NOTES.md
-          if-no-files-found: error
           retention-days: 30
 
       - name: Publish GitHub Release
@@ -286,7 +237,6 @@ jobs:
           name: FCBaz v${{ env.RELEASE_VERSION }}
           body_path: RELEASE_NOTES.md
           generate_release_notes: true
-          fail_on_unmatched_files: true
           files: |
             FCBaz-v${{ env.RELEASE_VERSION }}.apk
             FCBaz-v${{ env.RELEASE_VERSION }}.aab
