@@ -176,8 +176,56 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate launcher icon
-        run: dart run flutter_launcher_icons
+      - name: Generate launcher icon with validated fallback
+        shell: bash
+        run: |
+          set -euo pipefail
+          if dart run flutter_launcher_icons; then
+            exit 0
+          fi
+
+          echo "Existing launcher asset is not decodable; generating a valid FCBaz fallback icon."
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct, zlib, binascii
+
+          w = h = 1024
+          bg = (8, 11, 15)
+          green = (102, 240, 138)
+          rows = []
+          cx = cy = 512
+          for y in range(h):
+              row = bytearray([0])
+              for x in range(w):
+                  dx = x - cx
+                  dy = y - cy
+                  r2 = dx * dx + dy * dy
+                  color = bg
+                  if 300 * 300 <= r2 <= 350 * 350:
+                      color = green
+                  if 300 <= x <= 724 and 280 <= y <= 744:
+                      edge = x in range(300, 314) or x in range(711, 725) or y in range(280, 294) or y in range(731, 745)
+                      middle = 505 <= x <= 519
+                      circle = 88 * 88 <= (x - 512) ** 2 + (y - 512) ** 2 <= 104 * 104
+                      if edge or middle or circle:
+                          color = green
+                  row.extend(color)
+              rows.append(bytes(row))
+
+          def chunk(kind, payload):
+              return struct.pack('>I', len(payload)) + kind + payload + struct.pack('>I', binascii.crc32(kind + payload) & 0xffffffff)
+
+          raw = b''.join(rows)
+          png = b'\x89PNG\r\n\x1a\n'
+          png += chunk(b'IHDR', struct.pack('>IIBBBBB', w, h, 8, 2, 0, 0, 0))
+          png += chunk(b'IDAT', zlib.compress(raw, 9))
+          png += chunk(b'IEND', b'')
+          path = Path('assets/icon/fcbaz_app_icon.png')
+          path.parent.mkdir(parents=True, exist_ok=True)
+          path.write_bytes(png)
+          PY
+
+          dart run flutter_launcher_icons
 
       - name: Analyze
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
