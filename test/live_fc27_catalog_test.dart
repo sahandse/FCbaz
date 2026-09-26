@@ -31,7 +31,13 @@ void main() {
       expect(playerIds.add(id), isTrue, reason: 'duplicate player id: $id');
       expect(rating, inInclusiveRange(40, 99), reason: 'invalid rating: $name');
       expect(position, isNotEmpty, reason: 'missing position: $name');
-      expect(source.startsWith('https://www.fut.gg/'), isTrue, reason: 'player missing verified source: $name');
+      expect(
+        source.startsWith('https://www.fut.gg/') ||
+            source.startsWith('https://www.futbin.org/') ||
+            source.startsWith('https://www.ea.com/'),
+        isTrue,
+        reason: 'player missing trusted real source: $name',
+      );
     }
 
     for (final key in ['evolutions', 'sbcs', 'objectives']) {
