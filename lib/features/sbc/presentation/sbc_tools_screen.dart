@@ -34,8 +34,8 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
       error = null;
     });
 
-    final minRating = (targetRating - 5).clamp(75, 95);
-    final maxRating = (targetRating + 5).clamp(75, 95);
+    final minRating = (targetRating - 5).clamp(75, 95).toInt();
+    final maxRating = (targetRating + 5).clamp(75, 95).toInt();
     final found = <int, Player>{};
 
     try {
@@ -111,7 +111,7 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
               ),
             ),
             const SizedBox(height: 14),
-            _Fc27Notice(),
+            const _Fc27Notice(),
             const SizedBox(height: 14),
             Row(
               children: [
@@ -246,6 +246,8 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
 }
 
 class _Fc27Notice extends StatelessWidget {
+  const _Fc27Notice();
+
   @override
   Widget build(BuildContext context) {
     return Card(
