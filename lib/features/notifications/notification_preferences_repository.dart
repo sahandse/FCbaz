@@ -38,17 +38,18 @@ class NotificationPreferencesRepository {
       priceAlerts: prefs.getBool(_priceKey) ?? true,
       objectiveDeadlines: prefs.getBool(_objectiveKey) ?? true,
       evolutionDeadlines: prefs.getBool(_evolutionKey) ?? true,
-      deadlineHours: (prefs.getInt(_hoursKey) ?? 24).clamp(1, 168),
+      deadlineHours: (prefs.getInt(_hoursKey) ?? 24).clamp(1, 168).toInt(),
     );
   }
 
   Future<void> save(NotificationPreferences value) async {
     final prefs = await SharedPreferences.getInstance();
+    final hours = value.deadlineHours.clamp(1, 168).toInt();
     await Future.wait([
       prefs.setBool(_priceKey, value.priceAlerts),
       prefs.setBool(_objectiveKey, value.objectiveDeadlines),
       prefs.setBool(_evolutionKey, value.evolutionDeadlines),
-      prefs.setInt(_hoursKey, value.deadlineHours.clamp(1, 168)),
+      prefs.setInt(_hoursKey, hours),
     ]);
   }
 }
