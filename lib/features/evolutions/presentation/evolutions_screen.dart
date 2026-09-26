@@ -4,6 +4,7 @@ import '../../club/data/my_club_repository.dart';
 import '../data/evolution_repository.dart';
 import '../domain/evolution.dart';
 import '../domain/evolution_eligibility_engine.dart';
+import '../domain/evolution_projection.dart';
 
 class EvolutionsScreen extends StatefulWidget {
   const EvolutionsScreen({super.key});
@@ -44,16 +45,16 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Evolutions')),
+      appBar: AppBar(title: const Text('ارتقا بازیکنان')),
       body: RefreshIndicator(
         onRefresh: _load,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text('Evo Lab', style: Theme.of(context).textTheme.headlineSmall),
+            Text('آزمایشگاه Evolution', style: Theme.of(context).textTheme.headlineSmall),
             const SizedBox(height: 4),
             Text(
-              'مسیرهای ارتقا، شرایط و بازیکنان واجد شرایط',
+              'شرایط واقعی، کارت‌های واجد شرایط و مقایسه قبل/بعد فقط با داده منبع',
               style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
             ),
             const SizedBox(height: 16),
@@ -66,7 +67,7 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
               Card(
                 child: ListTile(
                   leading: const Icon(Icons.cloud_off_rounded),
-                  title: const Text('Evolutions در دسترس نیست'),
+                  title: const Text('Evolutionها در دسترس نیستند'),
                   subtitle: Text(error!),
                   trailing: IconButton(onPressed: _load, icon: const Icon(Icons.refresh_rounded)),
                 ),
@@ -81,7 +82,7 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
               )
             else
               for (final item in items) ...[
-                _EvolutionCard(item: item, repository: repository),
+                _EvolutionCard(item: item),
                 const SizedBox(height: 10),
               ],
           ],
@@ -92,10 +93,8 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
 }
 
 class _EvolutionCard extends StatefulWidget {
-  const _EvolutionCard({required this.item, required this.repository});
-
+  const _EvolutionCard({required this.item});
   final Evolution item;
-  final EvolutionRepository repository;
 
   @override
   State<_EvolutionCard> createState() => _EvolutionCardState();
@@ -104,10 +103,13 @@ class _EvolutionCard extends StatefulWidget {
 class _EvolutionCardState extends State<_EvolutionCard> {
   final clubRepository = MyClubRepository();
   final eligibilityEngine = const EvolutionEligibilityEngine();
+  final projectionEngine = const EvolutionProjectionEngine();
 
   bool loadingEligible = false;
+  bool checkedClub = false;
   List<MyClubItem> eligible = const [];
   List<MyClubItem> needsReview = const [];
+  List<MyClubItem> ineligible = const [];
 
   Future<void> _loadEligible() async {
     setState(() => loadingEligible = true);
@@ -115,27 +117,92 @@ class _EvolutionCardState extends State<_EvolutionCard> {
       final club = await clubRepository.getAll();
       final ok = <MyClubItem>[];
       final review = <MyClubItem>[];
+      final no = <MyClubItem>[];
 
       for (final item in club) {
         final result = eligibilityEngine.evaluate(item, widget.item);
-        if (result.status == EvoEligibilityStatus.eligible) {
-          ok.add(item);
-        } else if (result.status == EvoEligibilityStatus.needsReview) {
-          review.add(item);
+        switch (result.status) {
+          case EvoEligibilityStatus.eligible:
+            ok.add(item);
+          case EvoEligibilityStatus.needsReview:
+            review.add(item);
+          case EvoEligibilityStatus.ineligible:
+            no.add(item);
         }
       }
 
-      ok.sort((a, b) => b.rating.compareTo(a.rating));
-      review.sort((a, b) => b.rating.compareTo(a.rating));
+      int byRating(MyClubItem a, MyClubItem b) => b.rating.compareTo(a.rating);
+      ok.sort(byRating);
+      review.sort(byRating);
+      no.sort(byRating);
 
       if (!mounted) return;
       setState(() {
         eligible = ok;
         needsReview = review;
+        ineligible = no;
+        checkedClub = true;
       });
     } finally {
       if (mounted) setState(() => loadingEligible = false);
     }
+  }
+
+  String _expiry(Evolution item) {
+    final value = item.expiresAt;
+    if (value == null) return 'زمان پایان نامشخص';
+    final local = value.toLocal();
+    return '${local.year}/${local.month.toString().padLeft(2, '0')}/${local.day.toString().padLeft(2, '0')}';
+  }
+
+  void _showProjection(MyClubItem player) {
+    final projection = projectionEngine.project(player, widget.item);
+    if (projection == null) return;
+    const labels = <String, String>{
+      'rating': 'ریتینگ',
+      'pace': 'سرعت',
+      'shooting': 'شوت',
+      'passing': 'پاس',
+      'dribbling': 'دریبل',
+      'defending': 'دفاع',
+      'physical': 'فیزیک',
+      'skill_moves': 'مهارت',
+      'weak_foot': 'پای ضعیف',
+    };
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      isScrollControlled: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(18, 4, 18, 24),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(player.playerName, style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 4),
+              Text(widget.item.title, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+              const SizedBox(height: 16),
+              for (final key in projection.before.keys)
+                if ((projection.changes[key] ?? 0) != 0)
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    title: Text(labels[key] ?? key),
+                    subtitle: Text('${projection.before[key]}  ←  ${projection.after[key]}'),
+                    trailing: Chip(label: Text('+${projection.changes[key]}')),
+                  ),
+              const SizedBox(height: 8),
+              Text(
+                'این مقایسه فقط از Upgradeهای عددی و ساختاریافته دریافت‌شده از منبع ساخته شده است.',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -145,27 +212,21 @@ class _EvolutionCardState extends State<_EvolutionCard> {
       child: ExpansionTile(
         leading: Icon(Icons.auto_awesome_rounded, color: Theme.of(context).colorScheme.primary),
         title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w900)),
-        subtitle: Text(item.cost == 0 ? 'رایگان' : item.cost.toString() + ' Coins'),
+        subtitle: Text('${item.cost == 0 ? 'رایگان' : '${item.cost} Coins'} • ${_expiry(item)}'),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         children: [
           if (item.description.isNotEmpty)
             Align(alignment: Alignment.centerRight, child: Text(item.description)),
           if (item.requirements.isNotEmpty) ...[
             const SizedBox(height: 12),
-            const Align(
-              alignment: Alignment.centerRight,
-              child: Text('شرایط', style: TextStyle(fontWeight: FontWeight.w900)),
-            ),
+            const Align(alignment: Alignment.centerRight, child: Text('شرایط', style: TextStyle(fontWeight: FontWeight.w900))),
             const SizedBox(height: 6),
             for (final req in item.requirements)
-              Align(alignment: Alignment.centerRight, child: Text('• ' + req)),
+              Align(alignment: Alignment.centerRight, child: Text('• $req')),
           ],
           if (item.steps.isNotEmpty) ...[
             const SizedBox(height: 12),
-            const Align(
-              alignment: Alignment.centerRight,
-              child: Text('مسیر Evolution', style: TextStyle(fontWeight: FontWeight.w900)),
-            ),
+            const Align(alignment: Alignment.centerRight, child: Text('مسیر Evolution', style: TextStyle(fontWeight: FontWeight.w900))),
             const SizedBox(height: 8),
             for (var i = 0; i < item.steps.length; i++) ...[
               Container(
@@ -178,20 +239,14 @@ class _EvolutionCardState extends State<_EvolutionCard> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      (i + 1).toString() + '. ' +
-                          (item.steps[i].title.isEmpty ? 'مرحله ' + (i + 1).toString() : item.steps[i].title),
-                      style: const TextStyle(fontWeight: FontWeight.w900),
-                    ),
+                    Text('${i + 1}. ${item.steps[i].title.isEmpty ? 'مرحله ${i + 1}' : item.steps[i].title}', style: const TextStyle(fontWeight: FontWeight.w900)),
                     if (item.steps[i].requirements.isNotEmpty) ...[
                       const SizedBox(height: 6),
-                      for (final req in item.steps[i].requirements)
-                        Text('• ' + req),
+                      for (final req in item.steps[i].requirements) Text('• $req'),
                     ],
                     if (item.steps[i].upgrades.isNotEmpty) ...[
                       const SizedBox(height: 6),
-                      for (final up in item.steps[i].upgrades)
-                        Text('+ ' + up),
+                      for (final up in item.steps[i].upgrades) Text('+ $up'),
                     ],
                   ],
                 ),
@@ -201,13 +256,10 @@ class _EvolutionCardState extends State<_EvolutionCard> {
           ],
           if (item.upgrades.isNotEmpty) ...[
             const SizedBox(height: 12),
-            const Align(
-              alignment: Alignment.centerRight,
-              child: Text('ارتقاها', style: TextStyle(fontWeight: FontWeight.w900)),
-            ),
+            const Align(alignment: Alignment.centerRight, child: Text('ارتقاها', style: TextStyle(fontWeight: FontWeight.w900))),
             const SizedBox(height: 6),
             for (final upgrade in item.upgrades)
-              Align(alignment: Alignment.centerRight, child: Text('• ' + upgrade)),
+              Align(alignment: Alignment.centerRight, child: Text('• $upgrade')),
           ],
           const SizedBox(height: 12),
           SizedBox(
@@ -220,63 +272,53 @@ class _EvolutionCardState extends State<_EvolutionCard> {
               label: const Text('بررسی کارت‌های باشگاه من'),
             ),
           ),
+          if (checkedClub) ...[
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                Chip(label: Text('واجد شرایط: ${eligible.length}')),
+                Chip(label: Text('نیاز به بررسی: ${needsReview.length}')),
+                Chip(label: Text('نامعتبر: ${ineligible.length}')),
+              ],
+            ),
+          ],
           if (eligible.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                'واجد شرایط قطعی: ' + eligible.length.toString(),
-                style: TextStyle(
-                  color: Theme.of(context).colorScheme.primary,
-                  fontWeight: FontWeight.w900,
-                ),
-              ),
-            ),
-            const SizedBox(height: 6),
-            for (final player in eligible.take(8))
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                leading: Icon(
-                  Icons.check_circle_rounded,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                title: Text(player.playerName),
-                subtitle: Text(
-                  player.rating.toString() + ' • ' + player.position,
-                ),
-              ),
+            for (final player in eligible.take(10))
+              Builder(builder: (context) {
+                final projection = projectionEngine.project(player, item);
+                return ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: Icon(Icons.check_circle_rounded, color: Theme.of(context).colorScheme.primary),
+                  title: Text(player.playerName),
+                  subtitle: Text('${player.rating} • ${player.position}'),
+                  trailing: projection == null
+                      ? null
+                      : TextButton.icon(
+                          onPressed: () => _showProjection(player),
+                          icon: const Icon(Icons.compare_arrows_rounded, size: 18),
+                          label: const Text('قبل/بعد'),
+                        ),
+                );
+              }),
           ],
           if (needsReview.isNotEmpty) ...[
             const SizedBox(height: 10),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text(
-                'نیاز به بررسی شرط ناشناخته: ' +
-                    needsReview.length.toString(),
-                style: const TextStyle(fontWeight: FontWeight.w800),
-              ),
-            ),
-            const SizedBox(height: 6),
             for (final player in needsReview.take(5))
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 dense: true,
                 leading: const Icon(Icons.help_outline_rounded),
                 title: Text(player.playerName),
-                subtitle: const Text(
-                  'FCBaz این کارت را بدون تشخیص کامل همه شروط تأیید نمی‌کند.',
-                ),
+                subtitle: const Text('حداقل یک شرط ساختاریافته قابل تشخیص نیست؛ تأیید قطعی انجام نمی‌شود.'),
               ),
           ],
-          if (!loadingEligible &&
-              eligible.isEmpty &&
-              needsReview.isEmpty) ...[
+          if (checkedClub && eligible.isEmpty && needsReview.isEmpty) ...[
             const SizedBox(height: 10),
-            const Align(
-              alignment: Alignment.centerRight,
-              child: Text('کارت مناسبی در My Club پیدا نشد.'),
-            ),
+            const Align(alignment: Alignment.centerRight, child: Text('کارت واجد شرایطی در باشگاه من پیدا نشد.')),
           ],
         ],
       ),
