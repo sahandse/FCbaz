@@ -34,29 +34,42 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
   }
 
   Future<void> _initialize() async {
-    final loaded = await settingsRepository.load();
-    if (!mounted) return;
+    AppSettings loaded = const AppSettings();
+    try {
+      loaded = await settingsRepository.load();
+    } catch (_) {
+      // Corrupt/unavailable local preferences must not block app startup.
+    }
 
+    if (!mounted) return;
     setState(() {
       settings = loaded;
       ready = true;
     });
 
     if (loaded.priceAlertsEnabled) {
-      await priceAlertService.checkNow();
+      try {
+        await priceAlertService.checkNow();
+      } catch (_) {
+        // Network/background price checks are optional during startup.
+      }
     }
   }
 
   Future<void> _updateSettings(AppSettings value) async {
     setState(() => settings = value);
-    await settingsRepository.save(value);
+    try {
+      await settingsRepository.save(value);
+    } catch (_) {
+      // Keep the current in-memory settings if local persistence fails.
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
     if (!settings.marketRefreshOnResume || !settings.priceAlertsEnabled) return;
-    priceAlertService.checkNow();
+    priceAlertService.checkNow().catchError((_) {});
   }
 
   @override
