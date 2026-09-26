@@ -1,8 +1,8 @@
 import '../market/data/market_repository.dart';
 import '../market/data/watchlist_repository.dart';
 import '../settings/app_settings_repository.dart';
-import 'notification_preferences_repository.dart';
 import 'notification_repository.dart';
+import 'system_notification_service.dart';
 
 class PriceAlertCheckResult {
   const PriceAlertCheckResult({
@@ -20,23 +20,20 @@ class PriceAlertService {
     WatchlistRepository? watchlistRepository,
     NotificationRepository? notificationRepository,
     AppSettingsRepository? settingsRepository,
-    NotificationPreferencesRepository? preferencesRepository,
   })  : marketRepository = marketRepository ?? MarketRepository(),
         watchlistRepository = watchlistRepository ?? WatchlistRepository(),
-        notificationRepository = notificationRepository ?? NotificationRepository(),
-        settingsRepository = settingsRepository ?? AppSettingsRepository(),
-        preferencesRepository = preferencesRepository ?? NotificationPreferencesRepository();
+        notificationRepository =
+            notificationRepository ?? NotificationRepository(),
+        settingsRepository = settingsRepository ?? AppSettingsRepository();
 
   final MarketRepository marketRepository;
   final WatchlistRepository watchlistRepository;
   final NotificationRepository notificationRepository;
   final AppSettingsRepository settingsRepository;
-  final NotificationPreferencesRepository preferencesRepository;
 
   Future<PriceAlertCheckResult> checkNow() async {
     final settings = await settingsRepository.load();
-    final preferences = await preferencesRepository.load();
-    if (!settings.priceAlertsEnabled || !preferences.priceAlerts) {
+    if (!settings.priceAlertsEnabled) {
       return const PriceAlertCheckResult(checked: 0, triggered: 0);
     }
 
@@ -65,7 +62,7 @@ class PriceAlertService {
 
         final target = item.targetPrice!;
         final reached = price.current > 0 && price.current <= target;
-        final stateKey = 'price:${item.playerId}:$target';
+        final stateKey = '${item.playerId}:$target';
         final previous = states[stateKey] ?? 'above';
 
         if (reached && previous != 'reached') {
@@ -82,6 +79,13 @@ class PriceAlertService {
               targetPrice: target,
             ),
           );
+
+          await SystemNotificationService.instance.showPriceAlert(
+            playerId: item.playerId,
+            playerName: item.playerName,
+            currentPrice: price.current,
+            targetPrice: target,
+          );
           triggered++;
         }
 
@@ -94,6 +98,9 @@ class PriceAlertService {
       }
     }
 
-    return PriceAlertCheckResult(checked: checked, triggered: triggered);
+    return PriceAlertCheckResult(
+      checked: checked,
+      triggered: triggered,
+    );
   }
 }

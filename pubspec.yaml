@@ -1,7 +1,7 @@
 name: fcbaz
 description: FCBaz - Persian FC27 companion for Android
 publish_to: "none"
-version: 0.20.0+20
+version: 0.21.0+21
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
@@ -12,6 +12,9 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   shared_preferences: ^2.5.5
+  flutter_local_notifications: ^20.1.0
+  flutter_timezone: ^5.1.0
+  timezone: ^0.10.1
 
 dev_dependencies:
   flutter_test:

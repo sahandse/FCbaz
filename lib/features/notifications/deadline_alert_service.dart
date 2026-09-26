@@ -2,17 +2,20 @@ import '../evolutions/data/evolution_repository.dart';
 import '../home/home_repository.dart';
 import 'notification_preferences_repository.dart';
 import 'notification_repository.dart';
+import 'system_notification_service.dart';
 
 class DeadlineAlertResult {
   const DeadlineAlertResult({
     required this.checkedObjectives,
     required this.checkedEvolutions,
     required this.triggered,
+    required this.scheduled,
   });
 
   final int checkedObjectives;
   final int checkedEvolutions;
   final int triggered;
+  final int scheduled;
 }
 
 class DeadlineAlertService {
@@ -38,6 +41,7 @@ class DeadlineAlertService {
     var checkedObjectives = 0;
     var checkedEvolutions = 0;
     var triggered = 0;
+    var scheduled = 0;
 
     if (preferences.objectiveDeadlines) {
       try {
@@ -45,9 +49,22 @@ class DeadlineAlertService {
         checkedObjectives = objectives.length;
         for (final objective in objectives) {
           final expiresAt = objective.expiresAt;
-          if (expiresAt == null) continue;
+          if (expiresAt == null || !expiresAt.isAfter(now)) continue;
+
+          final scheduledAt = expiresAt.subtract(threshold);
+          if (scheduledAt.isAfter(now)) {
+            await SystemNotificationService.instance.scheduleDeadline(
+              type: 'objective',
+              sourceId: objective.id,
+              title: objective.title,
+              expiresAt: expiresAt,
+              before: threshold,
+            );
+            scheduled++;
+            continue;
+          }
+
           final remaining = expiresAt.difference(now);
-          if (remaining.isNegative || remaining > threshold) continue;
           final key = 'objective_deadline:${objective.id}:${expiresAt.toIso8601String()}';
           final states = await notificationRepository.alertStates();
           if (states[key] == 'sent') continue;
@@ -60,6 +77,12 @@ class DeadlineAlertService {
               createdAt: now,
               destinationId: objective.id,
             ),
+          );
+          await SystemNotificationService.instance.showDeadlineNow(
+            type: 'objective',
+            sourceId: objective.id,
+            title: objective.title,
+            remaining: remaining,
           );
           await notificationRepository.setAlertState(key, 'sent');
           triggered++;
@@ -75,9 +98,22 @@ class DeadlineAlertService {
         checkedEvolutions = evolutions.length;
         for (final evolution in evolutions) {
           final expiresAt = evolution.expiresAt;
-          if (expiresAt == null) continue;
+          if (expiresAt == null || !expiresAt.isAfter(now)) continue;
+
+          final scheduledAt = expiresAt.subtract(threshold);
+          if (scheduledAt.isAfter(now)) {
+            await SystemNotificationService.instance.scheduleDeadline(
+              type: 'evolution',
+              sourceId: evolution.id,
+              title: evolution.title,
+              expiresAt: expiresAt,
+              before: threshold,
+            );
+            scheduled++;
+            continue;
+          }
+
           final remaining = expiresAt.difference(now);
-          if (remaining.isNegative || remaining > threshold) continue;
           final key = 'evolution_deadline:${evolution.id}:${expiresAt.toIso8601String()}';
           final states = await notificationRepository.alertStates();
           if (states[key] == 'sent') continue;
@@ -91,6 +127,12 @@ class DeadlineAlertService {
               destinationId: evolution.id,
             ),
           );
+          await SystemNotificationService.instance.showDeadlineNow(
+            type: 'evolution',
+            sourceId: evolution.id,
+            title: evolution.title,
+            remaining: remaining,
+          );
           await notificationRepository.setAlertState(key, 'sent');
           triggered++;
         }
@@ -103,6 +145,7 @@ class DeadlineAlertService {
       checkedObjectives: checkedObjectives,
       checkedEvolutions: checkedEvolutions,
       triggered: triggered,
+      scheduled: scheduled,
     );
   }
 

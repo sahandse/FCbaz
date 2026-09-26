@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../evolutions/presentation/evolutions_screen.dart';
 import '../home/home_dashboard_screen.dart';
+import '../home/objectives_screen.dart';
 import '../players/data/player_repository.dart';
 import '../players/presentation/player_details_screen.dart';
 import 'app_navigation_repository.dart';
@@ -9,6 +11,7 @@ import '../notifications/deadline_alert_service.dart';
 import '../notifications/notification_center_screen.dart';
 import '../notifications/notification_repository.dart';
 import '../notifications/price_alert_service.dart';
+import '../notifications/system_notification_service.dart';
 import '../players/players_screen.dart';
 import '../search/search_screen.dart';
 import '../settings/app_settings_repository.dart';
@@ -32,6 +35,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   final notificationRepository = NotificationRepository();
   final priceAlertService = PriceAlertService();
   final deadlineAlertService = DeadlineAlertService();
+  final systemNotifications = SystemNotificationService.instance;
   final navigationRepository = AppNavigationRepository();
   final playerRepository = PlayerRepository();
 
@@ -58,6 +62,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     if (state != AppLifecycleState.resumed) return;
     _refreshLocalAlerts();
     _openPendingPlayer();
+    _openPendingSystemNotification();
   }
 
   Future<void> _refreshLocalAlerts() async {
@@ -83,6 +88,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _openPendingPlayer();
+      _openPendingSystemNotification();
     });
   }
 
@@ -106,6 +112,40 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       );
     } catch (_) {
       // If the player cannot be fetched, keep the app usable without fake data.
+    }
+  }
+
+  Future<void> _openPendingSystemNotification() async {
+    final payload = await systemNotifications.consumePendingPayload();
+    if (payload == null || payload.isEmpty || !mounted) return;
+
+    final separator = payload.indexOf(':');
+    if (separator <= 0 || separator == payload.length - 1) return;
+    final type = payload.substring(0, separator);
+    final id = payload.substring(separator + 1);
+
+    if (type == 'player') {
+      try {
+        final player = await playerRepository.getPlayer(id);
+        if (!mounted) return;
+        await Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
+        );
+      } catch (_) {}
+      return;
+    }
+
+    if (type == 'objective') {
+      await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const ObjectivesScreen()),
+      );
+      return;
+    }
+
+    if (type == 'evolution') {
+      await Navigator.of(context).push(
+        MaterialPageRoute(builder: (_) => const EvolutionsScreen()),
+      );
     }
   }
 

@@ -1,0 +1,100 @@
+name: FCBaz Flutter CI
+
+on:
+  pull_request:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Complete Android platform
+        run: flutter create . --platforms=android --org ir.fcbaz --project-name fcbaz
+
+      - name: Remove generated template test
+        run: rm -f test/widget_test.dart
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        shell: bash
+        run: |
+          set +e
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee analyze.txt
+          code=${PIPESTATUS[0]}
+          echo "ANALYZE_EXIT=$code" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Report analyzer errors
+        if: env.ANALYZE_EXIT != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('analyze.txt', 'utf8');
+            const lines = output.split('\n');
+            const errors = lines.filter((line) => line.includes(' error • '));
+            const body = `### Flutter analyze errors\n\n\`\`\`text\n${errors.join('\n') || output.slice(0, 6000)}\n\`\`\``;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Fail on analyzer errors
+        if: env.ANALYZE_EXIT != '0'
+        run: exit 1
+
+      - name: Test
+        shell: bash
+        run: |
+          set +e
+          flutter test --reporter expanded 2>&1 | tee test-output.txt
+          code=${PIPESTATUS[0]}
+          echo "TEST_EXIT=$code" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Report test failures
+        if: env.TEST_EXIT != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('test-output.txt', 'utf8');
+            const body = `### Flutter test failed\n\n\`\`\`text\n${output.slice(-12000)}\n\`\`\``;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Fail on test errors
+        if: env.TEST_EXIT != '0'
+        run: exit 1
+
+      - name: Build debug APK
+        run: flutter build apk --debug

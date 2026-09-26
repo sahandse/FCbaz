@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../settings/app_settings_repository.dart';
 import 'notification_preferences_repository.dart';
+import 'system_notification_service.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
@@ -13,10 +14,13 @@ class NotificationSettingsScreen extends StatefulWidget {
 class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
   final preferencesRepository = NotificationPreferencesRepository();
   final appSettingsRepository = AppSettingsRepository();
+  final systemNotifications = SystemNotificationService.instance;
 
   NotificationPreferences preferences = const NotificationPreferences();
   AppSettings appSettings = const AppSettings();
   bool loading = true;
+  bool systemEnabled = false;
+  int pendingSystemNotifications = 0;
 
   @override
   void initState() {
@@ -28,13 +32,36 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
     final values = await Future.wait([
       preferencesRepository.load(),
       appSettingsRepository.load(),
+      systemNotifications.notificationsEnabled(),
+      systemNotifications.pendingCount(),
     ]);
     if (!mounted) return;
     setState(() {
       preferences = values[0] as NotificationPreferences;
       appSettings = values[1] as AppSettings;
+      systemEnabled = values[2] as bool;
+      pendingSystemNotifications = values[3] as int;
       loading = false;
     });
+  }
+
+  Future<void> _requestSystemPermission() async {
+    final granted = await systemNotifications.requestPermission();
+    final pending = await systemNotifications.pendingCount();
+    if (!mounted) return;
+    setState(() {
+      systemEnabled = granted;
+      pendingSystemNotifications = pending;
+    });
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          granted
+              ? 'اعلان سیستمی Android فعال شد'
+              : 'مجوز اعلان داده نشد؛ هشدارها همچنان داخل FCBaz ثبت می‌شوند',
+        ),
+      ),
+    );
   }
 
   Future<void> _savePreferences(NotificationPreferences value) async {
@@ -59,6 +86,47 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
               padding: const EdgeInsets.all(16),
               children: [
                 Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Icon(
+                          systemEnabled
+                              ? Icons.notifications_active_rounded
+                              : Icons.notifications_off_outlined,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                systemEnabled
+                                    ? 'اعلان سیستمی فعال است'
+                                    : 'مجوز اعلان سیستمی غیرفعال است',
+                                style: const TextStyle(fontWeight: FontWeight.w900),
+                              ),
+                              Text(
+                                systemEnabled
+                                    ? '$pendingSystemNotifications اعلان زمان‌بندی‌شده در Android'
+                                    : 'برای دریافت هشدار بیرون از اپ، مجوز Android را فعال کن.',
+                                style: Theme.of(context).textTheme.bodySmall,
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (!systemEnabled)
+                          FilledButton.tonal(
+                            onPressed: _requestSystemPermission,
+                            child: const Text('فعال‌سازی'),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Card(
                   child: Column(
                     children: [
                       SwitchListTile(
@@ -66,7 +134,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                         onChanged: _setPriceAlerts,
                         secondary: const Icon(Icons.price_check_rounded),
                         title: const Text('هشدار قیمت'),
-                        subtitle: const Text('وقتی قیمت واقعی Watchlist به هدف برسد'),
+                        subtitle: const Text('وقتی قیمت واقعی فهرست پیگیری به هدف برسد'),
                       ),
                       const Divider(height: 1),
                       SwitchListTile(
@@ -101,7 +169,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                         Text('زمان هشدار مهلت', style: Theme.of(context).textTheme.titleMedium),
                         const SizedBox(height: 6),
                         Text(
-                          'قبل از پایان Objective یا Evolution هشدار داخل اپ ساخته شود.',
+                          'اعلان Android و Notification Center در فاصله انتخاب‌شده قبل از پایان همگام می‌شوند.',
                           style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
                         ),
                         const SizedBox(height: 12),
@@ -136,7 +204,7 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                         const SizedBox(width: 10),
                         const Expanded(
                           child: Text(
-                            'این تنظیمات مربوط به Notification Center داخل FCBaz است. اعلان سیستمی Android در این مرحله فعال نشده و اپ هیچ Push ساختگی ایجاد نمی‌کند.',
+                            'اعلان‌ها کاملاً محلی هستند؛ Firebase، Push Server و حساب کاربری استفاده نمی‌شود. زمان‌بندی Deadline به‌صورت inexact انجام می‌شود تا مجوز حساس Exact Alarm لازم نباشد.',
                           ),
                         ),
                       ],

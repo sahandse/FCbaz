@@ -122,10 +122,11 @@ class SbcRatingCalculator {
     int? cost;
     if (cheapestPriceByRating.isNotEmpty &&
         counts.keys.every((rating) => (cheapestPriceByRating[rating] ?? 0) > 0)) {
-      cost = 0;
+      var totalCost = 0;
       for (final entry in counts.entries) {
-        cost += cheapestPriceByRating[entry.key]! * entry.value;
+        totalCost += cheapestPriceByRating[entry.key]! * entry.value;
       }
+      cost = totalCost;
     }
 
     results.add(
