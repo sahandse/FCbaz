@@ -26,9 +26,12 @@ class PlayerPrice {
     }
     DateTime? asDate(dynamic value) => value == null ? null : DateTime.tryParse(value.toString());
 
-    final rawChange = json.containsKey('change_24h_percent')
-        ? json['change_24h_percent']
-        : json['change24h'];
+    final source = (json['source'] ?? '').toString();
+    final rawChange = source == 'futbin-public'
+        ? null
+        : (json.containsKey('change_24h_percent')
+            ? json['change_24h_percent']
+            : json['change24h']);
 
     return PlayerPrice(
       playerId: (json['player_id'] ?? json['playerId'] ?? '').toString(),
