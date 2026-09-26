@@ -3,19 +3,19 @@ import 'package:flutter/material.dart';
 import '../evolutions/presentation/evolutions_screen.dart';
 import '../home/home_dashboard_screen.dart';
 import '../home/objectives_screen.dart';
-import '../players/data/player_repository.dart';
-import '../players/presentation/player_details_screen.dart';
-import 'app_navigation_repository.dart';
 import '../more/more_screen.dart';
 import '../notifications/deadline_alert_service.dart';
 import '../notifications/notification_center_screen.dart';
 import '../notifications/notification_repository.dart';
 import '../notifications/price_alert_service.dart';
 import '../notifications/system_notification_service.dart';
+import '../players/data/player_repository.dart';
 import '../players/players_screen.dart';
+import '../players/presentation/player_details_screen.dart';
 import '../search/search_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../squad/squad_screen_pro.dart';
+import 'app_navigation_repository.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({
@@ -74,7 +74,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
         deadlineAlertService.checkNow(),
       ]);
     } catch (_) {
-      // Live alert checks are best-effort and never block app usage.
+      // Best-effort only; app usage must never depend on live alert checks.
     } finally {
       checkingLocalAlerts = false;
     }
@@ -85,7 +85,6 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     final saved = await navigationRepository.loadTab();
     if (!mounted) return;
     setState(() => index = saved);
-
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _openPendingPlayer();
       _openPendingSystemNotification();
@@ -101,24 +100,18 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   Future<void> _openPendingPlayer() async {
     final playerId = await navigationRepository.takePendingPlayer();
     if (playerId == null || playerId.isEmpty || !mounted) return;
-
     try {
       final player = await playerRepository.getPlayer(playerId);
       if (!mounted) return;
       await Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (_) => PlayerDetailsScreen(player: player),
-        ),
+        MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
       );
-    } catch (_) {
-      // If the player cannot be fetched, keep the app usable without fake data.
-    }
+    } catch (_) {}
   }
 
   Future<void> _openPendingSystemNotification() async {
     final payload = await systemNotifications.consumePendingPayload();
     if (payload == null || payload.isEmpty || !mounted) return;
-
     final separator = payload.indexOf(':');
     if (separator <= 0 || separator == payload.length - 1) return;
     final type = payload.substring(0, separator);
@@ -134,14 +127,12 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
       } catch (_) {}
       return;
     }
-
     if (type == 'objective') {
       await Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const ObjectivesScreen()),
       );
       return;
     }
-
     if (type == 'evolution') {
       await Navigator.of(context).push(
         MaterialPageRoute(builder: (_) => const EvolutionsScreen()),
@@ -157,15 +148,14 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
 
   Future<void> _openNotifications() async {
     await Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => const NotificationCenterScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const NotificationCenterScreen()),
     );
     await _refreshUnread();
   }
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     final pages = [
       HomeDashboardScreen(
         onOpenPlayers: () => _selectTab(1),
@@ -185,49 +175,49 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     return PopScope(
       canPop: index == 0,
       onPopInvokedWithResult: (didPop, result) {
-        if (!didPop && index != 0) {
-          _selectTab(0);
-        }
+        if (!didPop && index != 0) _selectTab(0);
       },
       child: Scaffold(
         appBar: AppBar(
-          toolbarHeight: 62,
-          titleSpacing: 16,
+          toolbarHeight: 56,
+          titleSpacing: 14,
           title: Row(
             children: [
               Container(
-                width: 34,
-                height: 34,
+                width: 36,
+                height: 36,
                 decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(11),
-                  gradient: LinearGradient(
-                    colors: [
-                      Theme.of(context).colorScheme.primary,
-                      Theme.of(context).colorScheme.secondary,
-                    ],
-                  ),
+                  color: scheme.primary,
+                  borderRadius: BorderRadius.circular(9),
+                  boxShadow: [
+                    BoxShadow(
+                      color: scheme.primary.withValues(alpha: .20),
+                      blurRadius: 18,
+                      spreadRadius: -5,
+                    ),
+                  ],
                 ),
                 alignment: Alignment.center,
-                child: Text(
+                child: const Text(
                   'FC',
+                  textDirection: TextDirection.ltr,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.onPrimary,
+                    color: Color(0xFF10140C),
                     fontWeight: FontWeight.w900,
                     fontSize: 12,
+                    letterSpacing: -.8,
                   ),
                 ),
               ),
-              const SizedBox(width: 10),
+              const SizedBox(width: 9),
               const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Text('FCBaz', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
                   Text(
-                    'FCBaz',
-                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 19),
-                  ),
-                  Text(
-                    'همراه فارسی FC27',
-                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600),
+                    'ULTIMATE TEAM • FC27',
+                    textDirection: TextDirection.ltr,
+                    style: TextStyle(fontSize: 8.5, fontWeight: FontWeight.w800, letterSpacing: .4),
                   ),
                 ],
               ),
@@ -243,41 +233,34 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
                 tooltip: 'اعلان‌ها',
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: 5),
           ],
         ),
         body: IndexedStack(index: index, children: pages),
         bottomNavigationBar: SafeArea(
           top: false,
-          child: NavigationBar(
-            selectedIndex: index,
-            onDestinationSelected: _selectTab,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.home_outlined),
-                selectedIcon: Icon(Icons.home_rounded),
-                label: 'خانه',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.groups_2_outlined),
-                selectedIcon: Icon(Icons.groups_2_rounded),
-                label: 'بازیکنان',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.search_rounded),
-                label: 'جستجو',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.stadium_outlined),
-                selectedIcon: Icon(Icons.stadium_rounded),
-                label: 'تیم‌ساز',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.grid_view_rounded),
-                selectedIcon: Icon(Icons.grid_view_rounded),
-                label: 'بیشتر',
-              ),
-            ],
+          child: Container(
+            margin: const EdgeInsets.fromLTRB(10, 0, 10, 8),
+            decoration: BoxDecoration(
+              color: const Color(0xFF090D0A),
+              borderRadius: BorderRadius.circular(14),
+              border: Border.all(color: scheme.outline.withValues(alpha: .75)),
+              boxShadow: const [
+                BoxShadow(color: Color(0x55000000), blurRadius: 20, offset: Offset(0, 8)),
+              ],
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: NavigationBar(
+              selectedIndex: index,
+              onDestinationSelected: _selectTab,
+              destinations: const [
+                NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home_rounded), label: 'خانه'),
+                NavigationDestination(icon: Icon(Icons.style_outlined), selectedIcon: Icon(Icons.style_rounded), label: 'بازیکنان'),
+                NavigationDestination(icon: Icon(Icons.search_rounded), label: 'جستجو'),
+                NavigationDestination(icon: Icon(Icons.stadium_outlined), selectedIcon: Icon(Icons.stadium_rounded), label: 'تیم‌ساز'),
+                NavigationDestination(icon: Icon(Icons.grid_view_rounded), selectedIcon: Icon(Icons.grid_view_rounded), label: 'بیشتر'),
+              ],
+            ),
           ),
         ),
       ),
