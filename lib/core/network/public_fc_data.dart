@@ -9,9 +9,6 @@ class PublicFcData {
   final HttpClient _client;
 
   static const _futbinBase = 'https://www.futbin.org/futbin/api/';
-  static const _githubFallback =
-      'https://raw.githubusercontent.com/matyuschenko/fifa-wc2026-players/main/data/players.tsv';
-
   static final Map<String, _PublicCacheEntry> _cache = {};
 
   Future<List<Player>> getPlayers({
@@ -28,16 +25,15 @@ class PublicFcData {
       );
       final data = json is Map ? json['data'] : null;
       if (data is List) {
-        final players = data
+        return data
             .whereType<Map>()
             .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
             .where((e) => e.id.isNotEmpty && e.name.isNotEmpty)
             .toList();
-        if (players.isNotEmpty) return players;
       }
     } catch (_) {}
 
-    return _githubPlayers();
+    return const [];
   }
 
   Future<List<Player>> search(
@@ -73,13 +69,7 @@ class PublicFcData {
       }
     } catch (_) {}
 
-    if (found.isNotEmpty) return found;
-
-    final fallback = await _githubPlayers();
-    return fallback
-        .where((e) => e.name.toLowerCase().contains(q))
-        .take(30)
-        .toList();
+    return found;
   }
 
   Future<Player?> getPlayer(
@@ -112,10 +102,6 @@ class PublicFcData {
       }
     } catch (_) {}
 
-    final fallback = await _githubPlayers();
-    for (final player in fallback) {
-      if (player.id == id) return player;
-    }
     return null;
   }
 
@@ -207,20 +193,11 @@ class PublicFcData {
 
         players = _textFilter(players, params);
         _sort(players, params['sort'] ?? 'rating_desc', params['platform']);
-        if (players.isNotEmpty) return players;
+        return players;
       }
     } catch (_) {}
 
-    var fallback = await _githubPlayers();
-    fallback = _textFilter(fallback, params);
-
-    final q = (params['q'] ?? '').trim().toLowerCase();
-    if (q.isNotEmpty) {
-      fallback =
-          fallback.where((e) => e.name.toLowerCase().contains(q)).toList();
-    }
-
-    return fallback;
+    return const [];
   }
 
   Future<Map<String, dynamic>?> getPrice(
@@ -299,86 +276,6 @@ class PublicFcData {
     final json = jsonDecode(body);
     _cache[key] = _PublicCacheEntry(value: json, at: DateTime.now());
     return json;
-  }
-
-  Future<List<Player>> _githubPlayers() async {
-    const cacheKey = 'github:fifa-wc2026-players';
-    final cached = _cache[cacheKey];
-    if (cached != null &&
-        DateTime.now().difference(cached.at) < const Duration(hours: 12)) {
-      return List<Player>.from(cached.value as List);
-    }
-
-    try {
-      final request = await _client.getUrl(Uri.parse(_githubFallback));
-      request.headers.set(
-        HttpHeaders.userAgentHeader,
-        'FCBaz/1.0',
-      );
-      final response = await request.close().timeout(
-            const Duration(seconds: 15),
-          );
-      if (response.statusCode != 200) return const [];
-
-      final body = await utf8.decoder.bind(response).join();
-      final lines = const LineSplitter().convert(body);
-      if (lines.length < 2) return const [];
-
-      final headers = lines.first.split('\t');
-      final index = <String, int>{};
-      for (var i = 0; i < headers.length; i++) {
-        index[headers[i].trim().toUpperCase()] = i;
-      }
-
-      String cell(List<String> row, String key) {
-        final i = index[key];
-        return i == null || i >= row.length ? '' : row[i].trim();
-      }
-
-      final players = <Player>[];
-      for (var i = 1; i < lines.length; i++) {
-        final row = lines[i].split('\t');
-        final name = cell(row, 'PLAYER NAME');
-        if (name.isEmpty) continue;
-
-        final team = cell(row, 'TEAM');
-        final club = cell(row, 'CLUB');
-        final pos = _mapWorldCupPosition(cell(row, 'POS'));
-        final height = cell(row, 'HEIGHT (CM)');
-
-        players.add(
-          Player(
-            id: 'wc2026-' + i.toString(),
-            name: name,
-            rating: 0,
-            position: pos,
-            positions: [pos],
-            clubName: club,
-            leagueName: '',
-            nationName: team,
-            version: 'FIFA World Cup 2026',
-            imageUrl: '',
-            pace: 0,
-            shooting: 0,
-            passing: 0,
-            dribbling: 0,
-            defending: 0,
-            physical: 0,
-            skillMoves: 0,
-            weakFoot: 0,
-            height: height,
-            rarity: 'Public Dataset',
-            cardType: 'Reference',
-          ),
-        );
-      }
-
-      _cache[cacheKey] =
-          _PublicCacheEntry(value: players, at: DateTime.now());
-      return players;
-    } catch (_) {
-      return const [];
-    }
   }
 
   List<Player> _textFilter(
@@ -460,7 +357,11 @@ class PublicFcData {
 
   int _coin(dynamic value) {
     if (value is num) return value.round();
-    final raw = (value ?? '').toString().trim().toUpperCase().replaceAll(',', '');
+    final raw = (value ?? '')
+        .toString()
+        .trim()
+        .toUpperCase()
+        .replaceAll(',', '');
     if (raw.isEmpty) return 0;
     var multiplier = 1.0;
     var number = raw;
@@ -472,21 +373,6 @@ class PublicFcData {
       number = raw.substring(0, raw.length - 1);
     }
     return ((double.tryParse(number) ?? 0) * multiplier).round();
-  }
-
-  String _mapWorldCupPosition(String value) {
-    switch (value.toUpperCase()) {
-      case 'GK':
-        return 'GK';
-      case 'DF':
-        return 'CB';
-      case 'MF':
-        return 'CM';
-      case 'FW':
-        return 'ST';
-      default:
-        return value.toUpperCase();
-    }
   }
 }
 
