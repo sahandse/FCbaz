@@ -28,7 +28,47 @@ jobs:
       - name: Refresh FC27 live catalog
         run: node tool/sync_live_fc27.mjs
 
-      - name: Validate player catalog size and sources
+      - name: Sanitize duplicate live catalog IDs
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const path = 'data/live/catalog.json';
+          const c = JSON.parse(fs.readFileSync(path, 'utf8'));
+
+          function slug(value) {
+            return String(value || '')
+              .toLowerCase()
+              .normalize('NFKD')
+              .replace(/[^a-z0-9]+/g, '-')
+              .replace(/^-+|-+$/g, '')
+              .slice(0, 90) || 'item';
+          }
+
+          for (const section of ['evolutions', 'sbcs', 'objectives']) {
+            const used = new Set();
+            c[section] = (c[section] || []).map((item, index) => {
+              const title = String(item.title_en || item.title || '').trim();
+              const source = String(item.source_url || '').trim();
+              let id = String(item.id || '').trim() || `futgg-${section}-${slug(title || source || index)}`;
+              if (used.has(id)) {
+                const sourcePath = (() => {
+                  try { return new URL(source).pathname; } catch { return source; }
+                })();
+                const base = `futgg-${section}-${slug(`${sourcePath}-${title}`)}`;
+                id = base;
+                let suffix = 2;
+                while (used.has(id)) id = `${base}-${suffix++}`;
+              }
+              used.add(id);
+              return { ...item, id };
+            });
+          }
+
+          fs.writeFileSync(path, `${JSON.stringify(c, null, 2)}\n`);
+          NODE
+
+      - name: Validate live catalog and player sources
         shell: bash
         run: |
           node - <<'NODE'
@@ -38,13 +78,14 @@ jobs:
           if (!Array.isArray(c.players) || c.players.length < 50) {
             throw new Error(`players catalog too small: ${c.players?.length ?? 0}`);
           }
-          const ids = new Set();
+
+          const playerIds = new Set();
           for (const p of c.players) {
             if (!p.id || !p.name || !Number(p.rating) || !p.position) {
               throw new Error(`invalid player: ${JSON.stringify(p)}`);
             }
-            if (ids.has(p.id)) throw new Error(`duplicate player id: ${p.id}`);
-            ids.add(p.id);
+            if (playerIds.has(p.id)) throw new Error(`duplicate player id: ${p.id}`);
+            playerIds.add(p.id);
             const source = String(p.source_url || '');
             if (!source.startsWith('https://www.fut.gg/') &&
                 !source.startsWith('https://www.futbin.org/') &&
@@ -53,7 +94,30 @@ jobs:
               throw new Error(`player without trusted source: ${p.name}`);
             }
           }
-          console.log(`Validated ${c.players.length} FC27 players`);
+
+          for (const section of ['evolutions', 'sbcs', 'objectives']) {
+            if (!Array.isArray(c[section]) || c[section].length === 0) {
+              throw new Error(`${section} is empty`);
+            }
+            const ids = new Set();
+            for (const item of c[section]) {
+              const title = String(item.title_en || item.title || '');
+              const source = String(item.source_url || '');
+              if (!item.id || !title) throw new Error(`invalid ${section} item`);
+              if (ids.has(item.id)) throw new Error(`${section} duplicate id: ${item.id}`);
+              ids.add(item.id);
+              if (!source.startsWith('https://www.fut.gg/')) {
+                throw new Error(`${section} item without FUT.GG source: ${title}`);
+              }
+            }
+          }
+
+          console.log({
+            players: c.players.length,
+            evolutions: c.evolutions.length,
+            sbcs: c.sbcs.length,
+            objectives: c.objectives.length,
+          });
           NODE
 
       - name: Commit refreshed catalog
@@ -65,7 +129,7 @@ jobs:
             git config user.name 'github-actions[bot]'
             git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
             git add data/live/catalog.json
-            git commit -m 'data: expand verified FC27 player catalog for v1.3.0'
+            git commit -m 'data: expand and sanitize verified FC27 catalog for v1.3.0'
             git push origin HEAD:main
           fi
 
