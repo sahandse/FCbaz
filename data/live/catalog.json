@@ -1,6 +1,6 @@
 {
   "game_year": 27,
-  "generated_at": "2026-09-26T14:08:07.854Z",
+  "generated_at": "2026-09-26T21:13:26.759Z",
   "sources": [
     "https://www.fut.gg/players/",
     "https://www.fut.gg/fc-27/ratings/",
@@ -15,7 +15,9 @@
     "https://www.fut.gg/rarities/team-of-the-week/",
     "https://www.fut.gg/rarities/destined-for-glory/",
     "https://www.fut.gg/rarities/squad-foundations/",
-    "https://www.fut.gg/rarities/debut-international-icon/"
+    "https://www.fut.gg/rarities/debut-international-icon/",
+    "https://www.fut.gg/whats-hot/",
+    "https://www.fut.gg/whats-new/"
   ],
   "players": [
     {
@@ -13487,7 +13489,7 @@
     {
       "id": "futgg-frontline-paradox",
       "title": "Frontline Paradox",
-      "description": "Evolution فعال برای مهاجم با تمرکز روی ارتقای تهدید در محوطه و نقش Advanced Forward.",
+      "description": "[Build out your striker’s core threat in the box, ending in a key decision that sets their role at the apex of your system. ![Image 11](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b407",
       "cost": 0,
       "requirements": [
         "Overall Max. 79",
@@ -13496,18 +13498,19 @@
         "Pace Max. 85"
       ],
       "upgrades": [
-        "OVR +5",
-        "Sprint Speed +5",
-        "Finishing +5",
-        "Acceleration +5",
-        "Advanced Forward role upgrade"
+        "+5 OVR 81",
+        "+5 Sprint Speed 82",
+        "+5 Finishing 81",
+        "+5 Long Shots 78",
+        "+5 Penalties 82"
       ],
-      "source_url": "https://www.fut.gg/evolutions/"
+      "source_url": "https://www.fut.gg/evolutions/2508-frontline-paradox/",
+      "details_source_url": "https://www.fut.gg/evolutions/2508-frontline-paradox/"
     },
     {
       "id": "futgg-midfield-glow-up",
       "title": "Midfield Glow Up",
-      "description": "[Elevate your engine room with a major tactical upgrade, combining enhanced recovery speed, relentless physical presence, and superior distribution across the pitch. ![Image 26](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rar",
+      "description": "[Elevate your engine room with a major tactical upgrade, combining enhanced recovery speed, relentless physical presence, and superior distribution across the pitch. ![Image 21](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rar",
       "cost": 0,
       "requirements": [
         "Overall Max. 74",
@@ -13516,12 +13519,49 @@
         "Pace Max. 85"
       ],
       "upgrades": [
-        "OVR increase",
-        "Passing upgrades",
-        "Defensive upgrades",
-        "Physical upgrades"
+        "+40 OVR 79",
+        "+50 Vision 77",
+        "+50 Long Pass 79",
+        "+40 Standing Tackle 80",
+        "+40 Strength 77",
+        "Training Time",
+        "6 hours",
+        "Level 2",
+        "Louza 79 CM PAC 59 SHO 69 PAS 74 DRI 74 DEF 68 PHY 75 CDM L 4★3 Louza 79 CM PAC 59 SHO 69 PAS 76 DRI 74 DEF 69 PHY 76 CDM L 4★3",
+        "Upgrades",
+        "+50 Crossing 75",
+        "+50 Curve 75",
+        "+40 Sliding Tackle 75",
+        "+40 Aggression 75",
+        "Level 3",
+        "Louza 79 CM PAC 59 SHO 69 PAS 76 DRI 74 DEF 69 PHY 76 CDM L 4★3 Louza 79 CM PAC 69 SHO 69 PAS 76 DRI 74 DEF 71 PHY 76 CDM L 4★3",
+        "+40 Acceleration 75",
+        "+50 Fk Accuracy 74",
+        "+40 Interceptions 75",
+        "+40 Jumping 76",
+        "CDM Deep Lying Playmaker+",
+        "Level 4",
+        "Louza 79 CM PAC 69 SHO 69 PAS 76 DRI 74 DEF 71 PHY 76 CDM L 4★3 Louza 79 CM PAC 75 SHO 69 PAS 78 DRI 74 DEF 77 PHY 76 CDM L 4★3",
+        "+40 Sprint Speed 75",
+        "+50 Short Pass 80",
+        "+40 Defensive Awareness 80",
+        "+40 Stamina 76",
+        "CDM Box Crasher+",
+        "Player Requirements",
+        "Overall",
+        "Max. 74",
+        "Position",
+        "CDM",
+        "Excluded Position",
+        "CAM, CB, ST",
+        "Max PS",
+        "Pace",
+        "Max. 85",
+        "Details",
+        "Submit by"
       ],
-      "source_url": "https://www.fut.gg/evolutions/2507-midfield-glow-up/"
+      "source_url": "https://www.fut.gg/evolutions/2507-midfield-glow-up/",
+      "details_source_url": "https://www.fut.gg/evolutions/2507-midfield-glow-up/"
     },
     {
       "id": "futgg-creative-crossroads",
@@ -13545,7 +13585,7 @@
     {
       "id": "futgg-fullback-fork",
       "title": "Fullback Fork",
-      "description": "[Sharpen your outer defender’s key attributes, culminating in a choice to tailor their game toward attacking width or defensive stability ![Image 84](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc420",
+      "description": "[Sharpen your outer defender’s key attributes, culminating in a choice to tailor their game toward attacking width or defensive stability ![Image 79](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc420",
       "cost": 0,
       "requirements": [
         "Overall Max. 79",
@@ -13554,17 +13594,18 @@
         "Pace Max. 83"
       ],
       "upgrades": [
-        "OVR +5",
-        "Defensive upgrades",
-        "Pace upgrades",
-        "Stamina and strength upgrades"
+        "+5 OVR 80",
+        "+5 Sprint Speed 82",
+        "+5 Defensive Awareness 79",
+        "+5 Sliding Tackle 80"
       ],
-      "source_url": "https://www.fut.gg/evolutions/2502-fullback-fork/"
+      "source_url": "https://www.fut.gg/evolutions/2502-fullback-fork/",
+      "details_source_url": "https://www.fut.gg/evolutions/2502-fullback-fork/"
     },
     {
       "id": "futgg-intro-repeatable-evolutions-2",
       "title": "Intro to Repeatable Evolutions 2",
-      "description": "[Discover Repeatable Evolutions, allowing you to run multiple players through the same upgrade path! ![Image 94](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff2003606fe684cdf8f9de",
+      "description": "[Discover Repeatable Evolutions, allowing you to run multiple players through the same upgrade path! ![Image 89](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff2003606fe684cdf8f9de",
       "cost": 0,
       "requirements": [
         "Overall Max. 79",
@@ -13572,17 +13613,19 @@
         "Pace Max. 81"
       ],
       "upgrades": [
-        "OVR increase",
-        "Passing upgrades",
-        "Dribbling upgrades",
-        "Shooting upgrades"
+        "+1 OVR 80",
+        "+4 Long Shots 77",
+        "+3 Vision 79",
+        "+3 Short Pass 78",
+        "+4 Reactions 80"
       ],
-      "source_url": "https://www.fut.gg/evolutions/2492-intro-to-repeatable-evolutions/"
+      "source_url": "https://www.fut.gg/evolutions/2492-intro-to-repeatable-evolutions/",
+      "details_source_url": "https://www.fut.gg/evolutions/2492-intro-to-repeatable-evolutions/"
     },
     {
       "id": "futgg-intro-to-evolutions",
       "title": "Intro to Evolutions",
-      "description": "[Welcome to Evolutions in FC 27! Upgrade a player of your choice and unlock their first attribute boost. ![Image 104](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-2-large/0.c17401f46193bac8fa70fc57cf2b3cfd322bf9",
+      "description": "[Welcome to Evolutions in FC 27! Upgrade a player of your choice and unlock their first attribute boost. ![Image 99](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-2-large/0.c17401f46193bac8fa70fc57cf2b3cfd322bf98",
       "cost": 0,
       "requirements": [
         "Overall Max. 75",
@@ -13591,12 +13634,15 @@
         "Pace Max. 80"
       ],
       "upgrades": [
-        "Large pace upgrade",
-        "Passing upgrades",
-        "Defensive upgrades",
-        "Wingback role upgrade"
+        "+34 OVR 79",
+        "+40 Sprint Speed 80",
+        "+40 Short Pass 76",
+        "+40 Balance 77",
+        "+40 Interceptions 76",
+        "+40 Sliding Tackle 75"
       ],
-      "source_url": "https://www.fut.gg/evolutions/2491-intro-to-evolutions/"
+      "source_url": "https://www.fut.gg/evolutions/2491-intro-to-evolutions/",
+      "details_source_url": "https://www.fut.gg/evolutions/2491-intro-to-evolutions/"
     },
     {
       "id": "futgg-otw-retro-20",
@@ -13620,43 +13666,136 @@
       "id": "futgg-trending-players",
       "title": "Trending Players",
       "description": "[Best Evolutions New](https://www.fut.gg/evolutions/best/)",
-      "source_url": "https://www.fut.gg/evolutions/trending/"
+      "source_url": "https://www.fut.gg/evolutions/trending/",
+      "details_source_url": "https://www.fut.gg/evolutions/trending/"
     },
     {
       "id": "futgg-best-evolutions-new",
       "title": "Best Evolutions New",
       "description": "[Evo Lab](https://www.fut.gg/evo-lab/)",
-      "source_url": "https://www.fut.gg/evolutions/best/"
+      "source_url": "https://www.fut.gg/evolutions/best/",
+      "upgrades": [
+        "Which of my players should I evolve?",
+        "Use theEvo Labto import your club and see the best Evolution paths for the players you own, or check thetrending evolved playersto see what the community is building.",
+        "© 2026 Stormstrike Inc. All rights reserved.",
+        "Your Privacy Choices",
+        "About|Editorial Policy|Privacy Policy|Terms of Service|Business Inquiries|FIFAIndex|MUT.GG|CFB.FAN|ForzaGarage"
+      ],
+      "details_source_url": "https://www.fut.gg/evolutions/best/"
     },
     {
       "id": "futgg-expired-evolutions",
       "title": "Expired Evolutions",
-      "description": "## [Ones to Watch Retro 20 New 25,000![Image 1: FC Coin](https://www.fut.gg/public-assets/coin.webp) 200![Image 2: FC Points](https://www.fut.gg/public-assets/fc-points.webp)](https://www.fut.gg/evolutions/2523-ones-to-watch-retro-20/)[Turn back the clock and ",
-      "source_url": "https://www.fut.gg/evolutions/expired/"
+      "description": "## [Pivot Shift New](https://www.fut.gg/evolutions/2524-pivot-shift/)[Sharpen your midfielder's ability to control the tempo, concluding with a decision that steers them toward forward progression or defensive coverage. ![Image 1](https://game-assets.fut.gg/cd",
+      "source_url": "https://www.fut.gg/evolutions/expired/",
+      "details_source_url": "https://www.fut.gg/evolutions/expired/"
     },
     {
       "id": "futgg-frontline-paradox-new",
       "title": "Frontline Paradox New",
       "description": "[Build out your striker’s core threat in the box, ending in a key decision that sets their role at the apex of your system. ![Image 16](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b407",
-      "source_url": "https://www.fut.gg/evolutions/2508-frontline-paradox/"
+      "source_url": "https://www.fut.gg/evolutions/2508-frontline-paradox/",
+      "upgrades": [
+        "+5 OVR 81",
+        "+5 Sprint Speed 82",
+        "+5 Finishing 81",
+        "+5 Long Shots 78",
+        "+5 Penalties 82"
+      ],
+      "details_source_url": "https://www.fut.gg/evolutions/2508-frontline-paradox/"
     },
     {
       "id": "futgg-intro-to-training-camp-evos",
       "title": "Intro to Training Camp EVOs",
-      "description": "[Send your players to training camp! Collect their attribute upgrades when the training session concludes. ![Image 114](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-2-large/0.c17401f46193bac8fa70fc57cf2b3cfd322b",
-      "source_url": "https://www.fut.gg/evolutions/2490-intro-to-training-camp-evos/"
+      "description": "[Send your players to training camp! Collect their attribute upgrades when the training session concludes. ![Image 109](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-2-large/0.c17401f46193bac8fa70fc57cf2b3cfd322b",
+      "source_url": "https://www.fut.gg/evolutions/2490-intro-to-training-camp-evos/",
+      "upgrades": [
+        "RB Fullback+",
+        "Training Time",
+        "1 hours",
+        "Player Requirements",
+        "Overall",
+        "Max. 80",
+        "Position",
+        "Details",
+        "Submit by",
+        "in 1 year",
+        "Expiry",
+        "Coins Cost",
+        "Free",
+        "Points Cost"
+      ],
+      "details_source_url": "https://www.fut.gg/evolutions/2490-intro-to-training-camp-evos/"
     },
     {
       "id": "futgg-repeat-delivery-2",
       "title": "Repeat Delivery 2",
-      "description": "[Keep the service coming. Upgrade your wide midfielder’s passing and delivery, then run it back for another round and keep feeding your attack from the flanks. ![Image 124](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities",
-      "source_url": "https://www.fut.gg/evolutions/2489-repeat-delivery/"
+      "description": "[Keep the service coming. Upgrade your wide midfielder’s passing and delivery, then run it back for another round and keep feeding your attack from the flanks. ![Image 119](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities",
+      "source_url": "https://www.fut.gg/evolutions/2489-repeat-delivery/",
+      "upgrades": [
+        "+8 OVR 78",
+        "+5 Sprint Speed 80",
+        "+15 Short Pass 76",
+        "+12 Balance 75",
+        "+10 Composure 75",
+        "Training Time",
+        "6 hours",
+        "Level 2",
+        "Moses 78 CM PAC 78 SHO 64 PAS 70 DRI 74 DEF 70 PHY 74 CDM RM R 2★3 Moses 78 CM PAC 78 SHO 64 PAS 73 DRI 74 DEF 70 PHY 74 CDM RM R 2★3",
+        "Upgrades",
+        "+15 Vision 84",
+        "+12 Long Pass 76",
+        "+12 Reactions 73",
+        "+15 Stamina 78",
+        "Level 3",
+        "Moses 78 CM PAC 78 SHO 64 PAS 73 DRI 74 DEF 70 PHY 74 CDM RM R 2★3 Moses 78 CM PAC 78 SHO 64 PAS 76 DRI 74 DEF 70 PHY 74 CDM RM R 2★3",
+        "+2 WF 3",
+        "+10 Crossing 78",
+        "+12 Curve 78",
+        "+8 Ball Control 74",
+        "Level 4",
+        "Moses 78 CM PAC 78 SHO 64 PAS 76 DRI 74 DEF 70 PHY 74 CDM RM R 2★3 Moses 78 CM PAC 80 SHO 64 PAS 76 DRI 75 DEF 70 PHY 74 CDM RM R 3★3",
+        "+2 SM 3",
+        "+5 Acceleration 80",
+        "+4 Fk Accuracy 80",
+        "+8 Agility 78",
+        "+8 Dribbling 74",
+        "Player Requirements",
+        "Overall",
+        "Max. 74",
+        "Position",
+        "LM, RM",
+        "Excluded Position",
+        "LB, RB",
+        "Max PS",
+        "Pace",
+        "Max. 83",
+        "Details",
+        "Submit by",
+        "in 25 days"
+      ],
+      "details_source_url": "https://www.fut.gg/evolutions/2489-repeat-delivery/"
     },
     {
       "id": "futgg-intro-to-pathway-evolutions",
       "title": "Intro to Pathway Evolutions",
-      "description": "[Explore Pathway Evolutions, a new type of Evolution that allows you to choose how your player develops and upgrades! ![Image 134](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff20",
-      "source_url": "https://www.fut.gg/evolutions/2488-intro-to-pathway-evolutions/"
+      "description": "[Explore Pathway Evolutions, a new type of Evolution that allows you to choose how your player develops and upgrades! ![Image 129](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff20",
+      "source_url": "https://www.fut.gg/evolutions/2488-intro-to-pathway-evolutions/",
+      "details_source_url": "https://www.fut.gg/evolutions/2488-intro-to-pathway-evolutions/"
+    },
+    {
+      "id": "futgg-pivot-shift-new",
+      "title": "Pivot Shift New",
+      "description": "[Sharpen your midfielder's ability to control the tempo, concluding with a decision that steers them toward forward progression or defensive coverage. ![Image 1](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-la",
+      "source_url": "https://www.fut.gg/evolutions/2524-pivot-shift/",
+      "upgrades": [
+        "+5 OVR 80",
+        "+3 Sprint Speed 75",
+        "+5 Crossing 76",
+        "+5 Long Pass 80",
+        "+5 Agility 75"
+      ],
+      "details_source_url": "https://www.fut.gg/evolutions/2524-pivot-shift/"
     }
   ],
   "sbcs": [
@@ -13684,141 +13823,447 @@
       "title_en": "Marquee Matchups",
       "category": "Challenges",
       "description": "[![Image 25: Marquee Matchups](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/19.png)](https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/)",
-      "reward": "Pack rewards",
+      "reward": "1 x Large Gold Players Pack • 1 x Mini Gold Pack • 1 x Small Mixed Players Pack • 1 x Small Gold Players Pack • 1 x Large Electrum Players Pack • Min. 1 Players from: Italy OR Belgium • Min. 3 Players: Silver • Player quality: Min. Bronze • Min. Squad Total Chemistry Points: 14 • Min. 1 Players from: Norway OR Portugal • Min. 3 Players from the same Club",
       "repeatable": false,
-      "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/",
+      "requirements": [
+        "Min. 1 Players from: Italy OR Belgium",
+        "Min. Clubs in Squad: 3",
+        "Min. 3 Players: Silver",
+        "Min. Squad Total Chemistry Points: 14",
+        "Min. 1 Players from: Norway OR Portugal",
+        "Min. 3 Players from the same Club",
+        "Max. Leagues in Squad: 5",
+        "Min. 2 Players: Gold",
+        "Min. Squad Total Chemistry Points: 18",
+        "Min. 2 Players from: Netherlands OR Germany",
+        "Max. 2 Players from the same Club",
+        "Min. 4 Players from the same League",
+        "Min. Squad Total Chemistry Points: 22",
+        "Min. 2 Players from: England OR Spain",
+        "Min. 4 Players from the same Nation",
+        "Max. 3 Players from the same Club",
+        "Min. Team Rating: 75",
+        "Min. Squad Total Chemistry Points: 26"
+      ],
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
     },
     {
       "id": "futgg-2-expiring-soon",
       "title_en": "2 Expiring Soon",
       "description": "[Expired](https://www.fut.gg/sbc/category/expired/)[2 Players](https://www.fut.gg/sbc/category/players/)[6 Upgrades](https://www.fut.gg/sbc/category/upgrades/)[3 Challenges](https://www.fut.gg/sbc/category/challenges/)[6 Foundations](https://www.fut.gg/sbc/cat",
-      "source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
+      "source_url": "https://www.fut.gg/sbc/category/expiring-soon/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "challenge_count": 1,
+      "repeatable": true,
+      "details_source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
     },
     {
       "id": "futgg-2-players",
       "title_en": "2 Players",
       "description": "[6 Upgrades](https://www.fut.gg/sbc/category/upgrades/)[3 Challenges](https://www.fut.gg/sbc/category/challenges/)[6 Foundations](https://www.fut.gg/sbc/category/foundations/)",
-      "source_url": "https://www.fut.gg/sbc/category/players/"
+      "source_url": "https://www.fut.gg/sbc/category/players/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/category/players/"
     },
     {
       "id": "futgg-6-upgrades",
       "title_en": "6 Upgrades",
-      "description": "[3 Challenges](https://www.fut.gg/sbc/category/challenges/)[6 Foundations](https://www.fut.gg/sbc/category/foundations/)",
-      "source_url": "https://www.fut.gg/sbc/category/upgrades/"
+      "description": "[2 Challenges](https://www.fut.gg/sbc/category/challenges/)[6 Foundations](https://www.fut.gg/sbc/category/foundations/)",
+      "source_url": "https://www.fut.gg/sbc/category/upgrades/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "challenge_count": 1,
+      "repeatable": true,
+      "details_source_url": "https://www.fut.gg/sbc/category/upgrades/"
     },
     {
       "id": "futgg-3-challenges",
       "title_en": "3 Challenges",
       "description": "[6 Foundations](https://www.fut.gg/sbc/category/foundations/)",
-      "source_url": "https://www.fut.gg/sbc/category/challenges/"
+      "source_url": "https://www.fut.gg/sbc/category/challenges/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "challenge_count": 4,
+      "details_source_url": "https://www.fut.gg/sbc/category/challenges/"
     },
     {
       "id": "futgg-6-foundations",
       "title_en": "6 Foundations",
-      "description": "[New ### Antonio Nusa 68,150![Image 16: FC Coin](https://www.fut.gg/public-assets/coin.webp) ![Image 17](https://www.fut.gg/public-assets/sbc-gem.webp)75,000](https://www.fut.gg/sbc/players/27-25-antonio-nusa/)",
-      "source_url": "https://www.fut.gg/sbc/category/foundations/"
+      "description": "### [Antonio Nusa 57,400![Image 16: FC Coin](https://www.fut.gg/public-assets/coin.webp) ![Image 17](https://www.fut.gg/public-assets/sbc-gem.webp)75,000](https://www.fut.gg/sbc/players/27-25-antonio-nusa/)",
+      "source_url": "https://www.fut.gg/sbc/category/foundations/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "challenge_count": 1,
+      "repeatable": true,
+      "item_score": 1250,
+      "details_source_url": "https://www.fut.gg/sbc/category/foundations/"
     },
     {
       "id": "futgg-challenges-1",
       "title_en": "Challenges 1",
       "description": "[Expires in 6 days](https://www.fut.gg/sbc/players/27-25-antonio-nusa/)[Repeatable-](https://www.fut.gg/sbc/players/27-25-antonio-nusa/)[Refreshes Every-](https://www.fut.gg/sbc/players/27-25-antonio-nusa/)",
-      "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "reward": "Eligible players • Player OVR: Min. 45",
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
     },
     {
       "id": "futgg-expires-in-6-days",
       "title_en": "Expires in 6 days",
       "description": "[Repeatable-](https://www.fut.gg/sbc/players/27-25-antonio-nusa/)[Refreshes Every-](https://www.fut.gg/sbc/players/27-25-antonio-nusa/)",
-      "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "reward": "Eligible players • Player OVR: Min. 45",
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
     },
     {
       "id": "futgg-repeatable",
       "title_en": "Repeatable-",
       "description": "[Refreshes Every-](https://www.fut.gg/sbc/players/27-25-antonio-nusa/)",
-      "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "reward": "Eligible players • Player OVR: Min. 45",
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
     },
     {
       "id": "futgg-refreshes-every",
       "title_en": "Refreshes Every-",
       "description": "[View Antonio Nusa](https://www.fut.gg/players/262863-antonio-nusa/27-50594511/)",
-      "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "reward": "Eligible players • Player OVR: Min. 45",
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
     },
     {
       "id": "futgg-challenges-4",
       "title_en": "Challenges 4",
       "description": "[Expires in 5 days](https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/)[Repeatable-](https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/)[Refreshes Every-](https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/)",
-      "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/",
+      "requirements": [
+        "Min. 1 Players from: Italy OR Belgium",
+        "Min. Clubs in Squad: 3",
+        "Min. 3 Players: Silver",
+        "Min. Squad Total Chemistry Points: 14",
+        "Min. 1 Players from: Norway OR Portugal",
+        "Min. 3 Players from the same Club",
+        "Max. Leagues in Squad: 5",
+        "Min. 2 Players: Gold",
+        "Min. Squad Total Chemistry Points: 18",
+        "Min. 2 Players from: Netherlands OR Germany",
+        "Max. 2 Players from the same Club",
+        "Min. 4 Players from the same League",
+        "Min. Squad Total Chemistry Points: 22",
+        "Min. 2 Players from: England OR Spain",
+        "Min. 4 Players from the same Nation",
+        "Max. 3 Players from the same Club",
+        "Min. Team Rating: 75",
+        "Min. Squad Total Chemistry Points: 26"
+      ],
+      "reward": "1 x Large Gold Players Pack • 1 x Mini Gold Pack • 1 x Small Mixed Players Pack • 1 x Small Gold Players Pack • 1 x Large Electrum Players Pack • Min. 1 Players from: Italy OR Belgium • Min. 3 Players: Silver • Player quality: Min. Bronze • Min. Squad Total Chemistry Points: 14 • Min. 1 Players from: Norway OR Portugal • Min. 3 Players from the same Club",
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
     },
     {
       "id": "futgg-expires-in-5-days",
       "title_en": "Expires in 5 days",
       "description": "[Repeatable-](https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/)[Refreshes Every-](https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/)",
-      "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/",
+      "requirements": [
+        "Min. 1 Players from: Italy OR Belgium",
+        "Min. Clubs in Squad: 3",
+        "Min. 3 Players: Silver",
+        "Min. Squad Total Chemistry Points: 14",
+        "Min. 1 Players from: Norway OR Portugal",
+        "Min. 3 Players from the same Club",
+        "Max. Leagues in Squad: 5",
+        "Min. 2 Players: Gold",
+        "Min. Squad Total Chemistry Points: 18",
+        "Min. 2 Players from: Netherlands OR Germany",
+        "Max. 2 Players from the same Club",
+        "Min. 4 Players from the same League",
+        "Min. Squad Total Chemistry Points: 22",
+        "Min. 2 Players from: England OR Spain",
+        "Min. 4 Players from the same Nation",
+        "Max. 3 Players from the same Club",
+        "Min. Team Rating: 75",
+        "Min. Squad Total Chemistry Points: 26"
+      ],
+      "reward": "1 x Large Gold Players Pack • 1 x Mini Gold Pack • 1 x Small Mixed Players Pack • 1 x Small Gold Players Pack • 1 x Large Electrum Players Pack • Min. 1 Players from: Italy OR Belgium • Min. 3 Players: Silver • Player quality: Min. Bronze • Min. Squad Total Chemistry Points: 14 • Min. 1 Players from: Norway OR Portugal • Min. 3 Players from the same Club",
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
     },
     {
       "id": "futgg-expires-in-9-years",
       "title_en": "Expires in 9 years",
       "description": "[Repeatable-](https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/)[Refreshes Every-](https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/)",
-      "source_url": "https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/"
+      "source_url": "https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "reward": "Intro to Player SBCs • Complete the Intro to Player SBCs to earn Squad Foundations Cristian Espinoza. • Eligible players • Player OVR: Min. 45",
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/"
     },
     {
       "id": "futgg-madrid-dreams",
       "title_en": "Madrid Dreams",
       "description": "[![Image 32: Madrid Dreams](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/15.png)](https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/)",
-      "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
+      "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+        "Max. 4 Players from the same League",
+        "Min. 3 Players from the same Club",
+        "Max. Clubs in Squad: 4",
+        "Min. Nationalities in Squad: 2",
+        "Min. Squad Total Chemistry Points: 12"
+      ],
+      "reward": "1 x Giant Gold Pack • Max. 4 Players from the same League • Min. 3 Players from the same Club • Player quality: Min. Gold • Min. Squad Total Chemistry Points: 12",
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
     },
     {
       "id": "futgg-expires-in-3-hours",
       "title_en": "Expires in 3 hours",
       "description": "[Repeatable-](https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/)[Refreshes Every-](https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/)",
-      "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
+      "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+        "Max. 4 Players from the same League",
+        "Min. 3 Players from the same Club",
+        "Max. Clubs in Squad: 4",
+        "Min. Nationalities in Squad: 2",
+        "Min. Squad Total Chemistry Points: 12"
+      ],
+      "reward": "1 x Giant Gold Pack • Max. 4 Players from the same League • Min. 3 Players from the same Club • Player quality: Min. Gold • Min. Squad Total Chemistry Points: 12",
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
     },
     {
       "id": "futgg-expires-in-3-days",
       "title_en": "Expires in 3 days",
       "description": "[Repeatable-](https://www.fut.gg/sbc/upgrades/27-12-83-upgrade/)[Refreshes Every-](https://www.fut.gg/sbc/upgrades/27-12-83-upgrade/)",
-      "source_url": "https://www.fut.gg/sbc/upgrades/27-12-83-upgrade/"
+      "source_url": "https://www.fut.gg/sbc/upgrades/27-12-83-upgrade/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "reward": "1 x 83+ Gold Player Pack • Earn a pack containing 1 Gold Player Item, rated 83 or higher. • Eligible players • Player OVR: Min. 45",
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-12-83-upgrade/"
     },
     {
       "id": "futgg-expires-in-2-days",
       "title_en": "Expires in 2 days",
       "description": "[Repeatable 3](https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/)[Refreshes Every 1 day](https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/)",
-      "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+        "Exactly Gold Players"
+      ],
+      "reward": "1 x 2x 79+ Gold Players Pack • Earn a pack containing 2 Gold Player Items, rated 79 or higher. • Exactly Gold Players • Number of players: 10",
+      "challenge_count": 1,
+      "repeatable": true,
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
     },
     {
       "id": "futgg-repeatable-3",
       "title_en": "Repeatable 3",
       "description": "[Refreshes Every 1 day](https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/)",
-      "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+        "Exactly Gold Players"
+      ],
+      "reward": "1 x 2x 79+ Gold Players Pack • Earn a pack containing 2 Gold Player Items, rated 79 or higher. • Exactly Gold Players • Number of players: 10",
+      "challenge_count": 1,
+      "repeatable": true,
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
     },
     {
       "id": "futgg-refreshes-every-1-day",
       "title_en": "Refreshes Every 1 day",
-      "description": "![Image 45: Pack](https://www.fut.gg/public-assets/pack-fc27.webp)1 x 2x 79+ Gold Players Pack![Image 46: Untradeable](https://www.fut.gg/public-assets/untradeable.png)",
-      "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      "description": "![Image 41: Pack](https://www.fut.gg/public-assets/pack-fc27.webp)1 x 2x 79+ Gold Players Pack![Image 42: Untradeable](https://www.fut.gg/public-assets/untradeable.png)",
+      "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+        "Exactly Gold Players"
+      ],
+      "reward": "1 x 2x 79+ Gold Players Pack • Earn a pack containing 2 Gold Player Items, rated 79 or higher. • Exactly Gold Players • Number of players: 10",
+      "challenge_count": 1,
+      "repeatable": true,
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
     },
     {
       "id": "futgg-sbcs-sbc-upgrades-27-6-gold-upgrade-repeatable",
       "title_en": "Repeatable∞",
       "description": "[Refreshes Every-](https://www.fut.gg/sbc/upgrades/27-6-gold-upgrade/)",
-      "source_url": "https://www.fut.gg/sbc/upgrades/27-6-gold-upgrade/"
+      "source_url": "https://www.fut.gg/sbc/upgrades/27-6-gold-upgrade/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "reward": "1 x Small Gold Players Pack • Exchange Gold items for rewards. • Player quality: Min. Gold",
+      "challenge_count": 1,
+      "repeatable": true,
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-6-gold-upgrade/"
     },
     {
       "id": "futgg-league-nation-advanced",
       "title_en": "League & Nation Advanced",
-      "description": "[![Image 66: League & Nation Advanced](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/10.png)](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)",
-      "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
+      "description": "[![Image 58: League & Nation Advanced](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/10.png)](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)",
+      "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+        "Max. 6 Players from the same League",
+        "Max. 6 Players from the same Nation",
+        "Exactly Gold Players",
+        "Min. Squad Total Chemistry Points: 30",
+        "Max. 4 Players from the same League",
+        "Max. 3 Players from the same Nation",
+        "Min. Team Rating: 78",
+        "Min. Squad Total Chemistry Points: 25",
+        "Max. 2 Players from the same Club",
+        "Min. Team Rating: 81"
+      ],
+      "reward": "1 x Jumbo Gold Pack • 1 x Small Electrum Players Pack • 1 x Large Electrum Players Pack • 1 x Small Gold Players Pack • 5,000 Coins • Max. 6 Players from the same League • Max. 6 Players from the same Nation • Exactly Gold Players • Min. Squad Total Chemistry Points: 30",
+      "challenge_count": 3,
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
     },
     {
       "id": "futgg-challenges-3",
       "title_en": "Challenges 3",
       "description": "[Expires in 9 years](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)[Repeatable-](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)[Refreshes Every-](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)",
-      "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
+      "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+        "Max. 6 Players from the same League",
+        "Max. 6 Players from the same Nation",
+        "Exactly Gold Players",
+        "Min. Squad Total Chemistry Points: 30",
+        "Max. 4 Players from the same League",
+        "Max. 3 Players from the same Nation",
+        "Min. Team Rating: 78",
+        "Min. Squad Total Chemistry Points: 25",
+        "Max. 2 Players from the same Club",
+        "Min. Team Rating: 81"
+      ],
+      "reward": "1 x Jumbo Gold Pack • 1 x Small Electrum Players Pack • 1 x Large Electrum Players Pack • 1 x Small Gold Players Pack • 5,000 Coins • Max. 6 Players from the same League • Max. 6 Players from the same Nation • Exactly Gold Players • Min. Squad Total Chemistry Points: 30",
+      "challenge_count": 3,
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
     },
     {
       "id": "futgg-intro-to-upgrade-sbcs",
       "title_en": "Intro to Upgrade SBCs",
-      "description": "[![Image 89: Intro to Upgrade SBCs](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/3.png)](https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/)",
-      "source_url": "https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/"
+      "description": "[![Image 81: Intro to Upgrade SBCs](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/3.png)](https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/)",
+      "source_url": "https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/",
+      "requirements": [
+        "Min. 11 Players: Bronze",
+        "Max. Team Rating: 64",
+        "Min. 11 Players: Silver",
+        "Min. 11 Players: Gold",
+        "Max. Team Rating: 85",
+        "Min. Squad Total Chemistry Points: 10"
+      ],
+      "reward": "1 x Small Gold Players Pack • 1 x Large Silver Players Pack • 1 x Gold Pack • 1 x Large Gold Pack • Min. 11 Players: Bronze • Min. 11 Players: Silver",
+      "estimated_cost": 2200,
+      "cost": 2200,
+      "challenge_count": 3,
+      "details_source_url": "https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/"
+    },
+    {
+      "id": "futgg-1-expiring-soon",
+      "title_en": "1 Expiring Soon",
+      "description": "[Expired](https://www.fut.gg/sbc/category/expired/)[1 Players](https://www.fut.gg/sbc/category/players/)[6 Upgrades](https://www.fut.gg/sbc/category/upgrades/)[2 Challenges](https://www.fut.gg/sbc/category/challenges/)[6 Foundations](https://www.fut.gg/sbc/cat",
+      "source_url": "https://www.fut.gg/sbc/category/expiring-soon/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "challenge_count": 1,
+      "repeatable": true,
+      "details_source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
+    },
+    {
+      "id": "futgg-1-players",
+      "title_en": "1 Players",
+      "description": "[6 Upgrades](https://www.fut.gg/sbc/category/upgrades/)[2 Challenges](https://www.fut.gg/sbc/category/challenges/)[6 Foundations](https://www.fut.gg/sbc/category/foundations/)",
+      "source_url": "https://www.fut.gg/sbc/category/players/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "challenge_count": 1,
+      "details_source_url": "https://www.fut.gg/sbc/category/players/"
+    },
+    {
+      "id": "futgg-2-challenges",
+      "title_en": "2 Challenges",
+      "description": "[6 Foundations](https://www.fut.gg/sbc/category/foundations/)",
+      "source_url": "https://www.fut.gg/sbc/category/challenges/",
+      "requirements": [
+        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+        "Players",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+      ],
+      "challenge_count": 4,
+      "details_source_url": "https://www.fut.gg/sbc/category/challenges/"
     }
   ],
   "objectives": [
@@ -13884,7 +14329,8 @@
       "description": "Mastery Objective برای Rivals.",
       "reward": "Large Gold Players Pack",
       "category": "Mastery",
-      "source_url": "https://www.fut.gg/objectives/mastery/"
+      "source_url": "https://www.fut.gg/objectives/mastery/",
+      "details_source_url": "https://www.fut.gg/objectives/mastery/"
     },
     {
       "id": "futgg-champions-mastery",
@@ -13892,7 +14338,8 @@
       "description": "Mastery Objective برای Champions.",
       "reward": "86+ Gold Player Pack + Coins + Tokens",
       "category": "Mastery",
-      "source_url": "https://www.fut.gg/objectives/mastery/"
+      "source_url": "https://www.fut.gg/objectives/mastery/",
+      "details_source_url": "https://www.fut.gg/objectives/mastery/"
     },
     {
       "id": "futgg-transfer-market-mastery",
@@ -13900,7 +14347,8 @@
       "description": "Mastery Objective برای فعالیت در بازار نقل‌وانتقالات.",
       "reward": "2x 82+ Gold Players Pack + 10,000 Coins",
       "category": "Mastery",
-      "source_url": "https://www.fut.gg/objectives/mastery/"
+      "source_url": "https://www.fut.gg/objectives/mastery/",
+      "details_source_url": "https://www.fut.gg/objectives/mastery/"
     },
     {
       "id": "futgg-weekly-objectives",
@@ -13922,55 +14370,86 @@
       "id": "futgg-1-expiring-soon",
       "title": "1 Expiring Soon",
       "description": "[1 Coming Soon](https://www.fut.gg/objectives/coming-soon/)",
-      "source_url": "https://www.fut.gg/objectives/expiring-soon/"
+      "source_url": "https://www.fut.gg/objectives/expiring-soon/",
+      "task_count": 30,
+      "details_source_url": "https://www.fut.gg/objectives/expiring-soon/"
     },
     {
       "id": "futgg-1-coming-soon",
       "title": "1 Coming Soon",
       "description": "[![Image 1: Season Points](https://www.fut.gg/public-assets/sp.webp)Season Pass](https://www.fut.gg/season-pass/)[Foundations](https://www.fut.gg/objectives/foundations/)[Seasonal](https://www.fut.gg/objectives/seasonal/)[Campaigns](https://www.fut.gg/objectiv",
-      "source_url": "https://www.fut.gg/objectives/coming-soon/"
+      "source_url": "https://www.fut.gg/objectives/coming-soon/",
+      "details_source_url": "https://www.fut.gg/objectives/coming-soon/"
     },
     {
       "id": "futgg-foundations",
       "title": "Foundations",
       "description": "[Seasonal](https://www.fut.gg/objectives/seasonal/)[Campaigns](https://www.fut.gg/objectives/campaigns/)[Live Events](https://www.fut.gg/objectives/live-events/)[Milestones](https://www.fut.gg/objectives/milestones/)[Mastery](https://www.fut.gg/objectives/mast",
-      "source_url": "https://www.fut.gg/objectives/foundations/"
+      "source_url": "https://www.fut.gg/objectives/foundations/",
+      "details_source_url": "https://www.fut.gg/objectives/foundations/"
     },
     {
       "id": "futgg-seasonal",
       "title": "Seasonal",
       "description": "[Campaigns](https://www.fut.gg/objectives/campaigns/)[Live Events](https://www.fut.gg/objectives/live-events/)[Milestones](https://www.fut.gg/objectives/milestones/)[Mastery](https://www.fut.gg/objectives/mastery/)[FC Pro](https://www.fut.gg/objectives/fc-pro/",
-      "source_url": "https://www.fut.gg/objectives/seasonal/"
+      "source_url": "https://www.fut.gg/objectives/seasonal/",
+      "task_count": 30,
+      "details_source_url": "https://www.fut.gg/objectives/seasonal/"
     },
     {
       "id": "futgg-campaigns",
       "title": "Campaigns",
       "description": "[Live Events](https://www.fut.gg/objectives/live-events/)[Milestones](https://www.fut.gg/objectives/milestones/)[Mastery](https://www.fut.gg/objectives/mastery/)[FC Pro](https://www.fut.gg/objectives/fc-pro/)",
-      "source_url": "https://www.fut.gg/objectives/campaigns/"
+      "source_url": "https://www.fut.gg/objectives/campaigns/",
+      "details_source_url": "https://www.fut.gg/objectives/campaigns/"
     },
     {
       "id": "futgg-live-events",
       "title": "Live Events",
       "description": "[Milestones](https://www.fut.gg/objectives/milestones/)[Mastery](https://www.fut.gg/objectives/mastery/)[FC Pro](https://www.fut.gg/objectives/fc-pro/)",
-      "source_url": "https://www.fut.gg/objectives/live-events/"
+      "source_url": "https://www.fut.gg/objectives/live-events/",
+      "details_source_url": "https://www.fut.gg/objectives/live-events/"
     },
     {
       "id": "futgg-milestones",
       "title": "Milestones",
       "description": "[Mastery](https://www.fut.gg/objectives/mastery/)[FC Pro](https://www.fut.gg/objectives/fc-pro/)",
-      "source_url": "https://www.fut.gg/objectives/milestones/"
+      "source_url": "https://www.fut.gg/objectives/milestones/",
+      "details_source_url": "https://www.fut.gg/objectives/milestones/"
     },
     {
       "id": "futgg-mastery",
       "title": "Mastery",
       "description": "[FC Pro](https://www.fut.gg/objectives/fc-pro/)",
-      "source_url": "https://www.fut.gg/objectives/mastery/"
+      "source_url": "https://www.fut.gg/objectives/mastery/",
+      "details_source_url": "https://www.fut.gg/objectives/mastery/"
     },
     {
       "id": "futgg-fc-pro",
       "title": "FC Pro",
       "description": "[New ### Squad Foundations: Shunsuke Mito Complete these objectives to earn Squad Foundations Shunsuke Mito and SP! All rewards are untradeable. ![Image 2: Shunsuke Mito](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/futgg-play",
-      "source_url": "https://www.fut.gg/objectives/fc-pro/"
+      "source_url": "https://www.fut.gg/objectives/fc-pro/",
+      "task_count": 30,
+      "details_source_url": "https://www.fut.gg/objectives/fc-pro/"
     }
-  ]
+  ],
+  "popular_players": [
+    {
+      "id": "futgg-david-luiz-hof",
+      "name": "David Luiz",
+      "rating": 85,
+      "position": "CB",
+      "positions": [
+        "CB"
+      ],
+      "nation_name": "Brazil",
+      "version": "Hall of FUT",
+      "rarity": "Hall of FUT",
+      "card_type": "Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "discovery_source_url": "https://www.fut.gg/whats-hot/"
+    }
+  ],
+  "discovery_generated_at": "2026-09-26T21:13:38.083Z",
+  "enriched_at": "2026-09-26T21:14:56.084Z"
 }
