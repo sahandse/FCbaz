@@ -45,8 +45,11 @@ jobs:
             }
             if (ids.has(p.id)) throw new Error(`duplicate player id: ${p.id}`);
             ids.add(p.id);
-            if (!String(p.source_url || '').startsWith('https://www.fut.gg/')) {
-              throw new Error(`player without FUT.GG source: ${p.name}`);
+            const source = String(p.source_url || '');
+            if (!source.startsWith('https://www.fut.gg/') &&
+                !source.startsWith('https://www.futbin.org/') &&
+                !source.startsWith('https://www.ea.com/')) {
+              throw new Error(`player without trusted source: ${p.name}`);
             }
           }
           console.log(`Validated ${c.players.length} FC27 players`);
