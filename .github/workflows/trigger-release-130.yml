@@ -1,0 +1,71 @@
+name: Trigger FCBaz v1.3.0 Release
+
+permissions:
+  contents: write
+  actions: write
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.release/fcbaz-v1.3.0'
+
+jobs:
+  sync-and-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh FC27 live catalog
+        run: node tool/sync_live_fc27.mjs
+
+      - name: Validate player catalog size and sources
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const c = JSON.parse(fs.readFileSync('data/live/catalog.json', 'utf8'));
+          if (Number(c.game_year) !== 27) throw new Error('wrong game year');
+          if (!Array.isArray(c.players) || c.players.length < 50) {
+            throw new Error(`players catalog too small: ${c.players?.length ?? 0}`);
+          }
+          const ids = new Set();
+          for (const p of c.players) {
+            if (!p.id || !p.name || !Number(p.rating) || !p.position) {
+              throw new Error(`invalid player: ${JSON.stringify(p)}`);
+            }
+            if (ids.has(p.id)) throw new Error(`duplicate player id: ${p.id}`);
+            ids.add(p.id);
+            if (!String(p.source_url || '').startsWith('https://www.fut.gg/')) {
+              throw new Error(`player without FUT.GG source: ${p.name}`);
+            }
+          }
+          console.log(`Validated ${c.players.length} FC27 players`);
+          NODE
+
+      - name: Commit refreshed catalog
+        shell: bash
+        run: |
+          if git diff --quiet -- data/live/catalog.json; then
+            echo 'No catalog changes.'
+          else
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add data/live/catalog.json
+            git commit -m 'data: expand verified FC27 player catalog for v1.3.0'
+            git push origin HEAD:main
+          fi
+
+      - name: Dispatch production release 1.3.0
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run flutter-android.yml -f release_version=1.3.0 -f api_base_url=
