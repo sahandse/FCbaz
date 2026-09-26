@@ -1,8 +1,19 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 const catalogPath = 'data/live/catalog.json';
+
+const playerPages = [
+  { url: 'https://www.fut.gg/fc-27/ratings/', version: 'Gold Rare' },
+  { url: 'https://www.fut.gg/rarities/base-icon/', version: 'Base Icon' },
+  { url: 'https://www.fut.gg/rarities/base-hero/', version: 'Base Hero' },
+  { url: 'https://www.fut.gg/rarities/team-of-the-week/', version: 'Team of the week' },
+  { url: 'https://www.fut.gg/rarities/destined-for-glory/', version: 'Destined for Glory' },
+  { url: 'https://www.fut.gg/rarities/squad-foundations/', version: 'Squad Foundations' },
+  { url: 'https://www.fut.gg/hall-of-fut/', version: 'Base Hall of FUT' },
+  { url: 'https://www.fut.gg/rarities/debut-international-icon/', version: 'Debut International Icon' },
+];
+
 const pages = {
-  players: 'https://www.fut.gg/fc-27/ratings/',
   evolutions: 'https://www.fut.gg/evolutions/',
   sbcs: 'https://www.fut.gg/sbc/',
   objectives: 'https://www.fut.gg/objectives/',
@@ -17,7 +28,7 @@ async function reader(url) {
     try {
       const response = await fetch(target, {
         headers: {
-          'user-agent': 'FCBaz-LiveData/1.2.1 (+https://github.com/sahandse/FCbaz)',
+          'user-agent': 'FCBaz-LiveData/1.3 (+https://github.com/sahandse/FCbaz)',
           accept: 'text/plain,text/markdown,text/html;q=0.9,*/*;q=0.8',
         },
         signal: AbortSignal.timeout(20000),
@@ -43,38 +54,43 @@ function slugId(prefix, value) {
 }
 
 function clean(value) {
-  return value
+  return String(value ?? '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .replace(/^(new|image:?|view)\s+/i, '')
     .trim();
 }
 
-function discoverPlayers(text, baseUrl) {
+function discoverPlayers(text, baseUrl, version) {
   const found = [];
   const seen = new Set();
   const patterns = [
-    /([A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+(?:\s+[A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+){1,4})\s+(\d{2})\s+OVR\s*[·•-]\s*([A-Z]{1,4})/g,
-    /([A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+(?:\s+[A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+){1,4})\s+(\d{2})\s+(GK|CB|LB|RB|LWB|RWB|CDM|CM|CAM|LM|RM|LW|RW|CF|ST)\b/g,
+    /([A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+(?:\s+[A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+){0,4})\s+(\d{2})\s+OVR\s*[·•-]\s*(GK|CB|LB|RB|LWB|RWB|CDM|CM|CAM|LM|RM|LW|RW|CF|ST)\b/g,
+    /([A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+(?:\s+[A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+){0,4})\s+(\d{2})\s+(GK|CB|LB|RB|LWB|RWB|CDM|CM|CAM|LM|RM|LW|RW|CF|ST)\b/g,
   ];
+
   for (const pattern of patterns) {
     for (const match of text.matchAll(pattern)) {
       const name = clean(match[1]);
       const rating = Number(match[2]);
       const position = match[3];
-      if (!name || rating < 40 || rating > 99 || seen.has(`${name}-${rating}-${position}`)) continue;
-      seen.add(`${name}-${rating}-${position}`);
+      const key = `${name}|${rating}|${position}|${version}`.toLowerCase();
+      if (!name || rating < 40 || rating > 99 || seen.has(key)) continue;
+      seen.add(key);
       found.push({
-        id: slugId('futgg', `${name}-${rating}-${position}`),
+        id: slugId('futgg', `${name}-${rating}-${position}-${version}`),
         name,
         rating,
         position,
         positions: [position],
-        version: 'FC27',
+        version,
+        rarity: version,
+        card_type: version,
         source_url: baseUrl,
       });
     }
   }
+
   return found;
 }
 
@@ -121,25 +137,52 @@ function mergeVerified(existing = [], discovered = [], keyOf) {
     const key = keyOf(item);
     if (!key) continue;
     const previous = byKey.get(key);
-    byKey.set(key, previous ? { ...previous, ...item, source_url: item.source_url || previous.source_url } : item);
+    byKey.set(
+      key,
+      previous
+        ? { ...previous, ...item, source_url: item.source_url || previous.source_url }
+        : item,
+    );
   }
   return [...byKey.values()];
 }
 
 let successfulSections = 0;
+let totalPlayerDiscoveries = 0;
+for (const source of playerPages) {
+  try {
+    const text = await reader(source.url);
+    const items = discoverPlayers(text, source.url, source.version);
+    if (items.length === 0) {
+      console.warn(`[players:${source.version}] no items discovered; keeping previous snapshot`);
+      continue;
+    }
+    current.players = mergeVerified(
+      current.players,
+      items,
+      (item) => `${item.name ?? ''}|${item.rating ?? ''}|${item.position ?? ''}|${item.version ?? ''}`.toLowerCase(),
+    );
+    successfulSections++;
+    totalPlayerDiscoveries += items.length;
+    console.log(`[players:${source.version}] discovered ${items.length}, total ${current.players.length}`);
+  } catch (error) {
+    console.warn(`[players:${source.version}] sync failed: ${error}`);
+  }
+}
+
 for (const [section, url] of Object.entries(pages)) {
   try {
     const text = await reader(url);
-    const items = section === 'players' ? discoverPlayers(text, url) : discover(text, section, url);
+    const items = discover(text, section, url);
     if (items.length === 0) {
       console.warn(`[${section}] no items discovered; keeping previous snapshot`);
       continue;
     }
-    if (section === 'players') {
-      current.players = mergeVerified(current.players, items, (item) => `${item.name ?? ''}|${item.rating ?? ''}|${item.position ?? ''}`.toLowerCase());
-    } else {
-      current[section] = mergeVerified(current[section], items, (item) => String(item.title_en ?? item.title ?? '').trim().toLowerCase());
-    }
+    current[section] = mergeVerified(
+      current[section],
+      items,
+      (item) => String(item.title_en ?? item.title ?? '').trim().toLowerCase(),
+    );
     successfulSections++;
     console.log(`[${section}] discovered ${items.length}, total ${current[section].length}`);
   } catch (error) {
@@ -153,7 +196,13 @@ if (successfulSections === 0) {
 
 current.game_year = 27;
 current.generated_at = new Date().toISOString();
-current.sources = [...new Set([...(current.sources ?? []), ...Object.values(pages)])];
+current.sources = [
+  ...new Set([
+    ...(current.sources ?? []),
+    ...playerPages.map((item) => item.url),
+    ...Object.values(pages),
+  ]),
+];
 
 await writeFile(catalogPath, `${JSON.stringify(current, null, 2)}\n`);
-console.log(`Updated ${catalogPath}`);
+console.log(`Updated ${catalogPath}; player discoveries this run: ${totalPlayerDiscoveries}`);
