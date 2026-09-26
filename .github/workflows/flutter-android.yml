@@ -10,7 +10,7 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 1.1.1
+        default: 1.2.0
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -21,10 +21,10 @@ on:
     branches:
       - main
     paths:
-      - '.release/fcbaz-v1.1.1'
+      - '.release/fcbaz-v1.2.0'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.1.1' }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.2.0' }}
   RELEASE_BUILD_NUMBER: ${{ github.run_number }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
 
@@ -72,31 +72,23 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-
           mkdir -p android/app/src/main/kotlin/ir/fcbaz/app
           cat > android/app/src/main/kotlin/ir/fcbaz/app/MainActivity.kt <<'EOF'
           package ir.fcbaz.app
-
           import io.flutter.embedding.android.FlutterActivity
-
           class MainActivity : FlutterActivity()
           EOF
           rm -rf android/app/src/main/kotlin/ir/fcbaz/fcbaz || true
           sed -i 's/android:label="fcbaz"/android:label="FCBaz"/' android/app/src/main/AndroidManifest.xml || true
-
           mkdir -p android/app/src/main/res/drawable
           cat > android/app/src/main/res/drawable/ic_stat_fcbaz.xml <<'EOF'
           <vector xmlns:android="http://schemas.android.com/apk/res/android"
-              android:width="24dp"
-              android:height="24dp"
-              android:viewportWidth="24"
-              android:viewportHeight="24">
-              <path
-                  android:fillColor="#FFFFFFFF"
+              android:width="24dp" android:height="24dp"
+              android:viewportWidth="24" android:viewportHeight="24">
+              <path android:fillColor="#FFFFFFFF"
                   android:pathData="M3,5h18v14H3zM5,7v10h14V7zM11,7h2v10h-2zM6.5,12a1.5,1.5 0,1 0,3 0a1.5,1.5 0,1 0,-3 0M14.5,12a1.5,1.5 0,1 0,3 0a1.5,1.5 0,1 0,-3 0" />
           </vector>
           EOF
-
           if [ -n "$KEYSTORE_BASE64" ] && [ -n "$STORE_PASSWORD_SECRET" ] && [ -n "$KEY_PASSWORD_SECRET" ] && [ -n "$KEY_ALIAS_SECRET" ]; then
             printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/fcbaz-release.jks
             STORE_PASSWORD="$STORE_PASSWORD_SECRET"
@@ -104,9 +96,7 @@ jobs:
             KEY_ALIAS="$KEY_ALIAS_SECRET"
           else
             mkdir -p /tmp/fcbaz-signing
-            ARTIFACT_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
-              --jq '.artifacts[] | select(.name | contains("signing-backup")) | select(.expired==false) | .id' \
-              | head -n 1)
+            ARTIFACT_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" --jq '.artifacts[] | select(.name | contains("signing-backup")) | select(.expired==false) | .id' | head -n 1)
             test -n "$ARTIFACT_ID" || { echo "No non-expired existing signing backup found."; exit 1; }
             gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/fcbaz-signing/signing.zip
             unzip -q -o /tmp/fcbaz-signing/signing.zip -d /tmp/fcbaz-signing
@@ -117,14 +107,12 @@ jobs:
             KEY_PASSWORD=$(awk -F= '/^keyPassword=/{print $2}' "$INFO")
             KEY_ALIAS=$(awk -F= '/^keyAlias=/{print $2}' "$INFO")
           fi
-
           cat > android/key.properties <<EOF
           storePassword=$STORE_PASSWORD
           keyPassword=$KEY_PASSWORD
           keyAlias=$KEY_ALIAS
           storeFile=fcbaz-release.jks
           EOF
-
           python3 - <<'PY'
           from pathlib import Path
           p = Path('android/app/build.gradle.kts')
@@ -177,14 +165,14 @@ jobs:
           for y in range(h):
               row = bytearray([0])
               for x in range(w):
-                  dx = x - cx; dy = y - cy; r2 = dx*dx + dy*dy
+                  dx = x-cx; dy = y-cy; r2 = dx*dx + dy*dy
                   color = green if 300*300 <= r2 <= 350*350 else bg
                   row.extend(color)
               rows.append(bytes(row))
-          def chunk(kind, payload):
-              return struct.pack('>I', len(payload)) + kind + payload + struct.pack('>I', binascii.crc32(kind + payload) & 0xffffffff)
-          raw = b''.join(rows)
-          png = b'\x89PNG\r\n\x1a\n' + chunk(b'IHDR', struct.pack('>IIBBBBB', w,h,8,2,0,0,0)) + chunk(b'IDAT', zlib.compress(raw,9)) + chunk(b'IEND', b'')
+          def chunk(kind,payload):
+              return struct.pack('>I',len(payload))+kind+payload+struct.pack('>I',binascii.crc32(kind+payload)&0xffffffff)
+          raw=b''.join(rows)
+          png=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',w,h,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(raw,9))+chunk(b'IEND',b'')
           Path('assets/icon/fcbaz_app_icon.png').write_bytes(png)
           PY
           dart run flutter_launcher_icons
@@ -210,13 +198,14 @@ jobs:
           cat > RELEASE_NOTES.md <<EOF
           ## FCBaz v${RELEASE_VERSION}
 
-          Hotfix صفحه سیاه هنگام شروع برنامه.
+          نسخه بزرگ 1.2 با دیتای واقعی FC27 و بازطراحی مینیمال و گرافیکی.
 
-          - UI قبل از initialize سرویس‌های اختیاری Android نمایش داده می‌شود.
-          - خطای Notification یا WorkManager دیگر startup را متوقف نمی‌کند.
-          - resource واقعی ic_stat_fcbaz در APK قرار می‌گیرد.
-          - لود تنظیمات و Price Alert هنگام شروع fail-safe شده است.
-          - داده ساختگی نمایش داده نمی‌شود.
+          - Player / Price / Trending از منبع عمومی واقعی FUTBIN.
+          - SBC / Evolutions / Objectives از Live Catalog واقعی با منبع FUT.GG.
+          - همگام‌سازی خودکار Live Catalog هر ۶ ساعت.
+          - Home Dashboard، Player Card و Theme بازطراحی شده‌اند.
+          - دیتای فیک، fallback فصل اشتباه و درصد ۲۴ساعته جعلی نمایش داده نمی‌شود.
+          - Watchlist، My Club، Squad و تنظیمات همچنان Local-first و بدون ثبت‌نام هستند.
           EOF
 
       - name: Upload release artifact
