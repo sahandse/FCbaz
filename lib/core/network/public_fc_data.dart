@@ -229,7 +229,7 @@ class PublicFcData {
         'current': _coin(raw['LCPrice']),
         'low': _coin(raw['MinPrice']),
         'high': _coin(raw['MaxPrice']),
-        'change_24h_percent': 0,
+        'change_24h_percent': null,
         'updated_text': (raw['updated'] ?? '').toString(),
         'source': 'futbin-public',
       };
@@ -248,8 +248,7 @@ class PublicFcData {
     );
     final key = uri.toString();
     final cached = _cache[key];
-    if (cached != null &&
-        DateTime.now().difference(cached.at) < ttl) {
+    if (cached != null && DateTime.now().difference(cached.at) < ttl) {
       return cached.value;
     }
 
@@ -259,7 +258,7 @@ class PublicFcData {
     request.headers.set(HttpHeaders.acceptHeader, 'application/json');
     request.headers.set(
       HttpHeaders.userAgentHeader,
-      'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 FCBaz/1.0',
+      'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 FCBaz/1.2',
     );
     request.headers.set('Referer', 'https://www.futbin.com/');
     request.headers.set('Origin', 'https://www.futbin.com');
@@ -270,7 +269,7 @@ class PublicFcData {
     final body = await utf8.decoder.bind(response).join();
 
     if (response.statusCode < 200 || response.statusCode >= 300) {
-      throw HttpException('HTTP ' + response.statusCode.toString());
+      throw HttpException('HTTP ${response.statusCode}');
     }
 
     final json = jsonDecode(body);
