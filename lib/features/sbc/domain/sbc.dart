@@ -45,10 +45,13 @@ class SbcChallenge {
     final rawTitle = (json['title'] ?? json['name'] ?? '').toString();
     final titleEn = (json['title_en'] ?? json['name_en'] ?? rawTitle).toString();
     final titleFa = (json['title_fa'] ?? json['name_fa'] ?? '').toString();
+    final displayTitle = titleFa.isNotEmpty && titleEn.isNotEmpty && titleFa != titleEn
+        ? '$titleFa • $titleEn'
+        : (titleFa.isNotEmpty ? titleFa : titleEn);
 
     return SbcChallenge(
       id: (json['id'] ?? '').toString(),
-      title: rawTitle,
+      title: displayTitle,
       titleEn: titleEn,
       titleFa: titleFa,
       category: (json['category'] ?? 'SBC').toString(),
