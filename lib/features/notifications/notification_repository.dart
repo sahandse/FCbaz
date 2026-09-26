@@ -10,6 +10,7 @@ class FCBazNotification {
     required this.body,
     required this.createdAt,
     this.playerId,
+    this.destinationId,
     this.price,
     this.targetPrice,
     this.isRead = false,
@@ -21,6 +22,7 @@ class FCBazNotification {
   final String body;
   final DateTime createdAt;
   final String? playerId;
+  final String? destinationId;
   final int? price;
   final int? targetPrice;
   final bool isRead;
@@ -32,6 +34,7 @@ class FCBazNotification {
         body: body,
         createdAt: createdAt,
         playerId: playerId,
+        destinationId: destinationId,
         price: price,
         targetPrice: targetPrice,
         isRead: isRead ?? this.isRead,
@@ -44,6 +47,7 @@ class FCBazNotification {
         'body': body,
         'created_at': createdAt.toIso8601String(),
         'player_id': playerId,
+        'destination_id': destinationId,
         'price': price,
         'target_price': targetPrice,
         'is_read': isRead,
@@ -61,6 +65,7 @@ class FCBazNotification {
       createdAt: DateTime.tryParse((json['created_at'] ?? '').toString()) ??
           DateTime.fromMillisecondsSinceEpoch(0),
       playerId: json['player_id']?.toString(),
+      destinationId: json['destination_id']?.toString(),
       price: asInt(json['price']),
       targetPrice: asInt(json['target_price']),
       isRead: json['is_read'] == true,
