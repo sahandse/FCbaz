@@ -1,6 +1,6 @@
 {
   "game_year": 27,
-  "generated_at": "2026-09-26T21:53:13.998Z",
+  "generated_at": "2026-09-26T21:56:09.933Z",
   "sources": [
     "https://www.fut.gg/players/",
     "https://www.fut.gg/fc-27/ratings/",
@@ -53,7 +53,12 @@
         "ST"
       ],
       "version": "Gold Rare",
-      "source_url": "https://www.fut.gg/fc-27/ratings/"
+      "source_url": "https://www.fut.gg/fc-27/ratings/",
+      "price_ps": 7000000,
+      "market_price": 7000000,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.628Z"
     },
     {
       "id": "futgg-dembele-base",
@@ -100,7 +105,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.628Z"
     },
     {
       "id": "futgg-david-luiz-hof",
@@ -114,7 +124,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.628Z"
     },
     {
       "id": "futgg-pato-hof",
@@ -128,7 +143,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 750,
+      "market_price": 750,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-balotelli-hof",
@@ -142,7 +162,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-hulk-hof",
@@ -156,7 +181,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 750,
+      "market_price": 750,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-walcott-hof",
@@ -170,7 +200,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-valencia-hof",
@@ -184,7 +219,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-richards-hof",
@@ -198,7 +238,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-fellaini-hof",
@@ -212,7 +257,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-mcgeady-hof",
@@ -226,7 +276,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 300,
+      "market_price": 300,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-akinfenwa-hof",
@@ -240,7 +295,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.629Z"
     },
     {
       "id": "futgg-guarin-hof",
@@ -254,7 +314,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.630Z"
     },
     {
       "id": "futgg-ibarbo-hof",
@@ -273,7 +338,7 @@
       "market_price": 400,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-09-26T21:53:25.172Z"
+      "price_updated_at": "2026-09-26T21:56:42.630Z"
     },
     {
       "id": "futgg-dos-santos-hof",
@@ -287,7 +352,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.630Z"
     },
     {
       "id": "futgg-gervinho-hof",
@@ -301,7 +371,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.630Z"
     },
     {
       "id": "futgg-doumbia-hof",
@@ -320,7 +395,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-09-26T21:53:25.173Z"
+      "price_updated_at": "2026-09-26T21:56:42.631Z"
     },
     {
       "id": "futgg-florenzi-hof",
@@ -334,7 +409,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.631Z"
     },
     {
       "id": "futgg-elia-hof",
@@ -348,7 +428,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.631Z"
     },
     {
       "id": "futgg-layun-hof",
@@ -362,7 +447,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 300,
+      "market_price": 300,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.631Z"
     },
     {
       "id": "futgg-remy-hof",
@@ -376,7 +466,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.632Z"
     },
     {
       "id": "futgg-emenike-hof",
@@ -390,7 +485,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 300,
+      "market_price": 300,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.632Z"
     },
     {
       "id": "ea-209331",
@@ -466,9 +566,13 @@
       "dribbling": 92,
       "defending": 37,
       "physical": 76,
-      "price_ps": 0,
+      "price_ps": 7000000,
       "price_pc": 0,
-      "source_url": "https://www.fut.gg/fc-27/ratings/"
+      "source_url": "https://www.fut.gg/fc-27/ratings/",
+      "market_price": 7000000,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.633Z"
     },
     {
       "id": "ea-241667",
@@ -1298,9 +1402,13 @@
       "dribbling": 88,
       "defending": 39,
       "physical": 76,
-      "price_ps": 0,
+      "price_ps": 748000,
       "price_pc": 0,
-      "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0"
+      "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0",
+      "market_price": 748000,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.635Z"
     },
     {
       "id": "ea-241846",
@@ -3326,9 +3434,13 @@
       "dribbling": 24,
       "defending": 56,
       "physical": 85,
-      "price_ps": 0,
+      "price_ps": 18500,
       "price_pc": 0,
-      "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=100"
+      "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=100",
+      "market_price": 18500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.640Z"
     },
     {
       "id": "ea-245872",
@@ -6634,7 +6746,7 @@
       "market_price": 650,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-09-26T21:53:25.182Z"
+      "price_updated_at": "2026-09-26T21:56:42.651Z"
     },
     {
       "id": "ea-217870",
@@ -13446,7 +13558,12 @@
       "version": "Base Hall of FUT",
       "rarity": "Base Hall of FUT",
       "card_type": "Base Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.662Z"
     },
     {
       "id": "futgg-marouane-fellaini-85-cm-base-hall-of-fut",
@@ -13459,7 +13576,12 @@
       "version": "Base Hall of FUT",
       "rarity": "Base Hall of FUT",
       "card_type": "Base Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.662Z"
     },
     {
       "id": "futgg-loi-c-re-my-84-st-base-hall-of-fut",
@@ -13472,7 +13594,12 @@
       "version": "Base Hall of FUT",
       "rarity": "Base Hall of FUT",
       "card_type": "Base Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.662Z"
     },
     {
       "id": "futgg-eljero-elia-84-lw-base-hall-of-fut",
@@ -13485,7 +13612,12 @@
       "version": "Base Hall of FUT",
       "rarity": "Base Hall of FUT",
       "card_type": "Base Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.662Z"
     },
     {
       "id": "futgg-santos-84-st-base-hall-of-fut",
@@ -13498,7 +13630,12 @@
       "version": "Base Hall of FUT",
       "rarity": "Base Hall of FUT",
       "card_type": "Base Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:56:42.662Z"
     }
   ],
   "evolutions": [
@@ -13527,7 +13664,7 @@
       "id": "futgg-midfield-glow-up",
       "title": "Midfield Glow Up",
       "description": "[Elevate your engine room with a major tactical upgrade, combining enhanced recovery speed, relentless physical presence, and superior distribution across the pitch. ![Image 21](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rar",
-      "cost": 0,
+      "cost": 1256,
       "requirements": [
         "Overall Max. 74",
         "Position CDM",
@@ -14104,23 +14241,41 @@
       "requirements": [
         "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
         "Players",
+        "Clubs",
+        "Nations",
+        "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "Eligible players • Player OVR: Min. 45",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
-      "estimated_cost": 1256,
-      "cost": 1256,
+      "estimated_cost": 63600,
+      "cost": 63600,
       "public_solution": {
-        "total_cost": 1256,
-        "remaining_cost": 1256,
+        "total_cost": 63600,
+        "remaining_cost": 63600,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [],
+        "notes": [
+          "Antonio Nusa: Earn a special Destined for Glory Antonio Nusa.",
+          "Antonio Nusa • هزینه تخمینی منبع عمومی: 63,600 سکه"
+        ],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
-      }
+      },
+      "challenges": [
+        {
+          "title": "Antonio Nusa",
+          "description": "Earn a special Destined for Glory Antonio Nusa.",
+          "requirements": [],
+          "estimated_cost": 63600
+        }
+      ],
+      "guide_fa": [
+        "Antonio Nusa: Earn a special Destined for Glory Antonio Nusa.",
+        "Antonio Nusa • هزینه تخمینی منبع عمومی: 63,600 سکه"
+      ]
     },
     {
       "id": "futgg-expires-in-6-days",
@@ -14208,8 +14363,8 @@
       "reward": "Eligible players • Player OVR: Min. 45",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
-      "estimated_cost": 63600,
-      "cost": 63600,
+      "estimated_cost": 1256,
+      "cost": 1256,
       "challenges": [
         {
           "title": "Antonio Nusa",
@@ -14223,15 +14378,12 @@
         "Antonio Nusa • هزینه تخمینی منبع عمومی: 63,600 سکه"
       ],
       "public_solution": {
-        "total_cost": 63600,
-        "remaining_cost": 63600,
+        "total_cost": 1256,
+        "remaining_cost": 1256,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Antonio Nusa: Earn a special Destined for Glory Antonio Nusa.",
-          "Antonio Nusa • هزینه تخمینی منبع عمومی: 63,600 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
       }
@@ -14348,13 +14500,11 @@
       "description": "[![Image 32: Madrid Dreams](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/15.png)](https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/)",
       "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/",
       "requirements": [
-        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-        "Players",
-        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
         "Max. 4 Players from the same League",
         "Min. 3 Players from the same Club",
         "Max. Clubs in Squad: 4",
         "Min. Nationalities in Squad: 2",
+        "Player quality: Min. Gold",
         "Min. Squad Total Chemistry Points: 12"
       ],
       "reward": "1 x Giant Gold Pack • Max. 4 Players from the same League • Min. 3 Players from the same Club • Player quality: Min. Gold • Min. Squad Total Chemistry Points: 12",
@@ -14363,17 +14513,38 @@
       "estimated_cost": 27,
       "cost": 27,
       "public_solution": {
-        "total_cost": 1256,
-        "remaining_cost": 1256,
+        "total_cost": 0,
+        "remaining_cost": 0,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [],
+        "notes": [
+          "Madrid Dreams: Celebrate Yan Diomandé's transfer to Real Madrid with this challenge!",
+          "Madrid Dreams • شرایط: Max. 4 Players from the same League | Min. 3 Players from the same Club | Max. Clubs in Squad: 4 | Min. Nationalities in Squad: 2 | Player quality: Min. Gold | Min. Squad Total Chemistry Points: 12"
+        ],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
       },
       "cost_source": "fcdata-public",
-      "cost_source_url": "https://fcdata.io/"
+      "cost_source_url": "https://fcdata.io/",
+      "challenges": [
+        {
+          "title": "Madrid Dreams",
+          "description": "Celebrate Yan Diomandé's transfer to Real Madrid with this challenge!",
+          "requirements": [
+            "Max. 4 Players from the same League",
+            "Min. 3 Players from the same Club",
+            "Max. Clubs in Squad: 4",
+            "Min. Nationalities in Squad: 2",
+            "Player quality: Min. Gold",
+            "Min. Squad Total Chemistry Points: 12"
+          ]
+        }
+      ],
+      "guide_fa": [
+        "Madrid Dreams: Celebrate Yan Diomandé's transfer to Real Madrid with this challenge!",
+        "Madrid Dreams • شرایط: Max. 4 Players from the same League | Min. 3 Players from the same Club | Max. Clubs in Squad: 4 | Min. Nationalities in Squad: 2 | Player quality: Min. Gold | Min. Squad Total Chemistry Points: 12"
+      ]
     },
     {
       "id": "futgg-expires-in-3-hours",
@@ -14838,7 +15009,8 @@
       "title": "Campaigns",
       "description": "[Live Events](https://www.fut.gg/objectives/live-events/)[Milestones](https://www.fut.gg/objectives/milestones/)[Mastery](https://www.fut.gg/objectives/mastery/)[FC Pro](https://www.fut.gg/objectives/fc-pro/)",
       "source_url": "https://www.fut.gg/objectives/campaigns/",
-      "details_source_url": "https://www.fut.gg/objectives/campaigns/"
+      "details_source_url": "https://www.fut.gg/objectives/campaigns/",
+      "task_count": 30
     },
     {
       "id": "futgg-live-events",
@@ -14887,8 +15059,8 @@
       "discovery_source_url": "https://www.fut.gg/whats-hot/"
     }
   ],
-  "discovery_generated_at": "2026-09-26T21:53:14.727Z",
-  "enriched_at": "2026-09-26T21:53:19.994Z",
-  "market_enriched_at": "2026-09-26T21:53:25.784Z",
-  "priced_players": 3
+  "discovery_generated_at": "2026-09-26T21:56:10.898Z",
+  "enriched_at": "2026-09-26T21:56:16.887Z",
+  "market_enriched_at": "2026-09-26T21:56:43.030Z",
+  "priced_players": 31
 }
