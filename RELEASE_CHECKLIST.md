@@ -1,105 +1,73 @@
 # FCBaz Production Release Checklist
 
-This checklist is intentionally strict. A public release should not be published
-until every required item below is verified.
+این چک‌لیست برای انتشار عمومی FCBaz اجباری است.
 
-## 1. Production data
+## 1. داده واقعی FC27
 
-- Configure a production `FCBAZ_API_BASE_URL`.
-- Configure `PARSE_API_KEY` and verify all FC27 provider endpoints return real data.
-- Confirm player, price, SBC, Evolution, Objective, market and news endpoints do not fall back to fabricated data.
-- Confirm Console and PC prices are mapped correctly.
+- `FCBAZ_API_BASE_URL` روی Backend واقعی Production تنظیم شده باشد.
+- Provider واقعی FC27 فعال و تست شده باشد.
+- Players، Prices، SBC، Evolutions، Objectives، Market، Promo Squads و News فقط از منبع واقعی پر شوند.
+- هیچ Demo/Fake/Placeholder یا Dataset مربوط به فصل دیگر نمایش داده نشود.
+- قیمت Console و PC جداگانه و درست نگاشت شوند.
+- در صورت قطع منبع، Empty/Error State واقعی نمایش داده شود؛ نه داده جایگزین نامرتبط.
 
-## 2. Supabase
+## 2. بدون ثبت‌نام
 
-Run `backend/SUPABASE_SCHEMA.sql` in the production Supabase project.
+- اپ هیچ Login/Register اجباری نداشته باشد.
+- Watchlist، My Club، Saved Squads، Saved Evolutions و تنظیمات به‌صورت Local روی دستگاه کار کنند.
+- هیچ Token حساب کاربری یا Credential غیرضروری ذخیره نشود.
+- حذف داده‌های محلی از تنظیمات قابل انجام باشد.
 
-Backend environment:
+## 3. زبان و RTL
 
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-
-Verify:
-
-- Registration and login work.
-- Email confirmation behavior matches the production Supabase Auth configuration.
-- Access-token refresh works.
-- Cloud backup upload works.
-- Restore works on a second test account/device.
-- Service-role key exists only on the backend.
-
-## 3. Firebase Cloud Messaging
-
-Backend environment:
-
-- `FIREBASE_PROJECT_ID`
-- `FIREBASE_CLIENT_EMAIL`
-- `FIREBASE_PRIVATE_KEY`
-- `CRON_SECRET`
-
-GitHub Actions secrets:
-
-- `FIREBASE_API_KEY`
-- `FIREBASE_APP_ID`
-- `FIREBASE_MESSAGING_SENDER_ID`
-- `FIREBASE_PROJECT_ID`
-
-Verify the Firebase Android app is registered with package:
-
-`ir.fcbaz.app`
-
-Verify:
-
-- Android notification permission appears on supported Android versions.
-- Device token registration succeeds after login.
-- Foreground messages appear in Notification Center.
-- Background/terminated push is delivered on a physical device.
-- Price alerts trigger once on crossing the target and do not repeatedly spam.
+- کل رابط کاربری فارسی و RTL باشد.
+- نام بازیکنان به زبان اصلی باقی بماند.
+- نام Challengeها/SBCها در صورت وجود ترجمه معتبر، انگلیسی و فارسی کنار هم نمایش داده شود.
+- اصطلاحات عمومی UI مانند Market، Meta، Objectives، Consumables و Watchlist به فارسی نمایش داده شوند.
+- Overflow روی گوشی‌های کوچک و بزرگ تست شود.
 
 ## 4. Android signing
 
-Required GitHub Actions secrets:
+GitHub Actions secrets موردنیاز:
 
 - `ANDROID_KEYSTORE_BASE64`
 - `ANDROID_KEYSTORE_PASSWORD`
 - `ANDROID_KEY_ALIAS`
 - `ANDROID_KEY_PASSWORD`
 
-Keep the original keystore permanently backed up offline. Future updates must use
-the same signing identity.
+Keystore اصلی باید خارج از GitHub بکاپ امن داشته باشد و همه آپدیت‌های بعدی با همان کلید Sign شوند.
 
-## 5. Privacy and account behavior
+## 5. پایداری و شبکه
 
-- Auth tokens must remain in secure storage and must not be exported in backups.
-- Account/Cloud API responses must use `Cache-Control: no-store`.
-- Local backup must export only FCBaz-owned preferences.
-- Verify account logout removes local auth credentials.
-- Verify destructive Cloud Restore requires confirmation.
+- Timeout و خطاهای شبکه مدیریت شوند.
+- Retry دستی در Empty/Error State وجود داشته باشد.
+- درخواست‌های عمومی Cache محدود و قابل Refresh داشته باشند.
+- هیچ Credential یا Secret در اپ Flutter قرار نگیرد.
+- Backend فقط Secretهای Provider را نگه دارد.
 
-## 6. UI and data integrity
+## 6. UI و کیفیت
 
-- Test Persian RTL on small and large Android screens.
-- Test English mode for layout overflow even if Persian remains the primary experience.
-- Verify Dark, Light and System theme persistence.
-- Verify empty, loading and network-error states.
-- Verify all images have fallback states.
-- Verify no placeholder/fake player, market or SBC data is displayed.
+- Dark، Light و System Theme تست شوند.
+- Home، Players، Search، Player Details، Market، Squad Builder، SBC، Evolutions، Objectives، My Club و More روی دستگاه واقعی تست شوند.
+- Loading، Empty و Error State برای همه صفحات وجود داشته باشد.
+- تمام تصاویر Player/Card fallback مناسب داشته باشند.
+- هیچ متن انگلیسی در UI باقی نماند مگر نام بازیکن، نام Challenge یا اصطلاحی که عمداً دو‌زبانه نمایش داده می‌شود.
 
-## 7. Final release gate
+## 7. تست
 
-Only when Sahand explicitly requests a new release:
+1. `flutter pub get`
+2. `flutter analyze`
+3. اجرای کامل `flutter test`
+4. رفع همه خطاهای Release-blocking
+5. Build امضاشده APK
+6. Build امضاشده AAB
+7. ثبت SHA256 فایل‌ها
+8. نصب APK Release روی گوشی واقعی
+9. Smoke Test کامل صفحات اصلی و جریان‌های ذخیره محلی
+10. تست با Backend قطع و وصل برای اطمینان از عدم نمایش داده Fake
 
-1. Run `flutter pub get`.
-2. Run `flutter analyze`.
-3. Run the full `flutter test` suite.
-4. Fix every release-blocking error.
-5. Build signed release APK.
-6. Build signed release AAB.
-7. Record SHA256 hashes.
-8. Install the release APK on a physical Android device.
-9. Smoke-test Login, Home, Search, Player Details, Market, Squad, My Club,
-   Cloud Sync, Notification Center and Update Checker.
-10. Publish the GitHub Release only after the smoke test passes.
+## 8. Release gate
 
-No debug/preview APK should be published as a public FCBaz release.
+فقط زمانی Release عمومی ساخته شود که Sahand صراحتاً درخواست انتشار نسخه جدید بدهد و همه مراحل بالا پاس شده باشند.
+
+هیچ Debug/Preview APK و هیچ نسخه دارای داده Demo نباید به‌عنوان Release عمومی منتشر شود.

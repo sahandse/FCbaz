@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../club/presentation/my_club_screen.dart';
+import '../evolutions/presentation/evolutions_screen.dart';
+import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
 import '../meta/presentation/meta_screen.dart';
+import '../sbc/presentation/sbc_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../settings/profile_screen.dart';
 import '../settings/settings_screen.dart';
@@ -26,17 +29,17 @@ class MoreScreen extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
       children: [
         Text(
-          'بیشتر',
+          'ابزارها',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
         const SizedBox(height: 4),
         Text(
-          'ابزارهای اصلی و تنظیمات؛ بدون ثبت‌نام و بدون حساب اجباری.',
+          'همه ابزارهای FC27 بدون ثبت‌نام؛ فقط با داده واقعی و ذخیره محلی.',
           style: TextStyle(color: scheme.onSurfaceVariant),
         ),
         const SizedBox(height: 18),
         Text(
-          'ابزارهای FC27',
+          'ابزارهای اصلی',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 10),
@@ -46,13 +49,31 @@ class MoreScreen extends StatelessWidget {
           physics: const NeverScrollableScrollPhysics(),
           mainAxisSpacing: 10,
           crossAxisSpacing: 10,
-          childAspectRatio: 1.5,
+          childAspectRatio: 1.42,
           children: [
             _ToolCard(
               title: 'بازار',
-              subtitle: 'قیمت و Watchlist',
+              subtitle: 'قیمت زنده و فهرست پیگیری',
               icon: Icons.query_stats_rounded,
               onTap: () => _open(context, const MarketScreen()),
+            ),
+            _ToolCard(
+              title: 'چالش‌های ساخت ترکیب',
+              subtitle: 'SBCهای فعال و راه‌حل‌ها',
+              icon: Icons.extension_rounded,
+              onTap: () => _open(context, const SbcScreen()),
+            ),
+            _ToolCard(
+              title: 'تکامل بازیکنان',
+              subtitle: 'Evoهای فعال و شرایط',
+              icon: Icons.auto_awesome_rounded,
+              onTap: () => _open(context, const EvolutionsScreen()),
+            ),
+            _ToolCard(
+              title: 'اهداف',
+              subtitle: 'ماموریت‌ها و پاداش‌ها',
+              icon: Icons.flag_rounded,
+              onTap: () => _open(context, const ObjectivesScreen()),
             ),
             _ToolCard(
               title: 'باشگاه من',
@@ -61,8 +82,8 @@ class MoreScreen extends StatelessWidget {
               onTap: () => _open(context, const MyClubScreen()),
             ),
             _ToolCard(
-              title: 'Meta',
-              subtitle: 'بازیکنان برتر هر پست',
+              title: 'بازیکنان برتر',
+              subtitle: 'متای هر پست بر اساس داده واقعی',
               icon: Icons.leaderboard_rounded,
               onTap: () => _open(context, const MetaScreen()),
             ),
@@ -70,7 +91,7 @@ class MoreScreen extends StatelessWidget {
         ),
         const SizedBox(height: 22),
         Text(
-          'اطلاعات من',
+          'داده‌های محلی من',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 10),
@@ -79,15 +100,15 @@ class MoreScreen extends StatelessWidget {
             children: [
               _MenuTile(
                 icon: Icons.account_circle_rounded,
-                title: 'پروفایل',
-                subtitle: 'Favorites، My Club، Squads و Watchlist',
+                title: 'پروفایل محلی',
+                subtitle: 'علاقه‌مندی‌ها، باشگاه، ترکیب‌ها و فهرست پیگیری',
                 onTap: () => _open(context, const ProfileScreen()),
               ),
               const Divider(),
               _MenuTile(
                 icon: Icons.settings_rounded,
                 title: 'تنظیمات',
-                subtitle: 'تم، بازار، اعلان و بروزرسانی',
+                subtitle: 'تم، بازار، اعلان‌ها و بروزرسانی',
                 onTap: () => _open(
                   context,
                   SettingsScreen(
@@ -101,15 +122,15 @@ class MoreScreen extends StatelessWidget {
         ),
         const SizedBox(height: 22),
         Text(
-          'راهنما',
+          'راهنمای بازی',
           style: Theme.of(context).textTheme.titleLarge,
         ),
         const SizedBox(height: 10),
         Card(
           child: _MenuTile(
             icon: Icons.auto_fix_high_rounded,
-            title: 'Consumables',
-            subtitle: 'Chemistry Styles و راهنمای مصرفی‌ها',
+            title: 'آیتم‌های مصرفی',
+            subtitle: 'سبک‌های شیمی و راهنمای آیتم‌های مصرفی',
             onTap: () => _open(context, const ConsumablesScreen()),
           ),
         ),
@@ -129,7 +150,7 @@ class MoreScreen extends StatelessWidget {
               SizedBox(width: 10),
               Expanded(
                 child: Text(
-                  'بازیکنان، قیمت‌ها و Meta مستقیماً از منابع رایگان اینترنتی دریافت می‌شوند؛ بخش بدون منبع معتبر نمایش داده نمی‌شود.',
+                  'FCBaz هیچ داده نمایشی یا ساختگی نشان نمی‌دهد. اگر منبع معتبر یک بخش در دسترس نباشد، همان بخش خالی یا غیرفعال نمایش داده می‌شود.',
                 ),
               ),
             ],

@@ -2,6 +2,8 @@ class SbcChallenge {
   const SbcChallenge({
     required this.id,
     required this.title,
+    required this.titleEn,
+    required this.titleFa,
     required this.category,
     required this.description,
     required this.reward,
@@ -15,6 +17,8 @@ class SbcChallenge {
 
   final String id;
   final String title;
+  final String titleEn;
+  final String titleFa;
   final String category;
   final String description;
   final String reward;
@@ -25,6 +29,12 @@ class SbcChallenge {
   final int? itemScore;
   final List<String> guideFa;
 
+  String get primaryTitle => titleFa.isNotEmpty ? titleFa : titleEn;
+  String get secondaryTitle =>
+      titleFa.isNotEmpty && titleEn.isNotEmpty && titleFa != titleEn
+          ? titleEn
+          : '';
+
   factory SbcChallenge.fromJson(Map<String, dynamic> json) {
     int? asNullableInt(dynamic value) =>
         value == null ? null : (value is int ? value : int.tryParse(value.toString()));
@@ -32,13 +42,22 @@ class SbcChallenge {
     List<String> asStrings(dynamic value) =>
         value is List ? value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList() : const [];
 
+    final rawTitle = (json['title'] ?? json['name'] ?? '').toString();
+    final titleEn = (json['title_en'] ?? json['name_en'] ?? rawTitle).toString();
+    final titleFa = (json['title_fa'] ?? json['name_fa'] ?? '').toString();
+    final displayTitle = titleFa.isNotEmpty && titleEn.isNotEmpty && titleFa != titleEn
+        ? '$titleFa • $titleEn'
+        : (titleFa.isNotEmpty ? titleFa : titleEn);
+
     return SbcChallenge(
       id: (json['id'] ?? '').toString(),
-      title: (json['title'] ?? json['name'] ?? '').toString(),
+      title: displayTitle,
+      titleEn: titleEn,
+      titleFa: titleFa,
       category: (json['category'] ?? 'SBC').toString(),
-      description: (json['description'] ?? '').toString(),
-      reward: (json['reward'] ?? json['rewards'] ?? '').toString(),
-      requirements: asStrings(json['requirements']),
+      description: (json['description_fa'] ?? json['description'] ?? '').toString(),
+      reward: (json['reward_fa'] ?? json['reward'] ?? json['rewards'] ?? '').toString(),
+      requirements: asStrings(json['requirements_fa'] ?? json['requirements']),
       repeatable: json['repeatable'] == true,
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
       estimatedCost: asNullableInt(json['estimated_cost'] ?? json['cost']),
