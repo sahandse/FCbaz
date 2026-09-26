@@ -158,7 +158,7 @@ class _MetaScreenState extends State<MetaScreen> {
                 value: availableRoles.contains(role) ? role : null,
                 decoration: const InputDecoration(
                   labelText: 'نقش بازیکن',
-                  prefixIcon: Icon(Icons.strategy_rounded),
+                  prefixIcon: Icon(Icons.schema_rounded),
                 ),
                 items: [
                   const DropdownMenuItem<String?>(
