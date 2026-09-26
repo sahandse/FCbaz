@@ -15,7 +15,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 18
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -25,10 +25,16 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Refresh public FC27 catalog
         run: node tool/sync_live_fc27.mjs
+
+      - name: Refresh What's Hot / What's New discovery
+        run: node tool/sync_fc27_discovery.mjs
+
+      - name: Enrich SBC Evolution and Objective details
+        run: node tool/enrich_fc27_catalog.mjs
 
       - name: Validate catalog
         run: |
@@ -36,6 +42,12 @@ jobs:
           const fs = require('fs');
           const c = JSON.parse(fs.readFileSync('data/live/catalog.json', 'utf8'));
           if (Number(c.game_year) !== 27) throw new Error('wrong game year');
+          const generated = new Date(c.generated_at);
+          if (!Number.isFinite(generated.getTime())) throw new Error('invalid generated_at');
+          if (!Array.isArray(c.players) || c.players.length < 200) {
+            throw new Error(`players catalog too small: ${c.players?.length ?? 0}`);
+          }
+
           for (const key of ['players', 'evolutions', 'sbcs', 'objectives']) {
             if (!Array.isArray(c[key]) || c[key].length === 0) {
               throw new Error(`${key} is empty`);
@@ -61,12 +73,27 @@ jobs:
               }
             }
           }
+
+          const completeStats = c.players.filter((p) =>
+            ['pace','shooting','passing','dribbling','defending','physical']
+              .filter((key) => Number(p[key]) > 0).length >= 5
+          ).length;
+          if (completeStats < 100) throw new Error(`not enough players with real stats: ${completeStats}`);
+
+          const enriched = ['sbcs','evolutions','objectives']
+            .reduce((sum, key) => sum + c[key].filter((item) => item.details_source_url).length, 0);
+
           console.log({
             players: c.players.length,
+            popular_players: c.popular_players?.length ?? 0,
+            new_players: c.new_players?.length ?? 0,
             evolutions: c.evolutions.length,
             sbcs: c.sbcs.length,
             objectives: c.objectives.length,
+            completeStats,
+            enriched,
             generated_at: c.generated_at,
+            enriched_at: c.enriched_at ?? null,
           });
           NODE
 
