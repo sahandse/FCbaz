@@ -62,22 +62,59 @@ class SbcRepository {
     String id, {
     Set<String> ownedPlayerIds = const {},
   }) async {
-    if (!api.isConfigured) {
-      throw const FCBazApiException(
-        'حل خودکار SBC فقط با Backend واقعی فعال می‌شود؛ داده ساختگی ساخته نمی‌شود.',
-      );
+    if (api.isConfigured) {
+      try {
+        final owned = ownedPlayerIds.isEmpty
+            ? ''
+            : '&owned_ids=' + Uri.encodeQueryComponent(ownedPlayerIds.join(','));
+        final json = await api.getJson(
+          '/api/v1/sbc/' + Uri.encodeComponent(id) + '/solution?mode=cheapest' + owned,
+        );
+        final raw = json is Map ? (json['data'] ?? json) : json;
+        if (raw is Map) {
+          final parsed = SbcSolution.fromJson(Map<String, dynamic>.from(raw));
+          if (parsed.players.isNotEmpty || parsed.notes.isNotEmpty || parsed.totalCost > 0) {
+            return parsed;
+          }
+        }
+      } catch (_) {}
     }
 
-    final owned = ownedPlayerIds.isEmpty
-        ? ''
-        : '&owned_ids=' + Uri.encodeQueryComponent(ownedPlayerIds.join(','));
-    final json = await api.getJson(
-      '/api/v1/sbc/' + Uri.encodeComponent(id) + '/solution?mode=cheapest' + owned,
-    );
-    final raw = json is Map ? (json['data'] ?? json) : json;
-    if (raw is! Map) {
-      throw const FCBazApiException('راه‌حل SBC معتبر نیست.');
+    final items = await liveCatalog.list('sbcs');
+    for (final item in items) {
+      if ((item['id'] ?? '').toString() != id) continue;
+
+      final rawPublic = item['public_solution'];
+      if (rawPublic is Map) {
+        final map = Map<String, dynamic>.from(rawPublic);
+        map['owned_player_ids'] = ownedPlayerIds.toList();
+        final parsed = SbcSolution.fromJson(map);
+        if (parsed.notes.isNotEmpty || parsed.totalCost > 0 || parsed.itemScore != null) {
+          return parsed;
+        }
+      }
+
+      final challenge = SbcChallenge.fromJson(item);
+      final notes = <String>[
+        ...challenge.guideFa,
+        if (challenge.guideFa.isEmpty) ...challenge.requirements,
+      ];
+      if (notes.isNotEmpty || challenge.estimatedCost != null || challenge.itemScore != null) {
+        return SbcSolution(
+          totalCost: challenge.estimatedCost ?? 0,
+          remainingCost: challenge.estimatedCost ?? 0,
+          playerIds: const [],
+          players: const [],
+          ownedPlayerIds: ownedPlayerIds.toList(),
+          notes: notes,
+          itemScore: challenge.itemScore,
+        );
+      }
+      break;
     }
-    return SbcSolution.fromJson(Map<String, dynamic>.from(raw));
+
+    throw const FCBazApiException(
+      'برای این SBC هنوز راه‌حل عمومی قابل اتکا پیدا نشده است؛ داده ساختگی نمایش داده نمی‌شود.',
+    );
   }
 }
