@@ -1,9 +1,10 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
 const catalogPath = 'data/live/catalog.json';
+const eaRatingsBase = 'https://drop-api.ea.com/rating/ea-sports-fc';
 
 const playerPages = [
-  { url: 'https://www.fut.gg/fc-27/ratings/', version: 'Gold Rare' },
+  { url: 'https://www.fut.gg/fc-27/ratings/', version: 'Gold' },
   { url: 'https://www.fut.gg/rarities/base-icon/', version: 'Base Icon' },
   { url: 'https://www.fut.gg/rarities/base-hero/', version: 'Base Hero' },
   { url: 'https://www.fut.gg/rarities/team-of-the-week/', version: 'Team of the week' },
@@ -54,11 +55,155 @@ function slugId(prefix, value) {
 }
 
 function clean(value) {
+  if (value && typeof value === 'object') {
+    return clean(value.shortLabel ?? value.shortName ?? value.label ?? value.name ?? value.id ?? '');
+  }
   return String(value ?? '')
     .replace(/<[^>]+>/g, ' ')
     .replace(/\s+/g, ' ')
     .replace(/^(new|image:?|view)\s+/i, '')
     .trim();
+}
+
+function numberAt(raw, keys) {
+  for (const key of keys) {
+    const direct = raw?.[key];
+    if (direct !== undefined && direct !== null) {
+      if (typeof direct === 'number' && Number.isFinite(direct)) return Math.round(direct);
+      if (typeof direct === 'string' && direct.trim()) {
+        const parsed = Number(direct);
+        if (Number.isFinite(parsed)) return Math.round(parsed);
+      }
+      if (typeof direct === 'object') {
+        const nested = numberAt(direct, ['value', 'rating', 'score']);
+        if (nested !== 0) return nested;
+      }
+    }
+    const match = Object.keys(raw ?? {}).find((candidate) => candidate.toLowerCase() === key.toLowerCase());
+    if (match && match !== key) {
+      const nested = numberAt({ [key]: raw[match] }, [key]);
+      if (nested !== 0) return nested;
+    }
+  }
+  return 0;
+}
+
+function stringAt(raw, keys) {
+  for (const key of keys) {
+    const direct = raw?.[key];
+    if (direct !== undefined && direct !== null) {
+      const value = clean(direct);
+      if (value) return value;
+    }
+    const match = Object.keys(raw ?? {}).find((candidate) => candidate.toLowerCase() === key.toLowerCase());
+    if (match) {
+      const value = clean(raw[match]);
+      if (value) return value;
+    }
+  }
+  return '';
+}
+
+function candidateItems(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (!payload || typeof payload !== 'object') return [];
+  for (const key of ['items', 'players', 'ratings', 'results', 'data', 'records', 'content', 'response']) {
+    const match = Object.keys(payload).find((candidate) => candidate.toLowerCase() === key);
+    const value = match ? payload[match] : undefined;
+    if (Array.isArray(value) && value.length) return value;
+    if (value && typeof value === 'object') {
+      const nested = candidateItems(value);
+      if (nested.length) return nested;
+    }
+  }
+  return [];
+}
+
+function metadataName(value) {
+  return value && typeof value === 'object'
+    ? stringAt(value, ['label', 'name', 'shortName'])
+    : clean(value);
+}
+
+function classifyBaseRarity(rating) {
+  if (rating >= 75) return 'Gold';
+  if (rating >= 65) return 'Silver';
+  return 'Bronze';
+}
+
+function normalizeEaPlayer(raw, sourceUrl) {
+  if (!raw || typeof raw !== 'object') return null;
+  const stats = raw.stats && typeof raw.stats === 'object' ? raw.stats : {};
+  const eaId = numberAt(raw, ['eaId', 'eaID', 'playerId', 'playerID', 'id']);
+  const firstName = stringAt(raw, ['firstName']);
+  const lastName = stringAt(raw, ['lastName']);
+  const name = stringAt(raw, ['name', 'fullName']) || [firstName, lastName].filter(Boolean).join(' ') || stringAt(raw, ['commonName']);
+  const rating = numberAt(raw, ['overall', 'overallRating', 'rating']);
+  const position = stringAt(raw, ['position', 'preferredPosition']) || 'UNK';
+  if (!eaId || !name || rating < 40 || rating > 99 || !position || position === 'UNK') return null;
+
+  const rarity = classifyBaseRarity(rating);
+  const stat = (keys) => Math.max(0, Math.min(99, numberAt(raw, keys) || numberAt(stats, keys)));
+  const team = metadataName(raw.team);
+  const nationality = metadataName(raw.nationality);
+  const league = metadataName(raw.league) || metadataName(raw.team?.league) || stringAt(raw, ['leagueName']);
+  const avatar = stringAt(raw, ['avatarUrl', 'imageUrl', 'portraitUrl']);
+  const externalId = stringAt(raw, ['externalId', 'externalID', 'external_id']) || String(eaId);
+
+  return {
+    id: `ea-${externalId}`,
+    name,
+    rating,
+    position,
+    positions: [position],
+    club_name: team,
+    league_name: league,
+    nation_name: nationality,
+    version: rarity,
+    rarity,
+    card_type: rarity,
+    image_url: avatar,
+    card_image_url: '',
+    pace: stat(['pace', 'pac']),
+    shooting: stat(['shooting', 'sho']),
+    passing: stat(['passing', 'pas']),
+    dribbling: stat(['dribbling', 'dri']),
+    defending: stat(['defending', 'def']),
+    physical: stat(['physical', 'phy']),
+    price_ps: 0,
+    price_pc: 0,
+    source_url: sourceUrl,
+  };
+}
+
+async function fetchEaBulk(maxPages = 5) {
+  const players = [];
+  const seen = new Set();
+  for (let page = 0; page < maxPages; page++) {
+    const url = new URL(eaRatingsBase);
+    url.searchParams.set('locale', 'en');
+    url.searchParams.set('limit', '100');
+    url.searchParams.set('offset', String(page * 100));
+    const response = await fetch(url, {
+      headers: {
+        accept: 'application/json',
+        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/137 Safari/537.36',
+      },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) throw new Error(`EA ratings HTTP ${response.status} offset ${page * 100}`);
+    const payload = await response.json();
+    const items = candidateItems(payload);
+    if (!items.length) break;
+    for (const raw of items) {
+      const item = normalizeEaPlayer(raw, url.toString());
+      if (!item) continue;
+      const key = `${item.id}|${item.rating}|${item.position}`;
+      if (seen.add(key)) players.push(item);
+    }
+    if (items.length < 100) break;
+  }
+  return players;
 }
 
 function asInt(value) {
@@ -84,7 +229,6 @@ function discoverPlayers(text, baseUrl, version) {
     /([A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+(?:\s+[A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+){0,4})\s+(\d{2})\s+OVR\s*[·•-]\s*(GK|CB|LB|RB|LWB|RWB|CDM|CM|CAM|LM|RM|LW|RW|CF|ST)\b/g,
     /([A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+(?:\s+[A-ZÀ-ÖØ-öø-ÿĀ-ž][A-Za-zÀ-ÖØ-öø-ÿĀ-ž'’.-]+){0,4})\s+(\d{2})\s+(GK|CB|LB|RB|LWB|RWB|CDM|CM|CAM|LM|RM|LW|RW|CF|ST)\b/g,
   ];
-
   for (const pattern of patterns) {
     for (const match of text.matchAll(pattern)) {
       const name = clean(match[1]);
@@ -106,7 +250,6 @@ function discoverPlayers(text, baseUrl, version) {
       });
     }
   }
-
   return found;
 }
 
@@ -115,25 +258,15 @@ function normalizeFutbinPlayer(raw, sourceUrl) {
   const rating = asInt(raw.rating ?? raw.overall);
   const position = clean(raw.position);
   if (!name || rating < 40 || rating > 99 || !position) return null;
-
-  const version = clean(raw.version ?? raw.rarity ?? raw.card_type ?? raw.raretype) ||
-      (rating >= 75 ? 'Gold Rare' : rating >= 65 ? 'Silver' : 'Bronze');
+  const version = clean(raw.version ?? raw.rarity ?? raw.card_type ?? raw.raretype) || classifyBaseRarity(rating);
   const rawId = clean(raw.ID ?? raw.id ?? raw.player_id ?? raw.playerid ?? raw.resource_id);
   const id = rawId || slugId('futbin', `${name}-${rating}-${position}-${version}`);
-  const positionsRaw = raw.positions ?? raw.alternative_positions ?? raw.pos_all;
-  const positions = Array.isArray(positionsRaw)
-    ? positionsRaw.map((v) => clean(typeof v === 'object' ? (v.name ?? v.label) : v)).filter(Boolean)
-    : String(positionsRaw ?? '')
-        .split(',')
-        .map((v) => clean(v))
-        .filter(Boolean);
-
   return {
     id,
     name,
     rating,
     position,
-    positions: positions.length ? positions : [position],
+    positions: [position],
     club_name: clean(raw.club_name ?? raw.club),
     league_name: clean(raw.league_name ?? raw.league),
     nation_name: clean(raw.nation_name ?? raw.nation),
@@ -148,17 +281,14 @@ function normalizeFutbinPlayer(raw, sourceUrl) {
     dribbling: asInt(raw.dribbling ?? raw.dri),
     defending: asInt(raw.defending ?? raw.def),
     physical: asInt(raw.physical ?? raw.phy),
-    skill_moves: asInt(raw.skill_moves),
-    weak_foot: asInt(raw.weak_foot),
     price_ps: asInt(raw.price_ps ?? raw.price_ps_coins ?? raw.ps_LCPrice),
     price_pc: asInt(raw.price_pc ?? raw.price_pc_coins ?? raw.pc_LCPrice),
     source_url: sourceUrl,
   };
 }
 
-async function fetchFutbinBulk(maxPages = 12) {
+async function fetchFutbinBulk(maxPages = 5) {
   const players = [];
-  const seen = new Set();
   for (let page = 1; page <= maxPages; page++) {
     const url = new URL('https://www.futbin.org/futbin/api/getFilteredPlayers');
     url.searchParams.set('platform', 'PS');
@@ -175,13 +305,10 @@ async function fetchFutbinBulk(maxPages = 12) {
     if (!response.ok) throw new Error(`FUTBIN HTTP ${response.status} page ${page}`);
     const json = await response.json();
     const data = Array.isArray(json?.data) ? json.data : [];
-    if (data.length === 0) break;
+    if (!data.length) break;
     for (const raw of data) {
-      if (!raw || typeof raw !== 'object') continue;
       const item = normalizeFutbinPlayer(raw, url.toString());
-      if (!item) continue;
-      const key = `${item.name}|${item.rating}|${item.position}|${item.version}`.toLowerCase();
-      if (seen.add(key)) players.push(item);
+      if (item) players.push(item);
     }
   }
   return players;
@@ -189,14 +316,8 @@ async function fetchFutbinBulk(maxPages = 12) {
 
 function discover(markdown, section, baseUrl) {
   const pathPart = section === 'sbcs' ? 'sbc' : section;
-  const absolute = new RegExp(
-    `\\[([^\\]]{2,100})\\]\\((https?:\\/\\/www\\.fut\\.gg\\/${pathPart}\\/[^)#?\\s]+[^)]*)\\)`,
-    'gi',
-  );
-  const relative = new RegExp(
-    `\\[([^\\]]{2,100})\\]\\((\\/${pathPart}\\/[^)#?\\s]+[^)]*)\\)`,
-    'gi',
-  );
+  const absolute = new RegExp(`\\[([^\\]]{2,100})\\]\\((https?:\\/\\/www\\.fut\\.gg\\/${pathPart}\\/[^)#?\\s]+[^)]*)\\)`, 'gi');
+  const relative = new RegExp(`\\[([^\\]]{2,100})\\]\\((\\/${pathPart}\\/[^)#?\\s]+[^)]*)\\)`, 'gi');
   const found = [];
   const seen = new Set();
   for (const regex of [absolute, relative]) {
@@ -204,17 +325,11 @@ function discover(markdown, section, baseUrl) {
       const title = clean(match[1]);
       if (!title || /^(all|expired|players|evolutions|objectives|sbc|view all)$/i.test(title)) continue;
       const url = match[2].startsWith('http') ? match[2] : new URL(match[2], 'https://www.fut.gg').toString();
-      const key = title.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
+      if (seen.has(title.toLowerCase())) continue;
+      seen.add(title.toLowerCase());
       const tail = markdown.slice(match.index + match[0].length, match.index + match[0].length + 360);
       const description = clean(tail.split('\n').find((line) => clean(line).length > 20) ?? '');
-      found.push({
-        id: slugId('futgg', title),
-        ...(section === 'sbcs' ? { title_en: title } : { title }),
-        description: description.slice(0, 260),
-        source_url: url || baseUrl,
-      });
+      found.push({ id: slugId('futgg', title), ...(section === 'sbcs' ? { title_en: title } : { title }), description: description.slice(0, 260), source_url: url || baseUrl });
     }
   }
   return found;
@@ -230,32 +345,31 @@ function mergeVerified(existing = [], discovered = [], keyOf) {
     const key = keyOf(item);
     if (!key) continue;
     const previous = byKey.get(key);
-    byKey.set(
-      key,
-      previous
-        ? {
-            ...previous,
-            ...item,
-            id: previous.id || item.id,
-            source_url: item.source_url || previous.source_url,
-          }
-        : item,
-    );
+    byKey.set(key, previous ? { ...previous, ...item, id: previous.id || item.id, source_url: item.source_url || previous.source_url } : item);
   }
   return [...byKey.values()];
 }
 
+const playerKey = (item) => `${item.name ?? ''}|${item.rating ?? ''}|${item.position ?? ''}|${item.version ?? ''}`.toLowerCase();
 let successfulSections = 0;
 let totalPlayerDiscoveries = 0;
 
 try {
+  const bulk = await fetchEaBulk();
+  if (bulk.length) {
+    current.players = mergeVerified(current.players, bulk, playerKey);
+    successfulSections++;
+    totalPlayerDiscoveries += bulk.length;
+    console.log(`[players:EA official] discovered ${bulk.length}, total ${current.players.length}`);
+  }
+} catch (error) {
+  console.warn(`[players:EA official] sync failed: ${error}`);
+}
+
+try {
   const bulk = await fetchFutbinBulk();
-  if (bulk.length > 0) {
-    current.players = mergeVerified(
-      current.players,
-      bulk,
-      (item) => `${item.name ?? ''}|${item.rating ?? ''}|${item.position ?? ''}|${item.version ?? ''}`.toLowerCase(),
-    );
+  if (bulk.length) {
+    current.players = mergeVerified(current.players, bulk, playerKey);
     successfulSections++;
     totalPlayerDiscoveries += bulk.length;
     console.log(`[players:FUTBIN bulk] discovered ${bulk.length}, total ${current.players.length}`);
@@ -268,15 +382,11 @@ for (const source of playerPages) {
   try {
     const text = await reader(source.url);
     const items = discoverPlayers(text, source.url, source.version);
-    if (items.length === 0) {
+    if (!items.length) {
       console.warn(`[players:${source.version}] no items discovered; keeping previous snapshot`);
       continue;
     }
-    current.players = mergeVerified(
-      current.players,
-      items,
-      (item) => `${item.name ?? ''}|${item.rating ?? ''}|${item.position ?? ''}|${item.version ?? ''}`.toLowerCase(),
-    );
+    current.players = mergeVerified(current.players, items, playerKey);
     successfulSections++;
     totalPlayerDiscoveries += items.length;
     console.log(`[players:${source.version}] discovered ${items.length}, total ${current.players.length}`);
@@ -289,15 +399,11 @@ for (const [section, url] of Object.entries(pages)) {
   try {
     const text = await reader(url);
     const items = discover(text, section, url);
-    if (items.length === 0) {
+    if (!items.length) {
       console.warn(`[${section}] no items discovered; keeping previous snapshot`);
       continue;
     }
-    current[section] = mergeVerified(
-      current[section],
-      items,
-      (item) => String(item.title_en ?? item.title ?? '').trim().toLowerCase(),
-    );
+    current[section] = mergeVerified(current[section], items, (item) => String(item.title_en ?? item.title ?? '').trim().toLowerCase());
     successfulSections++;
     console.log(`[${section}] discovered ${items.length}, total ${current[section].length}`);
   } catch (error) {
@@ -305,20 +411,10 @@ for (const [section, url] of Object.entries(pages)) {
   }
 }
 
-if (successfulSections === 0) {
-  throw new Error('No live FC27 section could be refreshed; catalog left unchanged.');
-}
+if (successfulSections === 0) throw new Error('No live FC27 section could be refreshed; catalog left unchanged.');
 
 current.game_year = 27;
 current.generated_at = new Date().toISOString();
-current.sources = [
-  ...new Set([
-    ...(current.sources ?? []),
-    'https://www.futbin.org/futbin/api/getFilteredPlayers',
-    ...playerPages.map((item) => item.url),
-    ...Object.values(pages),
-  ]),
-];
-
+current.sources = [...new Set([...(current.sources ?? []), eaRatingsBase, 'https://www.futbin.org/futbin/api/getFilteredPlayers', ...playerPages.map((item) => item.url), ...Object.values(pages)])];
 await writeFile(catalogPath, `${JSON.stringify(current, null, 2)}\n`);
 console.log(`Updated ${catalogPath}; player discoveries this run: ${totalPlayerDiscoveries}; total players: ${current.players.length}`);
