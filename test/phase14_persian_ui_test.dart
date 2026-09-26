@@ -21,4 +21,40 @@ void main() {
     expect(source, isNot(contains('اکانت آنلاین هنوز فعال نیست')));
     expect(source, isNot(contains('اضافه‌شدن Login')));
   });
+
+  test('player details uses Persian presentation labels', () {
+    final source = File(
+      'lib/features/players/presentation/player_details_screen.dart',
+    ).readAsStringSync();
+
+    expect(source, contains("title: 'آمار اصلی'"));
+    expect(source, contains("title: 'آمار درون بازی'"));
+    expect(source, contains("title: 'پیشنهاد سبک شیمی'"));
+    expect(source, contains("'حرکات مهارتی'"));
+    expect(source, contains("'پای ضعیف'"));
+    expect(source, contains("'نرخ فعالیت'"));
+
+    expect(source, isNot(contains("title: 'Face Stats'")));
+    expect(source, isNot(contains("title: 'In‑Game Stats'")));
+    expect(source, isNot(contains("title: 'Chemistry Style Advisor'")));
+    expect(source, isNot(contains("('Skill Moves'")));
+    expect(source, isNot(contains("('Weak Foot'")));
+    expect(source, isNot(contains("('Work Rates'")));
+  });
+
+  test('search discovery and price labels stay Persian', () {
+    final source = File(
+      'lib/features/search/search_screen.dart',
+    ).readAsStringSync();
+
+    expect(source, contains('بازیکنان ترند'));
+    expect(source, contains('جستجوهای محبوب'));
+    expect(source, contains('قیمت رایانه'));
+    expect(source, contains('قیمت کنسول'));
+
+    expect(source, isNot(contains('Trending Players')));
+    expect(source, isNot(contains('Popular Searches')));
+    expect(source, isNot(contains('PC Price')));
+    expect(source, isNot(contains('Console Price')));
+  });
 }
