@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../players/presentation/player_details_screen.dart';
 import '../data/meta_repository.dart';
+import '../domain/meta_player_entry.dart';
 
 class MetaScreen extends StatefulWidget {
   const MetaScreen({super.key});
@@ -13,11 +15,24 @@ class _MetaScreenState extends State<MetaScreen> {
   final repository = MetaRepository();
 
   String? position;
+  String? role;
+  String platform = 'console';
   bool loading = true;
   String? error;
-  List<Map<String, dynamic>> items = const [];
+  List<MetaPlayerEntry> items = const [];
 
-  static const positions = ['ST', 'LW', 'RW', 'CAM', 'CM', 'CDM', 'CB', 'LB', 'RB', 'GK'];
+  static const positions = [
+    'ST',
+    'LW',
+    'RW',
+    'CAM',
+    'CM',
+    'CDM',
+    'CB',
+    'LB',
+    'RB',
+    'GK',
+  ];
 
   @override
   void initState() {
@@ -31,7 +46,11 @@ class _MetaScreenState extends State<MetaScreen> {
       error = null;
     });
     try {
-      final data = await repository.getBestPlayers(position: position);
+      final data = await repository.getBestPlayers(
+        position: position,
+        role: role,
+        platform: platform,
+      );
       if (!mounted) return;
       setState(() => items = data);
     } catch (e) {
@@ -42,33 +61,76 @@ class _MetaScreenState extends State<MetaScreen> {
     }
   }
 
-  String _value(Map<String, dynamic> item, String key) =>
-      (item[key] ?? '—').toString();
+  List<String> get availableRoles {
+    final roles = <String>{};
+    for (final item in items) {
+      if (item.role.isNotEmpty) roles.add(item.role);
+      roles.addAll(item.player.roles.where((e) => e.trim().isNotEmpty));
+    }
+    final out = roles.toList()..sort();
+    return out;
+  }
+
+  String _coins(int value) {
+    if (value <= 0) return '—';
+    if (value >= 1000000) {
+      final n = value / 1000000;
+      return n.toStringAsFixed(n >= 10 ? 0 : 1) + 'M';
+    }
+    if (value >= 1000) {
+      final n = value / 1000;
+      return n.toStringAsFixed(n >= 100 ? 0 : 1) + 'K';
+    }
+    return value.toString();
+  }
 
   @override
   Widget build(BuildContext context) {
+    final hasVerifiedMeta = items.any((e) => e.isVerifiedMeta);
     return Scaffold(
-      appBar: AppBar(title: const Text('Meta Players')),
+      appBar: AppBar(title: const Text('بازیکنان متا')),
       body: RefreshIndicator(
         onRefresh: _load,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
             Text(
-              'بهترین بازیکنان متا',
+              hasVerifiedMeta ? 'بازیکنان متای FC27' : 'بالاترین ریتینگ‌های FC27',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            const SizedBox(height: 10),
+            const SizedBox(height: 5),
+            Text(
+              hasVerifiedMeta
+                  ? 'رتبه، Tier و دلیل فقط وقتی نمایش داده می‌شوند که Backend متا آن‌ها را برگرداند.'
+                  : 'منبع متا در دسترس نیست؛ این لیست صرفاً از داده واقعی بازیکنان و مرتب‌سازی ریتینگ ساخته شده و رتبه متا محسوب نمی‌شود.',
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            ),
+            const SizedBox(height: 14),
+            SegmentedButton<String>(
+              segments: const [
+                ButtonSegment(value: 'console', label: Text('کنسول')),
+                ButtonSegment(value: 'pc', label: Text('رایانه')),
+              ],
+              selected: {platform},
+              onSelectionChanged: (value) {
+                setState(() => platform = value.first);
+                _load();
+              },
+            ),
+            const SizedBox(height: 12),
             SizedBox(
               height: 42,
               child: ListView(
                 scrollDirection: Axis.horizontal,
                 children: [
                   ChoiceChip(
-                    label: const Text('همه'),
+                    label: const Text('همه پست‌ها'),
                     selected: position == null,
                     onSelected: (_) {
-                      setState(() => position = null);
+                      setState(() {
+                        position = null;
+                        role = null;
+                      });
                       _load();
                     },
                   ),
@@ -78,7 +140,10 @@ class _MetaScreenState extends State<MetaScreen> {
                       label: Text(p),
                       selected: position == p,
                       onSelected: (_) {
-                        setState(() => position = p);
+                        setState(() {
+                          position = p;
+                          role = null;
+                        });
                         _load();
                       },
                     ),
@@ -87,6 +152,28 @@ class _MetaScreenState extends State<MetaScreen> {
                 ],
               ),
             ),
+            if (availableRoles.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              DropdownButtonFormField<String?>(
+                value: availableRoles.contains(role) ? role : null,
+                decoration: const InputDecoration(
+                  labelText: 'نقش بازیکن',
+                  prefixIcon: Icon(Icons.strategy_rounded),
+                ),
+                items: [
+                  const DropdownMenuItem<String?>(
+                    value: null,
+                    child: Text('همه نقش‌ها'),
+                  ),
+                  for (final item in availableRoles)
+                    DropdownMenuItem<String?>(value: item, child: Text(item)),
+                ],
+                onChanged: (value) {
+                  setState(() => role = value);
+                  _load();
+                },
+              ),
+            ],
             const SizedBox(height: 16),
             if (loading)
               const Padding(
@@ -97,45 +184,143 @@ class _MetaScreenState extends State<MetaScreen> {
               Card(
                 child: ListTile(
                   leading: const Icon(Icons.cloud_off_rounded),
-                  title: const Text('Meta data در دسترس نیست'),
+                  title: const Text('داده بازیکنان در دسترس نیست'),
                   subtitle: Text(error!),
+                  trailing: IconButton(
+                    onPressed: _load,
+                    icon: const Icon(Icons.refresh_rounded),
+                  ),
                 ),
               )
             else if (items.isEmpty)
               const Card(
                 child: ListTile(
                   leading: Icon(Icons.leaderboard_outlined),
-                  title: Text('داده‌ای پیدا نشد'),
-                  subtitle: Text('رتبه‌بندی فقط از Backend واقعی نمایش داده می‌شود.'),
+                  title: Text('بازیکنی برای این فیلتر پیدا نشد'),
                 ),
               )
             else
-              for (var i = 0; i < items.length; i++) ...[
-                Card(
-                  child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text((i + 1).toString()),
-                    ),
-                    title: Text(
-                      _value(items[i], 'name'),
-                      style: const TextStyle(fontWeight: FontWeight.w900),
-                    ),
-                    subtitle: Text(
-                      _value(items[i], 'position') +
-                          ' • ' +
-                          _value(items[i], 'rating') +
-                          ' • ' +
-                          _value(items[i], 'reason'),
-                    ),
-                    trailing: Text(
-                      _value(items[i], 'price'),
-                      style: const TextStyle(fontWeight: FontWeight.w800),
-                    ),
-                  ),
+              for (final entry in items) ...[
+                _MetaPlayerCard(
+                  entry: entry,
+                  platform: platform,
+                  coins: _coins,
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 9),
               ],
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MetaPlayerCard extends StatelessWidget {
+  const _MetaPlayerCard({
+    required this.entry,
+    required this.platform,
+    required this.coins,
+  });
+
+  final MetaPlayerEntry entry;
+  final String platform;
+  final String Function(int) coins;
+
+  @override
+  Widget build(BuildContext context) {
+    final player = entry.player;
+    final price = platform == 'pc' ? player.pricePc : player.pricePs;
+
+    return Card(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        onTap: () => Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (_) => PlayerDetailsScreen(player: player),
+          ),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 27,
+                backgroundImage:
+                    player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
+                child: player.imageUrl.isEmpty
+                    ? Text(player.rating.toString())
+                    : null,
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            player.name,
+                            style: const TextStyle(fontWeight: FontWeight.w900),
+                          ),
+                        ),
+                        if (entry.isVerifiedMeta && entry.rank != null)
+                          Chip(label: Text('#${entry.rank}')),
+                      ],
+                    ),
+                    Text(
+                      '${player.rating} • ${player.position} • ${player.clubName}',
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                    if (entry.isVerifiedMeta &&
+                        (entry.tier.isNotEmpty || entry.role.isNotEmpty)) ...[
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 6,
+                        runSpacing: 6,
+                        children: [
+                          if (entry.tier.isNotEmpty)
+                            Chip(label: Text('Tier ${entry.tier}')),
+                          if (entry.role.isNotEmpty)
+                            Chip(label: Text(entry.role)),
+                          if (entry.score != null)
+                            Chip(label: Text('امتیاز ${entry.score!.toStringAsFixed(1)}')),
+                        ],
+                      ),
+                    ],
+                    if (entry.isVerifiedMeta && entry.reason.isNotEmpty) ...[
+                      const SizedBox(height: 7),
+                      Text(entry.reason),
+                    ],
+                    if (!entry.isVerifiedMeta) ...[
+                      const SizedBox(height: 7),
+                      Text(
+                        'مرتب‌شده بر اساس ریتینگ واقعی کارت؛ این مورد رتبه متا نیست.',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    coins(price),
+                    style: const TextStyle(fontWeight: FontWeight.w900),
+                  ),
+                  Text(
+                    platform == 'pc' ? 'PC' : 'Console',
+                    style: Theme.of(context).textTheme.labelSmall,
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );
