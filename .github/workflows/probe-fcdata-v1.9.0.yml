@@ -1,0 +1,31 @@
+name: Probe FCData v1.9.0
+
+on:
+  push:
+    branches:
+      - fix/v1.9.0-prices-sbc
+    paths:
+      - '.release/probe-fcdata-v1.9.0'
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Probe public FCData responses
+        run: |
+          node - <<'NODE'
+          const urls = [
+            'https://fcdata.io/players/?page=1',
+            'https://r.jina.ai/https://fcdata.io/players/?page=1',
+            'https://fcdata.io/',
+            'https://r.jina.ai/https://fcdata.io/'
+          ];
+          for (const url of urls) {
+            try {
+              const r = await fetch(url, {headers:{'user-agent':'Mozilla/5.0 FCBaz/1.9'}, signal:AbortSignal.timeout(20000)});
+              const t = await r.text();
+              console.log('\nURL', url, 'status', r.status, 'length', t.length);
+              console.log(t.slice(0, 9000));
+            } catch (e) { console.log('ERR', url, String(e)); }
+          }
+          NODE
