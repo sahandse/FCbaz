@@ -10,6 +10,8 @@ function cleanLine(value) {
     .replace(/<[^>]+>/g, ' ')
     .replace(/&nbsp;/gi, ' ')
     .replace(/&amp;/gi, '&')
+    .replace(/&#x27;/gi, "'")
+    .replace(/&quot;/gi, '"')
     .replace(/\s+/g, ' ')
     .trim();
 }
@@ -25,11 +27,25 @@ function normalize(value) {
 
 function coins(raw) {
   const value = String(raw ?? '').trim().toUpperCase().replaceAll(',', '');
-  if (!value || value === '-' || value === '—' || value === 'EXTINCT') return 0;
+  if (!value || value === '-' || value === '—' || value === 'EXTINCT' || value === 'SBC' || value === 'OBJ') return 0;
   const multiplier = value.endsWith('M') ? 1000000 : value.endsWith('K') ? 1000 : 1;
   const number = Number(value.replace(/[KM]$/, ''));
   const result = Math.round(number * multiplier);
   return Number.isFinite(result) && result > 0 ? result : 0;
+}
+
+async function fetchDirect(url) {
+  const response = await fetch(url, {
+    headers: {
+      accept: 'text/html,*/*;q=0.8',
+      'user-agent': 'Mozilla/5.0 FCBaz/1.9 public-data-sync',
+    },
+    signal: AbortSignal.timeout(20000),
+  });
+  if (!response.ok) throw new Error(`${response.status} ${response.statusText}`);
+  const body = await response.text();
+  if (body.length < 800) throw new Error('response too small');
+  return body;
 }
 
 async function fetchText(url) {
@@ -55,15 +71,28 @@ async function fetchText(url) {
   throw lastError ?? new Error(`Unable to fetch ${url}`);
 }
 
-function playerLines(text) {
+function markdownPlayerLines(text) {
   return String(text)
     .split(/\r?\n/)
     .map(cleanLine)
     .filter((line) =>
       /^\d{2}\s/.test(line) &&
       /(?:PAC|DIV)\s*\d+/i.test(line) &&
-      /(?:\d+(?:\.\d+)?[KM]?|—|Extinct)$/i.test(line),
+      /(?:\d+(?:\.\d+)?[KM]?|—|Extinct|SBC|OBJ)$/i.test(line),
     );
+}
+
+function htmlPlayerLines(html) {
+  const out = [];
+  const link = /<a\b[^>]*href=["'](?:https:\/\/fcdata\.io)?\/fc27\/players\/[^"']+["'][^>]*>([\s\S]*?)<\/a>/gi;
+  for (const match of String(html).matchAll(link)) {
+    const line = cleanLine(match[1]);
+    if (!/^\d{2}\s/.test(line)) continue;
+    if (!/(?:PAC|DIV)\s*\d+/i.test(line)) continue;
+    if (!/(?:\d+(?:\.\d+)?[KM]?|—|Extinct|SBC|OBJ)$/i.test(line)) continue;
+    out.push(line);
+  }
+  return out;
 }
 
 function nameMatches(line, name) {
@@ -100,11 +129,17 @@ async function collectFcDataLines() {
   for (let start = 0; start < urls.length; start += 3) {
     const batch = urls.slice(start, start + 3);
     const pages = await Promise.all(batch.map(async (url) => {
+      let direct = [];
       try {
-        const body = await fetchText(url);
-        return playerLines(body);
+        direct = htmlPlayerLines(await fetchDirect(url));
       } catch (error) {
-        console.warn(`[FCData] failed ${url}: ${error}`);
+        console.warn(`[FCData HTML] failed ${url}: ${error}`);
+      }
+      if (direct.length) return direct;
+      try {
+        return markdownPlayerLines(await fetchText(url));
+      } catch (error) {
+        console.warn(`[FCData markdown] failed ${url}: ${error}`);
         return [];
       }
     }));
@@ -125,7 +160,7 @@ for (const player of catalog.players ?? []) {
 
   const candidates = lines.filter((line) =>
     line.startsWith(`${rating} `) &&
-    line.slice(0, 48).includes(position) &&
+    line.slice(0, 58).includes(position) &&
     nameMatches(line, name),
   );
   if (!candidates.length) continue;
@@ -144,7 +179,7 @@ for (const player of catalog.players ?? []) {
     .filter((value) => Number(value) > 0).length;
   if (knownStats >= 5 && candidates.length > 1 && bestStats < 4) continue;
 
-  const priceMatch = selected.match(/(\d+(?:\.\d+)?[KM]?|—|Extinct)$/i);
+  const priceMatch = selected.match(/(\d+(?:\.\d+)?[KM]?|—|Extinct|SBC|OBJ)$/i);
   const value = coins(priceMatch?.[1]);
   if (value <= 0) continue;
 
