@@ -14,12 +14,13 @@ void main() {
       'lib/features/navigation/main_shell.dart',
     ).readAsStringSync();
 
-    expect(screen, contains('بازیکنان داغ بازار'));
-    expect(screen, contains('Live Hub'));
-    expect(screen, contains('SBC'));
-    expect(screen, contains('Evolutions'));
-    expect(screen, contains('Objectives'));
-    expect(screen, contains('بدون داده ساختگی'));
+    expect(screen, contains('YOUR CLUB.'));
+    expect(screen, contains('HOT ITEMS'));
+    expect(screen, contains('LIVE HUB'));
+    expect(screen, contains("label: 'SBC'"));
+    expect(screen, contains("label: 'EVOLUTIONS'"));
+    expect(screen, contains("label: 'OBJECTIVES'"));
+    expect(screen, contains('فقط داده معتبر'));
     expect(service, contains('WatchlistRepository'));
     expect(service, contains('ObjectiveProgressRepository'));
     expect(service, contains('MyClubRepository'));
