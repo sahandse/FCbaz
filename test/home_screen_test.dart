@@ -3,7 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fcbaz/features/home/home_dashboard_screen.dart';
 
 void main() {
-  testWidgets('FCBaz home renders local-first Persian dashboard actions', (tester) async {
+  testWidgets('FCBaz home renders the v1.2 Persian live dashboard', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: HomeDashboardScreen(
@@ -18,27 +18,23 @@ void main() {
     await tester.pump();
 
     expect(find.text('FCBaz'), findsOneWidget);
-    expect(
-      find.text('داشبورد شخصی FC27؛ بدون ثبت‌نام، با داده محلی خودت و اطلاعات زنده واقعی.'),
-      findsOneWidget,
-    );
-    expect(find.text('جستجو'), findsOneWidget);
-    expect(find.text('بازیکنان'), findsOneWidget);
+    expect(find.text('بازیکنان داغ بازار'), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('دسترسی سریع'),
+      find.text('Live Hub'),
       180,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('دسترسی سریع'), findsOneWidget);
+    expect(find.text('Live Hub'), findsOneWidget);
+    expect(find.textContaining('بدون داده ساختگی'), findsOneWidget);
 
     await tester.scrollUntilVisible(
-      find.text('ساخت ترکیب'),
+      find.text('SBC'),
       180,
       scrollable: find.byType(Scrollable).first,
     );
-    expect(find.text('ساخت ترکیب'), findsOneWidget);
-    expect(find.text('بازار'), findsOneWidget);
-    expect(find.text('همه ابزارها'), findsOneWidget);
+    expect(find.text('SBC'), findsOneWidget);
+    expect(find.text('Evolutions'), findsOneWidget);
+    expect(find.text('Objectives'), findsOneWidget);
   });
 }
