@@ -1,6 +1,7 @@
 import '../market/data/market_repository.dart';
 import '../market/data/watchlist_repository.dart';
 import '../settings/app_settings_repository.dart';
+import 'notification_preferences_repository.dart';
 import 'notification_repository.dart';
 
 class PriceAlertCheckResult {
@@ -19,20 +20,23 @@ class PriceAlertService {
     WatchlistRepository? watchlistRepository,
     NotificationRepository? notificationRepository,
     AppSettingsRepository? settingsRepository,
+    NotificationPreferencesRepository? preferencesRepository,
   })  : marketRepository = marketRepository ?? MarketRepository(),
         watchlistRepository = watchlistRepository ?? WatchlistRepository(),
-        notificationRepository =
-            notificationRepository ?? NotificationRepository(),
-        settingsRepository = settingsRepository ?? AppSettingsRepository();
+        notificationRepository = notificationRepository ?? NotificationRepository(),
+        settingsRepository = settingsRepository ?? AppSettingsRepository(),
+        preferencesRepository = preferencesRepository ?? NotificationPreferencesRepository();
 
   final MarketRepository marketRepository;
   final WatchlistRepository watchlistRepository;
   final NotificationRepository notificationRepository;
   final AppSettingsRepository settingsRepository;
+  final NotificationPreferencesRepository preferencesRepository;
 
   Future<PriceAlertCheckResult> checkNow() async {
     final settings = await settingsRepository.load();
-    if (!settings.priceAlertsEnabled) {
+    final preferences = await preferencesRepository.load();
+    if (!settings.priceAlertsEnabled || !preferences.priceAlerts) {
       return const PriceAlertCheckResult(checked: 0, triggered: 0);
     }
 
@@ -61,25 +65,17 @@ class PriceAlertService {
 
         final target = item.targetPrice!;
         final reached = price.current > 0 && price.current <= target;
-        final stateKey = item.playerId + ':' + target.toString();
+        final stateKey = 'price:${item.playerId}:$target';
         final previous = states[stateKey] ?? 'above';
 
         if (reached && previous != 'reached') {
           final now = DateTime.now();
           await notificationRepository.add(
             FCBazNotification(
-              id: 'price-' +
-                  item.playerId +
-                  '-' +
-                  target.toString() +
-                  '-' +
-                  now.millisecondsSinceEpoch.toString(),
+              id: 'price-${item.playerId}-$target-${now.millisecondsSinceEpoch}',
               type: 'price_alert',
               title: 'قیمت هدف رسید',
-              body: item.playerName +
-                  ' به ' +
-                  price.current.toString() +
-                  ' Coins رسیده است.',
+              body: '${item.playerName} به ${price.current} سکه رسیده است.',
               createdAt: now,
               playerId: item.playerId,
               price: price.current,
@@ -98,9 +94,6 @@ class PriceAlertService {
       }
     }
 
-    return PriceAlertCheckResult(
-      checked: checked,
-      triggered: triggered,
-    );
+    return PriceAlertCheckResult(checked: checked, triggered: triggered);
   }
 }
