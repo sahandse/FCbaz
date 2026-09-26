@@ -183,11 +183,91 @@ class FCBazTheme {
           textStyle: const TextStyle(fontWeight: FontWeight.w900),
         ),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: primary,
+          textStyle: const TextStyle(fontWeight: FontWeight.w900),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+        ),
+      ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           minimumSize: const Size(39, 39),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          backgroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? primary
+                : surfaceHigh.withValues(alpha: .75),
+          ),
+          foregroundColor: WidgetStateProperty.resolveWith(
+            (states) => states.contains(WidgetState.selected)
+                ? const Color(0xFF10140C)
+                : scheme.onSurface,
+          ),
+          side: WidgetStatePropertyAll(
+            BorderSide(color: outlineColor.withValues(alpha: .85)),
+          ),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+          ),
+          textStyle: const WidgetStatePropertyAll(
+            TextStyle(fontWeight: FontWeight.w900, fontSize: 11),
+          ),
+        ),
+      ),
+      tabBarTheme: TabBarThemeData(
+        indicatorColor: primary,
+        indicatorSize: TabBarIndicatorSize.tab,
+        dividerColor: outlineColor.withValues(alpha: .55),
+        labelColor: primary,
+        unselectedLabelColor: scheme.onSurfaceVariant,
+        labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11),
+        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
+      ),
+      expansionTileTheme: ExpansionTileThemeData(
+        backgroundColor: surface,
+        collapsedBackgroundColor: surface,
+        iconColor: primary,
+        collapsedIconColor: scheme.onSurfaceVariant,
+        textColor: scheme.onSurface,
+        collapsedTextColor: scheme.onSurface,
+        shape: angular,
+        collapsedShape: angular,
+        tilePadding: const EdgeInsets.symmetric(horizontal: 13, vertical: 2),
+        childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
+      ),
+      floatingActionButtonTheme: FloatingActionButtonThemeData(
+        elevation: 0,
+        backgroundColor: primary,
+        foregroundColor: const Color(0xFF10140C),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
+      popupMenuTheme: PopupMenuThemeData(
+        color: surfaceHigh,
+        surfaceTintColor: Colors.transparent,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(11),
+          side: BorderSide(color: outlineColor.withValues(alpha: .85)),
+        ),
+        textStyle: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w700),
+      ),
+      badgeTheme: BadgeThemeData(
+        backgroundColor: primary,
+        textColor: const Color(0xFF10140C),
+        largeSize: 18,
+        textStyle: const TextStyle(fontSize: 9, fontWeight: FontWeight.w900),
+      ),
+      tooltipTheme: TooltipThemeData(
+        decoration: BoxDecoration(
+          color: surfaceHigh,
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(color: outlineColor.withValues(alpha: .8)),
+        ),
+        textStyle: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w700, fontSize: 11),
       ),
       dialogTheme: DialogThemeData(
         backgroundColor: surface,
@@ -201,6 +281,7 @@ class FCBazTheme {
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
+        dragHandleColor: primary.withValues(alpha: .55),
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
         ),
@@ -233,6 +314,14 @@ class FCBazTheme {
               ? primary.withValues(alpha: .28)
               : surfaceHigh,
         ),
+      ),
+      checkboxTheme: CheckboxThemeData(
+        fillColor: WidgetStateProperty.resolveWith(
+          (states) => states.contains(WidgetState.selected) ? primary : Colors.transparent,
+        ),
+        checkColor: const WidgetStatePropertyAll(Color(0xFF10140C)),
+        side: BorderSide(color: outlineColor),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: primary,
