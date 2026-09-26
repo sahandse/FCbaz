@@ -2,23 +2,31 @@ name: FCBaz Android Production Release
 
 permissions:
   contents: write
+  actions: read
 
 on:
   workflow_dispatch:
     inputs:
       release_version:
-        description: Release version without v prefix (example: 1.1.0)
+        description: Release version without v prefix
         required: true
+        default: 1.1.0
         type: string
       api_base_url:
-        description: Production FCBaz API base URL
-        required: true
+        description: Optional production FCBaz API base URL; leave empty for verified public data path
+        required: false
+        default: ''
         type: string
+  push:
+    branches:
+      - main
+    paths:
+      - '.release/fcbaz-v1.1.0'
 
 env:
-  RELEASE_VERSION: ${{ inputs.release_version }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.1.0' }}
   RELEASE_BUILD_NUMBER: ${{ github.run_number }}
-  FCBAZ_API_BASE_URL: ${{ inputs.api_base_url }}
+  FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
 
 jobs:
   release:
@@ -30,7 +38,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Java 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -41,35 +49,71 @@ jobs:
           channel: stable
           cache: true
 
-      - name: Validate release inputs and signing secrets
+      - name: Validate release inputs
         shell: bash
-        env:
-          KEYSTORE_BASE64: ${{ secrets.FCBAZ_KEYSTORE_BASE64 }}
-          STORE_PASSWORD: ${{ secrets.FCBAZ_STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.FCBAZ_KEY_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.FCBAZ_KEY_ALIAS }}
         run: |
           set -euo pipefail
           [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "release_version must be X.Y.Z"; exit 1; }
-          [[ "$FCBAZ_API_BASE_URL" =~ ^https:// ]] || { echo "Production API URL must use HTTPS"; exit 1; }
-          test -n "$KEYSTORE_BASE64" || { echo "Missing FCBAZ_KEYSTORE_BASE64"; exit 1; }
-          test -n "$STORE_PASSWORD" || { echo "Missing FCBAZ_STORE_PASSWORD"; exit 1; }
-          test -n "$KEY_PASSWORD" || { echo "Missing FCBAZ_KEY_PASSWORD"; exit 1; }
-          test -n "$KEY_ALIAS" || { echo "Missing FCBAZ_KEY_ALIAS"; exit 1; }
+          if [ -n "$FCBAZ_API_BASE_URL" ] && [[ ! "$FCBAZ_API_BASE_URL" =~ ^https:// ]]; then
+            echo "Production API URL must use HTTPS when configured"
+            exit 1
+          fi
 
       - name: Complete Android platform
         run: flutter create . --platforms=android --org ir.fcbaz --project-name fcbaz
 
-      - name: Configure Android identity and stable release signing
+      - name: Configure Android identity, launcher and stable signing
         shell: bash
         env:
           KEYSTORE_BASE64: ${{ secrets.FCBAZ_KEYSTORE_BASE64 }}
-          STORE_PASSWORD: ${{ secrets.FCBAZ_STORE_PASSWORD }}
-          KEY_PASSWORD: ${{ secrets.FCBAZ_KEY_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.FCBAZ_KEY_ALIAS }}
+          STORE_PASSWORD_SECRET: ${{ secrets.FCBAZ_STORE_PASSWORD }}
+          KEY_PASSWORD_SECRET: ${{ secrets.FCBAZ_KEY_PASSWORD }}
+          KEY_ALIAS_SECRET: ${{ secrets.FCBAZ_KEY_ALIAS }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/fcbaz-release.jks
+
+          mkdir -p android/app/src/main/kotlin/ir/fcbaz/app
+          cat > android/app/src/main/kotlin/ir/fcbaz/app/MainActivity.kt <<'EOF'
+          package ir.fcbaz.app
+
+          import io.flutter.embedding.android.FlutterActivity
+
+          class MainActivity : FlutterActivity()
+          EOF
+          rm -rf android/app/src/main/kotlin/ir/fcbaz/fcbaz || true
+
+          sed -i 's/android:label="fcbaz"/android:label="FCBaz"/' android/app/src/main/AndroidManifest.xml || true
+
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$STORE_PASSWORD_SECRET" ] && [ -n "$KEY_PASSWORD_SECRET" ] && [ -n "$KEY_ALIAS_SECRET" ]; then
+            printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/fcbaz-release.jks
+            STORE_PASSWORD="$STORE_PASSWORD_SECRET"
+            KEY_PASSWORD="$KEY_PASSWORD_SECRET"
+            KEY_ALIAS="$KEY_ALIAS_SECRET"
+            echo "Using stable signing material from GitHub Secrets."
+          else
+            echo "Signing secrets are not configured; restoring the existing release key used by previous FCBaz releases."
+            mkdir -p /tmp/fcbaz-signing
+            ARTIFACT_ID=$(gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts?per_page=100" \
+              --jq '.artifacts[] | select(.name | contains("signing-backup")) | select(.expired==false) | .id' \
+              | head -n 1)
+            test -n "$ARTIFACT_ID" || { echo "No non-expired existing signing backup found. Configure FCBAZ signing secrets."; exit 1; }
+            gh api "repos/${GITHUB_REPOSITORY}/actions/artifacts/${ARTIFACT_ID}/zip" > /tmp/fcbaz-signing/signing.zip
+            unzip -q -o /tmp/fcbaz-signing/signing.zip -d /tmp/fcbaz-signing
+            JKS=$(find /tmp/fcbaz-signing -name 'fcbaz-release.jks' | head -n 1)
+            INFO=$(find /tmp/fcbaz-signing -name 'signing-key-info.txt' | head -n 1)
+            test -n "$JKS" || { echo "Existing signing keystore not found in artifact."; exit 1; }
+            test -n "$INFO" || { echo "Existing signing key info not found in artifact."; exit 1; }
+            cp "$JKS" android/app/fcbaz-release.jks
+            STORE_PASSWORD=$(awk -F= '/^storePassword=/{print $2}' "$INFO")
+            KEY_PASSWORD=$(awk -F= '/^keyPassword=/{print $2}' "$INFO")
+            KEY_ALIAS=$(awk -F= '/^keyAlias=/{print $2}' "$INFO")
+          fi
+
+          test -n "$STORE_PASSWORD"
+          test -n "$KEY_PASSWORD"
+          test -n "$KEY_ALIAS"
+
           cat > android/key.properties <<EOF
           storePassword=$STORE_PASSWORD
           keyPassword=$KEY_PASSWORD
@@ -86,14 +130,21 @@ jobs:
           if 'import java.util.Properties' not in s:
               s = 'import java.util.Properties\nimport java.io.FileInputStream\n' + s
           if 'val keystoreProperties = Properties()' not in s:
-              s = s.replace('android {', '''val keystoreProperties = Properties()\nval keystorePropertiesFile = rootProject.file("key.properties")\nkeystoreProperties.load(FileInputStream(keystorePropertiesFile))\n\nandroid {''', 1)
+              s = s.replace(
+                  'android {',
+                  'val keystoreProperties = Properties()\nval keystorePropertiesFile = rootProject.file("key.properties")\nkeystoreProperties.load(FileInputStream(keystorePropertiesFile))\n\nandroid {',
+                  1,
+              )
           if 'create("release")' not in s:
-              s = s.replace('buildTypes {', '''signingConfigs {\n        create("release") {\n            keyAlias = keystoreProperties["keyAlias"] as String\n            keyPassword = keystoreProperties["keyPassword"] as String\n            storeFile = file(keystoreProperties["storeFile"] as String)\n            storePassword = keystoreProperties["storePassword"] as String\n        }\n    }\n\n    buildTypes {''', 1)
+              s = s.replace(
+                  '    buildTypes {',
+                  '''    signingConfigs {\n        create("release") {\n            keyAlias = keystoreProperties["keyAlias"] as String\n            keyPassword = keystoreProperties["keyPassword"] as String\n            storeFile = file(keystoreProperties["storeFile"] as String)\n            storePassword = keystoreProperties["storePassword"] as String\n        }\n    }\n\n    buildTypes {''',
+                  1,
+              )
           s = s.replace('signingConfig = signingConfigs.getByName("debug")', 'signingConfig = signingConfigs.getByName("release")')
           p.write_text(s)
           PY
 
-          sed -i 's/android:label="fcbaz"/android:label="FCBaz"/' android/app/src/main/AndroidManifest.xml || true
           keytool -list -keystore android/app/fcbaz-release.jks -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
 
       - name: Set release version
@@ -155,6 +206,18 @@ jobs:
           test -s "FCBaz-v${RELEASE_VERSION}.apk"
           test -s "FCBaz-v${RELEASE_VERSION}.aab"
           sha256sum "FCBaz-v${RELEASE_VERSION}.apk" "FCBaz-v${RELEASE_VERSION}.aab" > SHA256SUMS.txt
+          cat > RELEASE_NOTES.md <<EOF
+          ## FCBaz v${RELEASE_VERSION}
+
+          نسخه Production با معماری بدون ثبت‌نام و داده واقعی FC Ultimate Team.
+
+          - داده ساختگی و fallback فصل اشتباه نمایش داده نمی‌شود.
+          - قیمت فقط وقتی منبع واقعی در دسترس باشد نمایش داده می‌شود.
+          - درصد تغییر ۲۴ ساعته و تاریخچه قیمت بدون منبع واقعی با «ناموجود» نمایش داده می‌شوند.
+          - Watchlist، My Club، Squads و تنظیمات روی دستگاه ذخیره می‌شوند.
+          - اعلان محلی Android و بررسی دوره‌ای Price Alert فعال است.
+          - بخش‌های SBC / Evolution / Objectives فقط با داده واقعی نمایش داده می‌شوند و در نبود منبع، خالی می‌مانند.
+          EOF
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4
@@ -164,6 +227,7 @@ jobs:
             FCBaz-v${{ env.RELEASE_VERSION }}.apk
             FCBaz-v${{ env.RELEASE_VERSION }}.aab
             SHA256SUMS.txt
+            RELEASE_NOTES.md
           if-no-files-found: error
           retention-days: 30
 
@@ -172,6 +236,7 @@ jobs:
         with:
           tag_name: v${{ env.RELEASE_VERSION }}
           name: FCBaz v${{ env.RELEASE_VERSION }}
+          body_path: RELEASE_NOTES.md
           generate_release_notes: true
           fail_on_unmatched_files: true
           files: |
