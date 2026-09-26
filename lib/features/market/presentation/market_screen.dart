@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../players/domain/player.dart';
 import '../../players/presentation/player_details_screen.dart';
+import '../../settings/app_settings_repository.dart';
 import '../data/market_repository.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
-import '../../settings/app_settings_repository.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -35,16 +35,7 @@ class _MarketScreenState extends State<MarketScreen> {
   String? position;
 
   static const positions = [
-    'ST',
-    'LW',
-    'RW',
-    'CAM',
-    'CM',
-    'CDM',
-    'CB',
-    'LB',
-    'RB',
-    'GK',
+    'ST', 'LW', 'RW', 'CAM', 'CM', 'CDM', 'CB', 'LB', 'RB', 'GK',
   ];
 
   @override
@@ -74,7 +65,6 @@ class _MarketScreenState extends State<MarketScreen> {
       ]);
 
       if (!mounted) return;
-
       final watchItems = result[1] as List<WatchlistItem>;
       setState(() {
         feed = result[0] as List<Map<String, dynamic>>;
@@ -111,13 +101,20 @@ class _MarketScreenState extends State<MarketScreen> {
       }),
     );
 
-    if (!mounted) return;
-
     for (final result in results) {
       if (result == null) continue;
       savedPrices[result.$1] = result.$2;
+      await watchlist.recordPrice(
+        result.$1,
+        price: result.$2.current,
+        platform: platform,
+        checkedAt: result.$2.updatedAt ?? DateTime.now(),
+      );
     }
-    setState(() {});
+
+    final refreshed = await watchlist.getAll();
+    if (!mounted) return;
+    setState(() => saved = refreshed);
   }
 
   Future<void> _loadCheapest({bool forceRefresh = false}) async {
@@ -155,19 +152,44 @@ class _MarketScreenState extends State<MarketScreen> {
   String _coins(int value) {
     if (value >= 1000000) {
       final n = value / 1000000;
-      return n.toStringAsFixed(n >= 10 ? 0 : 1) + 'M';
+      return '${n.toStringAsFixed(n >= 10 ? 0 : 1)}M';
     }
     if (value >= 1000) {
       final n = value / 1000;
-      return n.toStringAsFixed(n >= 100 ? 0 : 1) + 'K';
+      return '${n.toStringAsFixed(n >= 100 ? 0 : 1)}K';
     }
     return value.toString();
+  }
+
+  Future<void> _changePlatform(String value) async {
+    if (value == platform) return;
+    setState(() => platform = value);
+    await Future.wait([
+      _load(forceRefresh: true),
+      _loadCheapest(forceRefresh: true),
+    ]);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('بازار و قیمت‌ها')),
+      appBar: AppBar(
+        title: const Text('بازار و قیمت‌ها'),
+        actions: [
+          Padding(
+            padding: const EdgeInsetsDirectional.only(end: 12),
+            child: SegmentedButton<String>(
+              showSelectedIcon: false,
+              segments: const [
+                ButtonSegment(value: 'console', label: Text('کنسول')),
+                ButtonSegment(value: 'pc', label: Text('PC')),
+              ],
+              selected: {platform},
+              onSelectionChanged: (value) => _changePlatform(value.first),
+            ),
+          ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: () async {
           await Future.wait([
@@ -178,16 +200,10 @@ class _MarketScreenState extends State<MarketScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text(
-              'واچ‌لیست و هشدار قیمت',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'قیمت‌ها مستقیم از منبع زنده FC27 بررسی می‌شوند.',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            _SectionHeader(
+              title: 'واچ‌لیست و هشدار قیمت',
+              subtitle: 'آخرین قیمت واقعی دریافت‌شده روی دستگاه و تغییر نسبت به بررسی قبلی.',
+              icon: Icons.favorite_rounded,
             ),
             const SizedBox(height: 10),
             if (saved.isEmpty)
@@ -203,20 +219,15 @@ class _MarketScreenState extends State<MarketScreen> {
                 _WatchlistCard(
                   item: item,
                   price: savedPrices[item.playerId],
+                  coins: _coins,
                 ),
                 const SizedBox(height: 8),
               ],
             const SizedBox(height: 22),
-            Text(
-              'ارزان‌ترین بازیکنان',
-              style: Theme.of(context).textTheme.titleLarge,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'مرتب‌سازی بر اساس قیمت واقعی بازار، نه امتیاز تخمینی.',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
+            _SectionHeader(
+              title: 'ارزان‌ترین بازیکنان',
+              subtitle: 'مرتب‌سازی بر اساس قیمت واقعی بازار، نه امتیاز تخمینی.',
+              icon: Icons.savings_outlined,
             ),
             const SizedBox(height: 12),
             _CheapestFilters(
@@ -269,9 +280,10 @@ class _MarketScreenState extends State<MarketScreen> {
                 const SizedBox(height: 8),
               ],
             const SizedBox(height: 22),
-            Text(
-              'بازار FC27',
-              style: Theme.of(context).textTheme.titleLarge,
+            _SectionHeader(
+              title: 'بازار FC27',
+              subtitle: 'فقط داده‌ای که منبع زنده برمی‌گرداند نمایش داده می‌شود.',
+              icon: Icons.query_stats_rounded,
             ),
             const SizedBox(height: 10),
             if (loading)
@@ -306,12 +318,10 @@ class _MarketScreenState extends State<MarketScreen> {
                     leading: const Icon(Icons.trending_up_rounded),
                     title: Text(_str(item, ['player_name', 'name'])),
                     subtitle: Text(
-                      _str(item, ['platform']) +
-                          ' • ' +
-                          _str(item, ['updated_at']),
+                      '${_str(item, ['platform'])} • ${_str(item, ['updated_at'])}',
                     ),
                     trailing: Text(
-                      _str(item, ['current', 'price']) + ' C',
+                      '${_str(item, ['current', 'price'])} C',
                       style: const TextStyle(fontWeight: FontWeight.w900),
                     ),
                   ),
@@ -323,44 +333,152 @@ class _MarketScreenState extends State<MarketScreen> {
   }
 }
 
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader({required this.title, required this.subtitle, required this.icon});
+  final String title;
+  final String subtitle;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(14),
+          ),
+          child: Icon(icon, color: Theme.of(context).colorScheme.onPrimaryContainer),
+        ),
+        const SizedBox(width: 10),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(title, style: Theme.of(context).textTheme.titleLarge),
+              const SizedBox(height: 3),
+              Text(
+                subtitle,
+                style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
 class _WatchlistCard extends StatelessWidget {
   const _WatchlistCard({
     required this.item,
     required this.price,
+    required this.coins,
   });
 
   final WatchlistItem item;
   final PlayerPrice? price;
+  final String Function(int) coins;
 
   @override
   Widget build(BuildContext context) {
-    final target = item.targetPrice;
-    final current = price?.current ?? 0;
-    final reached = target != null && current > 0 && current <= target;
+    final current = price?.current ?? item.lastPrice ?? 0;
+    final reached = item.targetPrice != null && current > 0 && current <= item.targetPrice!;
+    final change = item.percentChange;
+
+    IconData trendIcon = Icons.remove_rounded;
+    if (change != null && change > 0) trendIcon = Icons.trending_up_rounded;
+    if (change != null && change < 0) trendIcon = Icons.trending_down_rounded;
 
     return Card(
-      child: ListTile(
-        leading: Icon(
-          reached ? Icons.notifications_active_rounded : Icons.favorite_rounded,
-          color: reached ? Theme.of(context).colorScheme.primary : Colors.redAccent,
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  reached ? Icons.notifications_active_rounded : Icons.favorite_rounded,
+                  color: reached ? Theme.of(context).colorScheme.primary : null,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: Text(item.playerName, style: const TextStyle(fontWeight: FontWeight.w900)),
+                ),
+                if (reached) const Chip(label: Text('به هدف رسید')),
+              ],
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                _MetricChip(
+                  label: 'قیمت فعلی',
+                  value: current > 0 ? '${coins(current)} C' : 'ناموجود',
+                ),
+                if (item.targetPrice != null)
+                  _MetricChip(label: 'هدف', value: '${coins(item.targetPrice!)} C'),
+                if (change != null)
+                  _MetricChip(
+                    label: 'از بررسی قبل',
+                    value: '${change >= 0 ? '+' : ''}${change.toStringAsFixed(1)}٪',
+                    icon: trendIcon,
+                  ),
+                if (item.platform != null)
+                  _MetricChip(
+                    label: 'بازار',
+                    value: item.platform == 'pc' ? 'PC' : 'کنسول',
+                  ),
+              ],
+            ),
+            if (item.lastCheckedAt != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                'آخرین بررسی محلی: ${_timeLabel(item.lastCheckedAt!)}',
+                style: Theme.of(context).textTheme.labelSmall,
+              ),
+            ],
+          ],
         ),
-        title: Text(
-          item.playerName,
-          style: const TextStyle(fontWeight: FontWeight.w800),
-        ),
-        subtitle: Text(
-          price == null
-              ? 'قیمت زنده در دسترس نیست'
-              : target == null
-                  ? 'قیمت فعلی: ' + current.toString() + ' Coins'
-                  : 'فعلی: ' +
-                      current.toString() +
-                      ' • هدف: ' +
-                      target.toString(),
-        ),
-        trailing: reached
-            ? const Chip(label: Text('به هدف رسید'))
-            : null,
+      ),
+    );
+  }
+
+  static String _timeLabel(DateTime value) {
+    final local = value.toLocal();
+    String two(int v) => v.toString().padLeft(2, '0');
+    return '${local.year}/${two(local.month)}/${two(local.day)} • ${two(local.hour)}:${two(local.minute)}';
+  }
+}
+
+class _MetricChip extends StatelessWidget {
+  const _MetricChip({required this.label, required this.value, this.icon});
+  final String label;
+  final String value;
+  final IconData? icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (icon != null) ...[
+            Icon(icon, size: 16),
+            const SizedBox(width: 4),
+          ],
+          Text('$label: ', style: Theme.of(context).textTheme.labelSmall),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
+        ],
       ),
     );
   }
@@ -386,46 +504,33 @@ class _CheapestFilters extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(14),
-        child: Column(
+        child: Row(
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: DropdownButtonFormField<int>(
-                    value: minRating,
-                    decoration: const InputDecoration(labelText: 'حداقل ریتینگ'),
-                    items: [
-                      for (final value in [75, 80, 82, 84, 85, 86, 87, 88, 89, 90])
-                        DropdownMenuItem(
-                          value: value,
-                          child: Text(value.toString()),
-                        ),
-                    ],
-                    onChanged: (value) {
-                      if (value != null) onChanged(value, maxRating, position);
-                    },
-                  ),
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: DropdownButtonFormField<String?>(
-                    value: position,
-                    decoration: const InputDecoration(labelText: 'پست'),
-                    items: [
-                      const DropdownMenuItem<String?>(
-                        value: null,
-                        child: Text('همه'),
-                      ),
-                      for (final value in positions)
-                        DropdownMenuItem<String?>(
-                          value: value,
-                          child: Text(value),
-                        ),
-                    ],
-                    onChanged: (value) => onChanged(minRating, maxRating, value),
-                  ),
-                ),
-              ],
+            Expanded(
+              child: DropdownButtonFormField<int>(
+                initialValue: minRating,
+                decoration: const InputDecoration(labelText: 'حداقل ریتینگ'),
+                items: [
+                  for (final value in [75, 80, 82, 84, 85, 86, 87, 88, 89, 90])
+                    DropdownMenuItem(value: value, child: Text(value.toString())),
+                ],
+                onChanged: (value) {
+                  if (value != null) onChanged(value, maxRating, position);
+                },
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: DropdownButtonFormField<String?>(
+                initialValue: position,
+                decoration: const InputDecoration(labelText: 'پست'),
+                items: [
+                  const DropdownMenuItem<String?>(value: null, child: Text('همه')),
+                  for (final value in positions)
+                    DropdownMenuItem<String?>(value: value, child: Text(value)),
+                ],
+                onChanged: (value) => onChanged(minRating, maxRating, value),
+              ),
             ),
           ],
         ),
@@ -448,45 +553,24 @@ class _CheapPlayerCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final price = platform == 'pc' ? player.pricePc : player.pricePs;
-
     return Card(
       child: ListTile(
         onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PlayerDetailsScreen(player: player),
-          ),
+          MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
         ),
         leading: CircleAvatar(
-          backgroundImage:
-              player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
-          child: player.imageUrl.isEmpty
-              ? Text(player.rating.toString())
-              : null,
+          backgroundImage: player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
+          child: player.imageUrl.isEmpty ? Text(player.rating.toString()) : null,
         ),
-        title: Text(
-          player.name,
-          style: const TextStyle(fontWeight: FontWeight.w900),
-        ),
-        subtitle: Text(
-          player.rating.toString() +
-              ' • ' +
-              player.position +
-              ' • ' +
-              player.clubName,
-        ),
+        title: Text(player.name, style: const TextStyle(fontWeight: FontWeight.w900)),
+        subtitle: Text('${player.rating} • ${player.position} • ${player.clubName}'),
         trailing: price > 0
             ? Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(
-                    coins(price),
-                    style: const TextStyle(fontWeight: FontWeight.w900),
-                  ),
-                  Text(
-                    platform == 'pc' ? 'PC' : 'Console',
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
+                  Text(coins(price), style: const TextStyle(fontWeight: FontWeight.w900)),
+                  Text(platform == 'pc' ? 'PC' : 'کنسول', style: Theme.of(context).textTheme.labelSmall),
                 ],
               )
             : const Text('—'),
