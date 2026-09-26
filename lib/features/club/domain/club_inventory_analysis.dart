@@ -76,13 +76,12 @@ class ClubInventoryAnalysis {
       return true;
     }).toList();
 
-    switch (filter.sort) {
-      case ClubSort.rating:
-        result.sort((a, b) => b.rating.compareTo(a.rating));
-      case ClubSort.name:
-        result.sort((a, b) => a.playerName.compareTo(b.playerName));
-      case ClubSort.acquisitionPrice:
-        result.sort((a, b) => b.acquisitionPrice.compareTo(a.acquisitionPrice));
+    if (filter.sort == ClubSort.rating) {
+      result.sort((a, b) => b.rating.compareTo(a.rating));
+    } else if (filter.sort == ClubSort.name) {
+      result.sort((a, b) => a.playerName.compareTo(b.playerName));
+    } else {
+      result.sort((a, b) => b.acquisitionPrice.compareTo(a.acquisitionPrice));
     }
     return result;
   }
@@ -105,8 +104,14 @@ class ClubInventoryAnalysis {
   Set<String> positions(List<MyClubItem> source) {
     final values = <String>{};
     for (final item in source) {
-      if (item.position.trim().isNotEmpty) values.add(item.position.toUpperCase());
-      values.addAll(item.positions.where((e) => e.trim().isNotEmpty).map((e) => e.toUpperCase()));
+      if (item.position.trim().isNotEmpty) {
+        values.add(item.position.toUpperCase());
+      }
+      values.addAll(
+        item.positions
+            .where((e) => e.trim().isNotEmpty)
+            .map((e) => e.toUpperCase()),
+      );
     }
     final sorted = values.toList()..sort();
     return sorted.toSet();
