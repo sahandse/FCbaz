@@ -52,6 +52,13 @@ class PriceAlertService {
         );
 
         checked++;
+        await watchlistRepository.recordPrice(
+          item.playerId,
+          price: price.current,
+          platform: settings.defaultPlatform,
+          checkedAt: price.updatedAt ?? DateTime.now(),
+        );
+
         final target = item.targetPrice!;
         final reached = price.current > 0 && price.current <= target;
         final stateKey = item.playerId + ':' + target.toString();
@@ -87,7 +94,7 @@ class PriceAlertService {
           reached ? 'reached' : 'above',
         );
       } catch (_) {
-        // A failed market request must never create a fake alert.
+        // A failed market request must never create a fake alert or snapshot.
       }
     }
 
