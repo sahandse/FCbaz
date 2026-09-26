@@ -2,12 +2,11 @@ name: FCBaz Flutter CI
 
 on:
   pull_request:
-  push:
-    branches:
-      - upgrade/phase19-android-local-notifications
 
 permissions:
   contents: read
+  issues: write
+  pull-requests: write
 
 jobs:
   android:
@@ -37,7 +36,32 @@ jobs:
         run: flutter pub get
 
       - name: Analyze
-        run: flutter analyze --no-fatal-infos --no-fatal-warnings
+        shell: bash
+        run: |
+          set +e
+          flutter analyze --no-fatal-infos --no-fatal-warnings 2>&1 | tee analyze.txt
+          code=${PIPESTATUS[0]}
+          echo "ANALYZE_EXIT=$code" >> "$GITHUB_ENV"
+          exit 0
+
+      - name: Report analyzer errors
+        if: env.ANALYZE_EXIT != '0'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const output = fs.readFileSync('analyze.txt', 'utf8');
+            const body = `### Flutter analyze failed\n\n\`\`\`text\n${output.slice(-12000)}\n\`\`\``;
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
+
+      - name: Fail on analyzer errors
+        if: env.ANALYZE_EXIT != '0'
+        run: exit 1
 
       - name: Test
         run: flutter test
