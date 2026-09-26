@@ -1060,29 +1060,51 @@ class _Pitch extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final primary = Theme.of(context).colorScheme.primary;
     return AspectRatio(
-      aspectRatio: .76,
+      aspectRatio: .72,
       child: LayoutBuilder(
         builder: (context, constraints) {
+          final slotWidth = (constraints.maxWidth * .175).clamp(56.0, 72.0);
+          final slotHeight = slotWidth * 1.28;
           return Container(
+            clipBehavior: Clip.antiAlias,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(color: Theme.of(context).colorScheme.outline),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(color: primary.withValues(alpha: .28)),
               gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFF174D2D), Color(0xFF0D2D1B)],
+                colors: [Color(0xFF102A18), Color(0xFF07150D), Color(0xFF030806)],
               ),
             ),
             child: Stack(
               children: [
                 const Positioned.fill(child: _PitchLines()),
+                Positioned(
+                  top: 10,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: .28),
+                      borderRadius: BorderRadius.circular(7),
+                    ),
+                    child: Text(
+                      'FC27 • ${formation.name}',
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(color: primary, fontSize: 9, fontWeight: FontWeight.w900),
+                    ),
+                  ),
+                ),
                 for (final slot in formation.slots)
                   Positioned(
-                    left: constraints.maxWidth * slot.x - 31,
-                    top: constraints.maxHeight * slot.y - 39,
-                    width: 62,
-                    height: 78,
+                    left: (constraints.maxWidth * slot.x - slotWidth / 2)
+                        .clamp(5.0, constraints.maxWidth - slotWidth - 5),
+                    top: (constraints.maxHeight * slot.y - slotHeight / 2)
+                        .clamp(24.0, constraints.maxHeight - slotHeight - 7),
+                    width: slotWidth,
+                    height: slotHeight,
                     child: _SlotCard(
                       slot: slot,
                       player: playersBySlot[slot.id],
@@ -1110,42 +1132,31 @@ class _Pitch extends StatelessWidget {
 
 class _PitchLines extends StatelessWidget {
   const _PitchLines();
-
   @override
-  Widget build(BuildContext context) {
-    return CustomPaint(painter: _PitchPainter());
-  }
+  Widget build(BuildContext context) => CustomPaint(painter: _PitchPainter());
 }
 
 class _PitchPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
+    final stripe = Paint()..color = Colors.white.withValues(alpha: .018);
+    final stripeHeight = size.height / 10;
+    for (var i = 0; i < 10; i += 2) {
+      canvas.drawRect(Rect.fromLTWH(0, i * stripeHeight, size.width, stripeHeight), stripe);
+    }
     final paint = Paint()
-      ..color = Colors.white.withValues(alpha: .16)
+      ..color = Colors.white.withValues(alpha: .18)
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.4;
-
-    final rect = Rect.fromLTWH(14, 14, size.width - 28, size.height - 28);
+      ..strokeWidth = 1.25;
+    final rect = Rect.fromLTWH(13, 13, size.width - 26, size.height - 26);
     canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(18)), paint);
-    canvas.drawLine(
-      Offset(14, size.height / 2),
-      Offset(size.width - 14, size.height / 2),
-      paint,
-    );
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), 42, paint);
-
-    final topBox = Rect.fromCenter(
-      center: Offset(size.width / 2, 14),
-      width: size.width * .55,
-      height: size.height * .16,
-    );
-    final bottomBox = Rect.fromCenter(
-      center: Offset(size.width / 2, size.height - 14),
-      width: size.width * .55,
-      height: size.height * .16,
-    );
-    canvas.drawRect(topBox, paint);
-    canvas.drawRect(bottomBox, paint);
+    canvas.drawLine(Offset(13, size.height / 2), Offset(size.width - 13, size.height / 2), paint);
+    canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width * .12, paint);
+    canvas.drawCircle(Offset(size.width / 2, size.height / 2), 2.2, paint);
+    final boxW = size.width * .55;
+    final boxH = size.height * .16;
+    canvas.drawRect(Rect.fromCenter(center: Offset(size.width / 2, 13), width: boxW, height: boxH), paint);
+    canvas.drawRect(Rect.fromCenter(center: Offset(size.width / 2, size.height - 13), width: boxW, height: boxH), paint);
   }
 
   @override
@@ -1172,113 +1183,89 @@ class _SlotCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final primary = Theme.of(context).colorScheme.primary;
-
+    final filled = player != null;
     return Material(
       color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
-        onLongPress: player == null ? null : onRemove,
-        borderRadius: BorderRadius.circular(16),
+        onLongPress: filled ? onRemove : null,
+        borderRadius: BorderRadius.circular(12),
         child: Container(
-          padding: const EdgeInsets.all(5),
+          padding: const EdgeInsets.fromLTRB(4, 4, 4, 5),
           decoration: BoxDecoration(
-            color: const Color(0xE610151C),
-            borderRadius: BorderRadius.circular(16),
+            color: filled ? const Color(0xED0A100C) : const Color(0xB30B100D),
+            borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: player == null
-                  ? Colors.white.withValues(alpha: .24)
-                  : primary.withValues(alpha: .72),
+              color: filled ? primary.withValues(alpha: .62) : Colors.white.withValues(alpha: .20),
             ),
             boxShadow: const [
-              BoxShadow(
-                blurRadius: 12,
-                color: Color(0x33000000),
-                offset: Offset(0, 4),
-              ),
+              BoxShadow(blurRadius: 10, color: Color(0x44000000), offset: Offset(0, 5)),
             ],
           ),
-          child: player == null
-              ? Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Icon(Icons.add_rounded, color: Colors.white70, size: 20),
-                    const SizedBox(height: 2),
-                    Text(
-                      slot.position,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                  ],
-                )
-              : Column(
-                  children: [
-                    Expanded(
-                      child: player!.imageUrl.isEmpty
-                          ? const Icon(Icons.person_rounded, color: Colors.white, size: 28)
-                          : Image.network(
-                              player!.imageUrl,
-                              fit: BoxFit.contain,
-                              errorBuilder: (_, __, ___) => const Icon(
-                                Icons.person_rounded,
-                                color: Colors.white,
-                                size: 28,
-                              ),
-                            ),
-                    ),
-                    Text(
-                      player!.name,
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 8,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                    if (config != null &&
-                        (config!.role.isNotEmpty ||
-                            config!.chemistryStyle != 'Basic')) ...[
-                      const SizedBox(height: 1),
-                      Text(
-                        [
-                          if (config!.role.isNotEmpty) config!.role,
-                          if (config!.chemistryStyle != 'Basic')
-                            config!.chemistryStyle,
-                        ].join(' • '),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: Colors.white70,
-                          fontSize: 6.5,
-                        ),
-                      ),
-                    ],
-                    const SizedBox(height: 2),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(
-                        3,
-                        (i) => Container(
-                          width: 5,
-                          height: 5,
-                          margin: const EdgeInsets.symmetric(horizontal: 1),
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: i < chemistry ? primary : Colors.white24,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+          child: filled ? _filled(primary) : _empty(),
         ),
       ),
     );
   }
+
+  Widget _empty() => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.add_rounded, color: Colors.white70, size: 20),
+          const SizedBox(height: 3),
+          Text(slot.position, maxLines: 1, style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w900)),
+        ],
+      );
+
+  Widget _filled(Color primary) => Column(
+        children: [
+          Row(
+            children: [
+              Text(player!.rating > 0 ? '${player!.rating}' : '—', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w900)),
+              const Spacer(),
+              Text(player!.position, textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white70, fontSize: 7, fontWeight: FontWeight.w900)),
+            ],
+          ),
+          Expanded(
+            child: player!.imageUrl.isEmpty
+                ? const Center(child: Icon(Icons.person_rounded, color: Colors.white54, size: 28))
+                : Image.network(
+                    player!.imageUrl,
+                    fit: BoxFit.contain,
+                    alignment: Alignment.bottomCenter,
+                    errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.person_rounded, color: Colors.white54, size: 28)),
+                  ),
+          ),
+          SizedBox(
+            height: 12,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(player!.name, maxLines: 1, textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900)),
+            ),
+          ),
+          if (config != null && (config!.role.isNotEmpty || config!.chemistryStyle != 'Basic'))
+            Text(
+              [if (config!.role.isNotEmpty) config!.role, if (config!.chemistryStyle != 'Basic') config!.chemistryStyle].join(' • '),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              textDirection: TextDirection.ltr,
+              style: const TextStyle(color: Colors.white54, fontSize: 5.5),
+            ),
+          const SizedBox(height: 2),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              3,
+              (i) => Container(
+                width: 5,
+                height: 5,
+                margin: const EdgeInsets.symmetric(horizontal: 1),
+                decoration: BoxDecoration(shape: BoxShape.circle, color: i < chemistry ? primary : Colors.white24),
+              ),
+            ),
+          ),
+        ],
+      );
 }
 
 class _PlayerPicker extends StatefulWidget {
