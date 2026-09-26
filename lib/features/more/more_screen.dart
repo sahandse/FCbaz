@@ -4,6 +4,7 @@ import '../club/presentation/my_club_screen.dart';
 import '../evolutions/presentation/evolutions_screen.dart';
 import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
+import '../market/presentation/market_tools_screen.dart';
 import '../meta/presentation/meta_screen.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import '../settings/app_settings_repository.dart';
@@ -28,20 +29,14 @@ class MoreScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
       children: [
-        Text(
-          'ابزارها',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
+        Text('ابزارها', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 4),
         Text(
           'همه ابزارهای FC27 بدون ثبت‌نام؛ فقط با داده واقعی و ذخیره محلی.',
           style: TextStyle(color: scheme.onSurfaceVariant),
         ),
         const SizedBox(height: 18),
-        Text(
-          'ابزارهای اصلی',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text('ابزارهای اصلی', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 10),
         GridView.count(
           crossAxisCount: 2,
@@ -56,6 +51,12 @@ class MoreScreen extends StatelessWidget {
               subtitle: 'قیمت زنده و فهرست پیگیری',
               icon: Icons.query_stats_rounded,
               onTap: () => _open(context, const MarketScreen()),
+            ),
+            _ToolCard(
+              title: 'ابزارهای بازار',
+              subtitle: 'ارزان‌ترین ریتینگ و محبوب‌ترین‌ها',
+              icon: Icons.price_check_rounded,
+              onTap: () => _open(context, const MarketToolsScreen()),
             ),
             _ToolCard(
               title: 'چالش‌های ساخت ترکیب',
@@ -90,10 +91,7 @@ class MoreScreen extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 22),
-        Text(
-          'داده‌های محلی من',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text('داده‌های محلی من', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 10),
         Card(
           child: Column(
@@ -111,20 +109,14 @@ class MoreScreen extends StatelessWidget {
                 subtitle: 'تم، بازار، اعلان‌ها و بروزرسانی',
                 onTap: () => _open(
                   context,
-                  SettingsScreen(
-                    settings: settings,
-                    onChanged: onSettingsChanged,
-                  ),
+                  SettingsScreen(settings: settings, onChanged: onSettingsChanged),
                 ),
               ),
             ],
           ),
         ),
         const SizedBox(height: 22),
-        Text(
-          'راهنمای بازی',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        Text('راهنمای بازی', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 10),
         Card(
           child: _MenuTile(
@@ -140,9 +132,7 @@ class MoreScreen extends StatelessWidget {
           decoration: BoxDecoration(
             color: scheme.primary.withValues(alpha: .07),
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: scheme.primary.withValues(alpha: .18),
-            ),
+            border: Border.all(color: scheme.primary.withValues(alpha: .18)),
           ),
           child: const Row(
             children: [
@@ -161,9 +151,7 @@ class MoreScreen extends StatelessWidget {
   }
 
   void _open(BuildContext context, Widget screen) {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => screen),
-    );
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
   }
 }
 
@@ -183,7 +171,6 @@ class _ToolCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -248,15 +235,8 @@ class _MenuTile extends StatelessWidget {
     return ListTile(
       onTap: onTap,
       leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
-      title: Text(
-        title,
-        style: const TextStyle(fontWeight: FontWeight.w900),
-      ),
-      subtitle: Text(
-        subtitle,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
+      subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: const Icon(Icons.chevron_left_rounded),
     );
   }
