@@ -1,0 +1,28 @@
+name: Trigger FCBaz v1.2.1 Release
+
+permissions:
+  actions: write
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/trigger-release-121.yml'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch production release 1.2.1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api \
+            --method POST \
+            -H 'Accept: application/vnd.github+json' \
+            "/repos/${GITHUB_REPOSITORY}/actions/workflows/flutter-android.yml/dispatches" \
+            -f ref='main' \
+            -f 'inputs[release_version]=1.2.1' \
+            -f 'inputs[api_base_url]='
