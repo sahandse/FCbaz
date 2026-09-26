@@ -27,7 +27,7 @@ class SystemNotificationService {
       final zone = await FlutterTimezone.getLocalTimezone();
       tz.setLocalLocation(tz.getLocation(zone.identifier));
     } catch (_) {
-      // timezone defaults to UTC if the device identifier cannot be resolved.
+      // Timezone remains UTC if the device identifier cannot be resolved.
     }
 
     const settings = InitializationSettings(
@@ -125,6 +125,33 @@ class SystemNotificationService {
     );
   }
 
+  Future<void> showDeadlineNow({
+    required String type,
+    required String sourceId,
+    required String title,
+    required Duration remaining,
+  }) async {
+    if (!Platform.isAndroid || !await notificationsEnabled()) return;
+    final label = type == 'objective' ? 'Objective' : 'Evolution';
+
+    await _plugin.show(
+      id: _stableId('deadline-now:$type:$sourceId'),
+      title: 'مهلت $label نزدیک است',
+      body: '$title تا ${_remainingLabel(remaining)} دیگر به پایان می‌رسد.',
+      notificationDetails: const NotificationDetails(
+        android: AndroidNotificationDetails(
+          _deadlineChannelId,
+          'مهلت‌ها',
+          channelDescription: 'یادآوری پایان Objective و Evolutionهای واقعی',
+          importance: Importance.high,
+          priority: Priority.high,
+          icon: 'ic_stat_fcbaz',
+        ),
+      ),
+      payload: '$type:$sourceId',
+    );
+  }
+
   Future<void> scheduleDeadline({
     required String type,
     required String sourceId,
@@ -160,18 +187,6 @@ class SystemNotificationService {
     );
   }
 
-  Future<void> cancelDeadline({
-    required String type,
-    required String sourceId,
-    required DateTime expiresAt,
-  }) async {
-    if (!Platform.isAndroid) return;
-    await initialize();
-    await _plugin.cancel(
-      id: _stableId('$type:$sourceId:${expiresAt.toIso8601String()}'),
-    );
-  }
-
   Future<int> pendingCount() async {
     if (!Platform.isAndroid) return 0;
     await initialize();
@@ -193,5 +208,11 @@ class SystemNotificationService {
       return '${hours ~/ 24} روز';
     }
     return '$hours ساعت';
+  }
+
+  String _remainingLabel(Duration value) {
+    if (value.inHours < 1) return '${value.inMinutes.clamp(1, 59)} دقیقه';
+    if (value.inHours < 24) return '${value.inHours} ساعت';
+    return '${(value.inHours / 24).ceil()} روز';
   }
 }
