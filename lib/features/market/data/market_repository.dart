@@ -19,9 +19,9 @@ class MarketRepository {
     bool forceRefresh = false,
   }) async {
     try {
-      final path = '/api/v1/market/players/' +
+      final path = '/api/v1/players/' +
           Uri.encodeComponent(playerId) +
-          '?platform=' +
+          '/price?platform=' +
           Uri.encodeQueryComponent(platform);
       final json = await api.getJson(
         path,
@@ -52,11 +52,11 @@ class MarketRepository {
     String range = '7d',
     bool forceRefresh = false,
   }) async {
-    final path = '/api/v1/market/players/' +
+    final path = '/api/v1/players/' +
         Uri.encodeComponent(playerId) +
-        '/history?platform=' +
+        '/price-history?platform=' +
         Uri.encodeQueryComponent(platform) +
-        '&range=' +
+        '&graph_type=' +
         Uri.encodeQueryComponent(range);
     final json = await api.getJson(
       path,
@@ -162,5 +162,4 @@ class MarketRepository {
     );
     return priced;
   }
-
 }
