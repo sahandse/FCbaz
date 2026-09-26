@@ -21,8 +21,8 @@ void main() {
       expect(source.toLowerCase(), contains(token));
     }
 
-    expect(source, contains('Console'));
-    expect(source, contains('PC'));
+    expect(source, contains("label: 'PS'"));
+    expect(source, contains("label: 'PC'"));
     expect(source, contains("if (value <= 0) return '—'"));
   });
 
