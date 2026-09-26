@@ -1,4 +1,5 @@
 import '../../../core/network/fcbaz_api.dart';
+import '../../../core/network/futbin_public_price_service.dart';
 import '../../../core/network/public_fc_data.dart';
 import '../../players/domain/player.dart';
 import '../domain/player_price.dart';
@@ -7,11 +8,14 @@ class MarketRepository {
   MarketRepository({
     FCBazApi? api,
     PublicFcData? publicData,
+    FutbinPublicPriceService? futbinPrice,
   })  : api = api ?? FCBazApi(),
-        publicData = publicData ?? PublicFcData();
+        publicData = publicData ?? PublicFcData(),
+        futbinPrice = futbinPrice ?? FutbinPublicPriceService();
 
   final FCBazApi api;
   final PublicFcData publicData;
+  final FutbinPublicPriceService futbinPrice;
 
   Future<PlayerPrice> getPlayerPrice(
     String playerId, {
@@ -35,6 +39,17 @@ class MarketRepository {
           if (parsed.current > 0) return parsed;
         }
       } catch (_) {}
+    }
+
+    if (playerId.startsWith('ea-')) {
+      final byResource = await futbinPrice.byResourceId(
+        playerId,
+        platform: platform,
+      );
+      if (byResource != null) {
+        final parsed = PlayerPrice.fromJson(byResource);
+        if (parsed.current > 0) return parsed;
+      }
     }
 
     final direct = await publicData.getPrice(
@@ -105,12 +120,14 @@ class MarketRepository {
       } catch (_) {}
     }
 
-    // A popularity list is not a market feed. Without real price values there
-    // is intentionally no fallback row here.
     final popular = await publicData.getTrending();
     final priced = <Map<String, dynamic>>[];
     for (final player in popular.take(12)) {
-      final price = await publicData.getPrice(player.id);
+      Map<String, dynamic>? price;
+      if (player.id.startsWith('ea-')) {
+        price = await futbinPrice.byResourceId(player.id);
+      }
+      price ??= await publicData.getPrice(player.id);
       if (price == null || (price['current'] as int? ?? 0) <= 0) continue;
       priced.add({
         'player_id': player.id,
