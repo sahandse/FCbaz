@@ -183,7 +183,7 @@ class PlayerItemVisual extends StatelessWidget {
                           ),
                           if (showPrices)
                             Row(children: [
-                              Expanded(child: _Price(label: 'Console', value: _coins(player.pricePs), t: t)),
+                              Expanded(child: _Price(label: 'PS', value: _coins(player.pricePs), t: t)),
                               const SizedBox(width: 5),
                               Expanded(child: _Price(label: 'PC', value: _coins(player.pricePc), t: t)),
                             ]),
