@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../club/data/my_club_repository.dart';
 import '../data/sbc_repository.dart';
 import '../domain/sbc.dart';
+import 'sbc_tools_screen.dart';
 
 class SbcScreen extends StatefulWidget {
   const SbcScreen({super.key});
@@ -40,23 +41,56 @@ class _SbcScreenState extends State<SbcScreen> {
     }
   }
 
+  void _openTools() {
+    Navigator.of(context).push(
+      MaterialPageRoute(builder: (_) => const SbcToolsScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('SBC')),
+      appBar: AppBar(
+        title: const Text('SBC'),
+        actions: [
+          IconButton(
+            onPressed: _openTools,
+            tooltip: 'ابزارهای SBC',
+            icon: const Icon(Icons.calculate_rounded),
+          ),
+        ],
+      ),
       body: RefreshIndicator(
         onRefresh: _load,
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text(
-              'چالش‌های ساخت ترکیب',
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'SBCهای فعال FC27 با هزینه، پاداش و راه‌حل واقعی',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'چالش‌های ساخت ترکیب',
+                        style: Theme.of(context).textTheme.headlineSmall,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(
+                        'فقط SBC و اطلاعاتی که از منبع واقعی دریافت شوند نمایش داده می‌شوند.',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                FilledButton.tonalIcon(
+                  onPressed: _openTools,
+                  icon: const Icon(Icons.calculate_outlined),
+                  label: const Text('ابزارها'),
+                ),
+              ],
             ),
             const SizedBox(height: 16),
             if (loading)
@@ -75,7 +109,7 @@ class _SbcScreenState extends State<SbcScreen> {
               const _StateCard(
                 icon: Icons.extension_off_rounded,
                 title: 'SBC فعالی پیدا نشد',
-                subtitle: 'وقتی Backend داده واقعی FC27 داشته باشد اینجا نمایش داده می‌شود.',
+                subtitle: 'داده نمونه نمایش داده نمی‌شود. با در دسترس شدن منبع واقعی، چالش‌ها اینجا ظاهر می‌شوند.',
               )
             else
               for (final item in items) ...[
@@ -94,9 +128,9 @@ class _SbcCard extends StatelessWidget {
   final SbcChallenge item;
 
   String _cost(int? value) {
-    if (value == null) return 'نامشخص';
-    if (value >= 1000000) return (value / 1000000).toStringAsFixed(1) + 'M';
-    if (value >= 1000) return (value / 1000).toStringAsFixed(0) + 'K';
+    if (value == null || value <= 0) return 'نامشخص';
+    if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}M';
+    if (value >= 1000) return '${(value / 1000).toStringAsFixed(0)}K';
     return value.toString();
   }
 
@@ -116,29 +150,56 @@ class _SbcCard extends StatelessWidget {
               Row(
                 children: [
                   Expanded(
-                    child: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w900)),
+                    child: Text(
+                      item.title,
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
                   ),
-                  if (item.repeatable)
-                    const Chip(label: Text('تکرارپذیر')),
+                  if (item.repeatable) const Chip(label: Text('تکرارپذیر')),
                 ],
               ),
               const SizedBox(height: 6),
-              Text(
-                item.category,
-                style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w800),
-              ),
+              if (item.category.isNotEmpty)
+                Text(
+                  item.category,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               if (item.description.isNotEmpty) ...[
                 const SizedBox(height: 8),
-                Text(item.description, maxLines: 2, overflow: TextOverflow.ellipsis),
+                Text(
+                  item.description,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
               ],
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Expanded(child: _MiniStat(label: 'هزینه', value: _cost(item.estimatedCost) + ' C')),
+                  Expanded(
+                    child: _MiniStat(
+                      label: 'هزینه واقعی ثبت‌شده',
+                      value: '${_cost(item.estimatedCost)} سکه',
+                    ),
+                  ),
                   const SizedBox(width: 8),
-                  Expanded(child: _MiniStat(label: 'پاداش', value: item.reward.isEmpty ? '—' : item.reward)),
+                  Expanded(
+                    child: _MiniStat(
+                      label: 'پاداش',
+                      value: item.reward.isEmpty ? '—' : item.reward,
+                    ),
+                  ),
                 ],
               ),
+              if (item.itemScore != null) ...[
+                const SizedBox(height: 10),
+                Chip(
+                  avatar: const Icon(Icons.stars_rounded, size: 17),
+                  label: Text('Item Score: ${item.itemScore}'),
+                ),
+              ],
             ],
           ),
         ),
@@ -166,6 +227,7 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
     setState(() {
       solving = true;
       solveError = null;
+      solution = null;
     });
     try {
       final ownedIds = await clubRepository.getPlayerIds();
@@ -198,10 +260,12 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(sbc.title, style: Theme.of(context).textTheme.titleLarge),
-                  const SizedBox(height: 6),
-                  Text(sbc.description.isEmpty ? 'بدون توضیح' : sbc.description),
+                  if (sbc.description.isNotEmpty) ...[
+                    const SizedBox(height: 6),
+                    Text(sbc.description),
+                  ],
                   const SizedBox(height: 14),
-                  Text('پاداش: ' + (sbc.reward.isEmpty ? '—' : sbc.reward)),
+                  Text('پاداش: ${sbc.reward.isEmpty ? '—' : sbc.reward}'),
                   if (sbc.itemScore != null) ...[
                     const SizedBox(height: 8),
                     Row(
@@ -213,7 +277,7 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                         ),
                         const SizedBox(width: 6),
                         Text(
-                          'Item Score موردنیاز: ' + sbc.itemScore.toString(),
+                          'Item Score موردنیاز: ${sbc.itemScore}',
                           style: const TextStyle(fontWeight: FontWeight.w900),
                         ),
                       ],
@@ -270,98 +334,109 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
             ),
           ],
           const SizedBox(height: 14),
-          FilledButton.icon(
-            onPressed: solving ? null : _solve,
-            icon: solving
-                ? const SizedBox.square(
-                    dimension: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.auto_fix_high_rounded),
-            label: const Text('حل ارزان SBC'),
-          ),
+          if (sbc.itemScore != null)
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.info_outline_rounded),
+                title: const Text('SBC مبتنی بر Item Score'),
+                subtitle: const Text(
+                  'برای این نوع چالش Rating Combination استفاده نمی‌شود. مقدار Item Score فقط از داده واقعی خود چالش معتبر است.',
+                ),
+              ),
+            )
+          else
+            FilledButton.icon(
+              onPressed: solving ? null : _solve,
+              icon: solving
+                  ? const SizedBox.square(
+                      dimension: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.auto_fix_high_rounded),
+              label: const Text('بررسی راه‌حل واقعی Backend'),
+            ),
           if (solveError != null) ...[
             const SizedBox(height: 10),
-            Text(solveError!, textAlign: TextAlign.center),
-          ],
-          if (solution != null) ...[
-            const SizedBox(height: 14),
             Card(
-              child: Padding(
-                padding: const EdgeInsets.all(18),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('راه‌حل پیشنهادی', style: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: 8),
-                    Text('هزینه کل: ' + solution!.totalCost.toString() + ' Coins'),
-                    const SizedBox(height: 6),
-                    Text(
-                      'از باشگاه من: ' +
-                          solution!.ownedPlayerIds.length.toString() +
-                          ' کارت',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                        fontWeight: FontWeight.w900,
-                      ),
-                    ),
-                    const SizedBox(height: 6),
-                    Text(
-                      'هزینه باقی‌مانده: ' +
-                          solution!.remainingCost.toString() +
-                          ' Coins',
-                      style: const TextStyle(fontWeight: FontWeight.w900),
-                    ),
-                    const SizedBox(height: 8),
-                    Text('بازیکنان: ' + solution!.playerIds.length.toString()),
-                    if (solution!.itemScore != null) ...[
-                      const SizedBox(height: 8),
-                      Text(
-                        'Item Score راه‌حل: ' + solution!.itemScore.toString(),
-                        style: const TextStyle(fontWeight: FontWeight.w800),
-                      ),
-                    ],
-                    if (solution!.players.isNotEmpty) ...[
-                      const SizedBox(height: 10),
-                      for (final player in solution!.players)
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          dense: true,
-                          leading: Icon(
-                            solution!.ownedPlayerIds.contains(player.playerId)
-                                ? Icons.inventory_2_rounded
-                                : Icons.shopping_cart_outlined,
-                            color: solution!.ownedPlayerIds.contains(player.playerId)
-                                ? Theme.of(context).colorScheme.primary
-                                : null,
-                          ),
-                          title: Text(
-                            player.name.isEmpty
-                                ? player.playerId
-                                : player.name,
-                          ),
-                          subtitle: Text(
-                            player.rating.toString() +
-                                ' • ' +
-                                player.price.toString() +
-                                ' Coins',
-                          ),
-                          trailing:
-                              solution!.ownedPlayerIds.contains(player.playerId)
-                                  ? const Chip(label: Text('دارم'))
-                                  : null,
-                        ),
-                    ],
-                    if (solution!.notes.isNotEmpty) ...[
-                      const SizedBox(height: 10),
-                      for (final note in solution!.notes) Text('• ' + note),
-                    ],
-                  ],
-                ),
+              child: ListTile(
+                leading: const Icon(Icons.info_outline_rounded),
+                title: const Text('راه‌حل واقعی در دسترس نیست'),
+                subtitle: Text(solveError!),
               ),
             ),
           ],
+          if (solution != null) ...[
+            const SizedBox(height: 14),
+            _SolutionCard(solution: solution!),
+          ],
         ],
+      ),
+    );
+  }
+}
+
+class _SolutionCard extends StatelessWidget {
+  const _SolutionCard({required this.solution});
+  final SbcSolution solution;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(18),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'راه‌حل دریافت‌شده',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            const SizedBox(height: 8),
+            Text('هزینه کل: ${solution.totalCost} سکه'),
+            const SizedBox(height: 6),
+            Text(
+              'از باشگاه من: ${solution.ownedPlayerIds.length} کارت',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w900,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              'هزینه باقی‌مانده: ${solution.remainingCost} سکه',
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
+            if (solution.itemScore != null) ...[
+              const SizedBox(height: 8),
+              Text('Item Score راه‌حل: ${solution.itemScore}'),
+            ],
+            if (solution.players.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              for (final player in solution.players)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  leading: Icon(
+                    solution.ownedPlayerIds.contains(player.playerId)
+                        ? Icons.inventory_2_rounded
+                        : Icons.shopping_cart_outlined,
+                    color: solution.ownedPlayerIds.contains(player.playerId)
+                        ? Theme.of(context).colorScheme.primary
+                        : null,
+                  ),
+                  title: Text(player.name.isEmpty ? player.playerId : player.name),
+                  subtitle: Text('${player.rating} • ${player.price} سکه'),
+                  trailing: solution.ownedPlayerIds.contains(player.playerId)
+                      ? const Chip(label: Text('دارم'))
+                      : null,
+                ),
+            ],
+            if (solution.notes.isNotEmpty) ...[
+              const SizedBox(height: 10),
+              for (final note in solution.notes) Text('• $note'),
+            ],
+          ],
+        ),
       ),
     );
   }
@@ -383,7 +458,12 @@ class _MiniStat extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(value, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w900)),
+          Text(
+            value,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontWeight: FontWeight.w900),
+          ),
           const SizedBox(height: 2),
           Text(label, style: Theme.of(context).textTheme.labelSmall),
         ],
