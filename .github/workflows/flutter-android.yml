@@ -10,7 +10,7 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 1.2.0
+        default: 1.8.0
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -21,10 +21,10 @@ on:
     branches:
       - main
     paths:
-      - '.release/fcbaz-v1.2.0'
+      - '.release/fcbaz-v1.8.0'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.2.0' }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.8.0' }}
   RELEASE_BUILD_NUMBER: ${{ github.run_number }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
 
@@ -159,7 +159,7 @@ jobs:
           import struct, zlib, binascii
           w = h = 1024
           bg = (8, 11, 15)
-          green = (102, 240, 138)
+          green = (200, 255, 66)
           rows = []
           cx = cy = 512
           for y in range(h):
@@ -198,14 +198,15 @@ jobs:
           cat > RELEASE_NOTES.md <<EOF
           ## FCBaz v${RELEASE_VERSION}
 
-          نسخه بزرگ 1.2 با دیتای واقعی FC27 و بازطراحی مینیمال و گرافیکی.
+          بازطراحی FC27-style برای تجربه بازیکن و My Club.
 
-          - Player / Price / Trending از منبع عمومی واقعی FUTBIN.
-          - SBC / Evolutions / Objectives از Live Catalog واقعی با منبع FUT.GG.
-          - همگام‌سازی خودکار Live Catalog هر ۶ ساعت.
-          - Home Dashboard، Player Card و Theme بازطراحی شده‌اند.
-          - دیتای فیک، fallback فصل اشتباه و درصد ۲۴ساعته جعلی نمایش داده نمی‌شود.
-          - Watchlist، My Club، Squad و تنظیمات همچنان Local-first و بدون ثبت‌نام هستند.
+          - Player Details اکنون از Player Item مشترک Gold/Icon/Hero/TOTW/Holographic استفاده می‌کند.
+          - My Club به Collection Grid دو ستونه تبدیل شده است.
+          - قیمت Console/PC فقط از منبع واقعی و مقدار مثبت نمایش داده می‌شود؛ صفر و داده ناموجود `—` هستند.
+          - PlayStyles، Roles، Chemistry Style، نسخه‌های دیگر بازیکن و Market panel حفظ شده‌اند.
+          - Best Club XI، valuation و اکشن‌های Squad/Evolution همچنان فعال‌اند.
+          - SBC Hub و Evolution Lab جدید نسخه‌های 1.6/1.7 حفظ شده‌اند.
+          - بدون ثبت‌نام و بدون دیتای ساختگی.
           EOF
 
       - name: Upload release artifact
