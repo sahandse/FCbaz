@@ -30,4 +30,7 @@ This release moves the app from a generic Material companion look to a distinct 
 - No generated prices and no `0` presented as a real market value.
 - FUT.GG is used as a public FC27 player/rarity/discovery reference and for live snapshot enrichment.
 
+## App-wide surfaces
+The global theme now applies the same dark/acid visual language to Home, Search, Market, SBC, Evolutions, My Club, Settings and Squad Builder. Individual feature screens can continue replacing generic cards with feature-specific FC-style modules without changing the design tokens again.
+
 This is an inspired product language, not a pixel-for-pixel copy of EA assets or screens.
