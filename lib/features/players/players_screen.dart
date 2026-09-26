@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
+import '../settings/app_settings_repository.dart';
 import 'data/player_repository.dart';
 import 'domain/player.dart';
 import 'presentation/advanced_player_filter_sheet.dart';
 import 'presentation/player_card.dart';
-import '../settings/app_settings_repository.dart';
 
 class PlayersScreen extends StatefulWidget {
   const PlayersScreen({super.key});
@@ -20,7 +20,6 @@ class _PlayersScreenState extends State<PlayersScreen> {
   List<Player> players = const [];
   PlayerFilter filter = const PlayerFilter();
   PlayerFacets facets = const PlayerFacets();
-
   bool loading = true;
   String? error;
   String quickRarity = 'همه';
@@ -34,9 +33,7 @@ class _PlayersScreenState extends State<PlayersScreen> {
   Future<void> _initialize() async {
     final settings = await settingsRepository.load();
     if (!mounted) return;
-    setState(() {
-      filter = filter.copyWith(platform: settings.defaultPlatform);
-    });
+    setState(() => filter = filter.copyWith(platform: settings.defaultPlatform));
     await _load();
   }
 
@@ -45,7 +42,6 @@ class _PlayersScreenState extends State<PlayersScreen> {
       loading = true;
       error = null;
     });
-
     try {
       final result = await repository.advanced(filter);
       if (!mounted) return;
@@ -66,14 +62,9 @@ class _PlayersScreenState extends State<PlayersScreen> {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (_) => AdvancedPlayerFilterSheet(
-        current: filter,
-        facets: facets,
-      ),
+      builder: (_) => AdvancedPlayerFilterSheet(current: filter, facets: facets),
     );
-
     if (result == null) return;
-
     setState(() {
       filter = result;
       quickRarity = 'همه';
@@ -99,94 +90,91 @@ class _PlayersScreenState extends State<PlayersScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-
     return RefreshIndicator(
       onRefresh: _load,
       child: CustomScrollView(
         slivers: [
           SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+            padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
             sliver: SliverToBoxAdapter(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'FC27 Collection',
-                              textDirection: TextDirection.ltr,
-                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                    fontWeight: FontWeight.w900,
-                                    letterSpacing: -1,
-                                  ),
-                            ),
-                            const SizedBox(height: 3),
-                            Text(
-                              'بازیکنان واقعی با استایل کارت‌های Ultimate Team',
-                              style: TextStyle(
-                                color: scheme.onSurfaceVariant,
-                                fontSize: 12,
-                              ),
-                            ),
-                          ],
-                        ),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.fromLTRB(16, 16, 14, 14),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFF090E0A),
+                      borderRadius: BorderRadius.circular(14),
+                      border: Border.all(color: scheme.primary.withValues(alpha: .28)),
+                      gradient: LinearGradient(
+                        begin: Alignment.topRight,
+                        end: Alignment.bottomLeft,
+                        colors: [
+                          scheme.primary.withValues(alpha: .12),
+                          const Color(0xFF090E0A),
+                          scheme.secondary.withValues(alpha: .05),
+                        ],
                       ),
-                      Badge(
-                        isLabelVisible: filter.activeCount > 0,
-                        label: Text(filter.activeCount.toString()),
-                        child: IconButton.filledTonal(
-                          onPressed: _openFilters,
-                          icon: const Icon(Icons.tune_rounded),
-                          tooltip: 'فیلتر پیشرفته',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  SizedBox(
-                    height: 42,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
+                    ),
+                    child: Row(
                       children: [
-                        _RarityChip(
-                          label: 'همه',
-                          active: quickRarity == 'همه',
-                          onTap: () => _applyQuickRarity('همه', null),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'FUT COLLECTION',
+                                textDirection: TextDirection.ltr,
+                                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      letterSpacing: -1.2,
+                                    ),
+                              ),
+                              const SizedBox(height: 3),
+                              Text(
+                                'کارت‌های FC27 • Gold • ICON • Hero • Promo',
+                                style: TextStyle(
+                                  color: scheme.onSurfaceVariant,
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                        _RarityChip(
-                          label: 'Gold',
-                          active: quickRarity == 'Gold',
-                          onTap: () => _applyQuickRarity('Gold', 'Gold Rare'),
-                        ),
-                        _RarityChip(
-                          label: 'ICON',
-                          active: quickRarity == 'ICON',
-                          onTap: () => _applyQuickRarity('ICON', 'Base Icon'),
-                        ),
-                        _RarityChip(
-                          label: 'Hero',
-                          active: quickRarity == 'Hero',
-                          onTap: () => _applyQuickRarity('Hero', 'Base Hero'),
-                        ),
-                        _RarityChip(
-                          label: 'TOTW',
-                          active: quickRarity == 'TOTW',
-                          onTap: () => _applyQuickRarity('TOTW', 'Team of the week'),
-                        ),
-                        _RarityChip(
-                          label: 'Hall of FUT',
-                          active: quickRarity == 'Hall of FUT',
-                          onTap: () => _applyQuickRarity('Hall of FUT', 'Base Hall of FUT'),
+                        Badge(
+                          isLabelVisible: filter.activeCount > 0,
+                          label: Text(filter.activeCount.toString()),
+                          child: IconButton.filled(
+                            onPressed: _openFilters,
+                            icon: const Icon(Icons.tune_rounded),
+                            tooltip: 'فیلتر پیشرفته',
+                          ),
                         ),
                       ],
                     ),
                   ),
+                  const SizedBox(height: 11),
+                  SizedBox(
+                    height: 38,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        _RarityChip(label: 'همه', active: quickRarity == 'همه', onTap: () => _applyQuickRarity('همه', null)),
+                        _RarityChip(label: 'Gold', active: quickRarity == 'Gold', onTap: () => _applyQuickRarity('Gold', 'Gold')),
+                        _RarityChip(label: 'ICON', active: quickRarity == 'ICON', onTap: () => _applyQuickRarity('ICON', 'Base Icon')),
+                        _RarityChip(label: 'Hero', active: quickRarity == 'Hero', onTap: () => _applyQuickRarity('Hero', 'Base Hero')),
+                        _RarityChip(label: 'TOTW', active: quickRarity == 'TOTW', onTap: () => _applyQuickRarity('TOTW', 'Team of the week')),
+                        _RarityChip(label: 'Hall', active: quickRarity == 'Hall', onTap: () => _applyQuickRarity('Hall', 'Hall of FUT')),
+                        _RarityChip(label: 'Holo', active: quickRarity == 'Holo', onTap: () => _applyQuickRarity('Holo', 'Holographic')),
+                        _RarityChip(label: 'Silver', active: quickRarity == 'Silver', onTap: () => _applyQuickRarity('Silver', 'Silver')),
+                        _RarityChip(label: 'Bronze', active: quickRarity == 'Bronze', onTap: () => _applyQuickRarity('Bronze', 'Bronze')),
+                      ],
+                    ),
+                  ),
                   if (filter.activeCount > 0) ...[
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 8),
                     _ActiveFilters(
                       filter: filter,
                       onClear: () {
@@ -198,40 +186,34 @@ class _PlayersScreenState extends State<PlayersScreen> {
                       },
                     ),
                   ],
-                  const SizedBox(height: 14),
+                  const SizedBox(height: 10),
                   if (!loading && error == null && players.isNotEmpty)
                     Row(
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                          decoration: BoxDecoration(
-                            color: scheme.primary.withValues(alpha: .10),
-                            borderRadius: BorderRadius.circular(99),
-                          ),
-                          child: Text(
-                            '${players.length} کارت',
-                            style: TextStyle(
-                              color: scheme.primary,
-                              fontSize: 11,
-                              fontWeight: FontWeight.w900,
-                            ),
+                        Text(
+                          '${players.length} ITEM',
+                          textDirection: TextDirection.ltr,
+                          style: TextStyle(
+                            color: scheme.primary,
+                            fontWeight: FontWeight.w900,
+                            fontSize: 11,
                           ),
                         ),
                         const Spacer(),
-                        Icon(Icons.verified_rounded, size: 16, color: scheme.primary),
+                        Icon(Icons.verified_rounded, size: 15, color: scheme.primary),
                         const SizedBox(width: 4),
                         Text(
-                          'FC27 • Live data',
+                          'FC27 verified catalog',
                           textDirection: TextDirection.ltr,
                           style: TextStyle(
                             color: scheme.onSurfaceVariant,
-                            fontSize: 10,
+                            fontSize: 9.5,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
                       ],
                     ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
                 ],
               ),
             ),
@@ -243,11 +225,11 @@ class _PlayersScreenState extends State<PlayersScreen> {
             )
           else if (error != null)
             SliverPadding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(14),
               sliver: SliverToBoxAdapter(
                 child: _StateCard(
                   icon: Icons.cloud_off_rounded,
-                  title: 'داده بازیکنان در دسترس نیست',
+                  title: 'دیتای بازیکنان در دسترس نیست',
                   subtitle: error!,
                   actionLabel: 'تلاش دوباره',
                   onAction: _load,
@@ -256,15 +238,15 @@ class _PlayersScreenState extends State<PlayersScreen> {
             )
           else if (players.isEmpty)
             SliverPadding(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(14),
               sliver: SliverToBoxAdapter(
                 child: _StateCard(
                   icon: Icons.style_rounded,
-                  title: 'در این دسته کارتی پیدا نشد',
+                  title: 'کارتی پیدا نشد',
                   subtitle: filter.activeCount > 0
-                      ? 'دسته یا فیلتر دیگری را انتخاب کن.'
-                      : 'منبع زنده فعلاً بازیکنی برنگرداند.',
-                  actionLabel: filter.activeCount > 0 ? 'نمایش همه کارت‌ها' : null,
+                      ? 'فیلتر دیگری را امتحان کن.'
+                      : 'Catalog معتبر فعلاً آیتمی برنگرداند.',
+                  actionLabel: filter.activeCount > 0 ? 'نمایش همه' : null,
                   onAction: filter.activeCount > 0
                       ? () {
                           setState(() {
@@ -279,13 +261,13 @@ class _PlayersScreenState extends State<PlayersScreen> {
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(14, 0, 14, 28),
+              padding: const EdgeInsets.fromLTRB(11, 0, 11, 30),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 12,
-                  crossAxisSpacing: 10,
-                  childAspectRatio: .72,
+                  mainAxisSpacing: 9,
+                  crossAxisSpacing: 7,
+                  childAspectRatio: .69,
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => PlayerCard(
@@ -303,12 +285,7 @@ class _PlayersScreenState extends State<PlayersScreen> {
 }
 
 class _RarityChip extends StatelessWidget {
-  const _RarityChip({
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-
+  const _RarityChip({required this.label, required this.active, required this.onTap});
   final String label;
   final bool active;
   final VoidCallback onTap;
@@ -317,7 +294,7 @@ class _RarityChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     return Padding(
-      padding: const EdgeInsets.only(left: 7),
+      padding: const EdgeInsets.only(left: 6),
       child: ChoiceChip(
         label: Text(label, textDirection: TextDirection.ltr),
         selected: active,
@@ -325,14 +302,9 @@ class _RarityChip extends StatelessWidget {
         showCheckmark: false,
         selectedColor: scheme.primary,
         labelStyle: TextStyle(
-          color: active ? scheme.onPrimary : scheme.onSurface,
-          fontSize: 11,
+          color: active ? const Color(0xFF11150D) : scheme.onSurface,
+          fontSize: 10,
           fontWeight: FontWeight.w900,
-        ),
-        side: BorderSide(
-          color: active
-              ? scheme.primary
-              : scheme.outline.withValues(alpha: .45),
         ),
       ),
     );
@@ -340,11 +312,7 @@ class _RarityChip extends StatelessWidget {
 }
 
 class _ActiveFilters extends StatelessWidget {
-  const _ActiveFilters({
-    required this.filter,
-    required this.onClear,
-  });
-
+  const _ActiveFilters({required this.filter, required this.onClear});
   final PlayerFilter filter;
   final VoidCallback onClear;
 
@@ -356,23 +324,22 @@ class _ActiveFilters extends StatelessWidget {
       if (filter.league != null) filter.league!,
       if (filter.club != null) filter.club!,
       if (filter.nation != null) filter.nation!,
-      if (filter.minRating != 40 || filter.maxRating != 99)
-        'OVR ${filter.minRating}–${filter.maxRating}',
+      if (filter.minRating != 40 || filter.maxRating != 99) 'OVR ${filter.minRating}–${filter.maxRating}',
       if (filter.platform == 'pc') 'PC',
       if (filter.role != null) 'Role ${filter.role!}',
     ];
 
     return SizedBox(
-      height: 38,
+      height: 34,
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
           for (final label in labels) ...[
             Chip(label: Text(label)),
-            const SizedBox(width: 6),
+            const SizedBox(width: 5),
           ],
           ActionChip(
-            avatar: const Icon(Icons.close_rounded, size: 16),
+            avatar: const Icon(Icons.close_rounded, size: 15),
             label: const Text('پاک کردن'),
             onPressed: onClear,
           ),
@@ -390,7 +357,6 @@ class _StateCard extends StatelessWidget {
     this.actionLabel,
     this.onAction,
   });
-
   final IconData icon;
   final String title;
   final String subtitle;
@@ -401,28 +367,17 @@ class _StateCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(24),
+        padding: const EdgeInsets.all(22),
         child: Column(
           children: [
-            Icon(
-              icon,
-              size: 44,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.w900),
-            ),
-            const SizedBox(height: 6),
+            Icon(icon, size: 42, color: Theme.of(context).colorScheme.primary),
+            const SizedBox(height: 11),
+            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w900)),
+            const SizedBox(height: 5),
             Text(subtitle, textAlign: TextAlign.center),
             if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 14),
-              FilledButton(
-                onPressed: onAction,
-                child: Text(actionLabel!),
-              ),
+              const SizedBox(height: 13),
+              FilledButton(onPressed: onAction, child: Text(actionLabel!)),
             ],
           ],
         ),
