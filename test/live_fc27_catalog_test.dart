@@ -15,6 +15,25 @@ void main() {
     expect(map['game_year'], 27);
     expect(DateTime.tryParse((map['generated_at'] ?? '').toString()), isNotNull);
 
+    final players = map['players'];
+    expect(players, isA<List>());
+    expect(players as List, isNotEmpty, reason: 'players must not be empty');
+    final playerIds = <String>{};
+    for (final value in players.whereType<Map>()) {
+      final player = Map<String, dynamic>.from(value);
+      final id = (player['id'] ?? '').toString();
+      final name = (player['name'] ?? '').toString();
+      final source = (player['source_url'] ?? '').toString();
+      final rating = int.tryParse((player['rating'] ?? '').toString()) ?? 0;
+      final position = (player['position'] ?? '').toString();
+      expect(id, isNotEmpty);
+      expect(name, isNotEmpty);
+      expect(playerIds.add(id), isTrue, reason: 'duplicate player id: $id');
+      expect(rating, inInclusiveRange(40, 99), reason: 'invalid rating: $name');
+      expect(position, isNotEmpty, reason: 'missing position: $name');
+      expect(source.startsWith('https://www.fut.gg/'), isTrue, reason: 'player missing verified source: $name');
+    }
+
     for (final key in ['evolutions', 'sbcs', 'objectives']) {
       final raw = map[key];
       expect(raw, isA<List>(), reason: '$key must be a list');
