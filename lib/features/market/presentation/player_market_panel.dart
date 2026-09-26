@@ -43,18 +43,20 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
     });
 
     try {
-      final results = await Future.wait([
-        market.getPlayerPrice(widget.playerId),
-        market.getPriceHistory(widget.playerId, range: range),
-        watchlist.contains(widget.playerId),
-      ]);
+      final livePrice = await market.getPlayerPrice(widget.playerId);
+      final isSaved = await watchlist.contains(widget.playerId);
+      List<PricePoint> realHistory = const [];
+      try {
+        realHistory = await market.getPriceHistory(widget.playerId, range: range);
+      } catch (_) {
+        // Current price remains useful even when the provider has no real history.
+      }
 
       if (!mounted) return;
-
       setState(() {
-        price = results[0] as PlayerPrice;
-        history = results[1] as List<PricePoint>;
-        saved = results[2] as bool;
+        price = livePrice;
+        history = realHistory;
+        saved = isSaved;
       });
     } catch (e) {
       if (!mounted) return;
@@ -73,11 +75,11 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
   String _coins(int value) {
     if (value >= 1000000) {
       final v = value / 1000000;
-      return v.toStringAsFixed(v >= 10 ? 0 : 1) + 'M';
+      return '${v.toStringAsFixed(v >= 10 ? 0 : 1)}M';
     }
     if (value >= 1000) {
       final v = value / 1000;
-      return v.toStringAsFixed(v >= 100 ? 0 : 1) + 'K';
+      return '${v.toStringAsFixed(v >= 100 ? 0 : 1)}K';
     }
     return value.toString();
   }
@@ -155,7 +157,7 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
       );
     }
 
-    if (error != null) {
+    if (error != null || price == null) {
       return Card(
         child: Padding(
           padding: const EdgeInsets.all(18),
@@ -171,7 +173,7 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
                 style: TextStyle(fontWeight: FontWeight.w800),
               ),
               const SizedBox(height: 6),
-              Text(error!, textAlign: TextAlign.center),
+              if (error != null) Text(error!, textAlign: TextAlign.center),
               const SizedBox(height: 10),
               OutlinedButton(
                 onPressed: _load,
@@ -184,7 +186,8 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
     }
 
     final current = price!;
-    final positive = current.change24hPercent >= 0;
+    final change = current.change24hPercent;
+    final positive = change != null && change >= 0;
 
     return Card(
       child: Padding(
@@ -228,7 +231,7 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
             ),
             const SizedBox(height: 10),
             Text(
-              _coins(current.current) + ' Coins',
+              '${_coins(current.current)} Coins',
               style: Theme.of(context)
                   .textTheme
                   .headlineSmall
@@ -243,17 +246,25 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
                 const SizedBox(width: 8),
                 _Metric(
                   label: '24h',
-                  value: (positive ? '+' : '') +
-                      current.change24hPercent.toStringAsFixed(1) +
-                      '%',
+                  value: change == null
+                      ? '—'
+                      : '${positive ? '+' : ''}${change.toStringAsFixed(1)}%',
                 ),
               ],
             ),
             const SizedBox(height: 14),
-            PriceHistoryChart(
-              points: history,
-              rangeLabel: range == '24h' ? '۲۴ ساعت' : '۷ روز',
-            ),
+            if (history.isEmpty)
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 18),
+                child: Center(
+                  child: Text('تاریخچه قیمت واقعی برای این کارت در دسترس نیست.'),
+                ),
+              )
+            else
+              PriceHistoryChart(
+                points: history,
+                rangeLabel: range == '24h' ? '۲۴ ساعت' : '۷ روز',
+              ),
             const SizedBox(height: 14),
             SizedBox(
               width: double.infinity,

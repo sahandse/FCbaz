@@ -14,13 +14,24 @@ class PlayerPrice {
   final int current;
   final int low;
   final int high;
-  final double change24hPercent;
+  final double? change24hPercent;
   final DateTime? updatedAt;
 
   factory PlayerPrice.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic value) => value is int ? value : int.tryParse(value?.toString() ?? '') ?? 0;
-    double asDouble(dynamic value) => value is num ? value.toDouble() : double.tryParse(value?.toString() ?? '') ?? 0;
+    double? asNullableDouble(dynamic value) {
+      if (value == null) return null;
+      if (value is num) return value.toDouble();
+      return double.tryParse(value.toString());
+    }
     DateTime? asDate(dynamic value) => value == null ? null : DateTime.tryParse(value.toString());
+
+    final source = (json['source'] ?? '').toString();
+    final rawChange = source == 'futbin-public'
+        ? null
+        : (json.containsKey('change_24h_percent')
+            ? json['change_24h_percent']
+            : json['change24h']);
 
     return PlayerPrice(
       playerId: (json['player_id'] ?? json['playerId'] ?? '').toString(),
@@ -28,7 +39,7 @@ class PlayerPrice {
       current: asInt(json['current'] ?? json['price']),
       low: asInt(json['low']),
       high: asInt(json['high']),
-      change24hPercent: asDouble(json['change_24h_percent'] ?? json['change24h']),
+      change24hPercent: asNullableDouble(rawChange),
       updatedAt: asDate(json['updated_at'] ?? json['updatedAt']),
     );
   }
