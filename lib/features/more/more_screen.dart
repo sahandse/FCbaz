@@ -11,6 +11,7 @@ import '../settings/app_settings_repository.dart';
 import '../settings/profile_screen.dart';
 import '../settings/settings_screen.dart';
 import 'consumables_screen.dart';
+import 'fc27_reference_screen.dart';
 
 class MoreScreen extends StatelessWidget {
   const MoreScreen({
@@ -88,6 +89,12 @@ class MoreScreen extends StatelessWidget {
               icon: Icons.leaderboard_rounded,
               onTap: () => _open(context, const MetaScreen()),
             ),
+            _ToolCard(
+              title: 'سبک‌ها و نقش‌ها',
+              subtitle: 'راهنمای فارسی PlayStyle و Roleهای FC27',
+              icon: Icons.schema_rounded,
+              onTap: () => _open(context, const Fc27ReferenceScreen()),
+            ),
           ],
         ),
         const SizedBox(height: 22),
@@ -119,11 +126,22 @@ class MoreScreen extends StatelessWidget {
         Text('راهنمای بازی', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 10),
         Card(
-          child: _MenuTile(
-            icon: Icons.auto_fix_high_rounded,
-            title: 'آیتم‌های مصرفی',
-            subtitle: 'سبک‌های شیمی و راهنمای آیتم‌های مصرفی',
-            onTap: () => _open(context, const ConsumablesScreen()),
+          child: Column(
+            children: [
+              _MenuTile(
+                icon: Icons.auto_fix_high_rounded,
+                title: 'آیتم‌های مصرفی',
+                subtitle: 'سبک‌های شیمی و راهنمای آیتم‌های مصرفی',
+                onTap: () => _open(context, const ConsumablesScreen()),
+              ),
+              const Divider(),
+              _MenuTile(
+                icon: Icons.schema_rounded,
+                title: 'سبک‌ها و نقش‌ها',
+                subtitle: 'راهنمای فارسی ساختار جدید FC27',
+                onTap: () => _open(context, const Fc27ReferenceScreen()),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 14),
