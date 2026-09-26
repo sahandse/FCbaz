@@ -22,24 +22,19 @@ void main() {
     expect(source, isNot(contains('اضافه‌شدن Login')));
   });
 
-  test('player details uses Persian presentation labels', () {
+  test('player details keeps Persian UX around FC-style modules', () {
     final source = File(
       'lib/features/players/presentation/player_details_screen.dart',
     ).readAsStringSync();
 
-    expect(source, contains("title: 'آمار اصلی'"));
-    expect(source, contains("title: 'آمار درون بازی'"));
-    expect(source, contains("title: 'پیشنهاد سبک شیمی'"));
-    expect(source, contains("'حرکات مهارتی'"));
-    expect(source, contains("'پای ضعیف'"));
-    expect(source, contains("'نرخ فعالیت'"));
-
-    expect(source, isNot(contains("title: 'Face Stats'")));
-    expect(source, isNot(contains("title: 'In‑Game Stats'")));
-    expect(source, isNot(contains("title: 'Chemistry Style Advisor'")));
-    expect(source, isNot(contains("('Skill Moves'")));
-    expect(source, isNot(contains("('Weak Foot'")));
-    expect(source, isNot(contains("('Work Rates'")));
+    expect(source, contains('PlayerItemVisual'));
+    expect(source, contains("const _SectionLabel('FACE STATS')"));
+    expect(source, contains("const _SectionLabel('CHEMISTRY STYLE')"));
+    expect(source, contains("'مقایسه'"));
+    expect(source, contains("'یادداشت شخصی'"));
+    expect(source, contains("'هنوز نظری ثبت نشده'"));
+    expect(source, contains("('SKILLS'"));
+    expect(source, contains("('WEAK FOOT'"));
   });
 
   test('search discovery and price labels stay Persian', () {
