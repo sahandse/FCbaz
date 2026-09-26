@@ -5,8 +5,10 @@ import '../players/data/player_repository.dart';
 import '../players/presentation/player_details_screen.dart';
 import 'app_navigation_repository.dart';
 import '../more/more_screen.dart';
+import '../notifications/deadline_alert_service.dart';
 import '../notifications/notification_center_screen.dart';
 import '../notifications/notification_repository.dart';
+import '../notifications/price_alert_service.dart';
 import '../players/players_screen.dart';
 import '../search/search_screen.dart';
 import '../settings/app_settings_repository.dart';
@@ -28,18 +30,21 @@ class MainShell extends StatefulWidget {
 
 class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   final notificationRepository = NotificationRepository();
+  final priceAlertService = PriceAlertService();
+  final deadlineAlertService = DeadlineAlertService();
   final navigationRepository = AppNavigationRepository();
   final playerRepository = PlayerRepository();
 
   int index = 0;
   int unread = 0;
+  bool checkingLocalAlerts = false;
 
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _initializeNavigation();
-    _refreshUnread();
+    _refreshLocalAlerts();
   }
 
   @override
@@ -51,8 +56,24 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
-    _refreshUnread();
+    _refreshLocalAlerts();
     _openPendingPlayer();
+  }
+
+  Future<void> _refreshLocalAlerts() async {
+    if (checkingLocalAlerts) return;
+    checkingLocalAlerts = true;
+    try {
+      await Future.wait([
+        priceAlertService.checkNow(),
+        deadlineAlertService.checkNow(),
+      ]);
+    } catch (_) {
+      // Live alert checks are best-effort and never block app usage.
+    } finally {
+      checkingLocalAlerts = false;
+    }
+    await _refreshUnread();
   }
 
   Future<void> _initializeNavigation() async {
