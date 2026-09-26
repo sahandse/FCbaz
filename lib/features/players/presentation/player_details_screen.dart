@@ -74,7 +74,7 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
                 controller: controller,
                 maxLines: 4,
                 decoration: const InputDecoration(
-                  labelText: 'یادداشت یا Review شخصی',
+                  labelText: 'یادداشت یا بررسی شخصی',
                 ),
               ),
             ],
@@ -203,7 +203,7 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
             ],
             const SizedBox(height: 16),
             _SectionHeader(
-              title: 'Face Stats',
+              title: 'آمار اصلی',
               trailing: TextButton.icon(
                 onPressed: _openCompare,
                 icon: const Icon(Icons.compare_arrows_rounded, size: 18),
@@ -234,13 +234,13 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
             if (player.playStylesPlus.isNotEmpty ||
                 player.playStyles.isNotEmpty) ...[
               const SizedBox(height: 18),
-              const _SectionHeader(title: 'PlayStyles'),
+              const _SectionHeader(title: 'سبک‌های بازی (PlayStyles)'),
               const SizedBox(height: 10),
               _PlayStylesSection(player: player),
             ],
             if (player.roles.isNotEmpty) ...[
               const SizedBox(height: 18),
-              const _SectionHeader(title: 'Roles'),
+              const _SectionHeader(title: 'نقش‌ها (Roles)'),
               const SizedBox(height: 10),
               _ChipSection(
                 items: player.roles,
@@ -249,19 +249,19 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
             ],
             if (player.inGameStats.isNotEmpty) ...[
               const SizedBox(height: 18),
-              const _SectionHeader(title: 'In‑Game Stats'),
+              const _SectionHeader(title: 'آمار درون بازی'),
               const SizedBox(height: 10),
               _InGameStats(stats: player.inGameStats),
             ],
             const SizedBox(height: 18),
-            const _SectionHeader(title: 'Chemistry Style Advisor'),
+            const _SectionHeader(title: 'پیشنهاد سبک شیمی'),
             const SizedBox(height: 10),
             _ChemistryStyleSection(
               suggestions: chemistryAdvisor.suggest(player),
             ),
             const SizedBox(height: 18),
             _SectionHeader(
-              title: 'امتیاز و Review من',
+              title: 'امتیاز و بررسی شخصی من',
               trailing: TextButton.icon(
                 onPressed: _editReview,
                 icon: const Icon(Icons.edit_note_rounded, size: 18),
@@ -297,7 +297,6 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
   }
 }
 
-
 class _ChemistryStyleSection extends StatelessWidget {
   const _ChemistryStyleSection({required this.suggestions});
 
@@ -312,7 +311,7 @@ class _ChemistryStyleSection extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'پیشنهاد تحلیلی FCBaz بر اساس Position و Stat واقعی کارت',
+              'پیشنهاد تحلیلی FCBaz بر اساس پست و آمار واقعی کارت',
               style: TextStyle(
                 color: Theme.of(context).colorScheme.onSurfaceVariant,
                 fontSize: 11,
@@ -526,11 +525,11 @@ class _IdentityCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final rows = <(String, String)>[
-      ('Skill Moves', player.skillMoves > 0 ? player.skillMoves.toString() + '★' : '—'),
-      ('Weak Foot', player.weakFoot > 0 ? player.weakFoot.toString() + '★' : '—'),
+      ('حرکات مهارتی', player.skillMoves > 0 ? player.skillMoves.toString() + '★' : '—'),
+      ('پای ضعیف', player.weakFoot > 0 ? player.weakFoot.toString() + '★' : '—'),
       if (player.foot.isNotEmpty) ('پا', player.foot),
       if (player.height.isNotEmpty) ('قد', player.height),
-      if (player.workRates.isNotEmpty) ('Work Rates', player.workRates),
+      if (player.workRates.isNotEmpty) ('نرخ فعالیت', player.workRates),
       if (player.positions.isNotEmpty)
         ('پست‌های جایگزین', player.positions.join('، ')),
     ];
