@@ -65,7 +65,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           autofocus: true,
           maxLength: 32,
           decoration: const InputDecoration(
-            hintText: 'مثلاً Sahand',
+            hintText: 'مثلاً سهند',
           ),
         ),
         actions: [
@@ -102,7 +102,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final name = displayName.isEmpty ? 'کاربر FCBaz' : displayName;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('پروفایل')),
+      appBar: AppBar(title: const Text('پروفایل محلی')),
       body: RefreshIndicator(
         onRefresh: _load,
         child: ListView(
@@ -134,7 +134,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            'پروفایل محلی • اطلاعات روی همین دستگاه',
+                            'بدون ثبت‌نام • اطلاعات فقط روی همین دستگاه',
                             style: TextStyle(
                               color: Theme.of(context)
                                   .colorScheme
@@ -162,22 +162,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
               childAspectRatio: 1.7,
               children: [
                 _ProfileMetric(
-                  label: 'Favorites',
+                  label: 'علاقه‌مندی‌ها',
                   value: favorites,
                   icon: Icons.favorite_rounded,
                 ),
                 _ProfileMetric(
-                  label: 'My Club',
+                  label: 'باشگاه من',
                   value: clubPlayers,
                   icon: Icons.inventory_2_rounded,
                 ),
                 _ProfileMetric(
-                  label: 'Squads',
+                  label: 'ترکیب‌ها',
                   value: squads,
                   icon: Icons.stadium_rounded,
                 ),
                 _ProfileMetric(
-                  label: 'Watchlist',
+                  label: 'واچ‌لیست',
                   value: watchlist,
                   icon: Icons.visibility_rounded,
                 ),
@@ -186,10 +186,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
             const SizedBox(height: 16),
             const Card(
               child: ListTile(
-                leading: Icon(Icons.cloud_off_rounded),
-                title: Text('اکانت آنلاین هنوز فعال نیست'),
+                leading: Icon(Icons.phonelink_lock_rounded),
+                title: Text('FCBaz حساب کاربری ندارد'),
                 subtitle: Text(
-                  'این صفحه عمداً پروفایل محلی است تا تا قبل از اضافه‌شدن Login/Backend حساب کاربری، اطلاعات جعلی نمایش داده نشود.',
+                  'نام نمایشی، باشگاه من، ترکیب‌ها، واچ‌لیست و پیشرفت‌ها به‌صورت محلی روی دستگاه ذخیره می‌شوند و برای استفاده از برنامه نیازی به ورود یا ثبت‌نام نیست.',
                 ),
               ),
             ),
