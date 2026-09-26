@@ -48,7 +48,8 @@ jobs:
             const source = String(p.source_url || '');
             if (!source.startsWith('https://www.fut.gg/') &&
                 !source.startsWith('https://www.futbin.org/') &&
-                !source.startsWith('https://www.ea.com/')) {
+                !source.startsWith('https://www.ea.com/') &&
+                !source.startsWith('https://drop-api.ea.com/')) {
               throw new Error(`player without trusted source: ${p.name}`);
             }
           }
