@@ -2,11 +2,15 @@ import 'dart:convert';
 import 'dart:io';
 
 import '../../features/players/domain/player.dart';
+import 'live_fc27_catalog.dart';
 
 class PublicFcData {
-  PublicFcData({HttpClient? client}) : _client = client ?? HttpClient();
+  PublicFcData({HttpClient? client, LiveFc27Catalog? liveCatalog})
+      : _client = client ?? HttpClient(),
+        _liveCatalog = liveCatalog ?? LiveFc27Catalog();
 
   final HttpClient _client;
+  final LiveFc27Catalog _liveCatalog;
 
   static const _futbinBase = 'https://www.futbin.org/futbin/api/';
   static final Map<String, _PublicCacheEntry> _cache = {};
@@ -25,15 +29,16 @@ class PublicFcData {
       );
       final data = json is Map ? json['data'] : null;
       if (data is List) {
-        return data
+        final players = data
             .whereType<Map>()
             .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
             .where((e) => e.id.isNotEmpty && e.name.isNotEmpty)
             .toList();
+        if (players.isNotEmpty) return players;
       }
     } catch (_) {}
 
-    return const [];
+    return _livePlayers();
   }
 
   Future<List<Player>> search(
@@ -69,7 +74,17 @@ class PublicFcData {
       }
     } catch (_) {}
 
-    return found;
+    if (found.isNotEmpty) return found;
+
+    final live = await _livePlayers();
+    return live
+        .where((p) =>
+            p.name.toLowerCase().contains(q) ||
+            p.clubName.toLowerCase().contains(q) ||
+            p.leagueName.toLowerCase().contains(q) ||
+            p.nationName.toLowerCase().contains(q))
+        .take(50)
+        .toList();
   }
 
   Future<Player?> getPlayer(
@@ -102,6 +117,10 @@ class PublicFcData {
       }
     } catch (_) {}
 
+    final live = await _livePlayers();
+    for (final player in live) {
+      if (player.id == id) return player;
+    }
     return null;
   }
 
@@ -125,6 +144,8 @@ class PublicFcData {
       }
     } catch (_) {}
 
+    final live = await _livePlayers();
+    if (live.isNotEmpty) return live.take(20).toList();
     return getPlayers(platform: platform);
   }
 
@@ -193,11 +214,38 @@ class PublicFcData {
 
         players = _textFilter(players, params);
         _sort(players, params['sort'] ?? 'rating_desc', params['platform']);
-        return players;
+        if (players.isNotEmpty) return players;
       }
     } catch (_) {}
 
-    return const [];
+    var players = await _livePlayers();
+    final q = (params['q'] ?? '').trim().toLowerCase();
+    if (q.isNotEmpty) {
+      players = players
+          .where((e) =>
+              e.name.toLowerCase().contains(q) ||
+              e.clubName.toLowerCase().contains(q) ||
+              e.leagueName.toLowerCase().contains(q) ||
+              e.nationName.toLowerCase().contains(q))
+          .toList();
+    }
+    players = _textFilter(players, params);
+    _sort(players, params['sort'] ?? 'rating_desc', params['platform']);
+    return players;
+  }
+
+  Future<List<Player>> _livePlayers() async {
+    try {
+      final raw = await _liveCatalog.list('players');
+      final players = raw
+          .map(Player.fromJson)
+          .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
+          .toList();
+      players.sort((a, b) => b.rating.compareTo(a.rating));
+      return players;
+    } catch (_) {
+      return const [];
+    }
   }
 
   Future<Map<String, dynamic>?> getPrice(
@@ -258,7 +306,7 @@ class PublicFcData {
     request.headers.set(HttpHeaders.acceptHeader, 'application/json');
     request.headers.set(
       HttpHeaders.userAgentHeader,
-      'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 FCBaz/1.2',
+      'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 FCBaz/1.2.1',
     );
     request.headers.set('Referer', 'https://www.futbin.com/');
     request.headers.set('Origin', 'https://www.futbin.com');
