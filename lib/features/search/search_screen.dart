@@ -356,7 +356,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
                 const Spacer(),
                 Text(
-                  filter.platform == 'pc' ? 'PC Price' : 'Console Price',
+                  filter.platform == 'pc' ? 'قیمت رایانه' : 'قیمت کنسول',
                   style: Theme.of(context).textTheme.labelMedium,
                 ),
               ],
@@ -414,7 +414,10 @@ class _DiscoveryContent extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (trending.isNotEmpty) ...[
-          _Header(title: 'Trending Players', subtitle: 'بر اساس داده زنده بازار'),
+          const _Header(
+            title: 'بازیکنان ترند',
+            subtitle: 'بر اساس داده زنده بازار',
+          ),
           const SizedBox(height: 10),
           SizedBox(
             height: 124,
@@ -464,8 +467,8 @@ class _DiscoveryContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
-          _Header(
-            title: 'Popular Searches',
+          const _Header(
+            title: 'جستجوهای محبوب',
             subtitle: 'نام‌های پرتکرار در ترند زنده بازار',
           ),
           const SizedBox(height: 8),
@@ -547,7 +550,7 @@ class _DiscoveryContent extends StatelessWidget {
               const Expanded(
                 child: _Header(
                   title: 'علاقه‌مندی‌ها',
-                  subtitle: 'کارت‌های Favorite شده',
+                  subtitle: 'کارت‌های ذخیره‌شده روی دستگاه',
                 ),
               ),
               IconButton(
@@ -570,7 +573,7 @@ class _DiscoveryContent extends StatelessWidget {
             icon: Icons.manage_search_rounded,
             title: 'جستجوی پیشرفته FC27',
             subtitle:
-                'حداقل دو حرف وارد کن یا از فیلترهای PlayStyles، Roles، SM/WF و Stat Range استفاده کن.',
+                'حداقل دو حرف وارد کن یا از فیلترهای PlayStyles، Roles، حرکات مهارتی، پای ضعیف و بازه آمار استفاده کن.',
           ),
       ],
     );
