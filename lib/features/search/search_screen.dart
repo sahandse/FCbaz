@@ -6,8 +6,8 @@ import '../players/data/player_repository.dart';
 import '../players/domain/player.dart';
 import '../players/presentation/advanced_player_filter_sheet.dart';
 import '../players/presentation/player_card.dart';
-import 'search_history_repository.dart';
 import '../settings/app_settings_repository.dart';
+import 'search_history_repository.dart';
 
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
@@ -28,10 +28,8 @@ class _SearchScreenState extends State<SearchScreen> {
   List<Player> favorites = const [];
   List<String> recent = const [];
   List<SavedPlayerFilter> savedFilters = const [];
-
   PlayerFilter filter = const PlayerFilter();
   PlayerFacets facets = const PlayerFacets();
-
   bool loading = false;
   bool loadingDiscovery = true;
   String? error;
@@ -45,9 +43,7 @@ class _SearchScreenState extends State<SearchScreen> {
   Future<void> _initialize() async {
     final settings = await settingsRepository.load();
     if (!mounted) return;
-    setState(() {
-      filter = filter.copyWith(platform: settings.defaultPlatform);
-    });
+    setState(() => filter = filter.copyWith(platform: settings.defaultPlatform));
     await _loadDiscovery();
   }
 
@@ -60,22 +56,18 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _loadDiscovery() async {
     setState(() => loadingDiscovery = true);
-
     final recentFuture = historyRepository.recentSearches();
     final savedFuture = historyRepository.savedFilters();
     final favoriteFuture = historyRepository.favorites();
-
     List<Player> trend = const [];
     try {
       trend = await repository.getTrendingPlayers();
     } catch (_) {
       trend = const [];
     }
-
     final recentData = await recentFuture;
     final savedData = await savedFuture;
     final favoriteData = await favoriteFuture;
-
     if (!mounted) return;
     setState(() {
       trending = trend;
@@ -89,11 +81,7 @@ class _SearchScreenState extends State<SearchScreen> {
   void _onChanged(String value) {
     debounce?.cancel();
     final query = value.trim();
-
-    setState(() {
-      filter = filter.copyWith(query: query);
-    });
-
+    setState(() => filter = filter.copyWith(query: query));
     if (query.length < 2) {
       setState(() {
         results = const [];
@@ -102,35 +90,25 @@ class _SearchScreenState extends State<SearchScreen> {
       });
       return;
     }
-
-    debounce = Timer(
-      const Duration(milliseconds: 350),
-      () => _search(),
-    );
+    debounce = Timer(const Duration(milliseconds: 300), _search);
   }
 
   Future<void> _search() async {
     final queryAtStart = filter.query.trim();
     if (queryAtStart.length < 2) return;
-
     setState(() {
       loading = true;
       error = null;
     });
-
     try {
       final data = await repository.advanced(filter);
       if (!mounted || filter.query.trim() != queryAtStart) return;
-
       await historyRepository.addRecentSearch(queryAtStart);
-
+      recent = await historyRepository.recentSearches();
       setState(() {
         results = data.players;
         facets = data.facets;
       });
-
-      recent = await historyRepository.recentSearches();
-      if (mounted) setState(() {});
     } catch (e) {
       if (!mounted) return;
       setState(() {
@@ -147,32 +125,18 @@ class _SearchScreenState extends State<SearchScreen> {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (_) => AdvancedPlayerFilterSheet(
-        current: filter,
-        facets: facets,
-      ),
+      builder: (_) => AdvancedPlayerFilterSheet(current: filter, facets: facets),
     );
-
     if (result == null) return;
-
-    setState(() {
-      filter = result.copyWith(query: controller.text.trim());
-    });
-
-    if (controller.text.trim().length >= 2) {
-      await _search();
-    }
+    setState(() => filter = result.copyWith(query: controller.text.trim()));
+    if (controller.text.trim().length >= 2) await _search();
   }
 
   Future<void> _saveCurrentFilter() async {
     if (filter.activeCount == 0 && filter.query.trim().isEmpty) return;
-
     final nameController = TextEditingController(
-      text: filter.query.trim().isEmpty
-          ? 'فیلتر FC27'
-          : 'جستجوی ' + filter.query.trim(),
+      text: filter.query.trim().isEmpty ? 'فیلتر FC27' : 'جستجوی ${filter.query.trim()}',
     );
-
     final name = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
@@ -183,24 +147,16 @@ class _SearchScreenState extends State<SearchScreen> {
           decoration: const InputDecoration(labelText: 'نام فیلتر'),
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('انصراف'),
-          ),
+          TextButton(onPressed: () => Navigator.pop(context), child: const Text('انصراف')),
           FilledButton(
-            onPressed: () => Navigator.pop(
-              context,
-              nameController.text.trim(),
-            ),
+            onPressed: () => Navigator.pop(context, nameController.text.trim()),
             child: const Text('ذخیره'),
           ),
         ],
       ),
     );
-
     nameController.dispose();
     if (name == null || name.isEmpty) return;
-
     await historyRepository.saveFilter(name, filter);
     savedFilters = await historyRepository.savedFilters();
     if (mounted) setState(() {});
@@ -210,7 +166,6 @@ class _SearchScreenState extends State<SearchScreen> {
     final savedQuery = saved.filter.query.trim();
     controller.text = savedQuery;
     setState(() => filter = saved.filter);
-
     if (savedQuery.length >= 2) {
       await _search();
     } else {
@@ -251,62 +206,83 @@ class _SearchScreenState extends State<SearchScreen> {
   Widget build(BuildContext context) {
     final query = controller.text.trim();
     final showingDiscovery = query.length < 2 && results.isEmpty;
+    final scheme = Theme.of(context).colorScheme;
 
     return RefreshIndicator(
       onRefresh: _loadDiscovery,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
+        cacheExtent: 900,
+        padding: const EdgeInsets.fromLTRB(14, 10, 14, 32),
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'جستجوی بازیکن',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-              IconButton.filledTonal(
-                onPressed: _saveCurrentFilter,
-                icon: const Icon(Icons.bookmark_add_outlined),
-                tooltip: 'ذخیره جستجو/فیلتر',
-              ),
-              const SizedBox(width: 6),
-              Badge(
-                isLabelVisible: filter.activeCount > 0,
-                label: Text(filter.activeCount.toString()),
-                child: IconButton.filledTonal(
-                  onPressed: _openFilters,
-                  icon: const Icon(Icons.tune_rounded),
-                  tooltip: 'فیلتر پیشرفته',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: controller,
-            onChanged: _onChanged,
-            textInputAction: TextInputAction.search,
-            onSubmitted: (_) => _search(),
-            decoration: InputDecoration(
-              hintText: 'نام بازیکن...',
-              prefixIcon: const Icon(Icons.search_rounded),
-              suffixIcon: query.isEmpty
-                  ? null
-                  : IconButton(
-                      onPressed: _clear,
-                      icon: const Icon(Icons.close_rounded),
+          Container(
+            padding: const EdgeInsets.fromLTRB(14, 14, 10, 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14),
+              color: const Color(0xFF090E0A),
+              border: Border.all(color: scheme.primary.withValues(alpha: .22)),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'PLAYER SEARCH',
+                            textDirection: TextDirection.ltr,
+                            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                  fontWeight: FontWeight.w900,
+                                  letterSpacing: -1,
+                                ),
+                          ),
+                          Text(
+                            'جستجوی سریع در کالکشن FC27',
+                            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11),
+                          ),
+                        ],
+                      ),
                     ),
+                    IconButton.filledTonal(
+                      onPressed: _saveCurrentFilter,
+                      icon: const Icon(Icons.bookmark_add_outlined),
+                      tooltip: 'ذخیره جستجو/فیلتر',
+                    ),
+                    const SizedBox(width: 5),
+                    Badge(
+                      isLabelVisible: filter.activeCount > 0,
+                      label: Text(filter.activeCount.toString()),
+                      child: IconButton.filled(
+                        onPressed: _openFilters,
+                        icon: const Icon(Icons.tune_rounded),
+                        tooltip: 'فیلتر پیشرفته',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
+                TextField(
+                  controller: controller,
+                  onChanged: _onChanged,
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (_) => _search(),
+                  decoration: InputDecoration(
+                    hintText: 'نام بازیکن، باشگاه، لیگ...',
+                    prefixIcon: const Icon(Icons.search_rounded),
+                    suffixIcon: query.isEmpty
+                        ? null
+                        : IconButton(onPressed: _clear, icon: const Icon(Icons.close_rounded)),
+                  ),
+                ),
+              ],
             ),
           ),
           if (filter.activeCount > 0) ...[
-            const SizedBox(height: 10),
+            const SizedBox(height: 9),
             Text(
-              filter.activeCount.toString() + ' فیلتر فعال',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.primary,
-                fontWeight: FontWeight.w800,
-              ),
+              '${filter.activeCount} فیلتر فعال',
+              style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w900),
             ),
           ],
           const SizedBox(height: 16),
@@ -336,11 +312,7 @@ class _SearchScreenState extends State<SearchScreen> {
               child: Center(child: CircularProgressIndicator()),
             )
           else if (error != null)
-            _SearchMessage(
-              icon: Icons.cloud_off_rounded,
-              title: 'جستجو در دسترس نیست',
-              subtitle: error!,
-            )
+            _SearchMessage(icon: Icons.cloud_off_rounded, title: 'جستجو در دسترس نیست', subtitle: error!)
           else if (results.isEmpty)
             const _SearchMessage(
               icon: Icons.search_off_rounded,
@@ -350,10 +322,7 @@ class _SearchScreenState extends State<SearchScreen> {
           else ...[
             Row(
               children: [
-                Text(
-                  results.length.toString() + ' نتیجه',
-                  style: const TextStyle(fontWeight: FontWeight.w900),
-                ),
+                Text('${results.length} نتیجه', style: const TextStyle(fontWeight: FontWeight.w900)),
                 const Spacer(),
                 Text(
                   filter.platform == 'pc' ? 'قیمت رایانه' : 'قیمت کنسول',
@@ -362,15 +331,34 @@ class _SearchScreenState extends State<SearchScreen> {
               ],
             ),
             const SizedBox(height: 10),
-            for (final player in results) ...[
-              PlayerCard(
-                player: player,
-                pricePlatform: filter.platform,
-              ),
-              const SizedBox(height: 8),
-            ],
+            _PlayerGrid(players: results, platform: filter.platform),
           ],
         ],
+      ),
+    );
+  }
+}
+
+class _PlayerGrid extends StatelessWidget {
+  const _PlayerGrid({required this.players, this.platform = 'console'});
+  final List<Player> players;
+  final String platform;
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        mainAxisSpacing: 14,
+        crossAxisSpacing: 10,
+        childAspectRatio: .72,
+      ),
+      itemCount: players.length,
+      itemBuilder: (context, index) => PlayerCard(
+        player: players[index],
+        pricePlatform: platform,
       ),
     );
   }
@@ -409,52 +397,51 @@ class _DiscoveryContent extends StatelessWidget {
         child: Center(child: CircularProgressIndicator()),
       );
     }
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (trending.isNotEmpty) ...[
-          const _Header(
-            title: 'بازیکنان ترند',
-            subtitle: 'بر اساس داده زنده بازار',
-          ),
+          const _Header(title: 'بازیکنان ترند', subtitle: 'بر اساس داده زنده بازار'),
           const SizedBox(height: 10),
           SizedBox(
-            height: 124,
+            height: 132,
             child: ListView.separated(
               scrollDirection: Axis.horizontal,
               itemCount: trending.length,
-              separatorBuilder: (_, __) => const SizedBox(width: 8),
+              separatorBuilder: (_, __) => const SizedBox(width: 9),
               itemBuilder: (_, index) {
                 final p = trending[index];
                 return SizedBox(
-                  width: 116,
-                  child: Card(
+                  width: 124,
+                  child: Material(
+                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(14),
                     clipBehavior: Clip.antiAlias,
                     child: InkWell(
                       onTap: () => onSearchText(p.name),
                       child: Padding(
-                        padding: const EdgeInsets.all(10),
+                        padding: const EdgeInsets.all(9),
                         child: Column(
                           children: [
-                            CircleAvatar(
-                              radius: 26,
-                              backgroundImage: p.imageUrl.isEmpty
-                                  ? null
-                                  : NetworkImage(p.imageUrl),
+                            Expanded(
                               child: p.imageUrl.isEmpty
-                                  ? Text(p.rating.toString())
-                                  : null,
+                                  ? const Icon(Icons.person_rounded, size: 52)
+                                  : Image.network(
+                                      p.imageUrl,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (_, __, ___) => const Icon(Icons.person_rounded, size: 52),
+                                    ),
                             ),
-                            const SizedBox(height: 6),
                             Text(
                               p.name,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(fontWeight: FontWeight.w900),
+                              textDirection: TextDirection.ltr,
+                              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11),
                             ),
                             Text(
-                              p.rating.toString() + ' • ' + p.position,
+                              '${p.rating} • ${p.position}',
+                              textDirection: TextDirection.ltr,
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                           ],
@@ -467,10 +454,7 @@ class _DiscoveryContent extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 18),
-          const _Header(
-            title: 'جستجوهای محبوب',
-            subtitle: 'نام‌های پرتکرار در ترند زنده بازار',
-          ),
+          const _Header(title: 'جستجوهای محبوب', subtitle: 'نام‌های پرتکرار در ترند زنده بازار'),
           const SizedBox(height: 8),
           Wrap(
             spacing: 7,
@@ -489,16 +473,8 @@ class _DiscoveryContent extends StatelessWidget {
         if (recent.isNotEmpty) ...[
           Row(
             children: [
-              const Expanded(
-                child: _Header(
-                  title: 'جستجوهای اخیر',
-                  subtitle: 'فقط روی همین گوشی',
-                ),
-              ),
-              TextButton(
-                onPressed: onClearRecent,
-                child: const Text('پاک کردن'),
-              ),
+              const Expanded(child: _Header(title: 'جستجوهای اخیر', subtitle: 'فقط روی همین گوشی')),
+              TextButton(onPressed: onClearRecent, child: const Text('پاک کردن')),
             ],
           ),
           const SizedBox(height: 8),
@@ -517,23 +493,15 @@ class _DiscoveryContent extends StatelessWidget {
           const SizedBox(height: 20),
         ],
         if (savedFilters.isNotEmpty) ...[
-          const _Header(
-            title: 'فیلترهای ذخیره‌شده',
-            subtitle: 'با یک لمس دوباره اجرا کن',
-          ),
+          const _Header(title: 'فیلترهای ذخیره‌شده', subtitle: 'با یک لمس دوباره اجرا کن'),
           const SizedBox(height: 8),
           for (final saved in savedFilters.take(8)) ...[
             Card(
               child: ListTile(
                 onTap: () => onApplySaved(saved),
                 leading: const Icon(Icons.bookmark_rounded),
-                title: Text(
-                  saved.name,
-                  style: const TextStyle(fontWeight: FontWeight.w800),
-                ),
-                subtitle: Text(
-                  saved.filter.activeCount.toString() + ' فیلتر فعال',
-                ),
+                title: Text(saved.name, style: const TextStyle(fontWeight: FontWeight.w800)),
+                subtitle: Text('${saved.filter.activeCount} فیلتر فعال'),
                 trailing: IconButton(
                   onPressed: () => onDeleteSaved(saved.id),
                   icon: const Icon(Icons.delete_outline_rounded),
@@ -547,33 +515,18 @@ class _DiscoveryContent extends StatelessWidget {
         if (favorites.isNotEmpty) ...[
           Row(
             children: [
-              const Expanded(
-                child: _Header(
-                  title: 'علاقه‌مندی‌ها',
-                  subtitle: 'کارت‌های ذخیره‌شده روی دستگاه',
-                ),
-              ),
-              IconButton(
-                onPressed: onRefreshFavorites,
-                icon: const Icon(Icons.refresh_rounded),
-              ),
+              const Expanded(child: _Header(title: 'علاقه‌مندی‌ها', subtitle: 'کارت‌های ذخیره‌شده روی دستگاه')),
+              IconButton(onPressed: onRefreshFavorites, icon: const Icon(Icons.refresh_rounded)),
             ],
           ),
-          const SizedBox(height: 8),
-          for (final player in favorites.take(8)) ...[
-            PlayerCard(player: player),
-            const SizedBox(height: 8),
-          ],
+          const SizedBox(height: 9),
+          _PlayerGrid(players: favorites.take(8).toList()),
         ],
-        if (trending.isEmpty &&
-            recent.isEmpty &&
-            savedFilters.isEmpty &&
-            favorites.isEmpty)
+        if (trending.isEmpty && recent.isEmpty && savedFilters.isEmpty && favorites.isEmpty)
           const _SearchMessage(
             icon: Icons.manage_search_rounded,
             title: 'جستجوی پیشرفته FC27',
-            subtitle:
-                'حداقل دو حرف وارد کن یا از فیلترهای PlayStyles، Roles، حرکات مهارتی، پای ضعیف و بازه آمار استفاده کن.',
+            subtitle: 'حداقل دو حرف وارد کن یا از فیلترهای PlayStyles، Roles، حرکات مهارتی، پای ضعیف و بازه آمار استفاده کن.',
           ),
       ],
     );
@@ -581,66 +534,43 @@ class _DiscoveryContent extends StatelessWidget {
 }
 
 class _Header extends StatelessWidget {
-  const _Header({
-    required this.title,
-    required this.subtitle,
-  });
-
+  const _Header({required this.title, required this.subtitle});
   final String title;
   final String subtitle;
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(title, style: Theme.of(context).textTheme.titleLarge),
-        const SizedBox(height: 2),
-        Text(
-          subtitle,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 11,
+  Widget build(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(title, style: Theme.of(context).textTheme.titleLarge),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 11),
           ),
-        ),
-      ],
-    );
-  }
+        ],
+      );
 }
 
 class _SearchMessage extends StatelessWidget {
-  const _SearchMessage({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
-
+  const _SearchMessage({required this.icon, required this.title, required this.subtitle});
   final IconData icon;
   final String title;
   final String subtitle;
 
   @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(28),
-        child: Column(
-          children: [
-            Icon(
-              icon,
-              size: 44,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.w900),
-            ),
-            const SizedBox(height: 6),
-            Text(subtitle, textAlign: TextAlign.center),
-          ],
+  Widget build(BuildContext context) => Card(
+        child: Padding(
+          padding: const EdgeInsets.all(28),
+          child: Column(
+            children: [
+              Icon(icon, size: 44, color: Theme.of(context).colorScheme.primary),
+              const SizedBox(height: 12),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
+              const SizedBox(height: 6),
+              Text(subtitle, textAlign: TextAlign.center),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
