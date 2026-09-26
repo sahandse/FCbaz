@@ -1,11 +1,32 @@
-# FCBaz 1.5 UI direction
+# FCBaz 1.5 — FC27-inspired UI system
 
-- Inspired by EA SPORTS FC 27 Ultimate Team presentation, not a pixel-for-pixel copy.
-- Dark stadium/club backdrop, acid-lime accent, warm gold for Gold cards, ivory for Icons, deep violet/red for Heroes and promos.
-- Player-first surfaces: item card is the primary visual object.
-- Compact Persian RTL chrome; player names stay original.
-- No decorative element may hide missing/unknown data.
-- Price chips show Console/PC only when positive real values exist; otherwise use `—`.
-- Special-card families: Gold, Silver, Bronze, Icon, Hero, TOTW, Hall of FUT, Destined for Glory, Squad Foundations, Holographic/Pristine and fallback Promo.
-- Rounded geometry is reduced in favor of clipped/angular card silhouettes and thin luminous borders.
-- Navigation uses a floating dark dock with strong selected state.
+This release moves the app from a generic Material companion look to a distinct FC27-inspired football item experience while keeping FCBaz original.
+
+## Visual language
+- Near-black club/stadium surfaces with acid-lime primary accent.
+- Reduced rounded-corner usage; more angular item silhouettes and compact controls.
+- Player items are the primary visual object, not generic list cards.
+- Persian RTL chrome; player names and game terminology remain original where appropriate.
+
+## Player items
+- Large portrait area.
+- OVR + position at the top.
+- Club/nation line.
+- PAC / SHO / PAS / DRI / DEF / PHY.
+- Separate Console and PC prices; zero/missing value renders as `—`.
+- Rarity-driven themes: Gold, Silver, Bronze, ICON, Hero, TOTW, Hall of FUT, Holographic/Pristine and generic Promo fallback.
+
+## Collection
+- Two-column FUT Collection grid.
+- Fast rarity filters for Gold / ICON / Hero / TOTW / Hall / Holo / Silver / Bronze.
+- Advanced filters remain available.
+- Verified FC27 catalog status is visible without pretending unavailable price data exists.
+
+## Market data
+- Backend provider first when configured.
+- Public FUTBIN price endpoint next.
+- EA resource-ID lookup uses the public `fetchPriceInformation` route where available.
+- No generated prices and no `0` presented as a real market value.
+- FUT.GG is used as a public FC27 player/rarity/discovery reference and for live snapshot enrichment.
+
+This is an inspired product language, not a pixel-for-pixel copy of EA assets or screens.
