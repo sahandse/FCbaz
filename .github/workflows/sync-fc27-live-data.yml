@@ -1,0 +1,68 @@
+name: Sync FC27 Live Data
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '17 */6 * * *'
+
+concurrency:
+  group: fcbaz-live-data-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Refresh public FC27 catalog
+        run: node tool/sync_live_fc27.mjs
+
+      - name: Validate catalog
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const c = JSON.parse(fs.readFileSync('data/live/catalog.json', 'utf8'));
+          if (Number(c.game_year) !== 27) throw new Error('wrong game year');
+          for (const key of ['evolutions', 'sbcs', 'objectives']) {
+            if (!Array.isArray(c[key]) || c[key].length === 0) {
+              throw new Error(`${key} is empty`);
+            }
+            for (const item of c[key]) {
+              if (!item.source_url || !String(item.source_url).startsWith('https://www.fut.gg/')) {
+                throw new Error(`${key} item without verified source_url`);
+              }
+            }
+          }
+          console.log({
+            evolutions: c.evolutions.length,
+            sbcs: c.sbcs.length,
+            objectives: c.objectives.length,
+            generated_at: c.generated_at,
+          });
+          NODE
+
+      - name: Commit changed snapshot
+        shell: bash
+        run: |
+          if git diff --quiet -- data/live/catalog.json; then
+            echo 'No live-data changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add data/live/catalog.json
+          git commit -m 'data: refresh verified FC27 live catalog'
+          git push origin HEAD:main
