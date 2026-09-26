@@ -51,8 +51,8 @@ class SbcRatingCalculator {
     int? maxCardRating,
     int limit = 30,
   }) {
-    final minRating = (minCardRating ?? targetRating - 5).clamp(40, 99);
-    final maxRating = (maxCardRating ?? targetRating + 5).clamp(40, 99);
+    final minRating = (minCardRating ?? targetRating - 5).clamp(40, 99).toInt();
+    final maxRating = (maxCardRating ?? targetRating + 5).clamp(40, 99).toInt();
     final ratingBand = <int>[
       for (var rating = minRating; rating <= maxRating; rating++) rating,
     ];
