@@ -54,7 +54,9 @@ jobs:
           script: |
             const fs = require('fs');
             const output = fs.readFileSync('analyze.txt', 'utf8');
-            const body = `### Flutter analyze failed\n\n\`\`\`text\n${output.slice(-12000)}\n\`\`\``;
+            const lines = output.split('\n');
+            const errors = lines.filter((line) => line.includes(' error • '));
+            const body = `### Flutter analyze errors\n\n\`\`\`text\n${errors.join('\n') || output.slice(0, 6000)}\n\`\`\``;
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
