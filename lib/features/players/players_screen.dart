@@ -93,6 +93,7 @@ class _PlayersScreenState extends State<PlayersScreen> {
     return RefreshIndicator(
       onRefresh: _load,
       child: CustomScrollView(
+        cacheExtent: 1000,
         slivers: [
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(14, 10, 14, 0),
@@ -261,13 +262,13 @@ class _PlayersScreenState extends State<PlayersScreen> {
             )
           else
             SliverPadding(
-              padding: const EdgeInsets.fromLTRB(11, 0, 11, 30),
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 34),
               sliver: SliverGrid(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
-                  mainAxisSpacing: 9,
-                  crossAxisSpacing: 7,
-                  childAspectRatio: .69,
+                  mainAxisSpacing: 14,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: .72,
                 ),
                 delegate: SliverChildBuilderDelegate(
                   (context, index) => PlayerCard(
@@ -275,6 +276,8 @@ class _PlayersScreenState extends State<PlayersScreen> {
                     pricePlatform: filter.platform,
                   ),
                   childCount: players.length,
+                  addAutomaticKeepAlives: false,
+                  addRepaintBoundaries: true,
                 ),
               ),
             ),
