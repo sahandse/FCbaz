@@ -89,13 +89,13 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               _QuickAction(
                 title: 'بازیکنان',
-                subtitle: 'دیتابیس و فیلترها',
+                subtitle: 'دیتابیس و فیلترهای حرفه‌ای',
                 icon: Icons.groups_2_rounded,
                 onTap: widget.onOpenPlayers,
               ),
               _QuickAction(
                 title: 'تیم‌ساز',
-                subtitle: 'Squad + Chemistry',
+                subtitle: 'ترکیب و شیمی تیم',
                 icon: Icons.stadium_rounded,
                 onTap: widget.onOpenSquad,
               ),
@@ -107,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               _QuickAction(
                 title: 'ابزارها',
-                subtitle: 'SBC، Evo و بازار',
+                subtitle: 'چالش‌ها، تکامل و بازار',
                 icon: Icons.dashboard_customize_rounded,
                 onTap: widget.onOpenMore,
               ),
@@ -121,11 +121,12 @@ class _HomeScreenState extends State<HomeScreen> {
             Card(
               child: ListTile(
                 leading: const Icon(Icons.cloud_off_rounded),
-                title: const Text('Home Feed در دسترس نیست'),
+                title: const Text('داده‌های صفحه اصلی در دسترس نیست'),
                 subtitle: Text(error!),
                 trailing: IconButton(
                   onPressed: _load,
                   icon: const Icon(Icons.refresh_rounded),
+                  tooltip: 'تلاش دوباره',
                 ),
               ),
             ),
@@ -133,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.trendingPlayers.isNotEmpty) ...[
               const SizedBox(height: 24),
               const _SectionTitle(
-                title: 'Trending Players',
+                title: 'بازیکنان محبوب',
                 subtitle: 'بر اساس داده زنده بازار FC27',
               ),
               const SizedBox(height: 10),
@@ -179,19 +180,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 Text(
-                                  player.rating.toString() +
-                                      ' • ' +
-                                      player.position,
-                                  style:
-                                      Theme.of(context).textTheme.labelSmall,
+                                  '${player.rating} • ${player.position}',
+                                  style: Theme.of(context).textTheme.labelSmall,
                                 ),
                                 if (player.version.isNotEmpty)
                                   Text(
                                     player.version,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style:
-                                        Theme.of(context).textTheme.labelSmall,
+                                    style: Theme.of(context).textTheme.labelSmall,
                                   ),
                               ],
                             ),
@@ -206,8 +203,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.marketMovers.isNotEmpty) ...[
               const SizedBox(height: 24),
               const _SectionTitle(
-                title: 'Market Movers',
-                subtitle: 'حرکت‌های مهم بازار از منبع زنده',
+                title: 'تغییرات مهم بازار',
+                subtitle: 'حرکت‌های مهم قیمت از منبع زنده',
               ),
               const SizedBox(height: 10),
               SizedBox(
@@ -235,17 +232,11 @@ class _HomeScreenState extends State<HomeScreen> {
                             _text(item, ['name', 'player_name']),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w900,
-                            ),
+                            style: const TextStyle(fontWeight: FontWeight.w900),
                           ),
                           const SizedBox(height: 5),
                           Text(
-                            _text(item, [
-                              'change_percent',
-                              'change',
-                              'trend',
-                            ]),
+                            _text(item, ['change_percent', 'change', 'trend']),
                             style: TextStyle(
                               color: Theme.of(context).colorScheme.primary,
                               fontWeight: FontWeight.w800,
@@ -265,8 +256,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.sbcs.isNotEmpty) ...[
               const SizedBox(height: 24),
               _SectionTitle(
-                title: 'SBCهای جدید',
-                subtitle: 'چالش‌های فعال FC27',
+                title: 'چالش‌های جدید',
+                subtitle: 'SBCهای فعال FC27',
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(builder: (_) => const SbcScreen()),
@@ -302,7 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.evolutions.isNotEmpty) ...[
               const SizedBox(height: 20),
               _SectionTitle(
-                title: 'Evolutions',
+                title: 'تکامل بازیکنان',
                 subtitle: 'Evoهای فعال و جدید',
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
@@ -339,24 +330,20 @@ class _HomeScreenState extends State<HomeScreen> {
                               children: [
                                 Icon(
                                   Icons.auto_awesome_rounded,
-                                  color:
-                                      Theme.of(context).colorScheme.primary,
+                                  color: Theme.of(context).colorScheme.primary,
                                 ),
                                 const SizedBox(height: 8),
                                 Text(
                                   evo.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w900,
-                                  ),
+                                  style: const TextStyle(fontWeight: FontWeight.w900),
                                 ),
                                 Text(
                                   evo.cost == 0
                                       ? 'رایگان'
-                                      : evo.cost.toString() + ' Coins',
-                                  style:
-                                      Theme.of(context).textTheme.labelSmall,
+                                      : '${evo.cost} سکه',
+                                  style: Theme.of(context).textTheme.labelSmall,
                                 ),
                               ],
                             ),
@@ -371,8 +358,8 @@ class _HomeScreenState extends State<HomeScreen> {
             if (data.objectives.isNotEmpty) ...[
               const SizedBox(height: 24),
               _SectionTitle(
-                title: 'Objectives',
-                subtitle: 'هدف‌ها و پاداش‌های زنده',
+                title: 'اهداف',
+                subtitle: 'ماموریت‌ها و پاداش‌های زنده',
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
                     MaterialPageRoute(
@@ -453,7 +440,7 @@ class _HeroCard extends StatelessWidget {
               borderRadius: BorderRadius.circular(99),
             ),
             child: Text(
-              'FC27 • Ultimate Team',
+              'FC27 • آلتیمیت تیم',
               style: TextStyle(
                 color: scheme.primary,
                 fontWeight: FontWeight.w900,
@@ -471,7 +458,7 @@ class _HeroCard extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'ترند بازار، بازیکنان، SBC، Evo، Objectives و ابزارهای Squad در یک داشبورد فارسی.',
+            'بازیکنان، بازار، چالش‌های ساخت ترکیب، تکامل‌ها، اهداف و تیم‌ساز؛ همه در یک داشبورد فارسی.',
             style: TextStyle(
               color: scheme.onSurfaceVariant,
               height: 1.6,
@@ -513,9 +500,7 @@ class _DataStatusCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: scheme.primary.withValues(alpha: .08),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: scheme.primary.withValues(alpha: .22),
-        ),
+        border: Border.all(color: scheme.primary.withValues(alpha: .22)),
       ),
       child: Row(
         children: [
@@ -528,9 +513,7 @@ class _DataStatusCard extends StatelessWidget {
             ),
             alignment: Alignment.center,
             child: Icon(
-              hasFeed
-                  ? Icons.verified_rounded
-                  : Icons.info_outline_rounded,
+              hasFeed ? Icons.verified_rounded : Icons.info_outline_rounded,
               color: scheme.primary,
             ),
           ),
@@ -538,7 +521,7 @@ class _DataStatusCard extends StatelessWidget {
           Expanded(
             child: Text(
               hasFeed
-                  ? 'Home Feed از داده واقعی FC27 دریافت شده است.'
+                  ? 'داده‌های صفحه اصلی از منبع واقعی FC27 دریافت شده‌اند.'
                   : 'اگر منبع واقعی در دسترس نباشد، FCBaz داده ساختگی جایگزین نمی‌کند.',
               style: const TextStyle(fontWeight: FontWeight.w800),
             ),
@@ -568,16 +551,12 @@ class _SectionTitle extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text(title, style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 3),
               Text(
                 subtitle,
                 style: TextStyle(
-                  color:
-                      Theme.of(context).colorScheme.onSurfaceVariant,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                   fontSize: 12,
                 ),
               ),
