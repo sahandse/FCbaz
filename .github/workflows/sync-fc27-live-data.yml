@@ -15,7 +15,7 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 18
+    timeout-minutes: 20
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -35,6 +35,9 @@ jobs:
 
       - name: Enrich SBC Evolution and Objective details
         run: node tool/enrich_fc27_catalog.mjs
+
+      - name: Enrich public player and SBC prices
+        run: node tool/enrich_public_market.mjs
 
       - name: Validate catalog
         run: |
@@ -82,18 +85,29 @@ jobs:
 
           const enriched = ['sbcs','evolutions','objectives']
             .reduce((sum, key) => sum + c[key].filter((item) => item.details_source_url).length, 0);
+          const sbcGuides = c.sbcs.filter((item) =>
+            (Array.isArray(item.requirements) && item.requirements.length) ||
+            (Array.isArray(item.guide_fa) && item.guide_fa.length) ||
+            (Array.isArray(item.challenges) && item.challenges.length)
+          ).length;
+          const pricedPlayers = c.players.filter((p) => Number(p.price_ps || p.market_price || 0) > 0).length;
+
+          if (sbcGuides === 0) throw new Error('no SBC detail/guide data after enrichment');
 
           console.log({
             players: c.players.length,
+            pricedPlayers,
             popular_players: c.popular_players?.length ?? 0,
             new_players: c.new_players?.length ?? 0,
             evolutions: c.evolutions.length,
             sbcs: c.sbcs.length,
+            sbcGuides,
             objectives: c.objectives.length,
             completeStats,
             enriched,
             generated_at: c.generated_at,
             enriched_at: c.enriched_at ?? null,
+            market_enriched_at: c.market_enriched_at ?? null,
           });
           NODE
 
