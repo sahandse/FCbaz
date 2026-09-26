@@ -1,4 +1,5 @@
 import '../../core/network/fcbaz_api.dart';
+import '../../core/network/live_fc27_catalog.dart';
 import '../../core/network/public_fc_data.dart';
 import '../evolutions/domain/evolution.dart';
 import '../players/domain/player.dart';
@@ -87,6 +88,7 @@ class HomeFeed {
     required this.sbcs,
     required this.evolutions,
     required this.objectives,
+    this.liveGeneratedAt,
   });
 
   final List<Player> trendingPlayers;
@@ -94,103 +96,155 @@ class HomeFeed {
   final List<SbcChallenge> sbcs;
   final List<Evolution> evolutions;
   final List<HomeObjective> objectives;
+  final DateTime? liveGeneratedAt;
 }
 
 class HomeRepository {
   HomeRepository({
     FCBazApi? api,
     PublicFcData? publicData,
+    LiveFc27Catalog? liveCatalog,
   })  : api = api ?? FCBazApi(),
-        publicData = publicData ?? PublicFcData();
+        publicData = publicData ?? PublicFcData(),
+        liveCatalog = liveCatalog ?? LiveFc27Catalog();
 
   final FCBazApi api;
   final PublicFcData publicData;
+  final LiveFc27Catalog liveCatalog;
 
   Future<HomeFeed> getFeed({bool forceRefresh = false}) async {
+    HomeFeed? backendFeed;
+    if (api.isConfigured) {
+      try {
+        final json = await api.getJson(
+          '/api/v1/home',
+          forceRefresh: forceRefresh,
+          cacheTtl: const Duration(seconds: 60),
+        );
+        final data = json is Map && json['data'] is Map
+            ? Map<String, dynamic>.from(json['data'] as Map)
+            : const <String, dynamic>{};
+        backendFeed = _fromMaps(data);
+      } catch (_) {}
+    }
+
+    final trendingFuture = publicData.getTrending();
+    Map<String, dynamic>? live;
     try {
-      final json = await api.getJson(
-        '/api/v1/home',
-        forceRefresh: forceRefresh,
-        cacheTtl: const Duration(seconds: 60),
-      );
-      final data = json is Map && json['data'] is Map
-          ? Map<String, dynamic>.from(json['data'] as Map)
-          : const <String, dynamic>{};
-
-      List<Map<String, dynamic>> maps(dynamic value) => value is List
-          ? value
-              .whereType<Map>()
-              .map((e) => Map<String, dynamic>.from(e))
-              .toList()
-          : const [];
-
-      final feed = HomeFeed(
-        trendingPlayers: maps(data['trending_players'])
-            .map(Player.fromJson)
-            .where((e) => e.id.isNotEmpty)
-            .toList(),
-        marketMovers: maps(data['market_movers']),
-        sbcs: maps(data['sbcs'])
-            .map(SbcChallenge.fromJson)
-            .where((e) => e.id.isNotEmpty)
-            .toList(),
-        evolutions: maps(data['evolutions'])
-            .map(Evolution.fromJson)
-            .where((e) => e.id.isNotEmpty)
-            .toList(),
-        objectives: maps(data['objectives'])
-            .map(HomeObjective.fromJson)
-            .where((e) => e.title.isNotEmpty)
-            .toList(),
-      );
-
-      if (feed.trendingPlayers.isNotEmpty || feed.marketMovers.isNotEmpty) {
-        return feed;
-      }
+      live = await liveCatalog.load(forceRefresh: forceRefresh);
     } catch (_) {}
+    final trending = await trendingFuture;
 
-    final trending = await publicData.getTrending();
-    final movers = trending
-        .take(10)
-        .map((p) => {
-              'player_id': p.id,
-              'id': p.id,
-              'name': p.name,
-              'rating': p.rating,
-              'price_ps': p.pricePs,
-              'price_pc': p.pricePc,
-              'source': 'futbin-public',
-            })
+    List<Map<String, dynamic>> maps(dynamic value) => value is List
+        ? value
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList()
+        : const [];
+
+    final liveSbcs = maps(live?['sbcs'])
+        .map(SbcChallenge.fromJson)
+        .where((e) => e.id.isNotEmpty && e.title.isNotEmpty)
+        .toList();
+    final liveEvos = maps(live?['evolutions'])
+        .map(Evolution.fromJson)
+        .where((e) => e.id.isNotEmpty && e.title.isNotEmpty)
+        .toList();
+    final liveObjectives = maps(live?['objectives'])
+        .map(HomeObjective.fromJson)
+        .where((e) => e.id.isNotEmpty && e.title.isNotEmpty)
         .toList();
 
+    final preferredPlayers = backendFeed?.trendingPlayers.isNotEmpty == true
+        ? backendFeed!.trendingPlayers
+        : trending.take(12).toList();
+    final movers = backendFeed?.marketMovers.isNotEmpty == true
+        ? backendFeed!.marketMovers
+        : preferredPlayers
+            .take(10)
+            .map((p) => {
+                  'player_id': p.id,
+                  'id': p.id,
+                  'name': p.name,
+                  'rating': p.rating,
+                  'price_ps': p.pricePs,
+                  'price_pc': p.pricePc,
+                  'source': 'futbin-public',
+                })
+            .toList();
+
     return HomeFeed(
-      trendingPlayers: trending.take(10).toList(),
+      trendingPlayers: preferredPlayers,
       marketMovers: movers,
-      sbcs: const [],
-      evolutions: const [],
-      objectives: const [],
+      sbcs: backendFeed?.sbcs.isNotEmpty == true ? backendFeed!.sbcs : liveSbcs,
+      evolutions: backendFeed?.evolutions.isNotEmpty == true
+          ? backendFeed!.evolutions
+          : liveEvos,
+      objectives: backendFeed?.objectives.isNotEmpty == true
+          ? backendFeed!.objectives
+          : liveObjectives,
+      liveGeneratedAt: DateTime.tryParse((live?['generated_at'] ?? '').toString()),
+    );
+  }
+
+  HomeFeed _fromMaps(Map<String, dynamic> data) {
+    List<Map<String, dynamic>> maps(dynamic value) => value is List
+        ? value
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList()
+        : const [];
+
+    return HomeFeed(
+      trendingPlayers: maps(data['trending_players'])
+          .map(Player.fromJson)
+          .where((e) => e.id.isNotEmpty)
+          .toList(),
+      marketMovers: maps(data['market_movers']),
+      sbcs: maps(data['sbcs'])
+          .map(SbcChallenge.fromJson)
+          .where((e) => e.id.isNotEmpty)
+          .toList(),
+      evolutions: maps(data['evolutions'])
+          .map(Evolution.fromJson)
+          .where((e) => e.id.isNotEmpty)
+          .toList(),
+      objectives: maps(data['objectives'])
+          .map(HomeObjective.fromJson)
+          .where((e) => e.title.isNotEmpty)
+          .toList(),
     );
   }
 
   Future<List<HomeObjective>> getObjectives({
     bool forceRefresh = false,
   }) async {
-    try {
-      final json = await api.getJson(
-        '/api/v1/objectives',
-        forceRefresh: forceRefresh,
-        cacheTtl: const Duration(seconds: 90),
-      );
-      final raw = json is Map ? (json['data'] ?? const []) : json;
-      if (raw is List) {
-        return raw
-            .whereType<Map>()
-            .map((e) => HomeObjective.fromJson(Map<String, dynamic>.from(e)))
-            .where((e) => e.title.isNotEmpty)
-            .toList();
-      }
-    } catch (_) {}
+    if (api.isConfigured) {
+      try {
+        final json = await api.getJson(
+          '/api/v1/objectives',
+          forceRefresh: forceRefresh,
+          cacheTtl: const Duration(seconds: 90),
+        );
+        final raw = json is Map ? (json['data'] ?? const []) : json;
+        if (raw is List) {
+          final items = raw
+              .whereType<Map>()
+              .map((e) => HomeObjective.fromJson(Map<String, dynamic>.from(e)))
+              .where((e) => e.title.isNotEmpty)
+              .toList();
+          if (items.isNotEmpty) return items;
+        }
+      } catch (_) {}
+    }
 
-    return const [];
+    final raw = await liveCatalog.list(
+      'objectives',
+      forceRefresh: forceRefresh,
+    );
+    return raw
+        .map(HomeObjective.fromJson)
+        .where((e) => e.title.isNotEmpty)
+        .toList();
   }
 }

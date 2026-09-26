@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 
 class FCBazTheme {
-  static const darkBackground = Color(0xFF080B0F);
-  static const darkSurface = Color(0xFF10151C);
-  static const darkSurfaceHigh = Color(0xFF171E27);
-  static const primaryGreen = Color(0xFF66F08A);
-  static const accentBlue = Color(0xFF79C8FF);
+  static const darkBackground = Color(0xFF07090C);
+  static const darkSurface = Color(0xFF0E1319);
+  static const darkSurfaceHigh = Color(0xFF151C24);
+  static const primaryGreen = Color(0xFF6CF38D);
+  static const accentBlue = Color(0xFF7BCBFF);
   static const warning = Color(0xFFFFC857);
-  static const outline = Color(0xFF26303C);
+  static const outline = Color(0xFF222C37);
 
   static ThemeData get dark => _build(
         brightness: Brightness.dark,
@@ -21,12 +21,12 @@ class FCBazTheme {
 
   static ThemeData get light => _build(
         brightness: Brightness.light,
-        background: const Color(0xFFF4F7F5),
+        background: const Color(0xFFF5F7F6),
         surface: Colors.white,
-        surfaceHigh: const Color(0xFFEEF3F0),
-        primary: const Color(0xFF177A36),
-        secondary: const Color(0xFF236FA6),
-        outlineColor: const Color(0xFFD7E0DA),
+        surfaceHigh: const Color(0xFFEEF2F0),
+        primary: const Color(0xFF147834),
+        secondary: const Color(0xFF216E9F),
+        outlineColor: const Color(0xFFDCE3DF),
       );
 
   static ThemeData _build({
@@ -56,22 +56,30 @@ class FCBazTheme {
       colorScheme: scheme,
       scaffoldBackgroundColor: background,
       splashFactory: InkSparkle.splashFactory,
+      visualDensity: VisualDensity.standard,
     );
 
     return base.copyWith(
       textTheme: base.textTheme.copyWith(
+        headlineMedium: base.textTheme.headlineMedium?.copyWith(
+          fontWeight: FontWeight.w900,
+          letterSpacing: -.8,
+        ),
         headlineSmall: base.textTheme.headlineSmall?.copyWith(
           fontWeight: FontWeight.w900,
-          letterSpacing: -.4,
+          letterSpacing: -.55,
         ),
         titleLarge: base.textTheme.titleLarge?.copyWith(
           fontWeight: FontWeight.w900,
-          letterSpacing: -.25,
+          letterSpacing: -.3,
         ),
         titleMedium: base.textTheme.titleMedium?.copyWith(
           fontWeight: FontWeight.w800,
         ),
-        bodyMedium: base.textTheme.bodyMedium?.copyWith(height: 1.55),
+        bodyMedium: base.textTheme.bodyMedium?.copyWith(height: 1.5),
+        labelLarge: base.textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w800,
+        ),
       ),
       cardTheme: CardThemeData(
         elevation: 0,
@@ -79,24 +87,28 @@ class FCBazTheme {
         color: surface,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(22),
-          side: BorderSide(color: outlineColor.withValues(alpha: .85)),
+          borderRadius: BorderRadius.circular(20),
+          side: BorderSide(color: outlineColor.withValues(alpha: .55)),
         ),
       ),
       dividerTheme: DividerThemeData(
-        color: outlineColor.withValues(alpha: .7),
+        color: outlineColor.withValues(alpha: .55),
         thickness: 1,
         space: 1,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 68,
+        height: 66,
         elevation: 0,
         backgroundColor: surface,
+        surfaceTintColor: Colors.transparent,
         indicatorColor: primary.withValues(alpha: .14),
+        indicatorShape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15),
+        ),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
-            size: 22,
+            size: states.contains(WidgetState.selected) ? 22 : 21,
             color: states.contains(WidgetState.selected)
                 ? primary
                 : scheme.onSurfaceVariant,
@@ -104,9 +116,9 @@ class FCBazTheme {
         ),
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: states.contains(WidgetState.selected)
-                ? FontWeight.w800
+                ? FontWeight.w900
                 : FontWeight.w600,
             color: states.contains(WidgetState.selected)
                 ? primary
@@ -120,47 +132,61 @@ class FCBazTheme {
         scrolledUnderElevation: 0,
         backgroundColor: background,
         surfaceTintColor: Colors.transparent,
+        toolbarHeight: 60,
         titleTextStyle: TextStyle(
           color: scheme.onSurface,
-          fontSize: 20,
+          fontSize: 19,
           fontWeight: FontWeight.w900,
+          letterSpacing: -.3,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: surface,
-        hintStyle: TextStyle(color: scheme.onSurfaceVariant),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
+        hintStyle: TextStyle(
+          color: scheme.onSurfaceVariant.withValues(alpha: .85),
+          fontSize: 13,
+        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
+          borderRadius: BorderRadius.circular(17),
           borderSide: BorderSide(color: outlineColor),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: outlineColor),
+          borderRadius: BorderRadius.circular(17),
+          borderSide: BorderSide(color: outlineColor.withValues(alpha: .7)),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(18),
-          borderSide: BorderSide(color: primary, width: 1.5),
+          borderRadius: BorderRadius.circular(17),
+          borderSide: BorderSide(color: primary, width: 1.35),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size(48, 48),
+          minimumSize: const Size(48, 47),
+          elevation: 0,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(15),
           ),
-          textStyle: const TextStyle(fontWeight: FontWeight.w800),
+          textStyle: const TextStyle(fontWeight: FontWeight.w900),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size(48, 48),
+          minimumSize: const Size(48, 47),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(15),
           ),
-          side: BorderSide(color: outlineColor),
+          side: BorderSide(color: outlineColor.withValues(alpha: .8)),
           textStyle: const TextStyle(fontWeight: FontWeight.w800),
+        ),
+      ),
+      iconButtonTheme: IconButtonThemeData(
+        style: IconButton.styleFrom(
+          minimumSize: const Size(40, 40),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(13),
+          ),
         ),
       ),
       dialogTheme: DialogThemeData(
@@ -168,7 +194,7 @@ class FCBazTheme {
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
-          side: BorderSide(color: outlineColor),
+          side: BorderSide(color: outlineColor.withValues(alpha: .7)),
         ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
@@ -187,15 +213,15 @@ class FCBazTheme {
           fontWeight: FontWeight.w700,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: outlineColor),
+          borderRadius: BorderRadius.circular(15),
+          side: BorderSide(color: outlineColor.withValues(alpha: .65)),
         ),
       ),
       listTileTheme: ListTileThemeData(
-        minVerticalPadding: 10,
+        minVerticalPadding: 9,
         iconColor: scheme.onSurfaceVariant,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
+          borderRadius: BorderRadius.circular(15),
         ),
       ),
       switchTheme: SwitchThemeData(
@@ -206,7 +232,7 @@ class FCBazTheme {
         ),
         trackColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
-              ? primary.withValues(alpha: .28)
+              ? primary.withValues(alpha: .26)
               : surfaceHigh,
         ),
       ),
@@ -216,9 +242,16 @@ class FCBazTheme {
         circularTrackColor: surfaceHigh,
       ),
       chipTheme: base.chipTheme.copyWith(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-        side: BorderSide(color: outlineColor),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w700),
+        backgroundColor: surface,
+        selectedColor: primary.withValues(alpha: .14),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(13),
+        ),
+        side: BorderSide(color: outlineColor.withValues(alpha: .7)),
+        labelStyle: const TextStyle(
+          fontWeight: FontWeight.w700,
+          fontSize: 11,
+        ),
       ),
     );
   }

@@ -1,0 +1,38 @@
+{
+  "game_year": 27,
+  "generated_at": "2026-09-26T00:00:00Z",
+  "sources": [
+    "https://www.fut.gg/evolutions/",
+    "https://www.fut.gg/sbc/",
+    "https://www.fut.gg/objectives/"
+  ],
+  "evolutions": [
+    {"id":"futgg-frontline-paradox","title":"Frontline Paradox","description":"Evolution فعال برای مهاجم با تمرکز روی ارتقای تهدید در محوطه و نقش Advanced Forward.","cost":0,"requirements":["Overall Max. 79","Position ST","Excluded Position CM, LM, RM","Pace Max. 85"],"upgrades":["OVR +5","Sprint Speed +5","Finishing +5","Acceleration +5","Advanced Forward role upgrade"],"source_url":"https://www.fut.gg/evolutions/"},
+    {"id":"futgg-midfield-glow-up","title":"Midfield Glow Up","description":"Evolution فعال برای هافبک دفاعی با ارتقای سرعت، قدرت بدنی و پاس.","cost":0,"requirements":["Overall Max. 74","Position CDM","Excluded Position CAM, CB, ST","Pace Max. 85"],"upgrades":["OVR increase","Passing upgrades","Defensive upgrades","Physical upgrades"],"source_url":"https://www.fut.gg/evolutions/"},
+    {"id":"futgg-creative-crossroads","title":"Creative Crossroads","description":"Evolution فعال برای CAM با مسیر ارتقای خلق موقعیت یا تهدید گلزنی.","cost":15000,"requirements":["Overall Max. 79","Position CAM","Excluded Position CDM, ST","Pace Max. 85"],"upgrades":["OVR +5","Shooting upgrades","Passing upgrades","Shadow Striker role upgrade"],"source_url":"https://www.fut.gg/evolutions/"},
+    {"id":"futgg-fullback-fork","title":"Fullback Fork","description":"Evolution فعال برای مدافع کناری با شاخه هجومی یا دفاعی.","cost":0,"requirements":["Overall Max. 79","Position LB, RB","Excluded Position CB, CM","Pace Max. 83"],"upgrades":["OVR +5","Defensive upgrades","Pace upgrades","Stamina and strength upgrades"],"source_url":"https://www.fut.gg/evolutions/"},
+    {"id":"futgg-intro-repeatable-evolutions-2","title":"Intro to Repeatable Evolutions 2","description":"Evolution تکرارشونده برای ارتقای بازیکنان واجد شرایط.","cost":0,"requirements":["Overall Max. 79","Position ST","Pace Max. 81"],"upgrades":["OVR increase","Passing upgrades","Dribbling upgrades","Shooting upgrades"],"source_url":"https://www.fut.gg/evolutions/"},
+    {"id":"futgg-intro-to-evolutions","title":"Intro to Evolutions","description":"Evolution مقدماتی FC27 برای ارتقای اولیه بازیکن واجد شرایط.","cost":0,"requirements":["Overall Max. 75","Position RB","Excluded Position CB","Pace Max. 80"],"upgrades":["Large pace upgrade","Passing upgrades","Defensive upgrades","Wingback role upgrade"],"source_url":"https://www.fut.gg/evolutions/"},
+    {"id":"futgg-otw-retro-20","title":"Ones to Watch Retro 20","description":"Evolution فعال برای اعمال rarity رترو Ones to Watch به بازیکن واجد شرایط.","cost":25000,"requirements":[],"upgrades":[],"source_url":"https://www.fut.gg/evolutions/"},
+    {"id":"futgg-otw-retro-19","title":"Ones to Watch Retro 19","description":"Evolution فعال برای اعمال rarity رترو Ones to Watch به بازیکن واجد شرایط.","cost":25000,"requirements":[],"upgrades":[],"source_url":"https://www.fut.gg/evolutions/"}
+  ],
+  "sbcs": [
+    {"id":"futgg-antonio-nusa","title_en":"Antonio Nusa","category":"Players","description":"SBC فعال برای دریافت آیتم ویژه Destined for Glory آنتونیو نوسا.","reward":"Destined for Glory Antonio Nusa","estimated_cost":75000,"repeatable":false,"source_url":"https://www.fut.gg/sbc/"},
+    {"id":"futgg-totw-upgrade","title_en":"TOTW Upgrade","category":"Upgrades","description":"SBC فعال با پاداش یک آیتم TOTW از تیم هفته 1 یا 2.","reward":"1x TOTW 1-2 Player Pack","repeatable":false,"source_url":"https://www.fut.gg/sbc/"},
+    {"id":"futgg-marquee-matchups","title_en":"Marquee Matchups","category":"Challenges","description":"SBC هفتگی بر اساس مسابقات مهم هفته.","reward":"Pack rewards","repeatable":false,"source_url":"https://www.fut.gg/sbc/"}
+  ],
+  "objectives": [
+    {"id":"futgg-squad-foundations-mito","title":"Squad Foundations: Shunsuke Mito","description":"Objective فعال برای دریافت Squad Foundations Shunsuke Mito و SP.","reward":"Shunsuke Mito + SP","category":"Foundations","source_url":"https://www.fut.gg/objectives/"},
+    {"id":"futgg-destined-for-glory-exhibition","title":"Destined for Glory Exhibition","description":"Live Event Objective با چند پاداش و Evo Unlock.","reward":"Rewards + Evo Unlock","category":"Live Events","source_url":"https://www.fut.gg/objectives/"},
+    {"id":"futgg-gallery-foundations","title":"Gallery Foundations","description":"Objective برای یادگیری و پیشرفت در Gallery.","reward":"1,000 Coins + Gallery Tokens","category":"Milestones","source_url":"https://www.fut.gg/objectives/"},
+    {"id":"futgg-weekly-rush-points","title":"Weekly Rush Points","description":"Objective هفتگی Rush برای دریافت امتیاز و پک.","reward":"2x 84+ Gold Players Pack","category":"Seasonal","source_url":"https://www.fut.gg/objectives/"},
+    {"id":"futgg-squad-battles-cqp","title":"Squad Battles: Champions Qualification Points","description":"Objective برای دریافت امتیاز Qualification از Squad Battles.","reward":"100 Champions Qualification Points","category":"Seasonal","source_url":"https://www.fut.gg/objectives/"},
+    {"id":"futgg-fc-pro-open-ladder","title":"FC Pro Open Ladder","description":"Objective رقابتی FC Pro Open Ladder.","reward":"Badge","category":"FC Pro","source_url":"https://www.fut.gg/objectives/"},
+    {"id":"futgg-claim-the-armband","title":"Claim the Armband","description":"Objective با Player Pick از چند Squad Foundations item.","reward":"1 of 4 Squad Foundations Pick","category":"Campaigns","source_url":"https://www.fut.gg/objectives/"},
+    {"id":"futgg-rivals-mastery","title":"Rivals Mastery","description":"Mastery Objective برای Rivals.","reward":"Large Gold Players Pack","category":"Mastery","source_url":"https://www.fut.gg/objectives/mastery/"},
+    {"id":"futgg-champions-mastery","title":"Champions Mastery","description":"Mastery Objective برای Champions.","reward":"86+ Gold Player Pack + Coins + Tokens","category":"Mastery","source_url":"https://www.fut.gg/objectives/mastery/"},
+    {"id":"futgg-transfer-market-mastery","title":"Transfer Market Mastery","description":"Mastery Objective برای فعالیت در بازار نقل‌وانتقالات.","reward":"2x 82+ Gold Players Pack + 10,000 Coins","category":"Mastery","source_url":"https://www.fut.gg/objectives/mastery/"},
+    {"id":"futgg-weekly-objectives","title":"Weekly Objectives","description":"Objective هفتگی برای کسب SP.","reward":"SP","category":"Seasonal","source_url":"https://www.fut.gg/objectives/"},
+    {"id":"futgg-daily-objectives","title":"Daily Objectives","description":"Objective روزانه برای کسب SP.","reward":"SP","category":"Seasonal","source_url":"https://www.fut.gg/objectives/"}
+  ]
+}
