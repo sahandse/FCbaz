@@ -45,13 +45,18 @@ jobs:
               if (!item.id) throw new Error(`${key} item without id`);
               if (ids.has(item.id)) throw new Error(`${key} duplicate id: ${item.id}`);
               ids.add(item.id);
-              if (!item.source_url || !String(item.source_url).startsWith('https://www.fut.gg/')) {
-                throw new Error(`${key} item without verified source_url`);
-              }
               if (key === 'players') {
                 if (!item.name || !Number(item.rating) || !item.position) {
                   throw new Error(`invalid player snapshot: ${JSON.stringify(item)}`);
                 }
+                const source = String(item.source_url || '');
+                if (!source.startsWith('https://www.fut.gg/') &&
+                    !source.startsWith('https://www.futbin.org/') &&
+                    !source.startsWith('https://www.ea.com/')) {
+                  throw new Error(`player without trusted source_url: ${item.name}`);
+                }
+              } else if (!item.source_url || !String(item.source_url).startsWith('https://www.fut.gg/')) {
+                throw new Error(`${key} item without verified FUT.GG source_url`);
               }
             }
           }
