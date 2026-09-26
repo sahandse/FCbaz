@@ -25,7 +25,6 @@ class SquadInsightsPanel extends StatefulWidget {
 
 class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
   final service = SquadInsightsService();
-
   int maxBudget = 250000;
   String platform = 'console';
   bool loadingSuggestions = false;
@@ -42,7 +41,6 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
       loadingSuggestions = true;
       suggestions = const [];
     });
-
     final result = await service.replacementSuggestions(
       squad: widget.squad,
       formation: widget.formation,
@@ -50,7 +48,6 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
       maxBudget: maxBudget,
       platform: platform,
     );
-
     if (!mounted) return;
     setState(() {
       suggestions = result;
@@ -61,11 +58,11 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
   String _coins(int value) {
     if (value >= 1000000) {
       final n = value / 1000000;
-      return n.toStringAsFixed(n >= 10 ? 0 : 1) + 'M';
+      return '${n.toStringAsFixed(n >= 10 ? 0 : 1)}M';
     }
     if (value >= 1000) {
       final n = value / 1000;
-      return n.toStringAsFixed(n >= 100 ? 0 : 1) + 'K';
+      return '${n.toStringAsFixed(n >= 100 ? 0 : 1)}K';
     }
     return value.toString();
   }
@@ -73,120 +70,75 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
   @override
   Widget build(BuildContext context) {
     final data = insights;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'Squad Insights',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
-        const SizedBox(height: 4),
-        Text(
-          'Meta Score یک امتیاز تحلیلی FCBaz است؛ بر اساس Stat، Chemistry، PlayStyles+ و Role fit.',
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.onSurfaceVariant,
-            fontSize: 11,
-          ),
-        ),
-        const SizedBox(height: 12),
         Row(
           children: [
             Expanded(
-              child: _ScoreCard(
-                label: 'Meta',
-                value: data.metaScore.toStringAsFixed(1),
-                icon: Icons.auto_graph_rounded,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('تحلیل ترکیب', style: Theme.of(context).textTheme.titleLarge),
+                  const SizedBox(height: 3),
+                  Text(
+                    '${widget.formation.name} • تحلیل محلی با داده واقعی کارت‌ها',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
               ),
             ),
+            _ChemistryBadge(chemistry: widget.chemistry),
+          ],
+        ),
+        const SizedBox(height: 14),
+        _TacticsSummary(tactics: widget.squad.tactics),
+        const SizedBox(height: 12),
+        _ChemistryBreakdown(
+          squad: widget.squad,
+          formation: widget.formation,
+          chemistry: widget.chemistry,
+        ),
+        const SizedBox(height: 14),
+        Row(
+          children: [
+            Expanded(child: _ScoreCard(label: 'متا', value: data.metaScore.toStringAsFixed(1), icon: Icons.auto_graph_rounded)),
             const SizedBox(width: 8),
-            Expanded(
-              child: _ScoreCard(
-                label: 'Attack',
-                value: data.attackScore.toStringAsFixed(0),
-                icon: Icons.flash_on_rounded,
-              ),
-            ),
+            Expanded(child: _ScoreCard(label: 'حمله', value: data.attackScore.toStringAsFixed(0), icon: Icons.flash_on_rounded)),
             const SizedBox(width: 8),
-            Expanded(
-              child: _ScoreCard(
-                label: 'Mid',
-                value: data.midfieldScore.toStringAsFixed(0),
-                icon: Icons.blur_circular_rounded,
-              ),
-            ),
+            Expanded(child: _ScoreCard(label: 'میانه', value: data.midfieldScore.toStringAsFixed(0), icon: Icons.blur_circular_rounded)),
             const SizedBox(width: 8),
-            Expanded(
-              child: _ScoreCard(
-                label: 'Def',
-                value: data.defenseScore.toStringAsFixed(0),
-                icon: Icons.shield_outlined,
-              ),
-            ),
+            Expanded(child: _ScoreCard(label: 'دفاع', value: data.defenseScore.toStringAsFixed(0), icon: Icons.shield_outlined)),
           ],
         ),
         const SizedBox(height: 10),
         Row(
           children: [
-            Expanded(
-              child: _MiniMetric(
-                label: 'AVG OVR',
-                value: data.averageRating.toStringAsFixed(1),
-              ),
-            ),
+            Expanded(child: _MiniMetric(label: 'میانگین ریتینگ', value: data.averageRating.toStringAsFixed(1))),
             const SizedBox(width: 8),
-            Expanded(
-              child: _MiniMetric(
-                label: 'PlayStyles+',
-                value: data.playStylesPlusCount.toString(),
-              ),
-            ),
+            Expanded(child: _MiniMetric(label: 'PlayStyles+', value: data.playStylesPlusCount.toString())),
             const SizedBox(width: 8),
-            Expanded(
-              child: _MiniMetric(
-                label: 'Role تنظیم‌شده',
-                value: data.roleConfiguredCount.toString(),
-              ),
-            ),
+            Expanded(child: _MiniMetric(label: 'Role تنظیم‌شده', value: data.roleConfiguredCount.toString())),
           ],
         ),
-        const SizedBox(height: 16),
         if (data.weaknesses.isNotEmpty) ...[
-          Text(
-            'نقاط قابل بهبود',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
+          const SizedBox(height: 18),
+          Text('نقاط قابل بهبود', style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          for (final issue in data.weaknesses) ...[
+          for (final issue in data.weaknesses)
             Card(
               child: ListTile(
-                leading: Icon(
-                  issue.severity >= 3
-                      ? Icons.error_outline_rounded
-                      : issue.severity == 2
-                          ? Icons.warning_amber_rounded
-                          : Icons.info_outline_rounded,
-                  color: issue.severity >= 3
-                      ? Colors.redAccent
-                      : issue.severity == 2
-                          ? Colors.orangeAccent
-                          : Theme.of(context).colorScheme.primary,
-                ),
-                title: Text(
-                  issue.title,
-                  style: const TextStyle(fontWeight: FontWeight.w900),
-                ),
+                leading: Icon(issue.severity >= 3 ? Icons.error_outline_rounded : Icons.warning_amber_rounded),
+                title: Text(issue.title, style: const TextStyle(fontWeight: FontWeight.w900)),
                 subtitle: Text(issue.detail),
               ),
             ),
-            const SizedBox(height: 7),
-          ],
         ],
         const SizedBox(height: 18),
-        Text(
-          'پیشنهاد تعویض با قیمت واقعی',
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        Text('پیشنهاد تعویض با قیمت واقعی', style: Theme.of(context).textTheme.titleMedium),
         const SizedBox(height: 8),
         Row(
           children: [
@@ -214,14 +166,8 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
                 initialValue: platform,
                 decoration: const InputDecoration(labelText: 'بازار'),
                 items: const [
-                  DropdownMenuItem(
-                    value: 'console',
-                    child: Text('Console'),
-                  ),
-                  DropdownMenuItem(
-                    value: 'pc',
-                    child: Text('PC'),
-                  ),
+                  DropdownMenuItem(value: 'console', child: Text('کنسول')),
+                  DropdownMenuItem(value: 'pc', child: Text('PC')),
                 ],
                 onChanged: (value) {
                   if (value != null) setState(() => platform = value);
@@ -234,103 +180,252 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
         SizedBox(
           width: double.infinity,
           child: FilledButton.tonalIcon(
-            onPressed: loadingSuggestions || widget.squad.playersBySlot.isEmpty
-                ? null
-                : _loadSuggestions,
+            onPressed: loadingSuggestions || widget.squad.playersBySlot.isEmpty ? null : _loadSuggestions,
             icon: const Icon(Icons.swap_horiz_rounded),
-            label: const Text('پیدا کردن Upgrade واقعی'),
+            label: const Text('پیدا کردن ارتقای واقعی'),
           ),
         ),
         if (loadingSuggestions)
           const Padding(
-            padding: EdgeInsets.symmetric(vertical: 18),
+            padding: EdgeInsets.all(18),
             child: Center(child: CircularProgressIndicator()),
           )
-        else if (suggestions.isNotEmpty) ...[
-          const SizedBox(height: 10),
-          for (final suggestion in suggestions) ...[
+        else if (suggestions.isNotEmpty)
+          for (final suggestion in suggestions)
             Card(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  children: [
-                    Row(
-                      children: [
-                        _PlayerAvatar(player: suggestion.currentPlayer),
-                        const SizedBox(width: 8),
-                        const Icon(Icons.arrow_back_rounded),
-                        const SizedBox(width: 8),
-                        _PlayerAvatar(player: suggestion.replacement),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                suggestion.replacement.name,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                              Text(
-                                suggestion.replacement.rating.toString() +
-                                    ' • ' +
-                                    suggestion.replacement.position +
-                                    ' • ' +
-                                    _coins(suggestion.price) +
-                                    ' Coins',
-                              ),
-                              Text(
-                                'Meta +' +
-                                    suggestion.scoreGain.toStringAsFixed(1),
-                                style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.primary,
-                                  fontWeight: FontWeight.w900,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    SizedBox(
-                      width: double.infinity,
-                      child: FilledButton(
-                        onPressed: () => widget.onReplace(
-                          suggestion.slotId,
-                          suggestion.replacement,
-                        ),
-                        child: const Text('جایگزین در ترکیب'),
-                      ),
-                    ),
-                  ],
+              child: ListTile(
+                leading: _PlayerAvatar(player: suggestion.replacement),
+                title: Text(suggestion.replacement.name, style: const TextStyle(fontWeight: FontWeight.w900)),
+                subtitle: Text('${suggestion.replacement.rating} • ${suggestion.replacement.position} • ${_coins(suggestion.price)} سکه • Meta +${suggestion.scoreGain.toStringAsFixed(1)}'),
+                trailing: FilledButton(
+                  onPressed: () => widget.onReplace(suggestion.slotId, suggestion.replacement),
+                  child: const Text('جایگزین'),
                 ),
               ),
-            ),
-            const SizedBox(height: 8),
-          ],
-        ] else if (!loadingSuggestions)
+            )
+        else
           Text(
-            'پیشنهادی بارگذاری نشده؛ با دکمه بالا از دیتای واقعی بازار بررسی کن.',
-            style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 11,
-            ),
+            'جستجو فقط با داده واقعی بازار انجام می‌شود و در نبود داده، پیشنهاد ساختگی نمایش داده نمی‌شود.',
+            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 11),
           ),
       ],
     );
   }
 }
 
-class _ScoreCard extends StatelessWidget {
-  const _ScoreCard({
-    required this.label,
-    required this.value,
-    required this.icon,
-  });
+class _ChemistryBadge extends StatelessWidget {
+  const _ChemistryBadge({required this.chemistry});
+  final ChemistryResult chemistry;
 
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final max = chemistry.maxForFilledPlayers;
+    final full = max > 0 && chemistry.total == max;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: full ? scheme.primary : scheme.surfaceContainerHighest,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: Column(
+        children: [
+          Text(
+            '${chemistry.total}/${max == 0 ? 33 : max}',
+            style: TextStyle(fontWeight: FontWeight.w900, color: full ? scheme.onPrimary : scheme.onSurface),
+          ),
+          Text('شیمی', style: TextStyle(fontSize: 10, color: full ? scheme.onPrimary : scheme.onSurfaceVariant)),
+        ],
+      ),
+    );
+  }
+}
+
+class _TacticsSummary extends StatelessWidget {
+  const _TacticsSummary({required this.tactics});
+  final TacticProfile tactics;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final lineHeight = tactics.lineHeight;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerHighest.withValues(alpha: .55),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: scheme.outline.withValues(alpha: .45)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.tune_rounded, color: scheme.primary),
+              const SizedBox(width: 8),
+              Expanded(child: Text(tactics.name, style: const TextStyle(fontWeight: FontWeight.w900))),
+              if (tactics.code.trim().isNotEmpty) Chip(label: Text(tactics.code.trim())),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              _InfoPill(label: 'ساخت بازی', value: tactics.buildUpStyle.isEmpty ? 'تنظیم نشده' : _faTactic(tactics.buildUpStyle)),
+              _InfoPill(label: 'دفاع', value: tactics.defensiveApproach.isEmpty ? 'تنظیم نشده' : _faTactic(tactics.defensiveApproach)),
+              _InfoPill(label: 'ارتفاع خط', value: lineHeight == null ? '—' : lineHeight.toString()),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _faTactic(String value) {
+    const labels = {
+      'Balanced': 'متعادل',
+      'Counter': 'ضدحمله',
+      'Short Passing': 'پاس کوتاه',
+      'Deep': 'عمیق',
+      'High': 'بالا',
+      'Aggressive': 'تهاجمی',
+    };
+    return labels[value] ?? value;
+  }
+}
+
+class _ChemistryBreakdown extends StatelessWidget {
+  const _ChemistryBreakdown({required this.squad, required this.formation, required this.chemistry});
+  final SquadStateModel squad;
+  final FormationDefinition formation;
+  final ChemistryResult chemistry;
+
+  @override
+  Widget build(BuildContext context) {
+    final rows = <Widget>[];
+    for (final slot in formation.slots) {
+      final player = squad.playersBySlot[slot.id];
+      final detail = chemistry.details[slot.id];
+      if (player == null || detail == null) continue;
+      rows.add(_ChemistryPlayerRow(
+        player: player,
+        position: slot.position,
+        detail: detail,
+        config: squad.playerConfigs[slot.id],
+      ));
+    }
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: ExpansionTile(
+        initiallyExpanded: chemistry.hasOutOfPositionPlayers,
+        leading: const Icon(Icons.hub_rounded),
+        title: const Text('جزئیات شیمی تیم', style: TextStyle(fontWeight: FontWeight.w900)),
+        subtitle: Text(
+          chemistry.filledSlots == 0
+              ? 'بازیکنی در ترکیب نیست'
+              : '${chemistry.inPositionSlots} بازیکن در پست معتبر • ${chemistry.missingChemistry} شیمی تا سقف',
+        ),
+        children: rows.isEmpty
+            ? const [Padding(padding: EdgeInsets.all(16), child: Text('برای دیدن جزئیات، بازیکن به ترکیب اضافه کن.'))]
+            : rows,
+      ),
+    );
+  }
+}
+
+class _ChemistryPlayerRow extends StatelessWidget {
+  const _ChemistryPlayerRow({required this.player, required this.position, required this.detail, required this.config});
+  final Player player;
+  final String position;
+  final ChemistrySlotDetail detail;
+  final SquadPlayerConfig? config;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final role = config?.role.trim() ?? '';
+    final focus = config?.focus.trim() ?? '';
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+      child: Row(
+        children: [
+          _PlayerAvatar(player: player),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(player.name, style: const TextStyle(fontWeight: FontWeight.w900)),
+                Text(
+                  detail.inPosition
+                      ? '$position • باشگاه ${detail.clubCount} • لیگ ${detail.leagueCount} • کشور ${detail.nationCount}'
+                      : '$position • خارج از پست معتبر',
+                  style: TextStyle(fontSize: 11, color: detail.inPosition ? scheme.onSurfaceVariant : scheme.error),
+                ),
+                if (role.isNotEmpty || focus.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Wrap(
+                      spacing: 6,
+                      children: [
+                        if (role.isNotEmpty) _TinyTag(text: role),
+                        if (focus.isNotEmpty) _TinyTag(text: focus),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+          Column(
+            children: [
+              Text('${detail.chemistry}/3', style: TextStyle(fontWeight: FontWeight.w900, color: detail.chemistry == 3 ? scheme.primary : scheme.onSurface)),
+              if (detail.managerMatch) Icon(Icons.person_rounded, size: 14, color: scheme.primary),
+              if (detail.specialCard) Icon(Icons.auto_awesome_rounded, size: 14, color: scheme.primary),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _InfoPill extends StatelessWidget {
+  const _InfoPill({required this.label, required this.value});
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surface, borderRadius: BorderRadius.circular(14)),
+      child: Text('$label: $value', style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
+    );
+  }
+}
+
+class _TinyTag extends StatelessWidget {
+  const _TinyTag({required this.text});
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.primary.withValues(alpha: .10),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(text, style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w700)),
+    );
+  }
+}
+
+class _ScoreCard extends StatelessWidget {
+  const _ScoreCard({required this.label, required this.value, required this.icon});
   final String label;
   final String value;
   final IconData icon;
@@ -348,10 +443,7 @@ class _ScoreCard extends StatelessWidget {
         children: [
           Icon(icon, color: Theme.of(context).colorScheme.primary, size: 19),
           const SizedBox(height: 4),
-          Text(
-            value,
-            style: const TextStyle(fontWeight: FontWeight.w900),
-          ),
+          Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
           Text(label, style: Theme.of(context).textTheme.labelSmall),
         ],
       ),
@@ -360,11 +452,7 @@ class _ScoreCard extends StatelessWidget {
 }
 
 class _MiniMetric extends StatelessWidget {
-  const _MiniMetric({
-    required this.label,
-    required this.value,
-  });
-
+  const _MiniMetric({required this.label, required this.value});
   final String label;
   final String value;
 
@@ -372,10 +460,7 @@ class _MiniMetric extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 9),
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surfaceContainerHighest,
-        borderRadius: BorderRadius.circular(14),
-      ),
+      decoration: BoxDecoration(color: Theme.of(context).colorScheme.surfaceContainerHighest, borderRadius: BorderRadius.circular(14)),
       child: Column(
         children: [
           Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
@@ -388,15 +473,13 @@ class _MiniMetric extends StatelessWidget {
 
 class _PlayerAvatar extends StatelessWidget {
   const _PlayerAvatar({required this.player});
-
   final Player player;
 
   @override
   Widget build(BuildContext context) {
     return CircleAvatar(
-      radius: 24,
-      backgroundImage:
-          player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
+      radius: 22,
+      backgroundImage: player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
       child: player.imageUrl.isEmpty ? Text(player.rating.toString()) : null,
     );
   }
