@@ -34,7 +34,8 @@ void main() {
       expect(
         source.startsWith('https://www.fut.gg/') ||
             source.startsWith('https://www.futbin.org/') ||
-            source.startsWith('https://www.ea.com/'),
+            source.startsWith('https://www.ea.com/') ||
+            source.startsWith('https://drop-api.ea.com/'),
         isTrue,
         reason: 'player missing trusted real source: $name',
       );
