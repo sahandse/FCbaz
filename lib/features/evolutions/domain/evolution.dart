@@ -30,6 +30,7 @@ class Evolution {
     required this.requirements,
     required this.requirementData,
     required this.upgrades,
+    this.upgradeData = const [],
     required this.expiresAt,
     required this.steps,
   });
@@ -41,6 +42,7 @@ class Evolution {
   final List<String> requirements;
   final List<Map<String, dynamic>> requirementData;
   final List<String> upgrades;
+  final List<Map<String, dynamic>> upgradeData;
   final DateTime? expiresAt;
   final List<EvolutionStep> steps;
 
@@ -51,8 +53,20 @@ class Evolution {
     List<String> asStrings(dynamic value) =>
         value is List ? value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList() : const [];
 
+    List<Map<String, dynamic>> asMaps(dynamic value) => value is List
+        ? value
+            .whereType<Map>()
+            .map((e) => Map<String, dynamic>.from(e))
+            .toList()
+        : const [];
+
     final rawSteps = json['steps'] ?? json['chain'] ?? const [];
-    final rawReq = json['requirements_raw'] ?? const [];
+    final rawReq = json['requirements_raw'] ?? json['requirement_data'] ?? const [];
+    final rawUpgrade = json['upgrades_raw'] ??
+        json['upgrade_data'] ??
+        json['stat_upgrades'] ??
+        json['boosts'] ??
+        const [];
 
     return Evolution(
       id: (json['id'] ?? '').toString(),
@@ -60,13 +74,9 @@ class Evolution {
       description: (json['description'] ?? '').toString(),
       cost: asInt(json['cost']),
       requirements: asStrings(json['requirements']),
-      requirementData: rawReq is List
-          ? rawReq
-              .whereType<Map>()
-              .map((e) => Map<String, dynamic>.from(e))
-              .toList()
-          : const [],
+      requirementData: asMaps(rawReq),
       upgrades: asStrings(json['upgrades']),
+      upgradeData: asMaps(rawUpgrade),
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
       steps: rawSteps is List
           ? rawSteps
