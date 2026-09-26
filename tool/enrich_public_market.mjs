@@ -25,7 +25,7 @@ function normalize(value) {
 
 function coins(raw) {
   const value = String(raw ?? '').trim().toUpperCase().replaceAll(',', '');
-  if (!value || value === '-' || value === '—') return 0;
+  if (!value || value === '-' || value === '—' || value === 'EXTINCT') return 0;
   const multiplier = value.endsWith('M') ? 1000000 : value.endsWith('K') ? 1000 : 1;
   const number = Number(value.replace(/[KM]$/, ''));
   const result = Math.round(number * multiplier);
@@ -61,8 +61,8 @@ function playerLines(text) {
     .map(cleanLine)
     .filter((line) =>
       /^\d{2}\s/.test(line) &&
-      (/(?:PAC|DIV)\d+/i.test(line)) &&
-      /(?:\d+(?:\.\d+)?[KM]?|—)$/.test(line),
+      /(?:PAC|DIV)\s*\d+/i.test(line) &&
+      /(?:\d+(?:\.\d+)?[KM]?|—|Extinct)$/i.test(line),
     );
 }
 
@@ -84,7 +84,9 @@ function statMatchCount(line, player) {
     ['DEF', player.defending],
     ['PHY', player.physical],
   ];
-  return pairs.filter(([label, value]) => Number(value) > 0 && line.includes(`${label}${value}`)).length;
+  return pairs.filter(([label, value]) =>
+    Number(value) > 0 && new RegExp(`${label}\\s*${value}\\b`, 'i').test(line),
+  ).length;
 }
 
 async function collectFcDataLines() {
@@ -92,7 +94,6 @@ async function collectFcDataLines() {
   for (let page = 1; page <= 14; page++) {
     urls.push(`https://fcdata.io/players/?page=${page}`);
   }
-  // Hall of FUT cards are useful in FCBaz but sit outside the top-rating pages.
   urls.push('https://fcdata.io/players/?rarity=9');
 
   const out = [];
@@ -124,7 +125,7 @@ for (const player of catalog.players ?? []) {
 
   const candidates = lines.filter((line) =>
     line.startsWith(`${rating} `) &&
-    line.slice(0, 42).includes(position) &&
+    line.slice(0, 48).includes(position) &&
     nameMatches(line, name),
   );
   if (!candidates.length) continue;
@@ -139,12 +140,11 @@ for (const player of catalog.players ?? []) {
     }
   }
 
-  // For outfield cards with face stats, require a strong stat match when multiple versions exist.
   const knownStats = [player.pace, player.shooting, player.passing, player.dribbling, player.defending, player.physical]
     .filter((value) => Number(value) > 0).length;
   if (knownStats >= 5 && candidates.length > 1 && bestStats < 4) continue;
 
-  const priceMatch = selected.match(/(\d+(?:\.\d+)?[KM]?|—)$/i);
+  const priceMatch = selected.match(/(\d+(?:\.\d+)?[KM]?|—|Extinct)$/i);
   const value = coins(priceMatch?.[1]);
   if (value <= 0) continue;
 
@@ -156,7 +156,6 @@ for (const player of catalog.players ?? []) {
   priced++;
 }
 
-// FCData publishes live SBC aggregate costs on its public FC27 content surface.
 try {
   const home = cleanLine(await fetchText('https://fcdata.io/'));
   for (const sbc of catalog.sbcs ?? []) {
