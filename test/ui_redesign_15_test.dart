@@ -11,10 +11,13 @@ void main() {
   });
 
   test('player item displays separate Console and PC prices', () {
-    final source = File('lib/features/players/presentation/player_card.dart').readAsStringSync();
-    expect(source, contains("label: 'Console'"));
-    expect(source, contains("label: 'PC'"));
-    expect(source, contains("if (value <= 0) return '—'"));
+    final card = File('lib/features/players/presentation/player_card.dart').readAsStringSync();
+    final visual = File('lib/features/players/presentation/player_item_visual.dart').readAsStringSync();
+    expect(card, contains('PlayerItemVisual'));
+    expect(visual, contains("label: 'Console'"));
+    expect(visual, contains("label: 'PC'"));
+    expect(visual, contains("if (value <= 0) return '—'"));
+    expect(visual, contains('BoxFit.contain'));
   });
 
   test('EA resource id price lookup uses public FUTBIN resource endpoint', () {
