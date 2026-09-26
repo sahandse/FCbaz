@@ -30,7 +30,7 @@ class Evolution {
     required this.requirements,
     required this.requirementData,
     required this.upgrades,
-    required this.upgradeData,
+    this.upgradeData = const [],
     required this.expiresAt,
     required this.steps,
   });
