@@ -39,6 +39,14 @@ class SystemNotificationService {
       onDidReceiveNotificationResponse: _onNotificationResponse,
     );
 
+    final launch = await _plugin.getNotificationAppLaunchDetails();
+    final launchPayload = launch?.notificationResponse?.payload;
+    if ((launch?.didNotificationLaunchApp ?? false) &&
+        launchPayload != null &&
+        launchPayload.isNotEmpty) {
+      await _savePendingPayload(launchPayload);
+    }
+
     final android = _plugin.resolvePlatformSpecificImplementation<
         AndroidFlutterLocalNotificationsPlugin>();
     await android?.createNotificationChannel(
