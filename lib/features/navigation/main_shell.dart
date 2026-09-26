@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../home/home_screen.dart';
+import '../home/home_dashboard_screen.dart';
 import '../players/data/player_repository.dart';
 import '../players/presentation/player_details_screen.dart';
 import 'app_navigation_repository.dart';
@@ -106,7 +106,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   @override
   Widget build(BuildContext context) {
     final pages = [
-      HomeScreen(
+      HomeDashboardScreen(
         onOpenPlayers: () => _selectTab(1),
         onOpenSearch: () => _selectTab(2),
         onOpenSquad: () => _selectTab(3),
