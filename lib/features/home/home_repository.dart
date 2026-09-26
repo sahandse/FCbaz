@@ -158,20 +158,12 @@ class HomeRepository {
     final preferredPlayers = backendFeed?.trendingPlayers.isNotEmpty == true
         ? backendFeed!.trendingPlayers
         : trending.take(12).toList();
+
+    // Market Movers are only shown when a provider supplies an actual market
+    // movement payload. Never manufacture a mover from an ordinary player row.
     final movers = backendFeed?.marketMovers.isNotEmpty == true
         ? backendFeed!.marketMovers
-        : preferredPlayers
-            .take(10)
-            .map((p) => {
-                  'player_id': p.id,
-                  'id': p.id,
-                  'name': p.name,
-                  'rating': p.rating,
-                  'price_ps': p.pricePs,
-                  'price_pc': p.pricePc,
-                  'source': 'futbin-public',
-                })
-            .toList();
+        : maps(live?['market_movers']).where(_isVerifiedMarketMover).toList();
 
     return HomeFeed(
       trendingPlayers: preferredPlayers,
@@ -187,6 +179,15 @@ class HomeRepository {
     );
   }
 
+  bool _isVerifiedMarketMover(Map<String, dynamic> item) {
+    final source = (item['source_url'] ?? item['source'] ?? '').toString();
+    final hasPrice = item['price'] != null || item['current'] != null;
+    final hasMovement = item['change_percent'] != null ||
+        item['change_24h_percent'] != null ||
+        item['change'] != null;
+    return source.startsWith('https://') && hasPrice && hasMovement;
+  }
+
   HomeFeed _fromMaps(Map<String, dynamic> data) {
     List<Map<String, dynamic>> maps(dynamic value) => value is List
         ? value
@@ -200,7 +201,7 @@ class HomeRepository {
           .map(Player.fromJson)
           .where((e) => e.id.isNotEmpty)
           .toList(),
-      marketMovers: maps(data['market_movers']),
+      marketMovers: maps(data['market_movers']).where(_isVerifiedMarketMover).toList(),
       sbcs: maps(data['sbcs'])
           .map(SbcChallenge.fromJson)
           .where((e) => e.id.isNotEmpty)
