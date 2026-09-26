@@ -1,0 +1,21 @@
+name: Trigger FCBaz v1.8.1 Release
+
+permissions:
+  contents: read
+  actions: write
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.release/trigger-v1.8.1'
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dispatch production release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run flutter-android.yml --repo "$GITHUB_REPOSITORY" -f release_version=1.8.1 -f api_base_url=''
