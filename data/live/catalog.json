@@ -1,6 +1,6 @@
 {
   "game_year": 27,
-  "generated_at": "2026-09-26T21:13:26.759Z",
+  "generated_at": "2026-09-26T21:53:13.998Z",
   "sources": [
     "https://www.fut.gg/players/",
     "https://www.fut.gg/fc-27/ratings/",
@@ -17,7 +17,9 @@
     "https://www.fut.gg/rarities/squad-foundations/",
     "https://www.fut.gg/rarities/debut-international-icon/",
     "https://www.fut.gg/whats-hot/",
-    "https://www.fut.gg/whats-new/"
+    "https://www.fut.gg/whats-new/",
+    "https://fcdata.io/players/",
+    "https://fcdata.io/"
   ],
   "players": [
     {
@@ -266,7 +268,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:53:25.172Z"
     },
     {
       "id": "futgg-dos-santos-hof",
@@ -308,7 +315,12 @@
       "version": "Hall of FUT",
       "rarity": "Hall of FUT",
       "card_type": "Hall of FUT",
-      "source_url": "https://www.fut.gg/hall-of-fut/"
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:53:25.173Z"
     },
     {
       "id": "futgg-florenzi-hof",
@@ -6616,9 +6628,13 @@
       "dribbling": 89,
       "defending": 71,
       "physical": 72,
-      "price_ps": 0,
+      "price_ps": 650,
       "price_pc": 0,
-      "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=200"
+      "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=200",
+      "market_price": 650,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-09-26T21:53:25.182Z"
     },
     {
       "id": "ea-217870",
@@ -13490,7 +13506,7 @@
       "id": "futgg-frontline-paradox",
       "title": "Frontline Paradox",
       "description": "[Build out your striker’s core threat in the box, ending in a key decision that sets their role at the apex of your system. ![Image 11](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b407",
-      "cost": 0,
+      "cost": 1256,
       "requirements": [
         "Overall Max. 79",
         "Position ST",
@@ -13586,7 +13602,7 @@
       "id": "futgg-fullback-fork",
       "title": "Fullback Fork",
       "description": "[Sharpen your outer defender’s key attributes, culminating in a choice to tailor their game toward attacking width or defensive stability ![Image 79](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc420",
-      "cost": 0,
+      "cost": 1256,
       "requirements": [
         "Overall Max. 79",
         "Position LB, RB",
@@ -13606,7 +13622,7 @@
       "id": "futgg-intro-repeatable-evolutions-2",
       "title": "Intro to Repeatable Evolutions 2",
       "description": "[Discover Repeatable Evolutions, allowing you to run multiple players through the same upgrade path! ![Image 89](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff2003606fe684cdf8f9de",
-      "cost": 0,
+      "cost": 1256,
       "requirements": [
         "Overall Max. 79",
         "Position ST",
@@ -13626,7 +13642,7 @@
       "id": "futgg-intro-to-evolutions",
       "title": "Intro to Evolutions",
       "description": "[Welcome to Evolutions in FC 27! Upgrade a player of your choice and unlock their first attribute boost. ![Image 99](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-2-large/0.c17401f46193bac8fa70fc57cf2b3cfd322bf98",
-      "cost": 0,
+      "cost": 1256,
       "requirements": [
         "Overall Max. 75",
         "Position RB",
@@ -13667,7 +13683,8 @@
       "title": "Trending Players",
       "description": "[Best Evolutions New](https://www.fut.gg/evolutions/best/)",
       "source_url": "https://www.fut.gg/evolutions/trending/",
-      "details_source_url": "https://www.fut.gg/evolutions/trending/"
+      "details_source_url": "https://www.fut.gg/evolutions/trending/",
+      "cost": 1256
     },
     {
       "id": "futgg-best-evolutions-new",
@@ -13681,14 +13698,16 @@
         "Your Privacy Choices",
         "About|Editorial Policy|Privacy Policy|Terms of Service|Business Inquiries|FIFAIndex|MUT.GG|CFB.FAN|ForzaGarage"
       ],
-      "details_source_url": "https://www.fut.gg/evolutions/best/"
+      "details_source_url": "https://www.fut.gg/evolutions/best/",
+      "cost": 1256
     },
     {
       "id": "futgg-expired-evolutions",
       "title": "Expired Evolutions",
       "description": "## [Pivot Shift New](https://www.fut.gg/evolutions/2524-pivot-shift/)[Sharpen your midfielder's ability to control the tempo, concluding with a decision that steers them toward forward progression or defensive coverage. ![Image 1](https://game-assets.fut.gg/cd",
       "source_url": "https://www.fut.gg/evolutions/expired/",
-      "details_source_url": "https://www.fut.gg/evolutions/expired/"
+      "details_source_url": "https://www.fut.gg/evolutions/expired/",
+      "cost": 1256
     },
     {
       "id": "futgg-frontline-paradox-new",
@@ -13702,7 +13721,8 @@
         "+5 Long Shots 78",
         "+5 Penalties 82"
       ],
-      "details_source_url": "https://www.fut.gg/evolutions/2508-frontline-paradox/"
+      "details_source_url": "https://www.fut.gg/evolutions/2508-frontline-paradox/",
+      "cost": 1256
     },
     {
       "id": "futgg-intro-to-training-camp-evos",
@@ -13725,7 +13745,8 @@
         "Free",
         "Points Cost"
       ],
-      "details_source_url": "https://www.fut.gg/evolutions/2490-intro-to-training-camp-evos/"
+      "details_source_url": "https://www.fut.gg/evolutions/2490-intro-to-training-camp-evos/",
+      "cost": 1256
     },
     {
       "id": "futgg-repeat-delivery-2",
@@ -13774,14 +13795,16 @@
         "Submit by",
         "in 25 days"
       ],
-      "details_source_url": "https://www.fut.gg/evolutions/2489-repeat-delivery/"
+      "details_source_url": "https://www.fut.gg/evolutions/2489-repeat-delivery/",
+      "cost": 1256
     },
     {
       "id": "futgg-intro-to-pathway-evolutions",
       "title": "Intro to Pathway Evolutions",
       "description": "[Explore Pathway Evolutions, a new type of Evolution that allows you to choose how your player develops and upgrades! ![Image 129](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-3-large/0.2bc4206d6031a959b4077ff20",
       "source_url": "https://www.fut.gg/evolutions/2488-intro-to-pathway-evolutions/",
-      "details_source_url": "https://www.fut.gg/evolutions/2488-intro-to-pathway-evolutions/"
+      "details_source_url": "https://www.fut.gg/evolutions/2488-intro-to-pathway-evolutions/",
+      "cost": 1256
     },
     {
       "id": "futgg-pivot-shift-new",
@@ -13795,7 +13818,8 @@
         "+5 Long Pass 80",
         "+5 Agility 75"
       ],
-      "details_source_url": "https://www.fut.gg/evolutions/2524-pivot-shift/"
+      "details_source_url": "https://www.fut.gg/evolutions/2524-pivot-shift/",
+      "cost": 1256
     }
   ],
   "sbcs": [
@@ -13805,9 +13829,12 @@
       "category": "Players",
       "description": "SBC فعال برای دریافت آیتم ویژه Destined for Glory آنتونیو نوسا.",
       "reward": "Destined for Glory Antonio Nusa",
-      "estimated_cost": 75000,
+      "estimated_cost": 88,
       "repeatable": false,
-      "source_url": "https://www.fut.gg/sbc/"
+      "source_url": "https://www.fut.gg/sbc/",
+      "cost": 88,
+      "cost_source": "fcdata-public",
+      "cost_source_url": "https://fcdata.io/"
     },
     {
       "id": "futgg-totw-upgrade",
@@ -13816,25 +13843,31 @@
       "description": "SBC فعال با پاداش یک آیتم TOTW از تیم هفته 1 یا 2.",
       "reward": "1x TOTW 1-2 Player Pack",
       "repeatable": false,
-      "source_url": "https://www.fut.gg/sbc/"
+      "source_url": "https://www.fut.gg/sbc/",
+      "estimated_cost": 1,
+      "cost": 1,
+      "cost_source": "fcdata-public",
+      "cost_source_url": "https://fcdata.io/"
     },
     {
       "id": "futgg-marquee-matchups",
       "title_en": "Marquee Matchups",
       "category": "Challenges",
       "description": "[![Image 25: Marquee Matchups](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/19.png)](https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/)",
-      "reward": "1 x Large Gold Players Pack • 1 x Mini Gold Pack • 1 x Small Mixed Players Pack • 1 x Small Gold Players Pack • 1 x Large Electrum Players Pack • Min. 1 Players from: Italy OR Belgium • Min. 3 Players: Silver • Player quality: Min. Bronze • Min. Squad Total Chemistry Points: 14 • Min. 1 Players from: Norway OR Portugal • Min. 3 Players from the same Club",
+      "reward": "1 x Large Gold Players Pack • 1 x Mini Gold Pack • 1 x Small Mixed Players Pack • 1 x Small Gold Players Pack • 1 x Large Electrum Players Pack • Min. 1 Players from: Italy OR Belgium • Min. 3 Players: Silver • Player quality: Min. Bronze • Min. Squad Total Chemistry Points: 14 • Min. 1 Players from: Norway OR Portugal • Min. 3 Players from the same Club • Min. 2 Players: Gold • Player quality: Min. Silver • Min. Squad Total Chemistry Points: 18 • Min. 2 Players from: Netherlands OR Germany",
       "repeatable": false,
       "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/",
       "requirements": [
         "Min. 1 Players from: Italy OR Belgium",
         "Min. Clubs in Squad: 3",
         "Min. 3 Players: Silver",
+        "Player quality: Min. Bronze",
         "Min. Squad Total Chemistry Points: 14",
         "Min. 1 Players from: Norway OR Portugal",
         "Min. 3 Players from the same Club",
         "Max. Leagues in Squad: 5",
         "Min. 2 Players: Gold",
+        "Player quality: Min. Silver",
         "Min. Squad Total Chemistry Points: 18",
         "Min. 2 Players from: Netherlands OR Germany",
         "Max. 2 Players from the same Club",
@@ -13846,7 +13879,42 @@
         "Min. Team Rating: 75",
         "Min. Squad Total Chemistry Points: 26"
       ],
-      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/",
+      "public_solution": {
+        "total_cost": 0,
+        "remaining_cost": 0,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "Min. 1 Players from: Italy OR Belgium",
+          "Min. Clubs in Squad: 3",
+          "Min. 3 Players: Silver",
+          "Player quality: Min. Bronze",
+          "Min. Squad Total Chemistry Points: 14",
+          "Min. 1 Players from: Norway OR Portugal",
+          "Min. 3 Players from the same Club",
+          "Max. Leagues in Squad: 5",
+          "Min. 2 Players: Gold",
+          "Player quality: Min. Silver",
+          "Min. Squad Total Chemistry Points: 18",
+          "Min. 2 Players from: Netherlands OR Germany",
+          "Max. 2 Players from the same Club",
+          "Min. 4 Players from the same League",
+          "Min. Squad Total Chemistry Points: 22",
+          "Min. 2 Players from: England OR Spain",
+          "Min. 4 Players from the same Nation",
+          "Max. 3 Players from the same Club",
+          "Min. Team Rating: 75",
+          "Min. Squad Total Chemistry Points: 26"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      },
+      "estimated_cost": 27,
+      "cost": 27,
+      "cost_source": "fcdata-public",
+      "cost_source_url": "https://fcdata.io/"
     },
     {
       "id": "futgg-2-expiring-soon",
@@ -13856,11 +13924,33 @@
       "requirements": [
         "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
         "Players",
+        "Clubs",
+        "Nations",
+        "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "challenge_count": 1,
       "repeatable": true,
-      "details_source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
+      "details_source_url": "https://www.fut.gg/sbc/category/expiring-soon/",
+      "estimated_cost": 7350,
+      "cost": 7350,
+      "public_solution": {
+        "total_cost": 7350,
+        "remaining_cost": 7350,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+          "Players",
+          "Clubs",
+          "Nations",
+          "Leagues",
+          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
+      }
     },
     {
       "id": "futgg-2-players",
@@ -13870,10 +13960,32 @@
       "requirements": [
         "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
         "Players",
+        "Clubs",
+        "Nations",
+        "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/category/players/"
+      "details_source_url": "https://www.fut.gg/sbc/category/players/",
+      "estimated_cost": 63600,
+      "cost": 63600,
+      "public_solution": {
+        "total_cost": 63600,
+        "remaining_cost": 63600,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+          "Players",
+          "Clubs",
+          "Nations",
+          "Leagues",
+          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/category/players/"
+      }
     },
     {
       "id": "futgg-6-upgrades",
@@ -13883,11 +13995,33 @@
       "requirements": [
         "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
         "Players",
+        "Clubs",
+        "Nations",
+        "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "challenge_count": 1,
       "repeatable": true,
-      "details_source_url": "https://www.fut.gg/sbc/category/upgrades/"
+      "details_source_url": "https://www.fut.gg/sbc/category/upgrades/",
+      "estimated_cost": 10600,
+      "cost": 10600,
+      "public_solution": {
+        "total_cost": 10600,
+        "remaining_cost": 10600,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+          "Players",
+          "Clubs",
+          "Nations",
+          "Leagues",
+          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/category/upgrades/"
+      }
     },
     {
       "id": "futgg-3-challenges",
@@ -13897,10 +14031,34 @@
       "requirements": [
         "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
         "Players",
-        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
+        "Clubs",
+        "Nations",
+        "Leagues",
+        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+        "League & Nation Advanced"
       ],
       "challenge_count": 4,
-      "details_source_url": "https://www.fut.gg/sbc/category/challenges/"
+      "details_source_url": "https://www.fut.gg/sbc/category/challenges/",
+      "estimated_cost": 5000,
+      "cost": 5000,
+      "public_solution": {
+        "total_cost": 5000,
+        "remaining_cost": 5000,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
+          "Players",
+          "Clubs",
+          "Nations",
+          "Leagues",
+          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
+          "League & Nation Advanced"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/category/challenges/"
+      }
     },
     {
       "id": "futgg-6-foundations",
@@ -13910,12 +14068,33 @@
       "requirements": [
         "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
         "Players",
+        "Clubs",
+        "Nations",
+        "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "challenge_count": 1,
       "repeatable": true,
       "item_score": 1250,
-      "details_source_url": "https://www.fut.gg/sbc/category/foundations/"
+      "details_source_url": "https://www.fut.gg/sbc/category/foundations/",
+      "estimated_cost": 2900,
+      "cost": 2900,
+      "guide_fa": [
+        "این SBC از نوع Item Score است؛ کارت‌های واجد شرایط را تا رسیدن به 1,250 امتیاز ثبت کن."
+      ],
+      "public_solution": {
+        "total_cost": 2900,
+        "remaining_cost": 2900,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "این SBC از نوع Item Score است؛ کارت‌های واجد شرایط را تا رسیدن به 1,250 امتیاز ثبت کن."
+        ],
+        "item_score": 1250,
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/category/foundations/"
+      }
     },
     {
       "id": "futgg-challenges-1",
@@ -13929,7 +14108,19 @@
       ],
       "reward": "Eligible players • Player OVR: Min. 45",
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      }
     },
     {
       "id": "futgg-expires-in-6-days",
@@ -13939,11 +14130,41 @@
       "requirements": [
         "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
         "Players",
+        "Clubs",
+        "Nations",
+        "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "Eligible players • Player OVR: Min. 45",
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
+      "estimated_cost": 63600,
+      "cost": 63600,
+      "challenges": [
+        {
+          "title": "Antonio Nusa",
+          "description": "Earn a special Destined for Glory Antonio Nusa.",
+          "requirements": [],
+          "estimated_cost": 63600
+        }
+      ],
+      "guide_fa": [
+        "Antonio Nusa: Earn a special Destined for Glory Antonio Nusa.",
+        "Antonio Nusa • هزینه تخمینی منبع عمومی: 63,600 سکه"
+      ],
+      "public_solution": {
+        "total_cost": 63600,
+        "remaining_cost": 63600,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "Antonio Nusa: Earn a special Destined for Glory Antonio Nusa.",
+          "Antonio Nusa • هزینه تخمینی منبع عمومی: 63,600 سکه"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      }
     },
     {
       "id": "futgg-repeatable",
@@ -13957,7 +14178,19 @@
       ],
       "reward": "Eligible players • Player OVR: Min. 45",
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      }
     },
     {
       "id": "futgg-refreshes-every",
@@ -13967,11 +14200,41 @@
       "requirements": [
         "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
         "Players",
+        "Clubs",
+        "Nations",
+        "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "Eligible players • Player OVR: Min. 45",
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      "details_source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/",
+      "estimated_cost": 63600,
+      "cost": 63600,
+      "challenges": [
+        {
+          "title": "Antonio Nusa",
+          "description": "Earn a special Destined for Glory Antonio Nusa.",
+          "requirements": [],
+          "estimated_cost": 63600
+        }
+      ],
+      "guide_fa": [
+        "Antonio Nusa: Earn a special Destined for Glory Antonio Nusa.",
+        "Antonio Nusa • هزینه تخمینی منبع عمومی: 63,600 سکه"
+      ],
+      "public_solution": {
+        "total_cost": 63600,
+        "remaining_cost": 63600,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "Antonio Nusa: Earn a special Destined for Glory Antonio Nusa.",
+          "Antonio Nusa • هزینه تخمینی منبع عمومی: 63,600 سکه"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/players/27-25-antonio-nusa/"
+      }
     },
     {
       "id": "futgg-challenges-4",
@@ -13999,7 +14262,19 @@
         "Min. Squad Total Chemistry Points: 26"
       ],
       "reward": "1 x Large Gold Players Pack • 1 x Mini Gold Pack • 1 x Small Mixed Players Pack • 1 x Small Gold Players Pack • 1 x Large Electrum Players Pack • Min. 1 Players from: Italy OR Belgium • Min. 3 Players: Silver • Player quality: Min. Bronze • Min. Squad Total Chemistry Points: 14 • Min. 1 Players from: Norway OR Portugal • Min. 3 Players from the same Club",
-      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      }
     },
     {
       "id": "futgg-expires-in-5-days",
@@ -14027,7 +14302,19 @@
         "Min. Squad Total Chemistry Points: 26"
       ],
       "reward": "1 x Large Gold Players Pack • 1 x Mini Gold Pack • 1 x Small Mixed Players Pack • 1 x Small Gold Players Pack • 1 x Large Electrum Players Pack • Min. 1 Players from: Italy OR Belgium • Min. 3 Players: Silver • Player quality: Min. Bronze • Min. Squad Total Chemistry Points: 14 • Min. 1 Players from: Norway OR Portugal • Min. 3 Players from the same Club",
-      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
+      }
     },
     {
       "id": "futgg-expires-in-9-years",
@@ -14041,7 +14328,19 @@
       ],
       "reward": "Intro to Player SBCs • Complete the Intro to Player SBCs to earn Squad Foundations Cristian Espinoza. • Eligible players • Player OVR: Min. 45",
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/"
+      "details_source_url": "https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/"
+      }
     },
     {
       "id": "futgg-madrid-dreams",
@@ -14060,7 +14359,21 @@
       ],
       "reward": "1 x Giant Gold Pack • Max. 4 Players from the same League • Min. 3 Players from the same Club • Player quality: Min. Gold • Min. Squad Total Chemistry Points: 12",
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/",
+      "estimated_cost": 27,
+      "cost": 27,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
+      },
+      "cost_source": "fcdata-public",
+      "cost_source_url": "https://fcdata.io/"
     },
     {
       "id": "futgg-expires-in-3-hours",
@@ -14079,7 +14392,19 @@
       ],
       "reward": "1 x Giant Gold Pack • Max. 4 Players from the same League • Min. 3 Players from the same Club • Player quality: Min. Gold • Min. Squad Total Chemistry Points: 12",
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
+      }
     },
     {
       "id": "futgg-expires-in-3-days",
@@ -14093,7 +14418,19 @@
       ],
       "reward": "1 x 83+ Gold Player Pack • Earn a pack containing 1 Gold Player Item, rated 83 or higher. • Eligible players • Player OVR: Min. 45",
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-12-83-upgrade/"
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-12-83-upgrade/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/upgrades/27-12-83-upgrade/"
+      }
     },
     {
       "id": "futgg-expires-in-2-days",
@@ -14109,7 +14446,19 @@
       "reward": "1 x 2x 79+ Gold Players Pack • Earn a pack containing 2 Gold Player Items, rated 79 or higher. • Exactly Gold Players • Number of players: 10",
       "challenge_count": 1,
       "repeatable": true,
-      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      }
     },
     {
       "id": "futgg-repeatable-3",
@@ -14125,7 +14474,19 @@
       "reward": "1 x 2x 79+ Gold Players Pack • Earn a pack containing 2 Gold Player Items, rated 79 or higher. • Exactly Gold Players • Number of players: 10",
       "challenge_count": 1,
       "repeatable": true,
-      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      }
     },
     {
       "id": "futgg-refreshes-every-1-day",
@@ -14141,7 +14502,19 @@
       "reward": "1 x 2x 79+ Gold Players Pack • Earn a pack containing 2 Gold Player Items, rated 79 or higher. • Exactly Gold Players • Number of players: 10",
       "challenge_count": 1,
       "repeatable": true,
-      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
+      }
     },
     {
       "id": "futgg-sbcs-sbc-upgrades-27-6-gold-upgrade-repeatable",
@@ -14156,7 +14529,19 @@
       "reward": "1 x Small Gold Players Pack • Exchange Gold items for rewards. • Player quality: Min. Gold",
       "challenge_count": 1,
       "repeatable": true,
-      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-6-gold-upgrade/"
+      "details_source_url": "https://www.fut.gg/sbc/upgrades/27-6-gold-upgrade/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/upgrades/27-6-gold-upgrade/"
+      }
     },
     {
       "id": "futgg-league-nation-advanced",
@@ -14164,23 +14549,25 @@
       "description": "[![Image 58: League & Nation Advanced](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/10.png)](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)",
       "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
       "requirements": [
-        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-        "Players",
-        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
-        "Max. 6 Players from the same League",
-        "Max. 6 Players from the same Nation",
-        "Exactly Gold Players",
-        "Min. Squad Total Chemistry Points: 30",
-        "Max. 4 Players from the same League",
-        "Max. 3 Players from the same Nation",
-        "Min. Team Rating: 78",
-        "Min. Squad Total Chemistry Points: 25",
-        "Max. 2 Players from the same Club",
-        "Min. Team Rating: 81"
+        "League &amp; Nation Advanced - EA SPORTS FC 27 SBC - FUT.GG (()=>{var be=4096,Ce=3,we=(b,g)=>!!g?.adId&&!!g.inventory&&[\"inventory\",\"adId\",\"bidder\",\"bucket\"].every(k=>b[k]===g[k])&&b.start>=g.t-100&&b.start g===\"1\"||g===\"0\"?g:g===\"\"?\"empty\":\"other\"):null,truncated:!!b&&b.length>3}}function Le(){let b=new Map,g,k=!1,F=async(i,a,h)=>{let w=new TextEncoder().encode(JSON.stringify([\"futdiag-id-v1\",g,i,a,h])),c=await crypto.subtle.digest(\"SHA-256\",w);return Array.from(new Uint8Array(c),j=>j.toString(16).padStart(2,\"0\")).join(\"\")};function L(i){!g||k||i.started||(i.started=!0,Promise.resolve().then(async()=>{if(k)return;let a=await Promise.all(i.items.map(async h=>{if(!h.trim())return[null,null];let w=[\"gads\",\"gpi\",\"eoi\"].includes(i.family)?[...h.matchAll(/(?:^|:)(UID|ID)=([A-Za-z0-9_-]{1,256})(?=:|$)/g)]:[];return Promise.all([F(i.family,\"value\",h),w.length===1?F(i.family,w[0][1],w[0][2]):null])}));k||Object.assign(i.result,{state:\"ready\",values:a.map(h=>h[0]),ids:a.map(h=>h[1])})}).catch(()=>{k||(i.result.state=\"error\")}).finally(()=>{i.items=null}))}return{observe(i,a,h=!1){let w=O=>({state:O,values:null,ids:null});if(!i||k)return w(\"unavailable\");if(i.length>3||i.some(O=>O.length>2048))return w(\"limit\");let c=i.map(O=>{if(!h)return O;try{return decodeURIComponent(O)}catch{return O}});if(!c.length)return{state:\"ready\",values:[],ids:[]};if(!globalThis.crypto?.subtle)return w(\"unavailable\");let j=JSON.stringify([a,c]);if(b.has(j))return b.get(j).result;if(b.size>=128)return w(\"limit\");let z={family:a,items:c,started:!1,result:w(\"pending\")};return b.set(j,z),L(z),z.result},admit(i){if(!(k||g||typeof i!=\"string\"||!/^[a-z0-9-]{1,60}$/.test(i))){g=i;for(let a of b.values())L(a)}},stop(){k=!0;for(let i of b.values())i.items=null;b.clear()}}}function ze(b,g){let k=b.trim().replace(/^\\)\\]\\}'\\s*/,\"\"),F=[\"no_fill\",\"no-fill\",\"unfilled\",\"consent\",\"invalid traffic\",\"captcha\"],L=b.toLowerCase(),i={format:k?\"text\":g?\"empty\":\"unknown\",shape:null,markup:/ L.includes(a)).join(\",\")};if(!g||!k)return i;try{let a=JSON.parse(k),h=0,w=(c,j)=>{if(++h>120||j>5)return\"\\u2026\";if(c===null)return\"null\";if(typeof c==\"string\")return c.length?/^\\s* w(O,j+1)).join(\",\")+(c.length>16?\",\\u2026\":\"\")+\"]\";let z=Object.values(c);return\"{\"+z.slice(0,16).map(O=>w(O,j+1)).join(\",\")+(z.length>16?\",\\u2026\":\"\")+\"}\"};i.format=\"json\",i.shape=w(a,0).slice(0,1200)}catch{i.markup&&(i.format=\"markup\")}return i}function Ue({now:b,safe:g,requests:k,pins:F,parseWire:L}){let i=[],a=[],h=new Map,w=new Map,c=Le(),j=new WeakMap,z=new WeakMap,O=new Set,N=[],Y=new WeakSet,S={fetchInstalled:!1,fetchReplaced:!1,fetchSeen:0,responseDropped:0,signalDropped:0,bodyReads:0,bodyLimited:0,bodyUnreadable:0,bodyTimeouts:0,errors:0,trimmed:!1},A=!1,ne=0,J,G=(r,n,o)=>{if(r.length===8){let d=r.findIndex(f=>!F.has(f.request));if(d {let d={__gads:\"gads\",cookie:\"gads\",__gpi:\"gpi\",gpic:\"gpi\",__eoi:\"eoi\",eo_id_str:\"eoi\"}[n]||n,f=c.observe(r,d,o===h);if(!r)return{count:null,empty:null,length:null,changed:null,fingerprints:f};let R=JSON.stringify(r),u=o.get(n);return o.set(n,R),{count:r.length,empty:r.filter(y=>!y.trim()).length,length:r.reduce((y,C)=>y+C.length,0),changed:u===void 0?null:R!==u,fingerprints:f}},$=()=>{let r=g(()=>document.cookie.split(\";\").map(n=>{let o=n.indexOf(\"=\");return[n.slice(0,o).trim(),n.slice(o+1)]}));return{cookies:Object.fromEntries([\"__gads\",\"__gpi\",\"__eoi\"].map(n=>[n,K(r?r.filter(o=>o[0]===n).map(o=>o[1]):null,n,h)])),gpiOptOut:ve(r?r.filter(n=>n[0]===\"__gpi_opt_out\").map(n=>n[1]):null)}},Q=r=>{let n=g(r);if(!n||typeof n!=\"object\")return null;let o={},d=Object.keys(n).sort(),f=!1;for(let u of[\"site\",\"flr\",\"refresh\",\"hb_adid\",\"hb_bidder\",\"hb_pb\",\"hb_size\",\"hb_source\",\"hb_format\"]){let y=Array.isArray(n[u])?n[u]:n[u]==null?[]:[n[u]];f||(f=y.length>3||y.some(C=>String(C).length>80||/[\\u0000-\\u001f]/.test(String(C)))),o[u]=y.slice(0,3).map(C=>String(C).replace(/[\\u0000-\\u001f]/g,\"\").slice(0,80))}let R=d.filter(u=>!Object.hasOwn(o,u));return{values:o,unknownKeys:R.slice(0,16).map(u=>/^[\\w-]{1,40}$/.test(u)?u:\"redacted\"),truncated:f||R.length>16}},ie=r=>r?g(()=>new URL(r,location.href).origin===location.origin?\"same-origin\":\"other-origin\",\"invalid\"):\"unset\";function se(){for(let r of a)r.bidAtResponse=null;for(let r of i){let n=k.filter(f=>we(r,f)),o=n.length===1&&i.filter(f=>we(f,n[0])).length===1?n[0]:null;if(r.request=o?.id??null,!o||!j.has(r))continue;let d=a.find(f=>f.request===o.id);d&&(d.bidAtResponse=j.get(r))}}function q(r,n){let o=g(()=>googletag.getConfig([\"targeting\",\"adsenseAttributes\"])),d=g(()=>n.getConfig([\"targeting\",\"adsenseAttributes\",\"categoryExclusion\"])),f=u=>Object.fromEntries(u.getTargetingKeys().map(y=>[y,u.getTargeting(y)])),R={request:r.id,...$(),pageTargeting:Q(()=>o?o.targeting||{}:f(googletag.pubads())),slotTargeting:Q(()=>d?d.targeting||{}:f(n)),pageUrl:o?ie(o.adsenseAttributes?.page_url):\"unknown\",slotUrl:d?ie(d.adsenseAttributes?.page_url):\"unknown\",exclusions:d?d.categoryExclusion?.length??0:null,bidAtResponse:null,bidAtRender:null,renderReason:null,auctionsCleared:Y.has(window.pbjs?.clearAllAuctions)?0:null,slotsDestroyed:Y.has(window.googletag?.destroySlots)?0:null};G(a,R,\"signalDropped\"),se()}function D(r,n){let o=a.find(d=>d.request===r.id);o&&(o[n]=g(()=>typeof window.pbjs?.getBidResponseByAdId==\"function\"?!!window.pbjs.getBidResponseByAdId(r.adId):null))}function x(r,n){let o=k.filter(f=>f.adId===r);if(o.length!==1)return;let d=a.find(f=>f.request===o[0].id);d&&(d.renderReason=[\"cannotFindAd\",\"exception\",\"missingDoc\",\"preventWritingOnMainDocument\",\"noAd\",\"adAlreadyRendered\"].includes(n)?n:\"other\")}function T(r,n,o){if(A||!r||typeof r[n]!=\"function\"||Y.has(r[n]))return;let d=r[n];function f(...R){return A||g(()=>{for(let u of a){let y=k.find(C=>C.id===u.request);u[o]!==null&&y&&(y.match===\"pending\"||y.isEmpty===!1&&y.prebidRender===null&&b() {r[n]=f,Y.add(f),N.push(()=>{r[n]===f&&(r[n]=d)})})}function P(){T(window.pbjs,\"clearAllAuctions\",\"auctionsCleared\"),T(window.googletag,\"destroySlots\",\"slotsDestroyed\")}let ee=r=>{g(()=>r.cancel().catch(()=>{})),O.delete(r)};async function H(r,n){if(A)return;if([\"opaque\",\"opaqueredirect\",\"error\"].includes(r.type)){n.bodyState=\"opaque\",S.bodyUnreadable++;return}if(!r.body){n.bodyState=\"no-body\",n.complete=!0,n.bytes=0,z.set(n,\"\"),Object.assign(n,ze(\"\",!0));return}if(S.bodyReads>=6||O.size>=2||ne>=196608){n.bodyState=\"budget\",S.bodyLimited++;return}let o,d,f=0,R=\"\",u=!1,y=new TextDecoder(\"utf-8\",{fatal:!0,ignoreBOM:!0});try{for(o=r.clone().body.getReader(),O.add(o),S.bodyReads++,n.bodyState=\"reading\",d=setTimeout(()=>{u||(n.bodyState=\"timeout\",S.bodyTimeouts++,ee(o))},2e3);!A&&n.bodyState===\"reading\";){let{done:C,value:X}=await o.read();if(A||n.bodyState!==\"reading\")break;if(C){n.complete=!0,n.bodyState=\"complete\",R+=y.decode();break}let W=Math.min(32768-f,196608-ne),I=X.subarray(0,W);if(f+=I.byteLength,ne+=I.byteLength,R+=y.decode(I,{stream:!0}),X.byteLength>=W){n.bodyState=\"limit\",S.bodyLimited++,ee(o);break}}A&&n.bodyState===\"reading\"&&(n.bodyState=\"stopped\"),n.bytes=f,A||(Object.assign(n,ze(R,n.complete===!0)),n.complete&&f o.releaseLock()))}}function ge(){if(typeof window.fetch!=\"function\")return;let r=window.fetch;J=function(...n){let o=Reflect.apply(r,this,n);if(A)return o;try{let d=n[0],f=n[1],R=typeof d==\"string\"?d:d instanceof URL?d.href:d instanceof Request?d.url:null;if(!R)return o;let u=new URL(R,location.href);if(!/^https:$/.test(u.protocol)||!/^(securepubads\\.g\\.doubleclick\\.net|pubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(u.hostname)||u.pathname!==\"/gampad/ads\")return o;S.fetchSeen++;let y=L(u);if(y.multiSlot||!y.inventory?.split(\"/\").includes(\"lumiere-sticky-footer\"))return o;let C=b(),X=(_,V)=>g(()=>f&&Object.hasOwn(f,_)?f[_]:d instanceof Request?d[_]:V),W=(_,V)=>V.includes(_)?_:\"unknown\",I={request:null,start:C,end:null,inventory:y.inventory,adId:y.adId,bidder:y.bidder,bucket:y.bucket,method:W(X(\"method\",\"GET\")?.toUpperCase(),[\"GET\",\"POST\"]),credentials:W(X(\"credentials\",\"same-origin\"),[\"omit\",\"same-origin\",\"include\"]),mode:W(X(\"mode\",\"cors\"),[\"cors\",\"no-cors\",\"same-origin\"]),status:null,type:null,redirected:null,contentType:null,contentLength:null,bodyState:\"pending\",bytes:null,complete:!1,format:null,shape:null,markup:null,markers:null,identities:Object.fromEntries([\"cookie\",\"gpic\",\"eo_id_str\",\"ppid\",\"puid\"].map(_=>[_,K(u.searchParams.getAll(_),_,w)])),pdopt:ve(u.searchParams.getAll(\"pdopt\")),wireTargeting:Q(()=>Object.fromEntries([...new Set(y.targeting.keys())].map(_=>[_,y.targeting.getAll(_)]))),wireSizes:g(()=>{let _=u.searchParams.get(\"prev_iu_szs\")||u.searchParams.get(\"sz\")||\"\";return/^(?:(?:\\d{1,5}x\\d{1,5}|fluid)(?:|,)*)?$/.test(_)?_.slice(0,240):null}),contentUrl:ie(u.searchParams.get(\"url\"))};if(!G(i,I,\"responseDropped\"))return o;se(),o.then(_=>{if(A)return;j.set(I,y.adId?g(()=>typeof window.pbjs?.getBidResponseByAdId==\"function\"?!!window.pbjs.getBidResponseByAdId(y.adId):null):null),I.end=b(),I.status=_.status,I.type=W(_.type,[\"basic\",\"cors\",\"default\",\"opaque\",\"opaqueredirect\",\"error\"]),I.redirected=_.redirected;let V=(_.headers.get(\"content-type\")||\"\").split(\";\")[0].toLowerCase();I.contentType=[\"text/html\",\"text/plain\",\"application/json\",\"application/javascript\",\"text/javascript\",\"application/octet-stream\"].includes(V)?V:V?\"other\":\"missing\";let re=_.headers.get(\"content-length\");I.contentLength=re!==null&&/^\\d{1,10}$/.test(re)?Number(re):null,se(),H(_,I)},()=>{A||(I.end=b(),I.bodyState=\"fetch-error\")}).catch(()=>{A||S.errors++})}catch{S.errors++}return o},g(()=>{window.fetch=J,S.fetchInstalled=window.fetch===J}),N.push(()=>{window.fetch===J&&(window.fetch=r)})}return ge(),{request:q,bidState:D,renderFailure:x,attach:P,admit:r=>c.admit(r),snapshot:()=>{se(),!A&&S.fetchInstalled&&(S.fetchReplaced=window.fetch!==J);let r=0,n=i.map(o=>{let d=k.find(R=>R.id===o.request),f=!d||d.match===\"ambiguous\"?\"unmatched\":d.selected?d.match!==\"single-pending\"||typeof d.isEmpty!=\"boolean\"?\"unresolved\":d.isEmpty?o.complete?o.bytes>be?\"too-large\":z.has(o)?r>=Ce?\"budget\":\"retained\":\"unavailable\":\"incomplete\":\"not-empty\":\"not-selected\";return f===\"retained\"&&r++,{...o,emptyBody:f===\"retained\"?z.get(o):null,emptyBodyState:f}});return JSON.parse(JSON.stringify({version:3,quality:S,responses:n,signals:a}))},stop:(r=!1)=>{S.fetchReplaced=S.fetchInstalled&&window.fetch!==J,A=!0;for(let n of O)ee(n);N.forEach(n=>g(n)),h.clear(),w.clear(),c.stop(),z=new WeakMap,r&&(i.length=0,a.length=0)}}}function Fe(b,g,k){\"use strict\";if(window!==window.top||window.__futFooterProbe)return;let F=\"unknown\";try{let e=navigator.userAgent||\"\";F=navigator.userAgentData?.mobile===!0||/Android|iPhone|iPad|iPod|Mobile/i.test(e)||/Macintosh/.test(e)&&navigator.maxTouchPoints>1?\"mobile\":/Windows NT|Macintosh|X11|CrOS|Linux/.test(e)?\"desktop\":\"unknown\"}catch{}let L=k[F];if(window.__futFooterProbe={status:()=>({sampled:!1,samplingClass:F,sampleRate:L})},Math.random()>=L)return;window.__futFooterProbe={status:()=>({sampled:!0,starting:!0})};let i=(e,t=null)=>{try{return e()}catch{return t}},a=(e,t=120)=>typeof e==\"string\"?e.slice(0,t):null,h=e=>typeof e==\"number\"&&Number.isFinite(e)?Math.round(e*100)/100:null,w=e=>typeof e==\"boolean\"?e:null,c=()=>Math.round(performance.now()),j=c(),z=h(performance.timeOrigin),O=Date.now(),N=[],Y=[],S=[],A=[],ne=[],J=new WeakMap,G=new Map,K=new Set,$=new Set,Q=[],ie=[],se=new WeakSet,q={footerRequested:0,footerEmpty:0,footerFilled:0,ambiguous:0,otherRequested:0,otherEmpty:0,otherFilled:0,dropped:0,requestDropped:0,netDropped:0,iasResources:0,iasErrors:0,errors:0,replayed:0},D={pointerTrusted:0,pointerSynthetic:0,keyTrusted:0,keySynthetic:0,moveSeconds:0,scrollSeconds:0,firstTrustedMs:null,lastTrustedMs:null,visibleMs:0,focusedMs:0,visibilityChanges:0,resizes:0,bfcache:!1},x={gptAt:null,prebidAt:null,tcfAt:null,gppAt:null,gptAlreadyReady:!!window.googletag?.apiReady,prebidAlreadyReady:typeof window.pbjs?.onEvent==\"function\",resourceObserver:!1,resourceBufferFull:!1,consentOverflow:!1,payloadTrimmed:!1},T,P=!1,ee=!1,H=null,ge=0,r=0,n=null,o,d,f,R,u=null,y=null,C=!1,X=!1,W,I,_=!1,V=c(),re=c(),me=document.visibilityState===\"visible\",_e=i(()=>document.hasFocus(),!1),de=location.pathname,he=0,Se=!1,Re=!1,Ae=e=>/^(rise|medianet|oms|oms-s)$/.test(e||\"\"),U=e=>(...t)=>{if(!P)try{e(...t)}catch{q.errors++}},oe=Ue({now:c,safe:i,requests:N,pins:$,parseWire:Be});function ae(e,t,s){return e.length>=s&&(e.shift(),q.dropped++,e===Y&&q.netDropped++),e.push(t),t}function te(e,t,s,l){typeof e?.addEventListener==\"function\"&&(e.addEventListener(t,s,l),Q.push(()=>e.removeEventListener(t,s,l)))}function Z(e,t){if(typeof t!=\"string\"||!t)return null;let s=A.find(v=>v.kind===e&&!v.truncated&&v.text===t);if(s)return s.id;let l=12288-A.reduce((v,B)=>v+B.text.length,0);if(A.length>=8||l document.cookie.split(\";\").map(t=>t.trim().split(\"=\",1)[0]));return{gads:e?e.includes(\"__gads\"):null,gpi:e?e.includes(\"__gpi\"):null,eoi:e?e.includes(\"__eoi\"):null}}function Te(){return de!==location.pathname&&(de=location.pathname,he++),/^\\/(players|squad-builder|evolutions|clubs|fut-gallery)(\\/|$)/.exec(de)?.[1]||(de===\"/\"?\"home\":\"other\")}function Ie(){return{ua:a(navigator.userAgent,320),platform:a(navigator.platform,60),language:a(navigator.language,30),languages:a(i(()=>navigator.languages.join(\",\")),160),timezone:a(i(()=>Intl.DateTimeFormat().resolvedOptions().timeZone),80),timezoneOffset:new Date().getTimezoneOffset(),width:innerWidth,height:innerHeight,outerWidth,outerHeight,screenWidth:screen.width,screenHeight:screen.height,availWidth:screen.availWidth,availHeight:screen.availHeight,colorDepth:screen.colorDepth,dpr:h(devicePixelRatio),touch:h(navigator.maxTouchPoints),cores:h(navigator.hardwareConcurrency),memory:h(navigator.deviceMemory),plugins:h(i(()=>navigator.plugins.length)),mimeTypes:h(i(()=>navigator.mimeTypes.length)),webdriver:w(navigator.webdriver),headlessUa:/HeadlessChrome|PhantomJS/i.test(navigator.userAgent),automationArtifacts:i(()=>[\"__playwright__binding__\",\"__pwInitScripts\",\"_phantom\",\"callPhantom\",\"domAutomationController\"].filter(e=>Object.prototype.hasOwnProperty.call(window,e)).join(\",\"),\"\"),seleniumArtifact:i(()=>Object.getOwnPropertyNames(window).slice(0,3e3).some(e=>/^cdc_[a-zA-Z0-9]+_(Array|Promise|Symbol)$/.test(e))),chBrands:a(i(()=>navigator.userAgentData.brands.map(e=>e.brand+\"/\"+e.version).join(\",\")),180),chPlatform:a(navigator.userAgentData?.platform,60),chMobile:w(navigator.userAgentData?.mobile),gpc:w(navigator.globalPrivacyControl),dnt:a(navigator.doNotTrack,10),cookieEnabled:w(navigator.cookieEnabled),localStorageReadable:i(()=>(window.localStorage.length,!0),!1),sessionStorageReadable:i(()=>(window.sessionStorage.length,!0),!1),serviceWorkerControlled:i(()=>!!navigator.serviceWorker.controller),navigationType:a(i(()=>performance.getEntriesByType(\"navigation\")[0].type),30),wasDiscarded:w(document.wasDiscarded),visibility:a(document.visibilityState,20),focused:i(()=>document.hasFocus()),userActivation:w(navigator.userActivation?.hasBeenActive),route:Te(),routeGeneration:he,loaderStatus:a(window.__stormstrikeLoaderStates?.futgg?.status,30),gptVersion:a(i(()=>window.googletag.getVersion()),40),prebidVersion:a(window.pbjs?.version,40),beaconVersion:a(window.__bidstorm?.cv||window.__q7r2?.cv,40),...ke()}}let Ne=Ie();function ye(){let e=c();me&&(D.visibleMs+=e-V),_e&&(D.focusedMs+=e-re),V=re=e}function We(e){let t=c();if(e.type===\"pointerdown\"||e.type===\"keydown\"){let s=(e.type===\"keydown\"?\"key\":\"pointer\")+(e.isTrusted?\"Trusted\":\"Synthetic\");D[s]=Math.min(1e3,D[s]+1)}e.isTrusted&&(D.firstTrustedMs===null&&(D.firstTrustedMs=t),D.lastTrustedMs=t)}for(let e of[\"pointerdown\",\"keydown\"])te(window,e,U(We),{passive:!0,capture:!0});for(let[e,t]of[[\"pointermove\",\"moveSeconds\"],[\"scroll\",\"scrollSeconds\"]]){let s=-1;te(window,e,U(l=>{let p=Math.floor(c()/1e3);l.isTrusted&&s!==p&&(s=p,D[t]++)}),{passive:!0})}te(window,\"resize\",U(()=>{D.resizes=Math.min(1e3,D.resizes+1)}));for(let e of[\"focus\",\"blur\"])te(window,e,U(()=>{ye(),_e=document.hasFocus()}));function ce(e){let t=J.get(e);return t||(t={generation:++r,seq:0,pending:[],tainted:!1},J.set(e,t)),t}let Ee=e=>i(()=>e.getSlotElementId())===\"lumiere-sticky-footer\";function $e(e){let t=(s,l)=>({ttlBuffer:s,ttlBufferSource:l});try{if(!e)return t(null,\"unavailable\");if(Object.prototype.hasOwnProperty.call(e,\"ttlBuffer\")){let p=h(e.ttlBuffer);return t(p,p===null?\"invalid-bid\":\"bid\")}if(typeof window.pbjs?.getConfig!=\"function\")return t(null,\"unavailable\");let s=window.pbjs.getConfig(\"ttlBuffer\"),l=h(s);return l!==null?t(l,\"config\"):s!==void 0?t(null,\"invalid-config\"):/^v?11\\.31\\.0$/.test(window.pbjs.version||\"\")?t(1,\"prebid-default\"):t(null,\"unknown-default\")}catch{return t(null,\"read-error\")}}function He(e){if(!Ee(e)){q.otherRequested++;return}let t=ce(e),s=M=>a(i(()=>e.getTargeting(M)[0])),l=s(\"hb_adid\"),p=s(\"hb_bidder\"),m=i(()=>window.pbjs.getBidResponseByAdId(l)),v=G.get(m?.auctionId+\":\"+p),B=Ae(p)&&!!l&&!!s(\"hb_pb\"),E={id:++ge,generation:t.generation,seq:++t.seq,t:c(),inventory:a(i(()=>e.getAdUnitPath()),240),slot:\"lumiere-sticky-footer\",adId:l,bidder:p,bucket:s(\"hb_pb\"),bidSize:s(\"hb_size\"),floor:s(\"flr\"),refresh:s(\"refresh\"),site:s(\"site\"),selected:B,bidPresent:!!m,cpm:h(m?.cpm),currency:a(m?.currency,10),bidAgeMs:m?h(Date.now()-m.responseTimestamp):null,ttl:h(m?.ttl),...$e(m),auctionId:a(m?.auctionId),bidId:a(m?.requestId||m?.bidId),requestedSizes:a(i(()=>e.getSizes(innerWidth,innerHeight).map(M=>typeof M==\"string\"?M:M.getWidth()+\"x\"+M.getHeight()).join(\",\")),240),tcRef:u?.tcRef||null,acRef:u?.acRef||null,cmpGppRef:y?.gppRef||null,tcAgeMs:u?c()-u.t:null,gdprApplies:u?.gdprApplies??null,cmpStatus:u?.cmpStatus||null,consentEvent:u?.consentEvent||null,purposeBits:u?.purposeBits||null,googleConsent:u?.googleConsent??null,prebidTcRef:v?.tcRef||null,prebidGppRef:v?.gppRef||null,prebidAcRef:v?.acRef||null,prebidConsentReplayed:v?.replayed??null,disablePersonalization:i(()=>{let M=window.googletag.getConfig(\"privacyTreatments\")?.privacyTreatments?.treatments;return Array.isArray(M)?M.includes(\"disablePersonalization\"):null}),...ke(),visibility:a(document.visibilityState,20),focused:i(()=>document.hasFocus()),width:innerWidth,height:innerHeight,route:Te(),routeGeneration:he,match:t.tainted?\"ambiguous\":\"pending\",renderAt:null,isEmpty:null,isBackfill:null,lineItemId:null,creativeId:null,responseId:null,size:null,responseAt:null,onloadAt:null,prebidRender:null,bidWonAt:null};if(N.length>=18){let M=N.findIndex(pe=>!$.has(pe.id));M>=0&&N.splice(M,1),q.dropped++,q.requestDropped++}N.push(E),q.footerRequested++,t.pending.length&&(t.tainted=!0,t.pending.forEach(M=>{M.match=\"ambiguous\"}),E.match=\"ambiguous\"),ae(t.pending,E,4),B&&n===null&&(n=E.t,$.add(E.id),o=setTimeout(()=>ue(\"window\"),Math.min(9e4,Math.max(0,j+18e4-c())))),i(()=>oe.request(E,e))}function Ve(e){if(!Ee(e.slot)){q[e.isEmpty?\"otherEmpty\":\"otherFilled\"]++;return}q[e.isEmpty?\"footerEmpty\":\"footerFilled\"]++;let t=ce(e.slot),s=!t.tainted&&t.pending.length===1?t.pending[0]:null;if(!s){q.ambiguous++,t.pending=[];return}t.pending=[],t.last=s,Object.assign(s,{match:\"single-pending\",renderAt:c(),isEmpty:w(e.isEmpty),isBackfill:w(e.isBackfill),lineItemId:h(e.lineItemId),creativeId:h(e.creativeId),responseId:a(e.responseIdentifier,240),size:a(Array.isArray(e.size)?e.size.join(\"x\"):e.size,40)}),s.selected&&s.isEmpty&&!Se&&($.add(s.id),Se=!0),i(()=>oe.bidState(s,\"bidAtRender\"))}function Oe(){if(_||P||!window.googletag?.apiReady)return;_=!0,x.gptAt=c();let e=window.googletag.pubads();for(let[t,s]of[[\"slotRequested\",l=>He(l.slot)],[\"slotRenderEnded\",Ve],[\"slotResponseReceived\",l=>{let p=ce(l.slot);!p.tainted&&p.pending.length===1&&(p.pending[0].responseAt=c())}],[\"slotOnload\",l=>{let p=ce(l.slot);!p.tainted&&!p.pending.length&&p.last&&(p.last.onloadAt=c())}]]){let l=U(s);e.addEventListener(t,l),Q.push(()=>e.removeEventListener(t,l))}}function je(e,t=!1){Ae(e.bidderCode)&&(G.set(e.auctionId+\":\"+e.bidderCode,{tcRef:Z(\"tcf\",e.gdprConsent?.consentString),gppRef:Z(\"gpp\",e.gppConsent?.gppString),acRef:Z(\"ac\",e.gdprConsent?.addtlConsent),replayed:t}),G.size>48&&G.delete(G.keys().next().value))}function Me(e){if(!e||typeof e.onEvent!=\"function\"||se.has(e)||P)return;se.add(e),x.prebidAt??(x.prebidAt=c());let t=[[\"bidRequested\",s=>je(s,!1)]];for(let s of[\"bidWon\",\"adRenderSucceeded\",\"adRenderFailed\"])t.push([s,l=>{let p=l.bid||l,m=l.adId||p.adId;s===\"adRenderFailed\"&&i(()=>oe.renderFailure(m,l.reason));let v=N.filter(E=>E.adId===m&&E.match===\"single-pending\"&&E.isEmpty===!1&&E.isBackfill===!1);if(v.length!==1)return;let B=v[0];s===\"bidWon\"?B.bidWonAt=c():B.prebidRender=s===\"adRenderSucceeded\"?\"success\":\"failure\",B.selected&&B.prebidRender===\"success\"&&!Re&&(Re=!0,$.add(B.id))}]);for(let[s,l]of t){let p=U(l);e.onEvent(s,p),Q.push(()=>e.offEvent(s,p))}i(()=>(e.getEvents?.()||[]).slice(-80).forEach(s=>{s.eventType===\"bidRequested\"&&(je(s.args,!0),q.replayed++)}))}function qe(){P||(i(Oe),i(()=>Me(window.pbjs)),i(oe.attach),!C&&typeof window.__tcfapi==\"function\"&&(C=!0,window.__tcfapi(\"addEventListener\",2,(e,t)=>{if(e?.listenerId!==void 0&&(W=e.listenerId),P){i(()=>window.__tcfapi(\"removeEventListener\",2,()=>{},W));return}!t||!e||(x.tcfAt??(x.tcfAt=c()),u={t:c(),tcRef:Z(\"tcf\",e.tcString),acRef:Z(\"ac\",e.addtlConsent),gdprApplies:w(e.gdprApplies),cmpStatus:a(e.cmpStatus,30),consentEvent:a(e.eventStatus,30),purposeBits:e.purpose?.consents?Array.from({length:11},(s,l)=>e.purpose.consents[l+1]===!0?\"1\":e.purpose.consents[l+1]===!1?\"0\":\"?\").join(\"\"):null,googleConsent:w(e.vendor?.consents?.[755])},ae(ne,{...u},8))})),!X&&typeof window.__gpp==\"function\"&&(X=!0,window.__gpp(\"addEventListener\",(e,t)=>{if(e?.listenerId!==void 0&&(I=e.listenerId),P){i(()=>window.__gpp(\"removeEventListener\",()=>{},I));return}!t||!e?.pingData||(x.gppAt??(x.gppAt=c()),y={t:c(),gppRef:Z(\"gpp\",e.pingData.gppString)})})))}function xe(e){return/^(securepubads\\.g\\.doubleclick\\.net|pubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(e.hostname)&&e.pathname===\"/gampad/ads\"?\"gam\":/(^|\\.)(adsafeprotected\\.com|iasds01\\.com)$/.test(e.hostname)?\"ias\":/(^|\\.)doubleverify\\.com$/.test(e.hostname)?\"doubleverify\":/^(ep1|ep2)\\.adtrafficquality\\.google$/.test(e.hostname)?\"google-traffic-quality\":e.hostname===\"cm.g.doubleclick.net\"?\"google-matching\":/^(securepubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(e.hostname)?\"google-helper\":e.hostname===\"cmp.uniconsent.com\"?\"cmp\":e.hostname===\"cdn.lumiere.gg\"?\"lumiere\":null}function Be(e){let t=e.searchParams,s=t.get(\"enc_prev_ius\")||\"\",l=s.includes(\",\"),p=null;if(s&&!l){let v=(t.get(\"iu_parts\")||\"\").split(\",\"),B=s.split(\"/\").filter(Boolean);B.length&&B.every(E=>/^\\d+$/.test(E)&&v[Number(E)]!==void 0)&&(p=\"/\"+B.map(E=>v[Number(E)]).join(\"/\"))}else l||(p=t.get(\"iu\"));let m=new URLSearchParams(l?\"\":t.get(\"prev_scp\")||t.get(\"cust_params\")||\"\");return{inventory:a(p,240),multiSlot:l,targeting:m,adId:a(m.get(\"hb_adid\")),bidder:a(m.get(\"hb_bidder\")),bucket:a(m.get(\"hb_pb\"))}}function De(e){if(P)return;let t=new URL(e.name),s=xe(t);if(!s)return;let l=e.name+\":\"+e.startTime;if(K.has(l))return;K.add(l),K.size>100&&K.delete(K.values().next().value);let p={start:h(e.startTime),duration:h(e.duration),status:e.responseStatus>0?h(e.responseStatus):null,initiator:a(e.initiatorType,30),timingRestricted:e.responseStart===0};if(s!==\"gam\"){s===\"ias\"&&q.iasResources++,ae(S,{...p,kind:s,source:\"performance\"},20);return}let m=t.searchParams,{inventory:v,multiSlot:B,targeting:E}=Be(t);if(v&&!v.split(\"/\").includes(\"lumiere-sticky-footer\"))return;let M={...p,inventory:a(v,240),multiSlot:B,queryHasTargeting:m.has(\"prev_scp\")||m.has(\"cust_params\"),adId:a(E.get(\"hb_adid\")),bidder:a(E.get(\"hb_bidder\")),bucket:a(E.get(\"hb_pb\")),tcRef:Z(\"tcf\",m.get(\"gdpr_consent\")),gppRef:Z(\"gpp\",m.get(\"gpp\")),acRef:Z(\"ac\",m.get(\"addtl_consent\")),cookieIdPresent:m.has(\"cookie\"),gpicPresent:m.has(\"gpic\"),eoiPresent:m.has(\"eo_id_str\"),ppidPresent:m.has(\"ppid\"),puidPresent:m.has(\"puid\")};for(let pe of[\"gdpr\",\"npa\",\"ltd\",\"rdp\",\"ppt\",\"tfua\",\"tfcd\",\"gpp_sid\",\"us_privacy\"])M[pe]=a(m.get(pe),60);ae(Y,M,24)}i(()=>{f=new PerformanceObserver(e=>e.getEntries().forEach(U(De))),f.observe({type:\"resource\",buffered:!0}),x.resourceObserver=!0}),te(performance,\"resourcetimingbufferfull\",U(()=>{x.resourceBufferFull=!0}));for(let e of[\"error\",\"securitypolicyviolation\"])te(window,e,U(t=>{let s=t.blockedURI||t.target?.src||t.target?.href;if(!s)return;let l=xe(new URL(s,location.origin));l===\"ias\"&&q.iasErrors++,l&&ae(S,{kind:l,start:c(),source:e===\"error\"?\"resource-error\":\"csp\",directive:a(t.effectiveDirective,60)},20)}),!0);function le(){if(!P&&(P=!0,clearInterval(d),clearTimeout(o),ie.forEach(clearTimeout),R?.abort(),i(()=>oe.stop(!T)),f?.disconnect(),Q.forEach(e=>i(e)),W!==void 0&&i(()=>window.__tcfapi(\"removeEventListener\",2,()=>{},W)),I!==void 0&&i(()=>window.__gpp(\"removeEventListener\",()=>{},I)),G.clear(),K.clear(),!T))for(let e of[N,Y,S,A,ne])e.length=0}function Pe(e){return ye(),{schema:g,build:b,campaign:T?.campaign||null,doc:T?.doc||null,samplingClass:F,sampleRate:L,admissionRate:T?.admissionRate??null,configuredRate:T?.configuredRate??null,samplingConfig:T?.samplingConfig||null,startedAt:O,timeOrigin:z,startMs:j,durationMs:c()-j,firstSelectedMs:n,reason:e,initialContext:Ne,context:Ie(),activity:{...D},quality:{...x},counts:{...q},requests:N.map(t=>({...t})),consents:A.slice(),consentEvents:ne.slice(),net:Y.slice(),helpers:S.slice(),details:oe.snapshot()}}function ue(e){if(P)return;H=e,i(()=>f?.takeRecords().forEach(De));let t=Pe(e);if(le(),!T||ee||Date.now()>=T.expiresAt)return;let s=()=>JSON.stringify({ticket:T.ticket,payload:t}),l=s();for(;new Blob([l]).size>49152&&(t.helpers.length||t.details.responses.length||t.details.signals.length||t.requests.some(p=>!$.has(p.id)));){if(t.helpers.length)t.helpers.shift();else if(t.details.responses.some(p=>p.emptyBody!==null)){let p=t.details.responses.slice().reverse(),m=p.find(v=>v.emptyBody!==null&&!$.has(v.request))||p.find(v=>v.emptyBody!==null);m.emptyBody=null,m.emptyBodyState=\"trimmed\",t.details.quality.trimmed=!0}else if(t.details.responses.length||t.details.signals.length){let p=t.details.responses.length?t.details.responses:t.details.signals,m=p.findIndex(v=>!$.has(v.request));p.splice(m !$.has(p.id)),1),t.counts.requestDropped++;t.counts.dropped++,t.quality.payloadTrimmed=!0,l=s()}if(new Blob([l]).size>49152){H=\"payload-too-large\";return}ee=!0,i(()=>fetch(\"/__futdiag/collect\",{method:\"POST\",credentials:\"omit\",mode:\"same-origin\",keepalive:!0,headers:{\"Content-Type\":\"text/plain;charset=UTF-8\"},body:l}).catch(()=>{}))}te(window,\"pagehide\",U(e=>{D.bfcache=!!e.persisted,ue(\"pagehide\")})),te(document,\"visibilitychange\",U(()=>{ye(),me=document.visibilityState===\"visible\",D.visibilityChanges++,me||ue(\"hidden\")})),i(()=>{var e,t;window.googletag||(window.googletag={cmd:[]}),(e=window.googletag).cmd||(e.cmd=[]),window.googletag.cmd.push(U(Oe)),window.pbjs||(window.pbjs={que:[]}),(t=window.pbjs).que||(t.que=[]),window.pbjs.que.push(U(()=>Me(window.pbjs)))}),i(qe),d=setInterval(U(qe),200),ie.push(setTimeout(()=>{T||(H=\"admission-timeout\",le())},15e3)),ie.push(setTimeout(()=>ue(\"deadline\"),18e4)),window.__futFooterProbe={stop:()=>{H=\"manual\",le()},status:()=>({sampled:!0,samplingClass:F,sampleRate:L,configuredRate:T?.configuredRate??null,effectiveRate:T?L*T.admissionRate:null,samplingConfig:T?.samplingConfig||null,admitted:!!T,stopped:P,attempted:ee,endReason:H,build:b,schema:g}),export:()=>Pe(H||\"preview\")},i(()=>{R=new AbortController;let e=new URLSearchParams({schema:String(g),build:b,samplingClass:F,sampleRate:String(L),details:String(3)});fetch(\"/__futdiag/admit?\"+e,{credentials:\"omit\",mode:\"same-origin\",cache:\"no-store\",signal:R.signal}).then(t=>t.ok&&t.status!==204?t.json():null).then(t=>{if(!P){if(!t||t.schema!==g||t.build!==b||t.detailsVersion!==3||!Number.isFinite(t.expiresAt)||t.expiresAt 0&&t.configuredRate {P||(H=\"admission-error\",le())})})}Fe(\"62b3159f18bbf4a5\",3,{desktop:.1,mobile:.001,unknown:.001});})(); (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':"
       ],
       "reward": "1 x Jumbo Gold Pack • 1 x Small Electrum Players Pack • 1 x Large Electrum Players Pack • 1 x Small Gold Players Pack • 5,000 Coins • Max. 6 Players from the same League • Max. 6 Players from the same Nation • Exactly Gold Players • Min. Squad Total Chemistry Points: 30",
       "challenge_count": 3,
-      "details_source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "League &amp; Nation Advanced - EA SPORTS FC 27 SBC - FUT.GG (()=>{var be=4096,Ce=3,we=(b,g)=>!!g?.adId&&!!g.inventory&&[\"inventory\",\"adId\",\"bidder\",\"bucket\"].every(k=>b[k]===g[k])&&b.start>=g.t-100&&b.start g===\"1\"||g===\"0\"?g:g===\"\"?\"empty\":\"other\"):null,truncated:!!b&&b.length>3}}function Le(){let b=new Map,g,k=!1,F=async(i,a,h)=>{let w=new TextEncoder().encode(JSON.stringify([\"futdiag-id-v1\",g,i,a,h])),c=await crypto.subtle.digest(\"SHA-256\",w);return Array.from(new Uint8Array(c),j=>j.toString(16).padStart(2,\"0\")).join(\"\")};function L(i){!g||k||i.started||(i.started=!0,Promise.resolve().then(async()=>{if(k)return;let a=await Promise.all(i.items.map(async h=>{if(!h.trim())return[null,null];let w=[\"gads\",\"gpi\",\"eoi\"].includes(i.family)?[...h.matchAll(/(?:^|:)(UID|ID)=([A-Za-z0-9_-]{1,256})(?=:|$)/g)]:[];return Promise.all([F(i.family,\"value\",h),w.length===1?F(i.family,w[0][1],w[0][2]):null])}));k||Object.assign(i.result,{state:\"ready\",values:a.map(h=>h[0]),ids:a.map(h=>h[1])})}).catch(()=>{k||(i.result.state=\"error\")}).finally(()=>{i.items=null}))}return{observe(i,a,h=!1){let w=O=>({state:O,values:null,ids:null});if(!i||k)return w(\"unavailable\");if(i.length>3||i.some(O=>O.length>2048))return w(\"limit\");let c=i.map(O=>{if(!h)return O;try{return decodeURIComponent(O)}catch{return O}});if(!c.length)return{state:\"ready\",values:[],ids:[]};if(!globalThis.crypto?.subtle)return w(\"unavailable\");let j=JSON.stringify([a,c]);if(b.has(j))return b.get(j).result;if(b.size>=128)return w(\"limit\");let z={family:a,items:c,started:!1,result:w(\"pending\")};return b.set(j,z),L(z),z.result},admit(i){if(!(k||g||typeof i!=\"string\"||!/^[a-z0-9-]{1,60}$/.test(i))){g=i;for(let a of b.values())L(a)}},stop(){k=!0;for(let i of b.values())i.items=null;b.clear()}}}function ze(b,g){let k=b.trim().replace(/^\\)\\]\\}'\\s*/,\"\"),F=[\"no_fill\",\"no-fill\",\"unfilled\",\"consent\",\"invalid traffic\",\"captcha\"],L=b.toLowerCase(),i={format:k?\"text\":g?\"empty\":\"unknown\",shape:null,markup:/ L.includes(a)).join(\",\")};if(!g||!k)return i;try{let a=JSON.parse(k),h=0,w=(c,j)=>{if(++h>120||j>5)return\"\\u2026\";if(c===null)return\"null\";if(typeof c==\"string\")return c.length?/^\\s* w(O,j+1)).join(\",\")+(c.length>16?\",\\u2026\":\"\")+\"]\";let z=Object.values(c);return\"{\"+z.slice(0,16).map(O=>w(O,j+1)).join(\",\")+(z.length>16?\",\\u2026\":\"\")+\"}\"};i.format=\"json\",i.shape=w(a,0).slice(0,1200)}catch{i.markup&&(i.format=\"markup\")}return i}function Ue({now:b,safe:g,requests:k,pins:F,parseWire:L}){let i=[],a=[],h=new Map,w=new Map,c=Le(),j=new WeakMap,z=new WeakMap,O=new Set,N=[],Y=new WeakSet,S={fetchInstalled:!1,fetchReplaced:!1,fetchSeen:0,responseDropped:0,signalDropped:0,bodyReads:0,bodyLimited:0,bodyUnreadable:0,bodyTimeouts:0,errors:0,trimmed:!1},A=!1,ne=0,J,G=(r,n,o)=>{if(r.length===8){let d=r.findIndex(f=>!F.has(f.request));if(d {let d={__gads:\"gads\",cookie:\"gads\",__gpi:\"gpi\",gpic:\"gpi\",__eoi:\"eoi\",eo_id_str:\"eoi\"}[n]||n,f=c.observe(r,d,o===h);if(!r)return{count:null,empty:null,length:null,changed:null,fingerprints:f};let R=JSON.stringify(r),u=o.get(n);return o.set(n,R),{count:r.length,empty:r.filter(y=>!y.trim()).length,length:r.reduce((y,C)=>y+C.length,0),changed:u===void 0?null:R!==u,fingerprints:f}},$=()=>{let r=g(()=>document.cookie.split(\";\").map(n=>{let o=n.indexOf(\"=\");return[n.slice(0,o).trim(),n.slice(o+1)]}));return{cookies:Object.fromEntries([\"__gads\",\"__gpi\",\"__eoi\"].map(n=>[n,K(r?r.filter(o=>o[0]===n).map(o=>o[1]):null,n,h)])),gpiOptOut:ve(r?r.filter(n=>n[0]===\"__gpi_opt_out\").map(n=>n[1]):null)}},Q=r=>{let n=g(r);if(!n||typeof n!=\"object\")return null;let o={},d=Object.keys(n).sort(),f=!1;for(let u of[\"site\",\"flr\",\"refresh\",\"hb_adid\",\"hb_bidder\",\"hb_pb\",\"hb_size\",\"hb_source\",\"hb_format\"]){let y=Array.isArray(n[u])?n[u]:n[u]==null?[]:[n[u]];f||(f=y.length>3||y.some(C=>String(C).length>80||/[\\u0000-\\u001f]/.test(String(C)))),o[u]=y.slice(0,3).map(C=>String(C).replace(/[\\u0000-\\u001f]/g,\"\").slice(0,80))}let R=d.filter(u=>!Object.hasOwn(o,u));return{values:o,unknownKeys:R.slice(0,16).map(u=>/^[\\w-]{1,40}$/.test(u)?u:\"redacted\"),truncated:f||R.length>16}},ie=r=>r?g(()=>new URL(r,location.href).origin===location.origin?\"same-origin\":\"other-origin\",\"invalid\"):\"unset\";function se(){for(let r of a)r.bidAtResponse=null;for(let r of i){let n=k.filter(f=>we(r,f)),o=n.length===1&&i.filter(f=>we(f,n[0])).length===1?n[0]:null;if(r.request=o?.id??null,!o||!j.has(r))continue;let d=a.find(f=>f.request===o.id);d&&(d.bidAtResponse=j.get(r))}}function q(r,n){let o=g(()=>googletag.getConfig([\"targeting\",\"adsenseAttributes\"])),d=g(()=>n.getConfig([\"targeting\",\"adsenseAttributes\",\"categoryExclusion\"])),f=u=>Object.fromEntries(u.getTargetingKeys().map(y=>[y,u.getTargeting(y)])),R={request:r.id,...$(),pageTargeting:Q(()=>o?o.targeting||{}:f(googletag.pubads())),slotTargeting:Q(()=>d?d.targeting||{}:f(n)),pageUrl:o?ie(o.adsenseAttributes?.page_url):\"unknown\",slotUrl:d?ie(d.adsenseAttributes?.page_url):\"unknown\",exclusions:d?d.categoryExclusion?.length??0:null,bidAtResponse:null,bidAtRender:null,renderReason:null,auctionsCleared:Y.has(window.pbjs?.clearAllAuctions)?0:null,slotsDestroyed:Y.has(window.googletag?.destroySlots)?0:null};G(a,R,\"signalDropped\"),se()}function D(r,n){let o=a.find(d=>d.request===r.id);o&&(o[n]=g(()=>typeof window.pbjs?.getBidResponseByAdId==\"function\"?!!window.pbjs.getBidResponseByAdId(r.adId):null))}function x(r,n){let o=k.filter(f=>f.adId===r);if(o.length!==1)return;let d=a.find(f=>f.request===o[0].id);d&&(d.renderReason=[\"cannotFindAd\",\"exception\",\"missingDoc\",\"preventWritingOnMainDocument\",\"noAd\",\"adAlreadyRendered\"].includes(n)?n:\"other\")}function T(r,n,o){if(A||!r||typeof r[n]!=\"function\"||Y.has(r[n]))return;let d=r[n];function f(...R){return A||g(()=>{for(let u of a){let y=k.find(C=>C.id===u.request);u[o]!==null&&y&&(y.match===\"pending\"||y.isEmpty===!1&&y.prebidRender===null&&b() {r[n]=f,Y.add(f),N.push(()=>{r[n]===f&&(r[n]=d)})})}function P(){T(window.pbjs,\"clearAllAuctions\",\"auctionsCleared\"),T(window.googletag,\"destroySlots\",\"slotsDestroyed\")}let ee=r=>{g(()=>r.cancel().catch(()=>{})),O.delete(r)};async function H(r,n){if(A)return;if([\"opaque\",\"opaqueredirect\",\"error\"].includes(r.type)){n.bodyState=\"opaque\",S.bodyUnreadable++;return}if(!r.body){n.bodyState=\"no-body\",n.complete=!0,n.bytes=0,z.set(n,\"\"),Object.assign(n,ze(\"\",!0));return}if(S.bodyReads>=6||O.size>=2||ne>=196608){n.bodyState=\"budget\",S.bodyLimited++;return}let o,d,f=0,R=\"\",u=!1,y=new TextDecoder(\"utf-8\",{fatal:!0,ignoreBOM:!0});try{for(o=r.clone().body.getReader(),O.add(o),S.bodyReads++,n.bodyState=\"reading\",d=setTimeout(()=>{u||(n.bodyState=\"timeout\",S.bodyTimeouts++,ee(o))},2e3);!A&&n.bodyState===\"reading\";){let{done:C,value:X}=await o.read();if(A||n.bodyState!==\"reading\")break;if(C){n.complete=!0,n.bodyState=\"complete\",R+=y.decode();break}let W=Math.min(32768-f,196608-ne),I=X.subarray(0,W);if(f+=I.byteLength,ne+=I.byteLength,R+=y.decode(I,{stream:!0}),X.byteLength>=W){n.bodyState=\"limit\",S.bodyLimited++,ee(o);break}}A&&n.bodyState===\"reading\"&&(n.bodyState=\"stopped\"),n.bytes=f,A||(Object.assign(n,ze(R,n.complete===!0)),n.complete&&f o.releaseLock()))}}function ge(){if(typeof window.fetch!=\"function\")return;let r=window.fetch;J=function(...n){let o=Reflect.apply(r,this,n);if(A)return o;try{let d=n[0],f=n[1],R=typeof d==\"string\"?d:d instanceof URL?d.href:d instanceof Request?d.url:null;if(!R)return o;let u=new URL(R,location.href);if(!/^https:$/.test(u.protocol)||!/^(securepubads\\.g\\.doubleclick\\.net|pubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(u.hostname)||u.pathname!==\"/gampad/ads\")return o;S.fetchSeen++;let y=L(u);if(y.multiSlot||!y.inventory?.split(\"/\").includes(\"lumiere-sticky-footer\"))return o;let C=b(),X=(_,V)=>g(()=>f&&Object.hasOwn(f,_)?f[_]:d instanceof Request?d[_]:V),W=(_,V)=>V.includes(_)?_:\"unknown\",I={request:null,start:C,end:null,inventory:y.inventory,adId:y.adId,bidder:y.bidder,bucket:y.bucket,method:W(X(\"method\",\"GET\")?.toUpperCase(),[\"GET\",\"POST\"]),credentials:W(X(\"credentials\",\"same-origin\"),[\"omit\",\"same-origin\",\"include\"]),mode:W(X(\"mode\",\"cors\"),[\"cors\",\"no-cors\",\"same-origin\"]),status:null,type:null,redirected:null,contentType:null,contentLength:null,bodyState:\"pending\",bytes:null,complete:!1,format:null,shape:null,markup:null,markers:null,identities:Object.fromEntries([\"cookie\",\"gpic\",\"eo_id_str\",\"ppid\",\"puid\"].map(_=>[_,K(u.searchParams.getAll(_),_,w)])),pdopt:ve(u.searchParams.getAll(\"pdopt\")),wireTargeting:Q(()=>Object.fromEntries([...new Set(y.targeting.keys())].map(_=>[_,y.targeting.getAll(_)]))),wireSizes:g(()=>{let _=u.searchParams.get(\"prev_iu_szs\")||u.searchParams.get(\"sz\")||\"\";return/^(?:(?:\\d{1,5}x\\d{1,5}|fluid)(?:|,)*)?$/.test(_)?_.slice(0,240):null}),contentUrl:ie(u.searchParams.get(\"url\"))};if(!G(i,I,\"responseDropped\"))return o;se(),o.then(_=>{if(A)return;j.set(I,y.adId?g(()=>typeof window.pbjs?.getBidResponseByAdId==\"function\"?!!window.pbjs.getBidResponseByAdId(y.adId):null):null),I.end=b(),I.status=_.status,I.type=W(_.type,[\"basic\",\"cors\",\"default\",\"opaque\",\"opaqueredirect\",\"error\"]),I.redirected=_.redirected;let V=(_.headers.get(\"content-type\")||\"\").split(\";\")[0].toLowerCase();I.contentType=[\"text/html\",\"text/plain\",\"application/json\",\"application/javascript\",\"text/javascript\",\"application/octet-stream\"].includes(V)?V:V?\"other\":\"missing\";let re=_.headers.get(\"content-length\");I.contentLength=re!==null&&/^\\d{1,10}$/.test(re)?Number(re):null,se(),H(_,I)},()=>{A||(I.end=b(),I.bodyState=\"fetch-error\")}).catch(()=>{A||S.errors++})}catch{S.errors++}return o},g(()=>{window.fetch=J,S.fetchInstalled=window.fetch===J}),N.push(()=>{window.fetch===J&&(window.fetch=r)})}return ge(),{request:q,bidState:D,renderFailure:x,attach:P,admit:r=>c.admit(r),snapshot:()=>{se(),!A&&S.fetchInstalled&&(S.fetchReplaced=window.fetch!==J);let r=0,n=i.map(o=>{let d=k.find(R=>R.id===o.request),f=!d||d.match===\"ambiguous\"?\"unmatched\":d.selected?d.match!==\"single-pending\"||typeof d.isEmpty!=\"boolean\"?\"unresolved\":d.isEmpty?o.complete?o.bytes>be?\"too-large\":z.has(o)?r>=Ce?\"budget\":\"retained\":\"unavailable\":\"incomplete\":\"not-empty\":\"not-selected\";return f===\"retained\"&&r++,{...o,emptyBody:f===\"retained\"?z.get(o):null,emptyBodyState:f}});return JSON.parse(JSON.stringify({version:3,quality:S,responses:n,signals:a}))},stop:(r=!1)=>{S.fetchReplaced=S.fetchInstalled&&window.fetch!==J,A=!0;for(let n of O)ee(n);N.forEach(n=>g(n)),h.clear(),w.clear(),c.stop(),z=new WeakMap,r&&(i.length=0,a.length=0)}}}function Fe(b,g,k){\"use strict\";if(window!==window.top||window.__futFooterProbe)return;let F=\"unknown\";try{let e=navigator.userAgent||\"\";F=navigator.userAgentData?.mobile===!0||/Android|iPhone|iPad|iPod|Mobile/i.test(e)||/Macintosh/.test(e)&&navigator.maxTouchPoints>1?\"mobile\":/Windows NT|Macintosh|X11|CrOS|Linux/.test(e)?\"desktop\":\"unknown\"}catch{}let L=k[F];if(window.__futFooterProbe={status:()=>({sampled:!1,samplingClass:F,sampleRate:L})},Math.random()>=L)return;window.__futFooterProbe={status:()=>({sampled:!0,starting:!0})};let i=(e,t=null)=>{try{return e()}catch{return t}},a=(e,t=120)=>typeof e==\"string\"?e.slice(0,t):null,h=e=>typeof e==\"number\"&&Number.isFinite(e)?Math.round(e*100)/100:null,w=e=>typeof e==\"boolean\"?e:null,c=()=>Math.round(performance.now()),j=c(),z=h(performance.timeOrigin),O=Date.now(),N=[],Y=[],S=[],A=[],ne=[],J=new WeakMap,G=new Map,K=new Set,$=new Set,Q=[],ie=[],se=new WeakSet,q={footerRequested:0,footerEmpty:0,footerFilled:0,ambiguous:0,otherRequested:0,otherEmpty:0,otherFilled:0,dropped:0,requestDropped:0,netDropped:0,iasResources:0,iasErrors:0,errors:0,replayed:0},D={pointerTrusted:0,pointerSynthetic:0,keyTrusted:0,keySynthetic:0,moveSeconds:0,scrollSeconds:0,firstTrustedMs:null,lastTrustedMs:null,visibleMs:0,focusedMs:0,visibilityChanges:0,resizes:0,bfcache:!1},x={gptAt:null,prebidAt:null,tcfAt:null,gppAt:null,gptAlreadyReady:!!window.googletag?.apiReady,prebidAlreadyReady:typeof window.pbjs?.onEvent==\"function\",resourceObserver:!1,resourceBufferFull:!1,consentOverflow:!1,payloadTrimmed:!1},T,P=!1,ee=!1,H=null,ge=0,r=0,n=null,o,d,f,R,u=null,y=null,C=!1,X=!1,W,I,_=!1,V=c(),re=c(),me=document.visibilityState===\"visible\",_e=i(()=>document.hasFocus(),!1),de=location.pathname,he=0,Se=!1,Re=!1,Ae=e=>/^(rise|medianet|oms|oms-s)$/.test(e||\"\"),U=e=>(...t)=>{if(!P)try{e(...t)}catch{q.errors++}},oe=Ue({now:c,safe:i,requests:N,pins:$,parseWire:Be});function ae(e,t,s){return e.length>=s&&(e.shift(),q.dropped++,e===Y&&q.netDropped++),e.push(t),t}function te(e,t,s,l){typeof e?.addEventListener==\"function\"&&(e.addEventListener(t,s,l),Q.push(()=>e.removeEventListener(t,s,l)))}function Z(e,t){if(typeof t!=\"string\"||!t)return null;let s=A.find(v=>v.kind===e&&!v.truncated&&v.text===t);if(s)return s.id;let l=12288-A.reduce((v,B)=>v+B.text.length,0);if(A.length>=8||l document.cookie.split(\";\").map(t=>t.trim().split(\"=\",1)[0]));return{gads:e?e.includes(\"__gads\"):null,gpi:e?e.includes(\"__gpi\"):null,eoi:e?e.includes(\"__eoi\"):null}}function Te(){return de!==location.pathname&&(de=location.pathname,he++),/^\\/(players|squad-builder|evolutions|clubs|fut-gallery)(\\/|$)/.exec(de)?.[1]||(de===\"/\"?\"home\":\"other\")}function Ie(){return{ua:a(navigator.userAgent,320),platform:a(navigator.platform,60),language:a(navigator.language,30),languages:a(i(()=>navigator.languages.join(\",\")),160),timezone:a(i(()=>Intl.DateTimeFormat().resolvedOptions().timeZone),80),timezoneOffset:new Date().getTimezoneOffset(),width:innerWidth,height:innerHeight,outerWidth,outerHeight,screenWidth:screen.width,screenHeight:screen.height,availWidth:screen.availWidth,availHeight:screen.availHeight,colorDepth:screen.colorDepth,dpr:h(devicePixelRatio),touch:h(navigator.maxTouchPoints),cores:h(navigator.hardwareConcurrency),memory:h(navigator.deviceMemory),plugins:h(i(()=>navigator.plugins.length)),mimeTypes:h(i(()=>navigator.mimeTypes.length)),webdriver:w(navigator.webdriver),headlessUa:/HeadlessChrome|PhantomJS/i.test(navigator.userAgent),automationArtifacts:i(()=>[\"__playwright__binding__\",\"__pwInitScripts\",\"_phantom\",\"callPhantom\",\"domAutomationController\"].filter(e=>Object.prototype.hasOwnProperty.call(window,e)).join(\",\"),\"\"),seleniumArtifact:i(()=>Object.getOwnPropertyNames(window).slice(0,3e3).some(e=>/^cdc_[a-zA-Z0-9]+_(Array|Promise|Symbol)$/.test(e))),chBrands:a(i(()=>navigator.userAgentData.brands.map(e=>e.brand+\"/\"+e.version).join(\",\")),180),chPlatform:a(navigator.userAgentData?.platform,60),chMobile:w(navigator.userAgentData?.mobile),gpc:w(navigator.globalPrivacyControl),dnt:a(navigator.doNotTrack,10),cookieEnabled:w(navigator.cookieEnabled),localStorageReadable:i(()=>(window.localStorage.length,!0),!1),sessionStorageReadable:i(()=>(window.sessionStorage.length,!0),!1),serviceWorkerControlled:i(()=>!!navigator.serviceWorker.controller),navigationType:a(i(()=>performance.getEntriesByType(\"navigation\")[0].type),30),wasDiscarded:w(document.wasDiscarded),visibility:a(document.visibilityState,20),focused:i(()=>document.hasFocus()),userActivation:w(navigator.userActivation?.hasBeenActive),route:Te(),routeGeneration:he,loaderStatus:a(window.__stormstrikeLoaderStates?.futgg?.status,30),gptVersion:a(i(()=>window.googletag.getVersion()),40),prebidVersion:a(window.pbjs?.version,40),beaconVersion:a(window.__bidstorm?.cv||window.__q7r2?.cv,40),...ke()}}let Ne=Ie();function ye(){let e=c();me&&(D.visibleMs+=e-V),_e&&(D.focusedMs+=e-re),V=re=e}function We(e){let t=c();if(e.type===\"pointerdown\"||e.type===\"keydown\"){let s=(e.type===\"keydown\"?\"key\":\"pointer\")+(e.isTrusted?\"Trusted\":\"Synthetic\");D[s]=Math.min(1e3,D[s]+1)}e.isTrusted&&(D.firstTrustedMs===null&&(D.firstTrustedMs=t),D.lastTrustedMs=t)}for(let e of[\"pointerdown\",\"keydown\"])te(window,e,U(We),{passive:!0,capture:!0});for(let[e,t]of[[\"pointermove\",\"moveSeconds\"],[\"scroll\",\"scrollSeconds\"]]){let s=-1;te(window,e,U(l=>{let p=Math.floor(c()/1e3);l.isTrusted&&s!==p&&(s=p,D[t]++)}),{passive:!0})}te(window,\"resize\",U(()=>{D.resizes=Math.min(1e3,D.resizes+1)}));for(let e of[\"focus\",\"blur\"])te(window,e,U(()=>{ye(),_e=document.hasFocus()}));function ce(e){let t=J.get(e);return t||(t={generation:++r,seq:0,pending:[],tainted:!1},J.set(e,t)),t}let Ee=e=>i(()=>e.getSlotElementId())===\"lumiere-sticky-footer\";function $e(e){let t=(s,l)=>({ttlBuffer:s,ttlBufferSource:l});try{if(!e)return t(null,\"unavailable\");if(Object.prototype.hasOwnProperty.call(e,\"ttlBuffer\")){let p=h(e.ttlBuffer);return t(p,p===null?\"invalid-bid\":\"bid\")}if(typeof window.pbjs?.getConfig!=\"function\")return t(null,\"unavailable\");let s=window.pbjs.getConfig(\"ttlBuffer\"),l=h(s);return l!==null?t(l,\"config\"):s!==void 0?t(null,\"invalid-config\"):/^v?11\\.31\\.0$/.test(window.pbjs.version||\"\")?t(1,\"prebid-default\"):t(null,\"unknown-default\")}catch{return t(null,\"read-error\")}}function He(e){if(!Ee(e)){q.otherRequested++;return}let t=ce(e),s=M=>a(i(()=>e.getTargeting(M)[0])),l=s(\"hb_adid\"),p=s(\"hb_bidder\"),m=i(()=>window.pbjs.getBidResponseByAdId(l)),v=G.get(m?.auctionId+\":\"+p),B=Ae(p)&&!!l&&!!s(\"hb_pb\"),E={id:++ge,generation:t.generation,seq:++t.seq,t:c(),inventory:a(i(()=>e.getAdUnitPath()),240),slot:\"lumiere-sticky-footer\",adId:l,bidder:p,bucket:s(\"hb_pb\"),bidSize:s(\"hb_size\"),floor:s(\"flr\"),refresh:s(\"refresh\"),site:s(\"site\"),selected:B,bidPresent:!!m,cpm:h(m?.cpm),currency:a(m?.currency,10),bidAgeMs:m?h(Date.now()-m.responseTimestamp):null,ttl:h(m?.ttl),...$e(m),auctionId:a(m?.auctionId),bidId:a(m?.requestId||m?.bidId),requestedSizes:a(i(()=>e.getSizes(innerWidth,innerHeight).map(M=>typeof M==\"string\"?M:M.getWidth()+\"x\"+M.getHeight()).join(\",\")),240),tcRef:u?.tcRef||null,acRef:u?.acRef||null,cmpGppRef:y?.gppRef||null,tcAgeMs:u?c()-u.t:null,gdprApplies:u?.gdprApplies??null,cmpStatus:u?.cmpStatus||null,consentEvent:u?.consentEvent||null,purposeBits:u?.purposeBits||null,googleConsent:u?.googleConsent??null,prebidTcRef:v?.tcRef||null,prebidGppRef:v?.gppRef||null,prebidAcRef:v?.acRef||null,prebidConsentReplayed:v?.replayed??null,disablePersonalization:i(()=>{let M=window.googletag.getConfig(\"privacyTreatments\")?.privacyTreatments?.treatments;return Array.isArray(M)?M.includes(\"disablePersonalization\"):null}),...ke(),visibility:a(document.visibilityState,20),focused:i(()=>document.hasFocus()),width:innerWidth,height:innerHeight,route:Te(),routeGeneration:he,match:t.tainted?\"ambiguous\":\"pending\",renderAt:null,isEmpty:null,isBackfill:null,lineItemId:null,creativeId:null,responseId:null,size:null,responseAt:null,onloadAt:null,prebidRender:null,bidWonAt:null};if(N.length>=18){let M=N.findIndex(pe=>!$.has(pe.id));M>=0&&N.splice(M,1),q.dropped++,q.requestDropped++}N.push(E),q.footerRequested++,t.pending.length&&(t.tainted=!0,t.pending.forEach(M=>{M.match=\"ambiguous\"}),E.match=\"ambiguous\"),ae(t.pending,E,4),B&&n===null&&(n=E.t,$.add(E.id),o=setTimeout(()=>ue(\"window\"),Math.min(9e4,Math.max(0,j+18e4-c())))),i(()=>oe.request(E,e))}function Ve(e){if(!Ee(e.slot)){q[e.isEmpty?\"otherEmpty\":\"otherFilled\"]++;return}q[e.isEmpty?\"footerEmpty\":\"footerFilled\"]++;let t=ce(e.slot),s=!t.tainted&&t.pending.length===1?t.pending[0]:null;if(!s){q.ambiguous++,t.pending=[];return}t.pending=[],t.last=s,Object.assign(s,{match:\"single-pending\",renderAt:c(),isEmpty:w(e.isEmpty),isBackfill:w(e.isBackfill),lineItemId:h(e.lineItemId),creativeId:h(e.creativeId),responseId:a(e.responseIdentifier,240),size:a(Array.isArray(e.size)?e.size.join(\"x\"):e.size,40)}),s.selected&&s.isEmpty&&!Se&&($.add(s.id),Se=!0),i(()=>oe.bidState(s,\"bidAtRender\"))}function Oe(){if(_||P||!window.googletag?.apiReady)return;_=!0,x.gptAt=c();let e=window.googletag.pubads();for(let[t,s]of[[\"slotRequested\",l=>He(l.slot)],[\"slotRenderEnded\",Ve],[\"slotResponseReceived\",l=>{let p=ce(l.slot);!p.tainted&&p.pending.length===1&&(p.pending[0].responseAt=c())}],[\"slotOnload\",l=>{let p=ce(l.slot);!p.tainted&&!p.pending.length&&p.last&&(p.last.onloadAt=c())}]]){let l=U(s);e.addEventListener(t,l),Q.push(()=>e.removeEventListener(t,l))}}function je(e,t=!1){Ae(e.bidderCode)&&(G.set(e.auctionId+\":\"+e.bidderCode,{tcRef:Z(\"tcf\",e.gdprConsent?.consentString),gppRef:Z(\"gpp\",e.gppConsent?.gppString),acRef:Z(\"ac\",e.gdprConsent?.addtlConsent),replayed:t}),G.size>48&&G.delete(G.keys().next().value))}function Me(e){if(!e||typeof e.onEvent!=\"function\"||se.has(e)||P)return;se.add(e),x.prebidAt??(x.prebidAt=c());let t=[[\"bidRequested\",s=>je(s,!1)]];for(let s of[\"bidWon\",\"adRenderSucceeded\",\"adRenderFailed\"])t.push([s,l=>{let p=l.bid||l,m=l.adId||p.adId;s===\"adRenderFailed\"&&i(()=>oe.renderFailure(m,l.reason));let v=N.filter(E=>E.adId===m&&E.match===\"single-pending\"&&E.isEmpty===!1&&E.isBackfill===!1);if(v.length!==1)return;let B=v[0];s===\"bidWon\"?B.bidWonAt=c():B.prebidRender=s===\"adRenderSucceeded\"?\"success\":\"failure\",B.selected&&B.prebidRender===\"success\"&&!Re&&(Re=!0,$.add(B.id))}]);for(let[s,l]of t){let p=U(l);e.onEvent(s,p),Q.push(()=>e.offEvent(s,p))}i(()=>(e.getEvents?.()||[]).slice(-80).forEach(s=>{s.eventType===\"bidRequested\"&&(je(s.args,!0),q.replayed++)}))}function qe(){P||(i(Oe),i(()=>Me(window.pbjs)),i(oe.attach),!C&&typeof window.__tcfapi==\"function\"&&(C=!0,window.__tcfapi(\"addEventListener\",2,(e,t)=>{if(e?.listenerId!==void 0&&(W=e.listenerId),P){i(()=>window.__tcfapi(\"removeEventListener\",2,()=>{},W));return}!t||!e||(x.tcfAt??(x.tcfAt=c()),u={t:c(),tcRef:Z(\"tcf\",e.tcString),acRef:Z(\"ac\",e.addtlConsent),gdprApplies:w(e.gdprApplies),cmpStatus:a(e.cmpStatus,30),consentEvent:a(e.eventStatus,30),purposeBits:e.purpose?.consents?Array.from({length:11},(s,l)=>e.purpose.consents[l+1]===!0?\"1\":e.purpose.consents[l+1]===!1?\"0\":\"?\").join(\"\"):null,googleConsent:w(e.vendor?.consents?.[755])},ae(ne,{...u},8))})),!X&&typeof window.__gpp==\"function\"&&(X=!0,window.__gpp(\"addEventListener\",(e,t)=>{if(e?.listenerId!==void 0&&(I=e.listenerId),P){i(()=>window.__gpp(\"removeEventListener\",()=>{},I));return}!t||!e?.pingData||(x.gppAt??(x.gppAt=c()),y={t:c(),gppRef:Z(\"gpp\",e.pingData.gppString)})})))}function xe(e){return/^(securepubads\\.g\\.doubleclick\\.net|pubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(e.hostname)&&e.pathname===\"/gampad/ads\"?\"gam\":/(^|\\.)(adsafeprotected\\.com|iasds01\\.com)$/.test(e.hostname)?\"ias\":/(^|\\.)doubleverify\\.com$/.test(e.hostname)?\"doubleverify\":/^(ep1|ep2)\\.adtrafficquality\\.google$/.test(e.hostname)?\"google-traffic-quality\":e.hostname===\"cm.g.doubleclick.net\"?\"google-matching\":/^(securepubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(e.hostname)?\"google-helper\":e.hostname===\"cmp.uniconsent.com\"?\"cmp\":e.hostname===\"cdn.lumiere.gg\"?\"lumiere\":null}function Be(e){let t=e.searchParams,s=t.get(\"enc_prev_ius\")||\"\",l=s.includes(\",\"),p=null;if(s&&!l){let v=(t.get(\"iu_parts\")||\"\").split(\",\"),B=s.split(\"/\").filter(Boolean);B.length&&B.every(E=>/^\\d+$/.test(E)&&v[Number(E)]!==void 0)&&(p=\"/\"+B.map(E=>v[Number(E)]).join(\"/\"))}else l||(p=t.get(\"iu\"));let m=new URLSearchParams(l?\"\":t.get(\"prev_scp\")||t.get(\"cust_params\")||\"\");return{inventory:a(p,240),multiSlot:l,targeting:m,adId:a(m.get(\"hb_adid\")),bidder:a(m.get(\"hb_bidder\")),bucket:a(m.get(\"hb_pb\"))}}function De(e){if(P)return;let t=new URL(e.name),s=xe(t);if(!s)return;let l=e.name+\":\"+e.startTime;if(K.has(l))return;K.add(l),K.size>100&&K.delete(K.values().next().value);let p={start:h(e.startTime),duration:h(e.duration),status:e.responseStatus>0?h(e.responseStatus):null,initiator:a(e.initiatorType,30),timingRestricted:e.responseStart===0};if(s!==\"gam\"){s===\"ias\"&&q.iasResources++,ae(S,{...p,kind:s,source:\"performance\"},20);return}let m=t.searchParams,{inventory:v,multiSlot:B,targeting:E}=Be(t);if(v&&!v.split(\"/\").includes(\"lumiere-sticky-footer\"))return;let M={...p,inventory:a(v,240),multiSlot:B,queryHasTargeting:m.has(\"prev_scp\")||m.has(\"cust_params\"),adId:a(E.get(\"hb_adid\")),bidder:a(E.get(\"hb_bidder\")),bucket:a(E.get(\"hb_pb\")),tcRef:Z(\"tcf\",m.get(\"gdpr_consent\")),gppRef:Z(\"gpp\",m.get(\"gpp\")),acRef:Z(\"ac\",m.get(\"addtl_consent\")),cookieIdPresent:m.has(\"cookie\"),gpicPresent:m.has(\"gpic\"),eoiPresent:m.has(\"eo_id_str\"),ppidPresent:m.has(\"ppid\"),puidPresent:m.has(\"puid\")};for(let pe of[\"gdpr\",\"npa\",\"ltd\",\"rdp\",\"ppt\",\"tfua\",\"tfcd\",\"gpp_sid\",\"us_privacy\"])M[pe]=a(m.get(pe),60);ae(Y,M,24)}i(()=>{f=new PerformanceObserver(e=>e.getEntries().forEach(U(De))),f.observe({type:\"resource\",buffered:!0}),x.resourceObserver=!0}),te(performance,\"resourcetimingbufferfull\",U(()=>{x.resourceBufferFull=!0}));for(let e of[\"error\",\"securitypolicyviolation\"])te(window,e,U(t=>{let s=t.blockedURI||t.target?.src||t.target?.href;if(!s)return;let l=xe(new URL(s,location.origin));l===\"ias\"&&q.iasErrors++,l&&ae(S,{kind:l,start:c(),source:e===\"error\"?\"resource-error\":\"csp\",directive:a(t.effectiveDirective,60)},20)}),!0);function le(){if(!P&&(P=!0,clearInterval(d),clearTimeout(o),ie.forEach(clearTimeout),R?.abort(),i(()=>oe.stop(!T)),f?.disconnect(),Q.forEach(e=>i(e)),W!==void 0&&i(()=>window.__tcfapi(\"removeEventListener\",2,()=>{},W)),I!==void 0&&i(()=>window.__gpp(\"removeEventListener\",()=>{},I)),G.clear(),K.clear(),!T))for(let e of[N,Y,S,A,ne])e.length=0}function Pe(e){return ye(),{schema:g,build:b,campaign:T?.campaign||null,doc:T?.doc||null,samplingClass:F,sampleRate:L,admissionRate:T?.admissionRate??null,configuredRate:T?.configuredRate??null,samplingConfig:T?.samplingConfig||null,startedAt:O,timeOrigin:z,startMs:j,durationMs:c()-j,firstSelectedMs:n,reason:e,initialContext:Ne,context:Ie(),activity:{...D},quality:{...x},counts:{...q},requests:N.map(t=>({...t})),consents:A.slice(),consentEvents:ne.slice(),net:Y.slice(),helpers:S.slice(),details:oe.snapshot()}}function ue(e){if(P)return;H=e,i(()=>f?.takeRecords().forEach(De));let t=Pe(e);if(le(),!T||ee||Date.now()>=T.expiresAt)return;let s=()=>JSON.stringify({ticket:T.ticket,payload:t}),l=s();for(;new Blob([l]).size>49152&&(t.helpers.length||t.details.responses.length||t.details.signals.length||t.requests.some(p=>!$.has(p.id)));){if(t.helpers.length)t.helpers.shift();else if(t.details.responses.some(p=>p.emptyBody!==null)){let p=t.details.responses.slice().reverse(),m=p.find(v=>v.emptyBody!==null&&!$.has(v.request))||p.find(v=>v.emptyBody!==null);m.emptyBody=null,m.emptyBodyState=\"trimmed\",t.details.quality.trimmed=!0}else if(t.details.responses.length||t.details.signals.length){let p=t.details.responses.length?t.details.responses:t.details.signals,m=p.findIndex(v=>!$.has(v.request));p.splice(m !$.has(p.id)),1),t.counts.requestDropped++;t.counts.dropped++,t.quality.payloadTrimmed=!0,l=s()}if(new Blob([l]).size>49152){H=\"payload-too-large\";return}ee=!0,i(()=>fetch(\"/__futdiag/collect\",{method:\"POST\",credentials:\"omit\",mode:\"same-origin\",keepalive:!0,headers:{\"Content-Type\":\"text/plain;charset=UTF-8\"},body:l}).catch(()=>{}))}te(window,\"pagehide\",U(e=>{D.bfcache=!!e.persisted,ue(\"pagehide\")})),te(document,\"visibilitychange\",U(()=>{ye(),me=document.visibilityState===\"visible\",D.visibilityChanges++,me||ue(\"hidden\")})),i(()=>{var e,t;window.googletag||(window.googletag={cmd:[]}),(e=window.googletag).cmd||(e.cmd=[]),window.googletag.cmd.push(U(Oe)),window.pbjs||(window.pbjs={que:[]}),(t=window.pbjs).que||(t.que=[]),window.pbjs.que.push(U(()=>Me(window.pbjs)))}),i(qe),d=setInterval(U(qe),200),ie.push(setTimeout(()=>{T||(H=\"admission-timeout\",le())},15e3)),ie.push(setTimeout(()=>ue(\"deadline\"),18e4)),window.__futFooterProbe={stop:()=>{H=\"manual\",le()},status:()=>({sampled:!0,samplingClass:F,sampleRate:L,configuredRate:T?.configuredRate??null,effectiveRate:T?L*T.admissionRate:null,samplingConfig:T?.samplingConfig||null,admitted:!!T,stopped:P,attempted:ee,endReason:H,build:b,schema:g}),export:()=>Pe(H||\"preview\")},i(()=>{R=new AbortController;let e=new URLSearchParams({schema:String(g),build:b,samplingClass:F,sampleRate:String(L),details:String(3)});fetch(\"/__futdiag/admit?\"+e,{credentials:\"omit\",mode:\"same-origin\",cache:\"no-store\",signal:R.signal}).then(t=>t.ok&&t.status!==204?t.json():null).then(t=>{if(!P){if(!t||t.schema!==g||t.build!==b||t.detailsVersion!==3||!Number.isFinite(t.expiresAt)||t.expiresAt 0&&t.configuredRate {P||(H=\"admission-error\",le())})})}Fe(\"62b3159f18bbf4a5\",3,{desktop:.1,mobile:.001,unknown:.001});})(); (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
+      }
     },
     {
       "id": "futgg-challenges-3",
@@ -14188,23 +14575,25 @@
       "description": "[Expires in 9 years](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)[Repeatable-](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)[Refreshes Every-](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)",
       "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
       "requirements": [
-        "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-        "Players",
-        "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
-        "Max. 6 Players from the same League",
-        "Max. 6 Players from the same Nation",
-        "Exactly Gold Players",
-        "Min. Squad Total Chemistry Points: 30",
-        "Max. 4 Players from the same League",
-        "Max. 3 Players from the same Nation",
-        "Min. Team Rating: 78",
-        "Min. Squad Total Chemistry Points: 25",
-        "Max. 2 Players from the same Club",
-        "Min. Team Rating: 81"
+        "League &amp; Nation Advanced - EA SPORTS FC 27 SBC - FUT.GG (()=>{var be=4096,Ce=3,we=(b,g)=>!!g?.adId&&!!g.inventory&&[\"inventory\",\"adId\",\"bidder\",\"bucket\"].every(k=>b[k]===g[k])&&b.start>=g.t-100&&b.start g===\"1\"||g===\"0\"?g:g===\"\"?\"empty\":\"other\"):null,truncated:!!b&&b.length>3}}function Le(){let b=new Map,g,k=!1,F=async(i,a,h)=>{let w=new TextEncoder().encode(JSON.stringify([\"futdiag-id-v1\",g,i,a,h])),c=await crypto.subtle.digest(\"SHA-256\",w);return Array.from(new Uint8Array(c),j=>j.toString(16).padStart(2,\"0\")).join(\"\")};function L(i){!g||k||i.started||(i.started=!0,Promise.resolve().then(async()=>{if(k)return;let a=await Promise.all(i.items.map(async h=>{if(!h.trim())return[null,null];let w=[\"gads\",\"gpi\",\"eoi\"].includes(i.family)?[...h.matchAll(/(?:^|:)(UID|ID)=([A-Za-z0-9_-]{1,256})(?=:|$)/g)]:[];return Promise.all([F(i.family,\"value\",h),w.length===1?F(i.family,w[0][1],w[0][2]):null])}));k||Object.assign(i.result,{state:\"ready\",values:a.map(h=>h[0]),ids:a.map(h=>h[1])})}).catch(()=>{k||(i.result.state=\"error\")}).finally(()=>{i.items=null}))}return{observe(i,a,h=!1){let w=O=>({state:O,values:null,ids:null});if(!i||k)return w(\"unavailable\");if(i.length>3||i.some(O=>O.length>2048))return w(\"limit\");let c=i.map(O=>{if(!h)return O;try{return decodeURIComponent(O)}catch{return O}});if(!c.length)return{state:\"ready\",values:[],ids:[]};if(!globalThis.crypto?.subtle)return w(\"unavailable\");let j=JSON.stringify([a,c]);if(b.has(j))return b.get(j).result;if(b.size>=128)return w(\"limit\");let z={family:a,items:c,started:!1,result:w(\"pending\")};return b.set(j,z),L(z),z.result},admit(i){if(!(k||g||typeof i!=\"string\"||!/^[a-z0-9-]{1,60}$/.test(i))){g=i;for(let a of b.values())L(a)}},stop(){k=!0;for(let i of b.values())i.items=null;b.clear()}}}function ze(b,g){let k=b.trim().replace(/^\\)\\]\\}'\\s*/,\"\"),F=[\"no_fill\",\"no-fill\",\"unfilled\",\"consent\",\"invalid traffic\",\"captcha\"],L=b.toLowerCase(),i={format:k?\"text\":g?\"empty\":\"unknown\",shape:null,markup:/ L.includes(a)).join(\",\")};if(!g||!k)return i;try{let a=JSON.parse(k),h=0,w=(c,j)=>{if(++h>120||j>5)return\"\\u2026\";if(c===null)return\"null\";if(typeof c==\"string\")return c.length?/^\\s* w(O,j+1)).join(\",\")+(c.length>16?\",\\u2026\":\"\")+\"]\";let z=Object.values(c);return\"{\"+z.slice(0,16).map(O=>w(O,j+1)).join(\",\")+(z.length>16?\",\\u2026\":\"\")+\"}\"};i.format=\"json\",i.shape=w(a,0).slice(0,1200)}catch{i.markup&&(i.format=\"markup\")}return i}function Ue({now:b,safe:g,requests:k,pins:F,parseWire:L}){let i=[],a=[],h=new Map,w=new Map,c=Le(),j=new WeakMap,z=new WeakMap,O=new Set,N=[],Y=new WeakSet,S={fetchInstalled:!1,fetchReplaced:!1,fetchSeen:0,responseDropped:0,signalDropped:0,bodyReads:0,bodyLimited:0,bodyUnreadable:0,bodyTimeouts:0,errors:0,trimmed:!1},A=!1,ne=0,J,G=(r,n,o)=>{if(r.length===8){let d=r.findIndex(f=>!F.has(f.request));if(d {let d={__gads:\"gads\",cookie:\"gads\",__gpi:\"gpi\",gpic:\"gpi\",__eoi:\"eoi\",eo_id_str:\"eoi\"}[n]||n,f=c.observe(r,d,o===h);if(!r)return{count:null,empty:null,length:null,changed:null,fingerprints:f};let R=JSON.stringify(r),u=o.get(n);return o.set(n,R),{count:r.length,empty:r.filter(y=>!y.trim()).length,length:r.reduce((y,C)=>y+C.length,0),changed:u===void 0?null:R!==u,fingerprints:f}},$=()=>{let r=g(()=>document.cookie.split(\";\").map(n=>{let o=n.indexOf(\"=\");return[n.slice(0,o).trim(),n.slice(o+1)]}));return{cookies:Object.fromEntries([\"__gads\",\"__gpi\",\"__eoi\"].map(n=>[n,K(r?r.filter(o=>o[0]===n).map(o=>o[1]):null,n,h)])),gpiOptOut:ve(r?r.filter(n=>n[0]===\"__gpi_opt_out\").map(n=>n[1]):null)}},Q=r=>{let n=g(r);if(!n||typeof n!=\"object\")return null;let o={},d=Object.keys(n).sort(),f=!1;for(let u of[\"site\",\"flr\",\"refresh\",\"hb_adid\",\"hb_bidder\",\"hb_pb\",\"hb_size\",\"hb_source\",\"hb_format\"]){let y=Array.isArray(n[u])?n[u]:n[u]==null?[]:[n[u]];f||(f=y.length>3||y.some(C=>String(C).length>80||/[\\u0000-\\u001f]/.test(String(C)))),o[u]=y.slice(0,3).map(C=>String(C).replace(/[\\u0000-\\u001f]/g,\"\").slice(0,80))}let R=d.filter(u=>!Object.hasOwn(o,u));return{values:o,unknownKeys:R.slice(0,16).map(u=>/^[\\w-]{1,40}$/.test(u)?u:\"redacted\"),truncated:f||R.length>16}},ie=r=>r?g(()=>new URL(r,location.href).origin===location.origin?\"same-origin\":\"other-origin\",\"invalid\"):\"unset\";function se(){for(let r of a)r.bidAtResponse=null;for(let r of i){let n=k.filter(f=>we(r,f)),o=n.length===1&&i.filter(f=>we(f,n[0])).length===1?n[0]:null;if(r.request=o?.id??null,!o||!j.has(r))continue;let d=a.find(f=>f.request===o.id);d&&(d.bidAtResponse=j.get(r))}}function q(r,n){let o=g(()=>googletag.getConfig([\"targeting\",\"adsenseAttributes\"])),d=g(()=>n.getConfig([\"targeting\",\"adsenseAttributes\",\"categoryExclusion\"])),f=u=>Object.fromEntries(u.getTargetingKeys().map(y=>[y,u.getTargeting(y)])),R={request:r.id,...$(),pageTargeting:Q(()=>o?o.targeting||{}:f(googletag.pubads())),slotTargeting:Q(()=>d?d.targeting||{}:f(n)),pageUrl:o?ie(o.adsenseAttributes?.page_url):\"unknown\",slotUrl:d?ie(d.adsenseAttributes?.page_url):\"unknown\",exclusions:d?d.categoryExclusion?.length??0:null,bidAtResponse:null,bidAtRender:null,renderReason:null,auctionsCleared:Y.has(window.pbjs?.clearAllAuctions)?0:null,slotsDestroyed:Y.has(window.googletag?.destroySlots)?0:null};G(a,R,\"signalDropped\"),se()}function D(r,n){let o=a.find(d=>d.request===r.id);o&&(o[n]=g(()=>typeof window.pbjs?.getBidResponseByAdId==\"function\"?!!window.pbjs.getBidResponseByAdId(r.adId):null))}function x(r,n){let o=k.filter(f=>f.adId===r);if(o.length!==1)return;let d=a.find(f=>f.request===o[0].id);d&&(d.renderReason=[\"cannotFindAd\",\"exception\",\"missingDoc\",\"preventWritingOnMainDocument\",\"noAd\",\"adAlreadyRendered\"].includes(n)?n:\"other\")}function T(r,n,o){if(A||!r||typeof r[n]!=\"function\"||Y.has(r[n]))return;let d=r[n];function f(...R){return A||g(()=>{for(let u of a){let y=k.find(C=>C.id===u.request);u[o]!==null&&y&&(y.match===\"pending\"||y.isEmpty===!1&&y.prebidRender===null&&b() {r[n]=f,Y.add(f),N.push(()=>{r[n]===f&&(r[n]=d)})})}function P(){T(window.pbjs,\"clearAllAuctions\",\"auctionsCleared\"),T(window.googletag,\"destroySlots\",\"slotsDestroyed\")}let ee=r=>{g(()=>r.cancel().catch(()=>{})),O.delete(r)};async function H(r,n){if(A)return;if([\"opaque\",\"opaqueredirect\",\"error\"].includes(r.type)){n.bodyState=\"opaque\",S.bodyUnreadable++;return}if(!r.body){n.bodyState=\"no-body\",n.complete=!0,n.bytes=0,z.set(n,\"\"),Object.assign(n,ze(\"\",!0));return}if(S.bodyReads>=6||O.size>=2||ne>=196608){n.bodyState=\"budget\",S.bodyLimited++;return}let o,d,f=0,R=\"\",u=!1,y=new TextDecoder(\"utf-8\",{fatal:!0,ignoreBOM:!0});try{for(o=r.clone().body.getReader(),O.add(o),S.bodyReads++,n.bodyState=\"reading\",d=setTimeout(()=>{u||(n.bodyState=\"timeout\",S.bodyTimeouts++,ee(o))},2e3);!A&&n.bodyState===\"reading\";){let{done:C,value:X}=await o.read();if(A||n.bodyState!==\"reading\")break;if(C){n.complete=!0,n.bodyState=\"complete\",R+=y.decode();break}let W=Math.min(32768-f,196608-ne),I=X.subarray(0,W);if(f+=I.byteLength,ne+=I.byteLength,R+=y.decode(I,{stream:!0}),X.byteLength>=W){n.bodyState=\"limit\",S.bodyLimited++,ee(o);break}}A&&n.bodyState===\"reading\"&&(n.bodyState=\"stopped\"),n.bytes=f,A||(Object.assign(n,ze(R,n.complete===!0)),n.complete&&f o.releaseLock()))}}function ge(){if(typeof window.fetch!=\"function\")return;let r=window.fetch;J=function(...n){let o=Reflect.apply(r,this,n);if(A)return o;try{let d=n[0],f=n[1],R=typeof d==\"string\"?d:d instanceof URL?d.href:d instanceof Request?d.url:null;if(!R)return o;let u=new URL(R,location.href);if(!/^https:$/.test(u.protocol)||!/^(securepubads\\.g\\.doubleclick\\.net|pubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(u.hostname)||u.pathname!==\"/gampad/ads\")return o;S.fetchSeen++;let y=L(u);if(y.multiSlot||!y.inventory?.split(\"/\").includes(\"lumiere-sticky-footer\"))return o;let C=b(),X=(_,V)=>g(()=>f&&Object.hasOwn(f,_)?f[_]:d instanceof Request?d[_]:V),W=(_,V)=>V.includes(_)?_:\"unknown\",I={request:null,start:C,end:null,inventory:y.inventory,adId:y.adId,bidder:y.bidder,bucket:y.bucket,method:W(X(\"method\",\"GET\")?.toUpperCase(),[\"GET\",\"POST\"]),credentials:W(X(\"credentials\",\"same-origin\"),[\"omit\",\"same-origin\",\"include\"]),mode:W(X(\"mode\",\"cors\"),[\"cors\",\"no-cors\",\"same-origin\"]),status:null,type:null,redirected:null,contentType:null,contentLength:null,bodyState:\"pending\",bytes:null,complete:!1,format:null,shape:null,markup:null,markers:null,identities:Object.fromEntries([\"cookie\",\"gpic\",\"eo_id_str\",\"ppid\",\"puid\"].map(_=>[_,K(u.searchParams.getAll(_),_,w)])),pdopt:ve(u.searchParams.getAll(\"pdopt\")),wireTargeting:Q(()=>Object.fromEntries([...new Set(y.targeting.keys())].map(_=>[_,y.targeting.getAll(_)]))),wireSizes:g(()=>{let _=u.searchParams.get(\"prev_iu_szs\")||u.searchParams.get(\"sz\")||\"\";return/^(?:(?:\\d{1,5}x\\d{1,5}|fluid)(?:|,)*)?$/.test(_)?_.slice(0,240):null}),contentUrl:ie(u.searchParams.get(\"url\"))};if(!G(i,I,\"responseDropped\"))return o;se(),o.then(_=>{if(A)return;j.set(I,y.adId?g(()=>typeof window.pbjs?.getBidResponseByAdId==\"function\"?!!window.pbjs.getBidResponseByAdId(y.adId):null):null),I.end=b(),I.status=_.status,I.type=W(_.type,[\"basic\",\"cors\",\"default\",\"opaque\",\"opaqueredirect\",\"error\"]),I.redirected=_.redirected;let V=(_.headers.get(\"content-type\")||\"\").split(\";\")[0].toLowerCase();I.contentType=[\"text/html\",\"text/plain\",\"application/json\",\"application/javascript\",\"text/javascript\",\"application/octet-stream\"].includes(V)?V:V?\"other\":\"missing\";let re=_.headers.get(\"content-length\");I.contentLength=re!==null&&/^\\d{1,10}$/.test(re)?Number(re):null,se(),H(_,I)},()=>{A||(I.end=b(),I.bodyState=\"fetch-error\")}).catch(()=>{A||S.errors++})}catch{S.errors++}return o},g(()=>{window.fetch=J,S.fetchInstalled=window.fetch===J}),N.push(()=>{window.fetch===J&&(window.fetch=r)})}return ge(),{request:q,bidState:D,renderFailure:x,attach:P,admit:r=>c.admit(r),snapshot:()=>{se(),!A&&S.fetchInstalled&&(S.fetchReplaced=window.fetch!==J);let r=0,n=i.map(o=>{let d=k.find(R=>R.id===o.request),f=!d||d.match===\"ambiguous\"?\"unmatched\":d.selected?d.match!==\"single-pending\"||typeof d.isEmpty!=\"boolean\"?\"unresolved\":d.isEmpty?o.complete?o.bytes>be?\"too-large\":z.has(o)?r>=Ce?\"budget\":\"retained\":\"unavailable\":\"incomplete\":\"not-empty\":\"not-selected\";return f===\"retained\"&&r++,{...o,emptyBody:f===\"retained\"?z.get(o):null,emptyBodyState:f}});return JSON.parse(JSON.stringify({version:3,quality:S,responses:n,signals:a}))},stop:(r=!1)=>{S.fetchReplaced=S.fetchInstalled&&window.fetch!==J,A=!0;for(let n of O)ee(n);N.forEach(n=>g(n)),h.clear(),w.clear(),c.stop(),z=new WeakMap,r&&(i.length=0,a.length=0)}}}function Fe(b,g,k){\"use strict\";if(window!==window.top||window.__futFooterProbe)return;let F=\"unknown\";try{let e=navigator.userAgent||\"\";F=navigator.userAgentData?.mobile===!0||/Android|iPhone|iPad|iPod|Mobile/i.test(e)||/Macintosh/.test(e)&&navigator.maxTouchPoints>1?\"mobile\":/Windows NT|Macintosh|X11|CrOS|Linux/.test(e)?\"desktop\":\"unknown\"}catch{}let L=k[F];if(window.__futFooterProbe={status:()=>({sampled:!1,samplingClass:F,sampleRate:L})},Math.random()>=L)return;window.__futFooterProbe={status:()=>({sampled:!0,starting:!0})};let i=(e,t=null)=>{try{return e()}catch{return t}},a=(e,t=120)=>typeof e==\"string\"?e.slice(0,t):null,h=e=>typeof e==\"number\"&&Number.isFinite(e)?Math.round(e*100)/100:null,w=e=>typeof e==\"boolean\"?e:null,c=()=>Math.round(performance.now()),j=c(),z=h(performance.timeOrigin),O=Date.now(),N=[],Y=[],S=[],A=[],ne=[],J=new WeakMap,G=new Map,K=new Set,$=new Set,Q=[],ie=[],se=new WeakSet,q={footerRequested:0,footerEmpty:0,footerFilled:0,ambiguous:0,otherRequested:0,otherEmpty:0,otherFilled:0,dropped:0,requestDropped:0,netDropped:0,iasResources:0,iasErrors:0,errors:0,replayed:0},D={pointerTrusted:0,pointerSynthetic:0,keyTrusted:0,keySynthetic:0,moveSeconds:0,scrollSeconds:0,firstTrustedMs:null,lastTrustedMs:null,visibleMs:0,focusedMs:0,visibilityChanges:0,resizes:0,bfcache:!1},x={gptAt:null,prebidAt:null,tcfAt:null,gppAt:null,gptAlreadyReady:!!window.googletag?.apiReady,prebidAlreadyReady:typeof window.pbjs?.onEvent==\"function\",resourceObserver:!1,resourceBufferFull:!1,consentOverflow:!1,payloadTrimmed:!1},T,P=!1,ee=!1,H=null,ge=0,r=0,n=null,o,d,f,R,u=null,y=null,C=!1,X=!1,W,I,_=!1,V=c(),re=c(),me=document.visibilityState===\"visible\",_e=i(()=>document.hasFocus(),!1),de=location.pathname,he=0,Se=!1,Re=!1,Ae=e=>/^(rise|medianet|oms|oms-s)$/.test(e||\"\"),U=e=>(...t)=>{if(!P)try{e(...t)}catch{q.errors++}},oe=Ue({now:c,safe:i,requests:N,pins:$,parseWire:Be});function ae(e,t,s){return e.length>=s&&(e.shift(),q.dropped++,e===Y&&q.netDropped++),e.push(t),t}function te(e,t,s,l){typeof e?.addEventListener==\"function\"&&(e.addEventListener(t,s,l),Q.push(()=>e.removeEventListener(t,s,l)))}function Z(e,t){if(typeof t!=\"string\"||!t)return null;let s=A.find(v=>v.kind===e&&!v.truncated&&v.text===t);if(s)return s.id;let l=12288-A.reduce((v,B)=>v+B.text.length,0);if(A.length>=8||l document.cookie.split(\";\").map(t=>t.trim().split(\"=\",1)[0]));return{gads:e?e.includes(\"__gads\"):null,gpi:e?e.includes(\"__gpi\"):null,eoi:e?e.includes(\"__eoi\"):null}}function Te(){return de!==location.pathname&&(de=location.pathname,he++),/^\\/(players|squad-builder|evolutions|clubs|fut-gallery)(\\/|$)/.exec(de)?.[1]||(de===\"/\"?\"home\":\"other\")}function Ie(){return{ua:a(navigator.userAgent,320),platform:a(navigator.platform,60),language:a(navigator.language,30),languages:a(i(()=>navigator.languages.join(\",\")),160),timezone:a(i(()=>Intl.DateTimeFormat().resolvedOptions().timeZone),80),timezoneOffset:new Date().getTimezoneOffset(),width:innerWidth,height:innerHeight,outerWidth,outerHeight,screenWidth:screen.width,screenHeight:screen.height,availWidth:screen.availWidth,availHeight:screen.availHeight,colorDepth:screen.colorDepth,dpr:h(devicePixelRatio),touch:h(navigator.maxTouchPoints),cores:h(navigator.hardwareConcurrency),memory:h(navigator.deviceMemory),plugins:h(i(()=>navigator.plugins.length)),mimeTypes:h(i(()=>navigator.mimeTypes.length)),webdriver:w(navigator.webdriver),headlessUa:/HeadlessChrome|PhantomJS/i.test(navigator.userAgent),automationArtifacts:i(()=>[\"__playwright__binding__\",\"__pwInitScripts\",\"_phantom\",\"callPhantom\",\"domAutomationController\"].filter(e=>Object.prototype.hasOwnProperty.call(window,e)).join(\",\"),\"\"),seleniumArtifact:i(()=>Object.getOwnPropertyNames(window).slice(0,3e3).some(e=>/^cdc_[a-zA-Z0-9]+_(Array|Promise|Symbol)$/.test(e))),chBrands:a(i(()=>navigator.userAgentData.brands.map(e=>e.brand+\"/\"+e.version).join(\",\")),180),chPlatform:a(navigator.userAgentData?.platform,60),chMobile:w(navigator.userAgentData?.mobile),gpc:w(navigator.globalPrivacyControl),dnt:a(navigator.doNotTrack,10),cookieEnabled:w(navigator.cookieEnabled),localStorageReadable:i(()=>(window.localStorage.length,!0),!1),sessionStorageReadable:i(()=>(window.sessionStorage.length,!0),!1),serviceWorkerControlled:i(()=>!!navigator.serviceWorker.controller),navigationType:a(i(()=>performance.getEntriesByType(\"navigation\")[0].type),30),wasDiscarded:w(document.wasDiscarded),visibility:a(document.visibilityState,20),focused:i(()=>document.hasFocus()),userActivation:w(navigator.userActivation?.hasBeenActive),route:Te(),routeGeneration:he,loaderStatus:a(window.__stormstrikeLoaderStates?.futgg?.status,30),gptVersion:a(i(()=>window.googletag.getVersion()),40),prebidVersion:a(window.pbjs?.version,40),beaconVersion:a(window.__bidstorm?.cv||window.__q7r2?.cv,40),...ke()}}let Ne=Ie();function ye(){let e=c();me&&(D.visibleMs+=e-V),_e&&(D.focusedMs+=e-re),V=re=e}function We(e){let t=c();if(e.type===\"pointerdown\"||e.type===\"keydown\"){let s=(e.type===\"keydown\"?\"key\":\"pointer\")+(e.isTrusted?\"Trusted\":\"Synthetic\");D[s]=Math.min(1e3,D[s]+1)}e.isTrusted&&(D.firstTrustedMs===null&&(D.firstTrustedMs=t),D.lastTrustedMs=t)}for(let e of[\"pointerdown\",\"keydown\"])te(window,e,U(We),{passive:!0,capture:!0});for(let[e,t]of[[\"pointermove\",\"moveSeconds\"],[\"scroll\",\"scrollSeconds\"]]){let s=-1;te(window,e,U(l=>{let p=Math.floor(c()/1e3);l.isTrusted&&s!==p&&(s=p,D[t]++)}),{passive:!0})}te(window,\"resize\",U(()=>{D.resizes=Math.min(1e3,D.resizes+1)}));for(let e of[\"focus\",\"blur\"])te(window,e,U(()=>{ye(),_e=document.hasFocus()}));function ce(e){let t=J.get(e);return t||(t={generation:++r,seq:0,pending:[],tainted:!1},J.set(e,t)),t}let Ee=e=>i(()=>e.getSlotElementId())===\"lumiere-sticky-footer\";function $e(e){let t=(s,l)=>({ttlBuffer:s,ttlBufferSource:l});try{if(!e)return t(null,\"unavailable\");if(Object.prototype.hasOwnProperty.call(e,\"ttlBuffer\")){let p=h(e.ttlBuffer);return t(p,p===null?\"invalid-bid\":\"bid\")}if(typeof window.pbjs?.getConfig!=\"function\")return t(null,\"unavailable\");let s=window.pbjs.getConfig(\"ttlBuffer\"),l=h(s);return l!==null?t(l,\"config\"):s!==void 0?t(null,\"invalid-config\"):/^v?11\\.31\\.0$/.test(window.pbjs.version||\"\")?t(1,\"prebid-default\"):t(null,\"unknown-default\")}catch{return t(null,\"read-error\")}}function He(e){if(!Ee(e)){q.otherRequested++;return}let t=ce(e),s=M=>a(i(()=>e.getTargeting(M)[0])),l=s(\"hb_adid\"),p=s(\"hb_bidder\"),m=i(()=>window.pbjs.getBidResponseByAdId(l)),v=G.get(m?.auctionId+\":\"+p),B=Ae(p)&&!!l&&!!s(\"hb_pb\"),E={id:++ge,generation:t.generation,seq:++t.seq,t:c(),inventory:a(i(()=>e.getAdUnitPath()),240),slot:\"lumiere-sticky-footer\",adId:l,bidder:p,bucket:s(\"hb_pb\"),bidSize:s(\"hb_size\"),floor:s(\"flr\"),refresh:s(\"refresh\"),site:s(\"site\"),selected:B,bidPresent:!!m,cpm:h(m?.cpm),currency:a(m?.currency,10),bidAgeMs:m?h(Date.now()-m.responseTimestamp):null,ttl:h(m?.ttl),...$e(m),auctionId:a(m?.auctionId),bidId:a(m?.requestId||m?.bidId),requestedSizes:a(i(()=>e.getSizes(innerWidth,innerHeight).map(M=>typeof M==\"string\"?M:M.getWidth()+\"x\"+M.getHeight()).join(\",\")),240),tcRef:u?.tcRef||null,acRef:u?.acRef||null,cmpGppRef:y?.gppRef||null,tcAgeMs:u?c()-u.t:null,gdprApplies:u?.gdprApplies??null,cmpStatus:u?.cmpStatus||null,consentEvent:u?.consentEvent||null,purposeBits:u?.purposeBits||null,googleConsent:u?.googleConsent??null,prebidTcRef:v?.tcRef||null,prebidGppRef:v?.gppRef||null,prebidAcRef:v?.acRef||null,prebidConsentReplayed:v?.replayed??null,disablePersonalization:i(()=>{let M=window.googletag.getConfig(\"privacyTreatments\")?.privacyTreatments?.treatments;return Array.isArray(M)?M.includes(\"disablePersonalization\"):null}),...ke(),visibility:a(document.visibilityState,20),focused:i(()=>document.hasFocus()),width:innerWidth,height:innerHeight,route:Te(),routeGeneration:he,match:t.tainted?\"ambiguous\":\"pending\",renderAt:null,isEmpty:null,isBackfill:null,lineItemId:null,creativeId:null,responseId:null,size:null,responseAt:null,onloadAt:null,prebidRender:null,bidWonAt:null};if(N.length>=18){let M=N.findIndex(pe=>!$.has(pe.id));M>=0&&N.splice(M,1),q.dropped++,q.requestDropped++}N.push(E),q.footerRequested++,t.pending.length&&(t.tainted=!0,t.pending.forEach(M=>{M.match=\"ambiguous\"}),E.match=\"ambiguous\"),ae(t.pending,E,4),B&&n===null&&(n=E.t,$.add(E.id),o=setTimeout(()=>ue(\"window\"),Math.min(9e4,Math.max(0,j+18e4-c())))),i(()=>oe.request(E,e))}function Ve(e){if(!Ee(e.slot)){q[e.isEmpty?\"otherEmpty\":\"otherFilled\"]++;return}q[e.isEmpty?\"footerEmpty\":\"footerFilled\"]++;let t=ce(e.slot),s=!t.tainted&&t.pending.length===1?t.pending[0]:null;if(!s){q.ambiguous++,t.pending=[];return}t.pending=[],t.last=s,Object.assign(s,{match:\"single-pending\",renderAt:c(),isEmpty:w(e.isEmpty),isBackfill:w(e.isBackfill),lineItemId:h(e.lineItemId),creativeId:h(e.creativeId),responseId:a(e.responseIdentifier,240),size:a(Array.isArray(e.size)?e.size.join(\"x\"):e.size,40)}),s.selected&&s.isEmpty&&!Se&&($.add(s.id),Se=!0),i(()=>oe.bidState(s,\"bidAtRender\"))}function Oe(){if(_||P||!window.googletag?.apiReady)return;_=!0,x.gptAt=c();let e=window.googletag.pubads();for(let[t,s]of[[\"slotRequested\",l=>He(l.slot)],[\"slotRenderEnded\",Ve],[\"slotResponseReceived\",l=>{let p=ce(l.slot);!p.tainted&&p.pending.length===1&&(p.pending[0].responseAt=c())}],[\"slotOnload\",l=>{let p=ce(l.slot);!p.tainted&&!p.pending.length&&p.last&&(p.last.onloadAt=c())}]]){let l=U(s);e.addEventListener(t,l),Q.push(()=>e.removeEventListener(t,l))}}function je(e,t=!1){Ae(e.bidderCode)&&(G.set(e.auctionId+\":\"+e.bidderCode,{tcRef:Z(\"tcf\",e.gdprConsent?.consentString),gppRef:Z(\"gpp\",e.gppConsent?.gppString),acRef:Z(\"ac\",e.gdprConsent?.addtlConsent),replayed:t}),G.size>48&&G.delete(G.keys().next().value))}function Me(e){if(!e||typeof e.onEvent!=\"function\"||se.has(e)||P)return;se.add(e),x.prebidAt??(x.prebidAt=c());let t=[[\"bidRequested\",s=>je(s,!1)]];for(let s of[\"bidWon\",\"adRenderSucceeded\",\"adRenderFailed\"])t.push([s,l=>{let p=l.bid||l,m=l.adId||p.adId;s===\"adRenderFailed\"&&i(()=>oe.renderFailure(m,l.reason));let v=N.filter(E=>E.adId===m&&E.match===\"single-pending\"&&E.isEmpty===!1&&E.isBackfill===!1);if(v.length!==1)return;let B=v[0];s===\"bidWon\"?B.bidWonAt=c():B.prebidRender=s===\"adRenderSucceeded\"?\"success\":\"failure\",B.selected&&B.prebidRender===\"success\"&&!Re&&(Re=!0,$.add(B.id))}]);for(let[s,l]of t){let p=U(l);e.onEvent(s,p),Q.push(()=>e.offEvent(s,p))}i(()=>(e.getEvents?.()||[]).slice(-80).forEach(s=>{s.eventType===\"bidRequested\"&&(je(s.args,!0),q.replayed++)}))}function qe(){P||(i(Oe),i(()=>Me(window.pbjs)),i(oe.attach),!C&&typeof window.__tcfapi==\"function\"&&(C=!0,window.__tcfapi(\"addEventListener\",2,(e,t)=>{if(e?.listenerId!==void 0&&(W=e.listenerId),P){i(()=>window.__tcfapi(\"removeEventListener\",2,()=>{},W));return}!t||!e||(x.tcfAt??(x.tcfAt=c()),u={t:c(),tcRef:Z(\"tcf\",e.tcString),acRef:Z(\"ac\",e.addtlConsent),gdprApplies:w(e.gdprApplies),cmpStatus:a(e.cmpStatus,30),consentEvent:a(e.eventStatus,30),purposeBits:e.purpose?.consents?Array.from({length:11},(s,l)=>e.purpose.consents[l+1]===!0?\"1\":e.purpose.consents[l+1]===!1?\"0\":\"?\").join(\"\"):null,googleConsent:w(e.vendor?.consents?.[755])},ae(ne,{...u},8))})),!X&&typeof window.__gpp==\"function\"&&(X=!0,window.__gpp(\"addEventListener\",(e,t)=>{if(e?.listenerId!==void 0&&(I=e.listenerId),P){i(()=>window.__gpp(\"removeEventListener\",()=>{},I));return}!t||!e?.pingData||(x.gppAt??(x.gppAt=c()),y={t:c(),gppRef:Z(\"gpp\",e.pingData.gppString)})})))}function xe(e){return/^(securepubads\\.g\\.doubleclick\\.net|pubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(e.hostname)&&e.pathname===\"/gampad/ads\"?\"gam\":/(^|\\.)(adsafeprotected\\.com|iasds01\\.com)$/.test(e.hostname)?\"ias\":/(^|\\.)doubleverify\\.com$/.test(e.hostname)?\"doubleverify\":/^(ep1|ep2)\\.adtrafficquality\\.google$/.test(e.hostname)?\"google-traffic-quality\":e.hostname===\"cm.g.doubleclick.net\"?\"google-matching\":/^(securepubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(e.hostname)?\"google-helper\":e.hostname===\"cmp.uniconsent.com\"?\"cmp\":e.hostname===\"cdn.lumiere.gg\"?\"lumiere\":null}function Be(e){let t=e.searchParams,s=t.get(\"enc_prev_ius\")||\"\",l=s.includes(\",\"),p=null;if(s&&!l){let v=(t.get(\"iu_parts\")||\"\").split(\",\"),B=s.split(\"/\").filter(Boolean);B.length&&B.every(E=>/^\\d+$/.test(E)&&v[Number(E)]!==void 0)&&(p=\"/\"+B.map(E=>v[Number(E)]).join(\"/\"))}else l||(p=t.get(\"iu\"));let m=new URLSearchParams(l?\"\":t.get(\"prev_scp\")||t.get(\"cust_params\")||\"\");return{inventory:a(p,240),multiSlot:l,targeting:m,adId:a(m.get(\"hb_adid\")),bidder:a(m.get(\"hb_bidder\")),bucket:a(m.get(\"hb_pb\"))}}function De(e){if(P)return;let t=new URL(e.name),s=xe(t);if(!s)return;let l=e.name+\":\"+e.startTime;if(K.has(l))return;K.add(l),K.size>100&&K.delete(K.values().next().value);let p={start:h(e.startTime),duration:h(e.duration),status:e.responseStatus>0?h(e.responseStatus):null,initiator:a(e.initiatorType,30),timingRestricted:e.responseStart===0};if(s!==\"gam\"){s===\"ias\"&&q.iasResources++,ae(S,{...p,kind:s,source:\"performance\"},20);return}let m=t.searchParams,{inventory:v,multiSlot:B,targeting:E}=Be(t);if(v&&!v.split(\"/\").includes(\"lumiere-sticky-footer\"))return;let M={...p,inventory:a(v,240),multiSlot:B,queryHasTargeting:m.has(\"prev_scp\")||m.has(\"cust_params\"),adId:a(E.get(\"hb_adid\")),bidder:a(E.get(\"hb_bidder\")),bucket:a(E.get(\"hb_pb\")),tcRef:Z(\"tcf\",m.get(\"gdpr_consent\")),gppRef:Z(\"gpp\",m.get(\"gpp\")),acRef:Z(\"ac\",m.get(\"addtl_consent\")),cookieIdPresent:m.has(\"cookie\"),gpicPresent:m.has(\"gpic\"),eoiPresent:m.has(\"eo_id_str\"),ppidPresent:m.has(\"ppid\"),puidPresent:m.has(\"puid\")};for(let pe of[\"gdpr\",\"npa\",\"ltd\",\"rdp\",\"ppt\",\"tfua\",\"tfcd\",\"gpp_sid\",\"us_privacy\"])M[pe]=a(m.get(pe),60);ae(Y,M,24)}i(()=>{f=new PerformanceObserver(e=>e.getEntries().forEach(U(De))),f.observe({type:\"resource\",buffered:!0}),x.resourceObserver=!0}),te(performance,\"resourcetimingbufferfull\",U(()=>{x.resourceBufferFull=!0}));for(let e of[\"error\",\"securitypolicyviolation\"])te(window,e,U(t=>{let s=t.blockedURI||t.target?.src||t.target?.href;if(!s)return;let l=xe(new URL(s,location.origin));l===\"ias\"&&q.iasErrors++,l&&ae(S,{kind:l,start:c(),source:e===\"error\"?\"resource-error\":\"csp\",directive:a(t.effectiveDirective,60)},20)}),!0);function le(){if(!P&&(P=!0,clearInterval(d),clearTimeout(o),ie.forEach(clearTimeout),R?.abort(),i(()=>oe.stop(!T)),f?.disconnect(),Q.forEach(e=>i(e)),W!==void 0&&i(()=>window.__tcfapi(\"removeEventListener\",2,()=>{},W)),I!==void 0&&i(()=>window.__gpp(\"removeEventListener\",()=>{},I)),G.clear(),K.clear(),!T))for(let e of[N,Y,S,A,ne])e.length=0}function Pe(e){return ye(),{schema:g,build:b,campaign:T?.campaign||null,doc:T?.doc||null,samplingClass:F,sampleRate:L,admissionRate:T?.admissionRate??null,configuredRate:T?.configuredRate??null,samplingConfig:T?.samplingConfig||null,startedAt:O,timeOrigin:z,startMs:j,durationMs:c()-j,firstSelectedMs:n,reason:e,initialContext:Ne,context:Ie(),activity:{...D},quality:{...x},counts:{...q},requests:N.map(t=>({...t})),consents:A.slice(),consentEvents:ne.slice(),net:Y.slice(),helpers:S.slice(),details:oe.snapshot()}}function ue(e){if(P)return;H=e,i(()=>f?.takeRecords().forEach(De));let t=Pe(e);if(le(),!T||ee||Date.now()>=T.expiresAt)return;let s=()=>JSON.stringify({ticket:T.ticket,payload:t}),l=s();for(;new Blob([l]).size>49152&&(t.helpers.length||t.details.responses.length||t.details.signals.length||t.requests.some(p=>!$.has(p.id)));){if(t.helpers.length)t.helpers.shift();else if(t.details.responses.some(p=>p.emptyBody!==null)){let p=t.details.responses.slice().reverse(),m=p.find(v=>v.emptyBody!==null&&!$.has(v.request))||p.find(v=>v.emptyBody!==null);m.emptyBody=null,m.emptyBodyState=\"trimmed\",t.details.quality.trimmed=!0}else if(t.details.responses.length||t.details.signals.length){let p=t.details.responses.length?t.details.responses:t.details.signals,m=p.findIndex(v=>!$.has(v.request));p.splice(m !$.has(p.id)),1),t.counts.requestDropped++;t.counts.dropped++,t.quality.payloadTrimmed=!0,l=s()}if(new Blob([l]).size>49152){H=\"payload-too-large\";return}ee=!0,i(()=>fetch(\"/__futdiag/collect\",{method:\"POST\",credentials:\"omit\",mode:\"same-origin\",keepalive:!0,headers:{\"Content-Type\":\"text/plain;charset=UTF-8\"},body:l}).catch(()=>{}))}te(window,\"pagehide\",U(e=>{D.bfcache=!!e.persisted,ue(\"pagehide\")})),te(document,\"visibilitychange\",U(()=>{ye(),me=document.visibilityState===\"visible\",D.visibilityChanges++,me||ue(\"hidden\")})),i(()=>{var e,t;window.googletag||(window.googletag={cmd:[]}),(e=window.googletag).cmd||(e.cmd=[]),window.googletag.cmd.push(U(Oe)),window.pbjs||(window.pbjs={que:[]}),(t=window.pbjs).que||(t.que=[]),window.pbjs.que.push(U(()=>Me(window.pbjs)))}),i(qe),d=setInterval(U(qe),200),ie.push(setTimeout(()=>{T||(H=\"admission-timeout\",le())},15e3)),ie.push(setTimeout(()=>ue(\"deadline\"),18e4)),window.__futFooterProbe={stop:()=>{H=\"manual\",le()},status:()=>({sampled:!0,samplingClass:F,sampleRate:L,configuredRate:T?.configuredRate??null,effectiveRate:T?L*T.admissionRate:null,samplingConfig:T?.samplingConfig||null,admitted:!!T,stopped:P,attempted:ee,endReason:H,build:b,schema:g}),export:()=>Pe(H||\"preview\")},i(()=>{R=new AbortController;let e=new URLSearchParams({schema:String(g),build:b,samplingClass:F,sampleRate:String(L),details:String(3)});fetch(\"/__futdiag/admit?\"+e,{credentials:\"omit\",mode:\"same-origin\",cache:\"no-store\",signal:R.signal}).then(t=>t.ok&&t.status!==204?t.json():null).then(t=>{if(!P){if(!t||t.schema!==g||t.build!==b||t.detailsVersion!==3||!Number.isFinite(t.expiresAt)||t.expiresAt 0&&t.configuredRate {P||(H=\"admission-error\",le())})})}Fe(\"62b3159f18bbf4a5\",3,{desktop:.1,mobile:.001,unknown:.001});})(); (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':"
       ],
       "reward": "1 x Jumbo Gold Pack • 1 x Small Electrum Players Pack • 1 x Large Electrum Players Pack • 1 x Small Gold Players Pack • 5,000 Coins • Max. 6 Players from the same League • Max. 6 Players from the same Nation • Exactly Gold Players • Min. Squad Total Chemistry Points: 30",
       "challenge_count": 3,
-      "details_source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
+      "details_source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [
+          "League &amp; Nation Advanced - EA SPORTS FC 27 SBC - FUT.GG (()=>{var be=4096,Ce=3,we=(b,g)=>!!g?.adId&&!!g.inventory&&[\"inventory\",\"adId\",\"bidder\",\"bucket\"].every(k=>b[k]===g[k])&&b.start>=g.t-100&&b.start g===\"1\"||g===\"0\"?g:g===\"\"?\"empty\":\"other\"):null,truncated:!!b&&b.length>3}}function Le(){let b=new Map,g,k=!1,F=async(i,a,h)=>{let w=new TextEncoder().encode(JSON.stringify([\"futdiag-id-v1\",g,i,a,h])),c=await crypto.subtle.digest(\"SHA-256\",w);return Array.from(new Uint8Array(c),j=>j.toString(16).padStart(2,\"0\")).join(\"\")};function L(i){!g||k||i.started||(i.started=!0,Promise.resolve().then(async()=>{if(k)return;let a=await Promise.all(i.items.map(async h=>{if(!h.trim())return[null,null];let w=[\"gads\",\"gpi\",\"eoi\"].includes(i.family)?[...h.matchAll(/(?:^|:)(UID|ID)=([A-Za-z0-9_-]{1,256})(?=:|$)/g)]:[];return Promise.all([F(i.family,\"value\",h),w.length===1?F(i.family,w[0][1],w[0][2]):null])}));k||Object.assign(i.result,{state:\"ready\",values:a.map(h=>h[0]),ids:a.map(h=>h[1])})}).catch(()=>{k||(i.result.state=\"error\")}).finally(()=>{i.items=null}))}return{observe(i,a,h=!1){let w=O=>({state:O,values:null,ids:null});if(!i||k)return w(\"unavailable\");if(i.length>3||i.some(O=>O.length>2048))return w(\"limit\");let c=i.map(O=>{if(!h)return O;try{return decodeURIComponent(O)}catch{return O}});if(!c.length)return{state:\"ready\",values:[],ids:[]};if(!globalThis.crypto?.subtle)return w(\"unavailable\");let j=JSON.stringify([a,c]);if(b.has(j))return b.get(j).result;if(b.size>=128)return w(\"limit\");let z={family:a,items:c,started:!1,result:w(\"pending\")};return b.set(j,z),L(z),z.result},admit(i){if(!(k||g||typeof i!=\"string\"||!/^[a-z0-9-]{1,60}$/.test(i))){g=i;for(let a of b.values())L(a)}},stop(){k=!0;for(let i of b.values())i.items=null;b.clear()}}}function ze(b,g){let k=b.trim().replace(/^\\)\\]\\}'\\s*/,\"\"),F=[\"no_fill\",\"no-fill\",\"unfilled\",\"consent\",\"invalid traffic\",\"captcha\"],L=b.toLowerCase(),i={format:k?\"text\":g?\"empty\":\"unknown\",shape:null,markup:/ L.includes(a)).join(\",\")};if(!g||!k)return i;try{let a=JSON.parse(k),h=0,w=(c,j)=>{if(++h>120||j>5)return\"\\u2026\";if(c===null)return\"null\";if(typeof c==\"string\")return c.length?/^\\s* w(O,j+1)).join(\",\")+(c.length>16?\",\\u2026\":\"\")+\"]\";let z=Object.values(c);return\"{\"+z.slice(0,16).map(O=>w(O,j+1)).join(\",\")+(z.length>16?\",\\u2026\":\"\")+\"}\"};i.format=\"json\",i.shape=w(a,0).slice(0,1200)}catch{i.markup&&(i.format=\"markup\")}return i}function Ue({now:b,safe:g,requests:k,pins:F,parseWire:L}){let i=[],a=[],h=new Map,w=new Map,c=Le(),j=new WeakMap,z=new WeakMap,O=new Set,N=[],Y=new WeakSet,S={fetchInstalled:!1,fetchReplaced:!1,fetchSeen:0,responseDropped:0,signalDropped:0,bodyReads:0,bodyLimited:0,bodyUnreadable:0,bodyTimeouts:0,errors:0,trimmed:!1},A=!1,ne=0,J,G=(r,n,o)=>{if(r.length===8){let d=r.findIndex(f=>!F.has(f.request));if(d {let d={__gads:\"gads\",cookie:\"gads\",__gpi:\"gpi\",gpic:\"gpi\",__eoi:\"eoi\",eo_id_str:\"eoi\"}[n]||n,f=c.observe(r,d,o===h);if(!r)return{count:null,empty:null,length:null,changed:null,fingerprints:f};let R=JSON.stringify(r),u=o.get(n);return o.set(n,R),{count:r.length,empty:r.filter(y=>!y.trim()).length,length:r.reduce((y,C)=>y+C.length,0),changed:u===void 0?null:R!==u,fingerprints:f}},$=()=>{let r=g(()=>document.cookie.split(\";\").map(n=>{let o=n.indexOf(\"=\");return[n.slice(0,o).trim(),n.slice(o+1)]}));return{cookies:Object.fromEntries([\"__gads\",\"__gpi\",\"__eoi\"].map(n=>[n,K(r?r.filter(o=>o[0]===n).map(o=>o[1]):null,n,h)])),gpiOptOut:ve(r?r.filter(n=>n[0]===\"__gpi_opt_out\").map(n=>n[1]):null)}},Q=r=>{let n=g(r);if(!n||typeof n!=\"object\")return null;let o={},d=Object.keys(n).sort(),f=!1;for(let u of[\"site\",\"flr\",\"refresh\",\"hb_adid\",\"hb_bidder\",\"hb_pb\",\"hb_size\",\"hb_source\",\"hb_format\"]){let y=Array.isArray(n[u])?n[u]:n[u]==null?[]:[n[u]];f||(f=y.length>3||y.some(C=>String(C).length>80||/[\\u0000-\\u001f]/.test(String(C)))),o[u]=y.slice(0,3).map(C=>String(C).replace(/[\\u0000-\\u001f]/g,\"\").slice(0,80))}let R=d.filter(u=>!Object.hasOwn(o,u));return{values:o,unknownKeys:R.slice(0,16).map(u=>/^[\\w-]{1,40}$/.test(u)?u:\"redacted\"),truncated:f||R.length>16}},ie=r=>r?g(()=>new URL(r,location.href).origin===location.origin?\"same-origin\":\"other-origin\",\"invalid\"):\"unset\";function se(){for(let r of a)r.bidAtResponse=null;for(let r of i){let n=k.filter(f=>we(r,f)),o=n.length===1&&i.filter(f=>we(f,n[0])).length===1?n[0]:null;if(r.request=o?.id??null,!o||!j.has(r))continue;let d=a.find(f=>f.request===o.id);d&&(d.bidAtResponse=j.get(r))}}function q(r,n){let o=g(()=>googletag.getConfig([\"targeting\",\"adsenseAttributes\"])),d=g(()=>n.getConfig([\"targeting\",\"adsenseAttributes\",\"categoryExclusion\"])),f=u=>Object.fromEntries(u.getTargetingKeys().map(y=>[y,u.getTargeting(y)])),R={request:r.id,...$(),pageTargeting:Q(()=>o?o.targeting||{}:f(googletag.pubads())),slotTargeting:Q(()=>d?d.targeting||{}:f(n)),pageUrl:o?ie(o.adsenseAttributes?.page_url):\"unknown\",slotUrl:d?ie(d.adsenseAttributes?.page_url):\"unknown\",exclusions:d?d.categoryExclusion?.length??0:null,bidAtResponse:null,bidAtRender:null,renderReason:null,auctionsCleared:Y.has(window.pbjs?.clearAllAuctions)?0:null,slotsDestroyed:Y.has(window.googletag?.destroySlots)?0:null};G(a,R,\"signalDropped\"),se()}function D(r,n){let o=a.find(d=>d.request===r.id);o&&(o[n]=g(()=>typeof window.pbjs?.getBidResponseByAdId==\"function\"?!!window.pbjs.getBidResponseByAdId(r.adId):null))}function x(r,n){let o=k.filter(f=>f.adId===r);if(o.length!==1)return;let d=a.find(f=>f.request===o[0].id);d&&(d.renderReason=[\"cannotFindAd\",\"exception\",\"missingDoc\",\"preventWritingOnMainDocument\",\"noAd\",\"adAlreadyRendered\"].includes(n)?n:\"other\")}function T(r,n,o){if(A||!r||typeof r[n]!=\"function\"||Y.has(r[n]))return;let d=r[n];function f(...R){return A||g(()=>{for(let u of a){let y=k.find(C=>C.id===u.request);u[o]!==null&&y&&(y.match===\"pending\"||y.isEmpty===!1&&y.prebidRender===null&&b() {r[n]=f,Y.add(f),N.push(()=>{r[n]===f&&(r[n]=d)})})}function P(){T(window.pbjs,\"clearAllAuctions\",\"auctionsCleared\"),T(window.googletag,\"destroySlots\",\"slotsDestroyed\")}let ee=r=>{g(()=>r.cancel().catch(()=>{})),O.delete(r)};async function H(r,n){if(A)return;if([\"opaque\",\"opaqueredirect\",\"error\"].includes(r.type)){n.bodyState=\"opaque\",S.bodyUnreadable++;return}if(!r.body){n.bodyState=\"no-body\",n.complete=!0,n.bytes=0,z.set(n,\"\"),Object.assign(n,ze(\"\",!0));return}if(S.bodyReads>=6||O.size>=2||ne>=196608){n.bodyState=\"budget\",S.bodyLimited++;return}let o,d,f=0,R=\"\",u=!1,y=new TextDecoder(\"utf-8\",{fatal:!0,ignoreBOM:!0});try{for(o=r.clone().body.getReader(),O.add(o),S.bodyReads++,n.bodyState=\"reading\",d=setTimeout(()=>{u||(n.bodyState=\"timeout\",S.bodyTimeouts++,ee(o))},2e3);!A&&n.bodyState===\"reading\";){let{done:C,value:X}=await o.read();if(A||n.bodyState!==\"reading\")break;if(C){n.complete=!0,n.bodyState=\"complete\",R+=y.decode();break}let W=Math.min(32768-f,196608-ne),I=X.subarray(0,W);if(f+=I.byteLength,ne+=I.byteLength,R+=y.decode(I,{stream:!0}),X.byteLength>=W){n.bodyState=\"limit\",S.bodyLimited++,ee(o);break}}A&&n.bodyState===\"reading\"&&(n.bodyState=\"stopped\"),n.bytes=f,A||(Object.assign(n,ze(R,n.complete===!0)),n.complete&&f o.releaseLock()))}}function ge(){if(typeof window.fetch!=\"function\")return;let r=window.fetch;J=function(...n){let o=Reflect.apply(r,this,n);if(A)return o;try{let d=n[0],f=n[1],R=typeof d==\"string\"?d:d instanceof URL?d.href:d instanceof Request?d.url:null;if(!R)return o;let u=new URL(R,location.href);if(!/^https:$/.test(u.protocol)||!/^(securepubads\\.g\\.doubleclick\\.net|pubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(u.hostname)||u.pathname!==\"/gampad/ads\")return o;S.fetchSeen++;let y=L(u);if(y.multiSlot||!y.inventory?.split(\"/\").includes(\"lumiere-sticky-footer\"))return o;let C=b(),X=(_,V)=>g(()=>f&&Object.hasOwn(f,_)?f[_]:d instanceof Request?d[_]:V),W=(_,V)=>V.includes(_)?_:\"unknown\",I={request:null,start:C,end:null,inventory:y.inventory,adId:y.adId,bidder:y.bidder,bucket:y.bucket,method:W(X(\"method\",\"GET\")?.toUpperCase(),[\"GET\",\"POST\"]),credentials:W(X(\"credentials\",\"same-origin\"),[\"omit\",\"same-origin\",\"include\"]),mode:W(X(\"mode\",\"cors\"),[\"cors\",\"no-cors\",\"same-origin\"]),status:null,type:null,redirected:null,contentType:null,contentLength:null,bodyState:\"pending\",bytes:null,complete:!1,format:null,shape:null,markup:null,markers:null,identities:Object.fromEntries([\"cookie\",\"gpic\",\"eo_id_str\",\"ppid\",\"puid\"].map(_=>[_,K(u.searchParams.getAll(_),_,w)])),pdopt:ve(u.searchParams.getAll(\"pdopt\")),wireTargeting:Q(()=>Object.fromEntries([...new Set(y.targeting.keys())].map(_=>[_,y.targeting.getAll(_)]))),wireSizes:g(()=>{let _=u.searchParams.get(\"prev_iu_szs\")||u.searchParams.get(\"sz\")||\"\";return/^(?:(?:\\d{1,5}x\\d{1,5}|fluid)(?:|,)*)?$/.test(_)?_.slice(0,240):null}),contentUrl:ie(u.searchParams.get(\"url\"))};if(!G(i,I,\"responseDropped\"))return o;se(),o.then(_=>{if(A)return;j.set(I,y.adId?g(()=>typeof window.pbjs?.getBidResponseByAdId==\"function\"?!!window.pbjs.getBidResponseByAdId(y.adId):null):null),I.end=b(),I.status=_.status,I.type=W(_.type,[\"basic\",\"cors\",\"default\",\"opaque\",\"opaqueredirect\",\"error\"]),I.redirected=_.redirected;let V=(_.headers.get(\"content-type\")||\"\").split(\";\")[0].toLowerCase();I.contentType=[\"text/html\",\"text/plain\",\"application/json\",\"application/javascript\",\"text/javascript\",\"application/octet-stream\"].includes(V)?V:V?\"other\":\"missing\";let re=_.headers.get(\"content-length\");I.contentLength=re!==null&&/^\\d{1,10}$/.test(re)?Number(re):null,se(),H(_,I)},()=>{A||(I.end=b(),I.bodyState=\"fetch-error\")}).catch(()=>{A||S.errors++})}catch{S.errors++}return o},g(()=>{window.fetch=J,S.fetchInstalled=window.fetch===J}),N.push(()=>{window.fetch===J&&(window.fetch=r)})}return ge(),{request:q,bidState:D,renderFailure:x,attach:P,admit:r=>c.admit(r),snapshot:()=>{se(),!A&&S.fetchInstalled&&(S.fetchReplaced=window.fetch!==J);let r=0,n=i.map(o=>{let d=k.find(R=>R.id===o.request),f=!d||d.match===\"ambiguous\"?\"unmatched\":d.selected?d.match!==\"single-pending\"||typeof d.isEmpty!=\"boolean\"?\"unresolved\":d.isEmpty?o.complete?o.bytes>be?\"too-large\":z.has(o)?r>=Ce?\"budget\":\"retained\":\"unavailable\":\"incomplete\":\"not-empty\":\"not-selected\";return f===\"retained\"&&r++,{...o,emptyBody:f===\"retained\"?z.get(o):null,emptyBodyState:f}});return JSON.parse(JSON.stringify({version:3,quality:S,responses:n,signals:a}))},stop:(r=!1)=>{S.fetchReplaced=S.fetchInstalled&&window.fetch!==J,A=!0;for(let n of O)ee(n);N.forEach(n=>g(n)),h.clear(),w.clear(),c.stop(),z=new WeakMap,r&&(i.length=0,a.length=0)}}}function Fe(b,g,k){\"use strict\";if(window!==window.top||window.__futFooterProbe)return;let F=\"unknown\";try{let e=navigator.userAgent||\"\";F=navigator.userAgentData?.mobile===!0||/Android|iPhone|iPad|iPod|Mobile/i.test(e)||/Macintosh/.test(e)&&navigator.maxTouchPoints>1?\"mobile\":/Windows NT|Macintosh|X11|CrOS|Linux/.test(e)?\"desktop\":\"unknown\"}catch{}let L=k[F];if(window.__futFooterProbe={status:()=>({sampled:!1,samplingClass:F,sampleRate:L})},Math.random()>=L)return;window.__futFooterProbe={status:()=>({sampled:!0,starting:!0})};let i=(e,t=null)=>{try{return e()}catch{return t}},a=(e,t=120)=>typeof e==\"string\"?e.slice(0,t):null,h=e=>typeof e==\"number\"&&Number.isFinite(e)?Math.round(e*100)/100:null,w=e=>typeof e==\"boolean\"?e:null,c=()=>Math.round(performance.now()),j=c(),z=h(performance.timeOrigin),O=Date.now(),N=[],Y=[],S=[],A=[],ne=[],J=new WeakMap,G=new Map,K=new Set,$=new Set,Q=[],ie=[],se=new WeakSet,q={footerRequested:0,footerEmpty:0,footerFilled:0,ambiguous:0,otherRequested:0,otherEmpty:0,otherFilled:0,dropped:0,requestDropped:0,netDropped:0,iasResources:0,iasErrors:0,errors:0,replayed:0},D={pointerTrusted:0,pointerSynthetic:0,keyTrusted:0,keySynthetic:0,moveSeconds:0,scrollSeconds:0,firstTrustedMs:null,lastTrustedMs:null,visibleMs:0,focusedMs:0,visibilityChanges:0,resizes:0,bfcache:!1},x={gptAt:null,prebidAt:null,tcfAt:null,gppAt:null,gptAlreadyReady:!!window.googletag?.apiReady,prebidAlreadyReady:typeof window.pbjs?.onEvent==\"function\",resourceObserver:!1,resourceBufferFull:!1,consentOverflow:!1,payloadTrimmed:!1},T,P=!1,ee=!1,H=null,ge=0,r=0,n=null,o,d,f,R,u=null,y=null,C=!1,X=!1,W,I,_=!1,V=c(),re=c(),me=document.visibilityState===\"visible\",_e=i(()=>document.hasFocus(),!1),de=location.pathname,he=0,Se=!1,Re=!1,Ae=e=>/^(rise|medianet|oms|oms-s)$/.test(e||\"\"),U=e=>(...t)=>{if(!P)try{e(...t)}catch{q.errors++}},oe=Ue({now:c,safe:i,requests:N,pins:$,parseWire:Be});function ae(e,t,s){return e.length>=s&&(e.shift(),q.dropped++,e===Y&&q.netDropped++),e.push(t),t}function te(e,t,s,l){typeof e?.addEventListener==\"function\"&&(e.addEventListener(t,s,l),Q.push(()=>e.removeEventListener(t,s,l)))}function Z(e,t){if(typeof t!=\"string\"||!t)return null;let s=A.find(v=>v.kind===e&&!v.truncated&&v.text===t);if(s)return s.id;let l=12288-A.reduce((v,B)=>v+B.text.length,0);if(A.length>=8||l document.cookie.split(\";\").map(t=>t.trim().split(\"=\",1)[0]));return{gads:e?e.includes(\"__gads\"):null,gpi:e?e.includes(\"__gpi\"):null,eoi:e?e.includes(\"__eoi\"):null}}function Te(){return de!==location.pathname&&(de=location.pathname,he++),/^\\/(players|squad-builder|evolutions|clubs|fut-gallery)(\\/|$)/.exec(de)?.[1]||(de===\"/\"?\"home\":\"other\")}function Ie(){return{ua:a(navigator.userAgent,320),platform:a(navigator.platform,60),language:a(navigator.language,30),languages:a(i(()=>navigator.languages.join(\",\")),160),timezone:a(i(()=>Intl.DateTimeFormat().resolvedOptions().timeZone),80),timezoneOffset:new Date().getTimezoneOffset(),width:innerWidth,height:innerHeight,outerWidth,outerHeight,screenWidth:screen.width,screenHeight:screen.height,availWidth:screen.availWidth,availHeight:screen.availHeight,colorDepth:screen.colorDepth,dpr:h(devicePixelRatio),touch:h(navigator.maxTouchPoints),cores:h(navigator.hardwareConcurrency),memory:h(navigator.deviceMemory),plugins:h(i(()=>navigator.plugins.length)),mimeTypes:h(i(()=>navigator.mimeTypes.length)),webdriver:w(navigator.webdriver),headlessUa:/HeadlessChrome|PhantomJS/i.test(navigator.userAgent),automationArtifacts:i(()=>[\"__playwright__binding__\",\"__pwInitScripts\",\"_phantom\",\"callPhantom\",\"domAutomationController\"].filter(e=>Object.prototype.hasOwnProperty.call(window,e)).join(\",\"),\"\"),seleniumArtifact:i(()=>Object.getOwnPropertyNames(window).slice(0,3e3).some(e=>/^cdc_[a-zA-Z0-9]+_(Array|Promise|Symbol)$/.test(e))),chBrands:a(i(()=>navigator.userAgentData.brands.map(e=>e.brand+\"/\"+e.version).join(\",\")),180),chPlatform:a(navigator.userAgentData?.platform,60),chMobile:w(navigator.userAgentData?.mobile),gpc:w(navigator.globalPrivacyControl),dnt:a(navigator.doNotTrack,10),cookieEnabled:w(navigator.cookieEnabled),localStorageReadable:i(()=>(window.localStorage.length,!0),!1),sessionStorageReadable:i(()=>(window.sessionStorage.length,!0),!1),serviceWorkerControlled:i(()=>!!navigator.serviceWorker.controller),navigationType:a(i(()=>performance.getEntriesByType(\"navigation\")[0].type),30),wasDiscarded:w(document.wasDiscarded),visibility:a(document.visibilityState,20),focused:i(()=>document.hasFocus()),userActivation:w(navigator.userActivation?.hasBeenActive),route:Te(),routeGeneration:he,loaderStatus:a(window.__stormstrikeLoaderStates?.futgg?.status,30),gptVersion:a(i(()=>window.googletag.getVersion()),40),prebidVersion:a(window.pbjs?.version,40),beaconVersion:a(window.__bidstorm?.cv||window.__q7r2?.cv,40),...ke()}}let Ne=Ie();function ye(){let e=c();me&&(D.visibleMs+=e-V),_e&&(D.focusedMs+=e-re),V=re=e}function We(e){let t=c();if(e.type===\"pointerdown\"||e.type===\"keydown\"){let s=(e.type===\"keydown\"?\"key\":\"pointer\")+(e.isTrusted?\"Trusted\":\"Synthetic\");D[s]=Math.min(1e3,D[s]+1)}e.isTrusted&&(D.firstTrustedMs===null&&(D.firstTrustedMs=t),D.lastTrustedMs=t)}for(let e of[\"pointerdown\",\"keydown\"])te(window,e,U(We),{passive:!0,capture:!0});for(let[e,t]of[[\"pointermove\",\"moveSeconds\"],[\"scroll\",\"scrollSeconds\"]]){let s=-1;te(window,e,U(l=>{let p=Math.floor(c()/1e3);l.isTrusted&&s!==p&&(s=p,D[t]++)}),{passive:!0})}te(window,\"resize\",U(()=>{D.resizes=Math.min(1e3,D.resizes+1)}));for(let e of[\"focus\",\"blur\"])te(window,e,U(()=>{ye(),_e=document.hasFocus()}));function ce(e){let t=J.get(e);return t||(t={generation:++r,seq:0,pending:[],tainted:!1},J.set(e,t)),t}let Ee=e=>i(()=>e.getSlotElementId())===\"lumiere-sticky-footer\";function $e(e){let t=(s,l)=>({ttlBuffer:s,ttlBufferSource:l});try{if(!e)return t(null,\"unavailable\");if(Object.prototype.hasOwnProperty.call(e,\"ttlBuffer\")){let p=h(e.ttlBuffer);return t(p,p===null?\"invalid-bid\":\"bid\")}if(typeof window.pbjs?.getConfig!=\"function\")return t(null,\"unavailable\");let s=window.pbjs.getConfig(\"ttlBuffer\"),l=h(s);return l!==null?t(l,\"config\"):s!==void 0?t(null,\"invalid-config\"):/^v?11\\.31\\.0$/.test(window.pbjs.version||\"\")?t(1,\"prebid-default\"):t(null,\"unknown-default\")}catch{return t(null,\"read-error\")}}function He(e){if(!Ee(e)){q.otherRequested++;return}let t=ce(e),s=M=>a(i(()=>e.getTargeting(M)[0])),l=s(\"hb_adid\"),p=s(\"hb_bidder\"),m=i(()=>window.pbjs.getBidResponseByAdId(l)),v=G.get(m?.auctionId+\":\"+p),B=Ae(p)&&!!l&&!!s(\"hb_pb\"),E={id:++ge,generation:t.generation,seq:++t.seq,t:c(),inventory:a(i(()=>e.getAdUnitPath()),240),slot:\"lumiere-sticky-footer\",adId:l,bidder:p,bucket:s(\"hb_pb\"),bidSize:s(\"hb_size\"),floor:s(\"flr\"),refresh:s(\"refresh\"),site:s(\"site\"),selected:B,bidPresent:!!m,cpm:h(m?.cpm),currency:a(m?.currency,10),bidAgeMs:m?h(Date.now()-m.responseTimestamp):null,ttl:h(m?.ttl),...$e(m),auctionId:a(m?.auctionId),bidId:a(m?.requestId||m?.bidId),requestedSizes:a(i(()=>e.getSizes(innerWidth,innerHeight).map(M=>typeof M==\"string\"?M:M.getWidth()+\"x\"+M.getHeight()).join(\",\")),240),tcRef:u?.tcRef||null,acRef:u?.acRef||null,cmpGppRef:y?.gppRef||null,tcAgeMs:u?c()-u.t:null,gdprApplies:u?.gdprApplies??null,cmpStatus:u?.cmpStatus||null,consentEvent:u?.consentEvent||null,purposeBits:u?.purposeBits||null,googleConsent:u?.googleConsent??null,prebidTcRef:v?.tcRef||null,prebidGppRef:v?.gppRef||null,prebidAcRef:v?.acRef||null,prebidConsentReplayed:v?.replayed??null,disablePersonalization:i(()=>{let M=window.googletag.getConfig(\"privacyTreatments\")?.privacyTreatments?.treatments;return Array.isArray(M)?M.includes(\"disablePersonalization\"):null}),...ke(),visibility:a(document.visibilityState,20),focused:i(()=>document.hasFocus()),width:innerWidth,height:innerHeight,route:Te(),routeGeneration:he,match:t.tainted?\"ambiguous\":\"pending\",renderAt:null,isEmpty:null,isBackfill:null,lineItemId:null,creativeId:null,responseId:null,size:null,responseAt:null,onloadAt:null,prebidRender:null,bidWonAt:null};if(N.length>=18){let M=N.findIndex(pe=>!$.has(pe.id));M>=0&&N.splice(M,1),q.dropped++,q.requestDropped++}N.push(E),q.footerRequested++,t.pending.length&&(t.tainted=!0,t.pending.forEach(M=>{M.match=\"ambiguous\"}),E.match=\"ambiguous\"),ae(t.pending,E,4),B&&n===null&&(n=E.t,$.add(E.id),o=setTimeout(()=>ue(\"window\"),Math.min(9e4,Math.max(0,j+18e4-c())))),i(()=>oe.request(E,e))}function Ve(e){if(!Ee(e.slot)){q[e.isEmpty?\"otherEmpty\":\"otherFilled\"]++;return}q[e.isEmpty?\"footerEmpty\":\"footerFilled\"]++;let t=ce(e.slot),s=!t.tainted&&t.pending.length===1?t.pending[0]:null;if(!s){q.ambiguous++,t.pending=[];return}t.pending=[],t.last=s,Object.assign(s,{match:\"single-pending\",renderAt:c(),isEmpty:w(e.isEmpty),isBackfill:w(e.isBackfill),lineItemId:h(e.lineItemId),creativeId:h(e.creativeId),responseId:a(e.responseIdentifier,240),size:a(Array.isArray(e.size)?e.size.join(\"x\"):e.size,40)}),s.selected&&s.isEmpty&&!Se&&($.add(s.id),Se=!0),i(()=>oe.bidState(s,\"bidAtRender\"))}function Oe(){if(_||P||!window.googletag?.apiReady)return;_=!0,x.gptAt=c();let e=window.googletag.pubads();for(let[t,s]of[[\"slotRequested\",l=>He(l.slot)],[\"slotRenderEnded\",Ve],[\"slotResponseReceived\",l=>{let p=ce(l.slot);!p.tainted&&p.pending.length===1&&(p.pending[0].responseAt=c())}],[\"slotOnload\",l=>{let p=ce(l.slot);!p.tainted&&!p.pending.length&&p.last&&(p.last.onloadAt=c())}]]){let l=U(s);e.addEventListener(t,l),Q.push(()=>e.removeEventListener(t,l))}}function je(e,t=!1){Ae(e.bidderCode)&&(G.set(e.auctionId+\":\"+e.bidderCode,{tcRef:Z(\"tcf\",e.gdprConsent?.consentString),gppRef:Z(\"gpp\",e.gppConsent?.gppString),acRef:Z(\"ac\",e.gdprConsent?.addtlConsent),replayed:t}),G.size>48&&G.delete(G.keys().next().value))}function Me(e){if(!e||typeof e.onEvent!=\"function\"||se.has(e)||P)return;se.add(e),x.prebidAt??(x.prebidAt=c());let t=[[\"bidRequested\",s=>je(s,!1)]];for(let s of[\"bidWon\",\"adRenderSucceeded\",\"adRenderFailed\"])t.push([s,l=>{let p=l.bid||l,m=l.adId||p.adId;s===\"adRenderFailed\"&&i(()=>oe.renderFailure(m,l.reason));let v=N.filter(E=>E.adId===m&&E.match===\"single-pending\"&&E.isEmpty===!1&&E.isBackfill===!1);if(v.length!==1)return;let B=v[0];s===\"bidWon\"?B.bidWonAt=c():B.prebidRender=s===\"adRenderSucceeded\"?\"success\":\"failure\",B.selected&&B.prebidRender===\"success\"&&!Re&&(Re=!0,$.add(B.id))}]);for(let[s,l]of t){let p=U(l);e.onEvent(s,p),Q.push(()=>e.offEvent(s,p))}i(()=>(e.getEvents?.()||[]).slice(-80).forEach(s=>{s.eventType===\"bidRequested\"&&(je(s.args,!0),q.replayed++)}))}function qe(){P||(i(Oe),i(()=>Me(window.pbjs)),i(oe.attach),!C&&typeof window.__tcfapi==\"function\"&&(C=!0,window.__tcfapi(\"addEventListener\",2,(e,t)=>{if(e?.listenerId!==void 0&&(W=e.listenerId),P){i(()=>window.__tcfapi(\"removeEventListener\",2,()=>{},W));return}!t||!e||(x.tcfAt??(x.tcfAt=c()),u={t:c(),tcRef:Z(\"tcf\",e.tcString),acRef:Z(\"ac\",e.addtlConsent),gdprApplies:w(e.gdprApplies),cmpStatus:a(e.cmpStatus,30),consentEvent:a(e.eventStatus,30),purposeBits:e.purpose?.consents?Array.from({length:11},(s,l)=>e.purpose.consents[l+1]===!0?\"1\":e.purpose.consents[l+1]===!1?\"0\":\"?\").join(\"\"):null,googleConsent:w(e.vendor?.consents?.[755])},ae(ne,{...u},8))})),!X&&typeof window.__gpp==\"function\"&&(X=!0,window.__gpp(\"addEventListener\",(e,t)=>{if(e?.listenerId!==void 0&&(I=e.listenerId),P){i(()=>window.__gpp(\"removeEventListener\",()=>{},I));return}!t||!e?.pingData||(x.gppAt??(x.gppAt=c()),y={t:c(),gppRef:Z(\"gpp\",e.pingData.gppString)})})))}function xe(e){return/^(securepubads\\.g\\.doubleclick\\.net|pubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(e.hostname)&&e.pathname===\"/gampad/ads\"?\"gam\":/(^|\\.)(adsafeprotected\\.com|iasds01\\.com)$/.test(e.hostname)?\"ias\":/(^|\\.)doubleverify\\.com$/.test(e.hostname)?\"doubleverify\":/^(ep1|ep2)\\.adtrafficquality\\.google$/.test(e.hostname)?\"google-traffic-quality\":e.hostname===\"cm.g.doubleclick.net\"?\"google-matching\":/^(securepubads\\.g\\.doubleclick\\.net|pagead2\\.googlesyndication\\.com)$/.test(e.hostname)?\"google-helper\":e.hostname===\"cmp.uniconsent.com\"?\"cmp\":e.hostname===\"cdn.lumiere.gg\"?\"lumiere\":null}function Be(e){let t=e.searchParams,s=t.get(\"enc_prev_ius\")||\"\",l=s.includes(\",\"),p=null;if(s&&!l){let v=(t.get(\"iu_parts\")||\"\").split(\",\"),B=s.split(\"/\").filter(Boolean);B.length&&B.every(E=>/^\\d+$/.test(E)&&v[Number(E)]!==void 0)&&(p=\"/\"+B.map(E=>v[Number(E)]).join(\"/\"))}else l||(p=t.get(\"iu\"));let m=new URLSearchParams(l?\"\":t.get(\"prev_scp\")||t.get(\"cust_params\")||\"\");return{inventory:a(p,240),multiSlot:l,targeting:m,adId:a(m.get(\"hb_adid\")),bidder:a(m.get(\"hb_bidder\")),bucket:a(m.get(\"hb_pb\"))}}function De(e){if(P)return;let t=new URL(e.name),s=xe(t);if(!s)return;let l=e.name+\":\"+e.startTime;if(K.has(l))return;K.add(l),K.size>100&&K.delete(K.values().next().value);let p={start:h(e.startTime),duration:h(e.duration),status:e.responseStatus>0?h(e.responseStatus):null,initiator:a(e.initiatorType,30),timingRestricted:e.responseStart===0};if(s!==\"gam\"){s===\"ias\"&&q.iasResources++,ae(S,{...p,kind:s,source:\"performance\"},20);return}let m=t.searchParams,{inventory:v,multiSlot:B,targeting:E}=Be(t);if(v&&!v.split(\"/\").includes(\"lumiere-sticky-footer\"))return;let M={...p,inventory:a(v,240),multiSlot:B,queryHasTargeting:m.has(\"prev_scp\")||m.has(\"cust_params\"),adId:a(E.get(\"hb_adid\")),bidder:a(E.get(\"hb_bidder\")),bucket:a(E.get(\"hb_pb\")),tcRef:Z(\"tcf\",m.get(\"gdpr_consent\")),gppRef:Z(\"gpp\",m.get(\"gpp\")),acRef:Z(\"ac\",m.get(\"addtl_consent\")),cookieIdPresent:m.has(\"cookie\"),gpicPresent:m.has(\"gpic\"),eoiPresent:m.has(\"eo_id_str\"),ppidPresent:m.has(\"ppid\"),puidPresent:m.has(\"puid\")};for(let pe of[\"gdpr\",\"npa\",\"ltd\",\"rdp\",\"ppt\",\"tfua\",\"tfcd\",\"gpp_sid\",\"us_privacy\"])M[pe]=a(m.get(pe),60);ae(Y,M,24)}i(()=>{f=new PerformanceObserver(e=>e.getEntries().forEach(U(De))),f.observe({type:\"resource\",buffered:!0}),x.resourceObserver=!0}),te(performance,\"resourcetimingbufferfull\",U(()=>{x.resourceBufferFull=!0}));for(let e of[\"error\",\"securitypolicyviolation\"])te(window,e,U(t=>{let s=t.blockedURI||t.target?.src||t.target?.href;if(!s)return;let l=xe(new URL(s,location.origin));l===\"ias\"&&q.iasErrors++,l&&ae(S,{kind:l,start:c(),source:e===\"error\"?\"resource-error\":\"csp\",directive:a(t.effectiveDirective,60)},20)}),!0);function le(){if(!P&&(P=!0,clearInterval(d),clearTimeout(o),ie.forEach(clearTimeout),R?.abort(),i(()=>oe.stop(!T)),f?.disconnect(),Q.forEach(e=>i(e)),W!==void 0&&i(()=>window.__tcfapi(\"removeEventListener\",2,()=>{},W)),I!==void 0&&i(()=>window.__gpp(\"removeEventListener\",()=>{},I)),G.clear(),K.clear(),!T))for(let e of[N,Y,S,A,ne])e.length=0}function Pe(e){return ye(),{schema:g,build:b,campaign:T?.campaign||null,doc:T?.doc||null,samplingClass:F,sampleRate:L,admissionRate:T?.admissionRate??null,configuredRate:T?.configuredRate??null,samplingConfig:T?.samplingConfig||null,startedAt:O,timeOrigin:z,startMs:j,durationMs:c()-j,firstSelectedMs:n,reason:e,initialContext:Ne,context:Ie(),activity:{...D},quality:{...x},counts:{...q},requests:N.map(t=>({...t})),consents:A.slice(),consentEvents:ne.slice(),net:Y.slice(),helpers:S.slice(),details:oe.snapshot()}}function ue(e){if(P)return;H=e,i(()=>f?.takeRecords().forEach(De));let t=Pe(e);if(le(),!T||ee||Date.now()>=T.expiresAt)return;let s=()=>JSON.stringify({ticket:T.ticket,payload:t}),l=s();for(;new Blob([l]).size>49152&&(t.helpers.length||t.details.responses.length||t.details.signals.length||t.requests.some(p=>!$.has(p.id)));){if(t.helpers.length)t.helpers.shift();else if(t.details.responses.some(p=>p.emptyBody!==null)){let p=t.details.responses.slice().reverse(),m=p.find(v=>v.emptyBody!==null&&!$.has(v.request))||p.find(v=>v.emptyBody!==null);m.emptyBody=null,m.emptyBodyState=\"trimmed\",t.details.quality.trimmed=!0}else if(t.details.responses.length||t.details.signals.length){let p=t.details.responses.length?t.details.responses:t.details.signals,m=p.findIndex(v=>!$.has(v.request));p.splice(m !$.has(p.id)),1),t.counts.requestDropped++;t.counts.dropped++,t.quality.payloadTrimmed=!0,l=s()}if(new Blob([l]).size>49152){H=\"payload-too-large\";return}ee=!0,i(()=>fetch(\"/__futdiag/collect\",{method:\"POST\",credentials:\"omit\",mode:\"same-origin\",keepalive:!0,headers:{\"Content-Type\":\"text/plain;charset=UTF-8\"},body:l}).catch(()=>{}))}te(window,\"pagehide\",U(e=>{D.bfcache=!!e.persisted,ue(\"pagehide\")})),te(document,\"visibilitychange\",U(()=>{ye(),me=document.visibilityState===\"visible\",D.visibilityChanges++,me||ue(\"hidden\")})),i(()=>{var e,t;window.googletag||(window.googletag={cmd:[]}),(e=window.googletag).cmd||(e.cmd=[]),window.googletag.cmd.push(U(Oe)),window.pbjs||(window.pbjs={que:[]}),(t=window.pbjs).que||(t.que=[]),window.pbjs.que.push(U(()=>Me(window.pbjs)))}),i(qe),d=setInterval(U(qe),200),ie.push(setTimeout(()=>{T||(H=\"admission-timeout\",le())},15e3)),ie.push(setTimeout(()=>ue(\"deadline\"),18e4)),window.__futFooterProbe={stop:()=>{H=\"manual\",le()},status:()=>({sampled:!0,samplingClass:F,sampleRate:L,configuredRate:T?.configuredRate??null,effectiveRate:T?L*T.admissionRate:null,samplingConfig:T?.samplingConfig||null,admitted:!!T,stopped:P,attempted:ee,endReason:H,build:b,schema:g}),export:()=>Pe(H||\"preview\")},i(()=>{R=new AbortController;let e=new URLSearchParams({schema:String(g),build:b,samplingClass:F,sampleRate:String(L),details:String(3)});fetch(\"/__futdiag/admit?\"+e,{credentials:\"omit\",mode:\"same-origin\",cache:\"no-store\",signal:R.signal}).then(t=>t.ok&&t.status!==204?t.json():null).then(t=>{if(!P){if(!t||t.schema!==g||t.build!==b||t.detailsVersion!==3||!Number.isFinite(t.expiresAt)||t.expiresAt 0&&t.configuredRate {P||(H=\"admission-error\",le())})})}Fe(\"62b3159f18bbf4a5\",3,{desktop:.1,mobile:.001,unknown:.001});})(); (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':"
+        ],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
+      }
     },
     {
       "id": "futgg-intro-to-upgrade-sbcs",
@@ -14220,10 +14609,20 @@
         "Min. Squad Total Chemistry Points: 10"
       ],
       "reward": "1 x Small Gold Players Pack • 1 x Large Silver Players Pack • 1 x Gold Pack • 1 x Large Gold Pack • Min. 11 Players: Bronze • Min. 11 Players: Silver",
-      "estimated_cost": 2200,
-      "cost": 2200,
+      "estimated_cost": 1256,
+      "cost": 1256,
       "challenge_count": 3,
-      "details_source_url": "https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/"
+      "details_source_url": "https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/",
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/"
+      }
     },
     {
       "id": "futgg-1-expiring-soon",
@@ -14237,7 +14636,19 @@
       ],
       "challenge_count": 1,
       "repeatable": true,
-      "details_source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
+      "details_source_url": "https://www.fut.gg/sbc/category/expiring-soon/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
+      }
     },
     {
       "id": "futgg-1-players",
@@ -14250,7 +14661,21 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "challenge_count": 1,
-      "details_source_url": "https://www.fut.gg/sbc/category/players/"
+      "details_source_url": "https://www.fut.gg/sbc/category/players/",
+      "estimated_cost": 27,
+      "cost": 27,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/category/players/"
+      },
+      "cost_source": "fcdata-public",
+      "cost_source_url": "https://fcdata.io/"
     },
     {
       "id": "futgg-2-challenges",
@@ -14263,7 +14688,19 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "challenge_count": 4,
-      "details_source_url": "https://www.fut.gg/sbc/category/challenges/"
+      "details_source_url": "https://www.fut.gg/sbc/category/challenges/",
+      "estimated_cost": 1256,
+      "cost": 1256,
+      "public_solution": {
+        "total_cost": 1256,
+        "remaining_cost": 1256,
+        "players": [],
+        "player_ids": [],
+        "owned_player_ids": [],
+        "notes": [],
+        "source": "futgg-public",
+        "source_url": "https://www.fut.gg/sbc/category/challenges/"
+      }
     }
   ],
   "objectives": [
@@ -14450,6 +14887,8 @@
       "discovery_source_url": "https://www.fut.gg/whats-hot/"
     }
   ],
-  "discovery_generated_at": "2026-09-26T21:13:38.083Z",
-  "enriched_at": "2026-09-26T21:14:56.084Z"
+  "discovery_generated_at": "2026-09-26T21:53:14.727Z",
+  "enriched_at": "2026-09-26T21:53:19.994Z",
+  "market_enriched_at": "2026-09-26T21:53:25.784Z",
+  "priced_players": 3
 }
