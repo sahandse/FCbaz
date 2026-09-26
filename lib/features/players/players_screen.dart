@@ -23,6 +23,7 @@ class _PlayersScreenState extends State<PlayersScreen> {
 
   bool loading = true;
   String? error;
+  String quickRarity = 'همه';
 
   @override
   void initState() {
@@ -73,120 +74,266 @@ class _PlayersScreenState extends State<PlayersScreen> {
 
     if (result == null) return;
 
-    setState(() => filter = result);
+    setState(() {
+      filter = result;
+      quickRarity = 'همه';
+    });
+    await _load();
+  }
+
+  Future<void> _applyQuickRarity(String label, String? rarity) async {
+    setState(() {
+      quickRarity = label;
+      filter = filter.copyWith(
+        version: rarity,
+        clearVersion: rarity == null,
+        rarity: rarity,
+        clearRarity: rarity == null,
+        cardType: rarity,
+        clearCardType: rarity == null,
+      );
+    });
     await _load();
   }
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
     return RefreshIndicator(
       onRefresh: _load,
-      child: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'بازیکنان FC27',
-                      style: Theme.of(context).textTheme.headlineSmall,
-                    ),
-                    const SizedBox(height: 3),
-                    Text(
-                      'فیلتر حرفه‌ای روی دیتای واقعی',
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+      child: CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 0),
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'FC27 Collection',
+                              textDirection: TextDirection.ltr,
+                              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                    fontWeight: FontWeight.w900,
+                                    letterSpacing: -1,
+                                  ),
+                            ),
+                            const SizedBox(height: 3),
+                            Text(
+                              'بازیکنان واقعی با استایل کارت‌های Ultimate Team',
+                              style: TextStyle(
+                                color: scheme.onSurfaceVariant,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
+                      Badge(
+                        isLabelVisible: filter.activeCount > 0,
+                        label: Text(filter.activeCount.toString()),
+                        child: IconButton.filledTonal(
+                          onPressed: _openFilters,
+                          icon: const Icon(Icons.tune_rounded),
+                          tooltip: 'فیلتر پیشرفته',
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  SizedBox(
+                    height: 42,
+                    child: ListView(
+                      scrollDirection: Axis.horizontal,
+                      children: [
+                        _RarityChip(
+                          label: 'همه',
+                          active: quickRarity == 'همه',
+                          onTap: () => _applyQuickRarity('همه', null),
+                        ),
+                        _RarityChip(
+                          label: 'Gold',
+                          active: quickRarity == 'Gold',
+                          onTap: () => _applyQuickRarity('Gold', 'Gold Rare'),
+                        ),
+                        _RarityChip(
+                          label: 'ICON',
+                          active: quickRarity == 'ICON',
+                          onTap: () => _applyQuickRarity('ICON', 'Base Icon'),
+                        ),
+                        _RarityChip(
+                          label: 'Hero',
+                          active: quickRarity == 'Hero',
+                          onTap: () => _applyQuickRarity('Hero', 'Base Hero'),
+                        ),
+                        _RarityChip(
+                          label: 'TOTW',
+                          active: quickRarity == 'TOTW',
+                          onTap: () => _applyQuickRarity('TOTW', 'Team of the week'),
+                        ),
+                        _RarityChip(
+                          label: 'Hall of FUT',
+                          active: quickRarity == 'Hall of FUT',
+                          onTap: () => _applyQuickRarity('Hall of FUT', 'Base Hall of FUT'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (filter.activeCount > 0) ...[
+                    const SizedBox(height: 10),
+                    _ActiveFilters(
+                      filter: filter,
+                      onClear: () {
+                        setState(() {
+                          filter = const PlayerFilter();
+                          quickRarity = 'همه';
+                        });
+                        _load();
+                      },
                     ),
                   ],
-                ),
+                  const SizedBox(height: 14),
+                  if (!loading && error == null && players.isNotEmpty)
+                    Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: scheme.primary.withValues(alpha: .10),
+                            borderRadius: BorderRadius.circular(99),
+                          ),
+                          child: Text(
+                            '${players.length} کارت',
+                            style: TextStyle(
+                              color: scheme.primary,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w900,
+                            ),
+                          ),
+                        ),
+                        const Spacer(),
+                        Icon(Icons.verified_rounded, size: 16, color: scheme.primary),
+                        const SizedBox(width: 4),
+                        Text(
+                          'FC27 • Live data',
+                          textDirection: TextDirection.ltr,
+                          style: TextStyle(
+                            color: scheme.onSurfaceVariant,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 12),
+                ],
               ),
-              Badge(
-                isLabelVisible: filter.activeCount > 0,
-                label: Text(filter.activeCount.toString()),
-                child: IconButton.filledTonal(
-                  onPressed: _openFilters,
-                  icon: const Icon(Icons.tune_rounded),
-                  tooltip: 'فیلتر پیشرفته',
-                ),
-              ),
-            ],
-          ),
-          if (filter.activeCount > 0) ...[
-            const SizedBox(height: 12),
-            _ActiveFilters(
-              filter: filter,
-              onClear: () {
-                setState(() => filter = const PlayerFilter());
-                _load();
-              },
             ),
-          ],
-          const SizedBox(height: 16),
+          ),
           if (loading)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 72),
+            const SliverFillRemaining(
+              hasScrollBody: false,
               child: Center(child: CircularProgressIndicator()),
             )
           else if (error != null)
-            _StateCard(
-              icon: Icons.cloud_off_rounded,
-              title: 'داده بازیکنان در دسترس نیست',
-              subtitle: error!,
-              actionLabel: 'تلاش دوباره',
-              onAction: _load,
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverToBoxAdapter(
+                child: _StateCard(
+                  icon: Icons.cloud_off_rounded,
+                  title: 'داده بازیکنان در دسترس نیست',
+                  subtitle: error!,
+                  actionLabel: 'تلاش دوباره',
+                  onAction: _load,
+                ),
+              ),
             )
           else if (players.isEmpty)
-            _StateCard(
-              icon: Icons.person_search_rounded,
-              title: 'بازیکنی پیدا نشد',
-              subtitle: filter.activeCount > 0
-                  ? 'فیلترها را تغییر بده.'
-                  : 'منبع واقعی در حال حاضر نتیجه‌ای برنگرداند.',
-              actionLabel: filter.activeCount > 0 ? 'پاک کردن فیلترها' : null,
-              onAction: filter.activeCount > 0
-                  ? () {
-                      setState(() => filter = const PlayerFilter());
-                      _load();
-                    }
-                  : null,
-            )
-          else ...[
-            Row(
-              children: [
-                Text(
-                  players.length.toString() + ' نتیجه',
-                  style: const TextStyle(fontWeight: FontWeight.w900),
+            SliverPadding(
+              padding: const EdgeInsets.all(16),
+              sliver: SliverToBoxAdapter(
+                child: _StateCard(
+                  icon: Icons.style_rounded,
+                  title: 'در این دسته کارتی پیدا نشد',
+                  subtitle: filter.activeCount > 0
+                      ? 'دسته یا فیلتر دیگری را انتخاب کن.'
+                      : 'منبع زنده فعلاً بازیکنی برنگرداند.',
+                  actionLabel: filter.activeCount > 0 ? 'نمایش همه کارت‌ها' : null,
+                  onAction: filter.activeCount > 0
+                      ? () {
+                          setState(() {
+                            filter = const PlayerFilter();
+                            quickRarity = 'همه';
+                          });
+                          _load();
+                        }
+                      : null,
                 ),
-                const Spacer(),
-                Icon(
-                  Icons.verified_rounded,
-                  size: 17,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                const SizedBox(width: 4),
-                Text(
-                  'FC27 واقعی',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            for (final player in players) ...[
-              PlayerCard(
-                player: player,
-                pricePlatform: filter.platform,
               ),
-              const SizedBox(height: 8),
-            ],
-          ],
+            )
+          else
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(14, 0, 14, 28),
+              sliver: SliverGrid(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 2,
+                  mainAxisSpacing: 12,
+                  crossAxisSpacing: 10,
+                  childAspectRatio: .72,
+                ),
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) => PlayerCard(
+                    player: players[index],
+                    pricePlatform: filter.platform,
+                  ),
+                  childCount: players.length,
+                ),
+              ),
+            ),
         ],
+      ),
+    );
+  }
+}
+
+class _RarityChip extends StatelessWidget {
+  const _RarityChip({
+    required this.label,
+    required this.active,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool active;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Padding(
+      padding: const EdgeInsets.only(left: 7),
+      child: ChoiceChip(
+        label: Text(label, textDirection: TextDirection.ltr),
+        selected: active,
+        onSelected: (_) => onTap(),
+        showCheckmark: false,
+        selectedColor: scheme.primary,
+        labelStyle: TextStyle(
+          color: active ? scheme.onPrimary : scheme.onSurface,
+          fontSize: 11,
+          fontWeight: FontWeight.w900,
+        ),
+        side: BorderSide(
+          color: active
+              ? scheme.primary
+              : scheme.outline.withValues(alpha: .45),
+        ),
       ),
     );
   }
@@ -206,59 +353,13 @@ class _ActiveFilters extends StatelessWidget {
     final labels = <String>[
       if (filter.position != null) filter.position!,
       if (filter.version != null) filter.version!,
-      if (filter.rarity != null) filter.rarity!,
-      if (filter.cardType != null) filter.cardType!,
       if (filter.league != null) filter.league!,
       if (filter.club != null) filter.club!,
       if (filter.nation != null) filter.nation!,
       if (filter.minRating != 40 || filter.maxRating != 99)
-        'OVR ' +
-            filter.minRating.toString() +
-            '–' +
-            filter.maxRating.toString(),
-      if (filter.minPrice != null || filter.maxPrice != null)
-        'Price ' +
-            (filter.minPrice?.toString() ?? '0') +
-            '–' +
-            (filter.maxPrice?.toString() ?? '∞'),
+        'OVR ${filter.minRating}–${filter.maxRating}',
       if (filter.platform == 'pc') 'PC',
-      if (filter.playStyle != null) 'PS ' + filter.playStyle!,
-      if (filter.playStylePlus != null) 'PS+ ' + filter.playStylePlus!,
-      if (filter.role != null) 'Role ' + filter.role!,
-      if (filter.minSkillMoves != null)
-        'SM ' + filter.minSkillMoves.toString() + '★+',
-      if (filter.minWeakFoot != null)
-        'WF ' + filter.minWeakFoot.toString() + '★+',
-      if (filter.minPace != null || filter.maxPace != null)
-        'PAC ' +
-            (filter.minPace?.toString() ?? '0') +
-            '–' +
-            (filter.maxPace?.toString() ?? '99'),
-      if (filter.minShooting != null || filter.maxShooting != null)
-        'SHO ' +
-            (filter.minShooting?.toString() ?? '0') +
-            '–' +
-            (filter.maxShooting?.toString() ?? '99'),
-      if (filter.minPassing != null || filter.maxPassing != null)
-        'PAS ' +
-            (filter.minPassing?.toString() ?? '0') +
-            '–' +
-            (filter.maxPassing?.toString() ?? '99'),
-      if (filter.minDribbling != null || filter.maxDribbling != null)
-        'DRI ' +
-            (filter.minDribbling?.toString() ?? '0') +
-            '–' +
-            (filter.maxDribbling?.toString() ?? '99'),
-      if (filter.minDefending != null || filter.maxDefending != null)
-        'DEF ' +
-            (filter.minDefending?.toString() ?? '0') +
-            '–' +
-            (filter.maxDefending?.toString() ?? '99'),
-      if (filter.minPhysical != null || filter.maxPhysical != null)
-        'PHY ' +
-            (filter.minPhysical?.toString() ?? '0') +
-            '–' +
-            (filter.maxPhysical?.toString() ?? '99'),
+      if (filter.role != null) 'Role ${filter.role!}',
     ];
 
     return SizedBox(
