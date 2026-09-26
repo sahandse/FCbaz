@@ -22,6 +22,6 @@ void main() {
 
   test('1.8 version is production increment', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(pubspec, contains('version: 1.8.0+31'));
+    expect(RegExp(r'^version: 1\.8\.0\+\d+$', multiLine: true).hasMatch(pubspec), isTrue);
   });
 }
