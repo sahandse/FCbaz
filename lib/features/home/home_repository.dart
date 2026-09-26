@@ -4,6 +4,35 @@ import '../evolutions/domain/evolution.dart';
 import '../players/domain/player.dart';
 import '../sbc/domain/sbc.dart';
 
+class HomeObjectiveTask {
+  const HomeObjectiveTask({
+    required this.id,
+    required this.title,
+    required this.description,
+    required this.target,
+    required this.reward,
+  });
+
+  final String id;
+  final String title;
+  final String description;
+  final int target;
+  final String reward;
+
+  factory HomeObjectiveTask.fromJson(Map<String, dynamic> json) {
+    int asInt(dynamic value) =>
+        value is int ? value : int.tryParse((value ?? '0').toString()) ?? 0;
+
+    return HomeObjectiveTask(
+      id: (json['id'] ?? json['task_id'] ?? '').toString(),
+      title: (json['title'] ?? json['name'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      target: asInt(json['target'] ?? json['required'] ?? json['count']),
+      reward: (json['reward'] ?? '').toString(),
+    );
+  }
+}
+
 class HomeObjective {
   const HomeObjective({
     required this.id,
@@ -12,6 +41,8 @@ class HomeObjective {
     required this.reward,
     required this.expiresAt,
     required this.taskCount,
+    this.category = '',
+    this.tasks = const [],
   });
 
   final String id;
@@ -20,10 +51,21 @@ class HomeObjective {
   final String reward;
   final DateTime? expiresAt;
   final int taskCount;
+  final String category;
+  final List<HomeObjectiveTask> tasks;
 
   factory HomeObjective.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic value) =>
         value is int ? value : int.tryParse((value ?? '0').toString()) ?? 0;
+
+    final rawTasks = json['tasks'] ?? json['objectives'] ?? const [];
+    final tasks = rawTasks is List
+        ? rawTasks
+            .whereType<Map>()
+            .map((e) => HomeObjectiveTask.fromJson(Map<String, dynamic>.from(e)))
+            .where((e) => e.title.isNotEmpty)
+            .toList()
+        : const <HomeObjectiveTask>[];
 
     return HomeObjective(
       id: (json['id'] ?? '').toString(),
@@ -31,7 +73,9 @@ class HomeObjective {
       description: (json['description'] ?? '').toString(),
       reward: (json['reward'] ?? '').toString(),
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
-      taskCount: asInt(json['task_count']),
+      taskCount: asInt(json['task_count'] ?? tasks.length),
+      category: (json['category'] ?? json['group'] ?? json['type'] ?? '').toString(),
+      tasks: tasks,
     );
   }
 }
@@ -115,9 +159,7 @@ class HomeRepository {
               'rating': p.rating,
               'price_ps': p.pricePs,
               'price_pc': p.pricePc,
-              'source': p.version == 'FIFA World Cup 2026'
-                  ? 'github-fifa-wc2026'
-                  : 'futbin-public',
+              'source': 'futbin-public',
             })
         .toList();
 
@@ -143,9 +185,7 @@ class HomeRepository {
       if (raw is List) {
         return raw
             .whereType<Map>()
-            .map((e) => HomeObjective.fromJson(
-                  Map<String, dynamic>.from(e),
-                ))
+            .map((e) => HomeObjective.fromJson(Map<String, dynamic>.from(e)))
             .where((e) => e.title.isNotEmpty)
             .toList();
       }
