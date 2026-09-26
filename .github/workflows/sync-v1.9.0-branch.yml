@@ -1,0 +1,56 @@
+name: FCBaz v1.9.0 Data Validation
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - fix/v1.9.0-prices-sbc
+    paths:
+      - '.release/sync-v1.9.0'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: fix/v1.9.0-prices-sbc
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Refresh base catalog
+        run: node tool/sync_live_fc27.mjs
+      - name: Refresh discovery
+        run: node tool/sync_fc27_discovery.mjs
+      - name: Enrich SBC details
+        run: node tool/enrich_fc27_catalog.mjs
+      - name: Enrich public prices
+        run: node tool/enrich_public_market.mjs
+      - name: Validate price and SBC coverage
+        run: |
+          node - <<'NODE'
+          const fs = require('fs');
+          const c = JSON.parse(fs.readFileSync('data/live/catalog.json', 'utf8'));
+          const priced = c.players.filter((p) => Number(p.price_ps || p.market_price || 0) > 0);
+          const guided = c.sbcs.filter((s) =>
+            (Array.isArray(s.guide_fa) && s.guide_fa.length) ||
+            (Array.isArray(s.challenges) && s.challenges.length) ||
+            (Array.isArray(s.requirements) && s.requirements.length)
+          );
+          console.log({players:c.players.length, priced:priced.length, sbcs:c.sbcs.length, guided:guided.length});
+          if (!guided.length) throw new Error('No enriched SBC guidance');
+          if (!priced.length) throw new Error('No public player prices captured');
+          NODE
+      - name: Commit refreshed snapshot
+        run: |
+          git config user.name github-actions-bot
+          git config user.email github-actions-bot@users.noreply.github.com
+          git add data/live/catalog.json
+          git diff --cached --quiet && exit 0
+          git commit -m "data: add public FC27 prices and SBC guides"
+          git push origin HEAD:fix/v1.9.0-prices-sbc
