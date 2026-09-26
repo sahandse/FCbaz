@@ -61,6 +61,22 @@ function clean(value) {
     .trim();
 }
 
+function asInt(value) {
+  if (typeof value === 'number') return Math.round(value);
+  const raw = String(value ?? '').trim().toUpperCase().replaceAll(',', '');
+  if (!raw) return 0;
+  let multiplier = 1;
+  let number = raw;
+  if (raw.endsWith('K')) {
+    multiplier = 1000;
+    number = raw.slice(0, -1);
+  } else if (raw.endsWith('M')) {
+    multiplier = 1000000;
+    number = raw.slice(0, -1);
+  }
+  return Math.round((Number.parseFloat(number) || 0) * multiplier);
+}
+
 function discoverPlayers(text, baseUrl, version) {
   const found = [];
   const seen = new Set();
@@ -92,6 +108,83 @@ function discoverPlayers(text, baseUrl, version) {
   }
 
   return found;
+}
+
+function normalizeFutbinPlayer(raw, sourceUrl) {
+  const name = clean(raw.playername ?? raw.name ?? raw.common_name);
+  const rating = asInt(raw.rating ?? raw.overall);
+  const position = clean(raw.position);
+  if (!name || rating < 40 || rating > 99 || !position) return null;
+
+  const version = clean(raw.version ?? raw.rarity ?? raw.card_type ?? raw.raretype) ||
+      (rating >= 75 ? 'Gold Rare' : rating >= 65 ? 'Silver' : 'Bronze');
+  const rawId = clean(raw.ID ?? raw.id ?? raw.player_id ?? raw.playerid ?? raw.resource_id);
+  const id = rawId || slugId('futbin', `${name}-${rating}-${position}-${version}`);
+  const positionsRaw = raw.positions ?? raw.alternative_positions ?? raw.pos_all;
+  const positions = Array.isArray(positionsRaw)
+    ? positionsRaw.map((v) => clean(typeof v === 'object' ? (v.name ?? v.label) : v)).filter(Boolean)
+    : String(positionsRaw ?? '')
+        .split(',')
+        .map((v) => clean(v))
+        .filter(Boolean);
+
+  return {
+    id,
+    name,
+    rating,
+    position,
+    positions: positions.length ? positions : [position],
+    club_name: clean(raw.club_name ?? raw.club),
+    league_name: clean(raw.league_name ?? raw.league),
+    nation_name: clean(raw.nation_name ?? raw.nation),
+    version,
+    rarity: clean(raw.rarity ?? raw.raretype ?? version),
+    card_type: clean(raw.card_type ?? raw.type ?? version),
+    image_url: clean(raw.image_url ?? raw.image),
+    card_image_url: clean(raw.card_image_url ?? raw.card_image),
+    pace: asInt(raw.pace ?? raw.pac),
+    shooting: asInt(raw.shooting ?? raw.sho),
+    passing: asInt(raw.passing ?? raw.pas),
+    dribbling: asInt(raw.dribbling ?? raw.dri),
+    defending: asInt(raw.defending ?? raw.def),
+    physical: asInt(raw.physical ?? raw.phy),
+    skill_moves: asInt(raw.skill_moves),
+    weak_foot: asInt(raw.weak_foot),
+    price_ps: asInt(raw.price_ps ?? raw.price_ps_coins ?? raw.ps_LCPrice),
+    price_pc: asInt(raw.price_pc ?? raw.price_pc_coins ?? raw.pc_LCPrice),
+    source_url: sourceUrl,
+  };
+}
+
+async function fetchFutbinBulk(maxPages = 12) {
+  const players = [];
+  const seen = new Set();
+  for (let page = 1; page <= maxPages; page++) {
+    const url = new URL('https://www.futbin.org/futbin/api/getFilteredPlayers');
+    url.searchParams.set('platform', 'PS');
+    url.searchParams.set('page', String(page));
+    const response = await fetch(url, {
+      headers: {
+        accept: 'application/json',
+        'user-agent': 'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 FCBaz/1.3',
+        referer: 'https://www.futbin.com/',
+        origin: 'https://www.futbin.com',
+      },
+      signal: AbortSignal.timeout(15000),
+    });
+    if (!response.ok) throw new Error(`FUTBIN HTTP ${response.status} page ${page}`);
+    const json = await response.json();
+    const data = Array.isArray(json?.data) ? json.data : [];
+    if (data.length === 0) break;
+    for (const raw of data) {
+      if (!raw || typeof raw !== 'object') continue;
+      const item = normalizeFutbinPlayer(raw, url.toString());
+      if (!item) continue;
+      const key = `${item.name}|${item.rating}|${item.position}|${item.version}`.toLowerCase();
+      if (seen.add(key)) players.push(item);
+    }
+  }
+  return players;
 }
 
 function discover(markdown, section, baseUrl) {
@@ -140,7 +233,12 @@ function mergeVerified(existing = [], discovered = [], keyOf) {
     byKey.set(
       key,
       previous
-        ? { ...previous, ...item, source_url: item.source_url || previous.source_url }
+        ? {
+            ...previous,
+            ...item,
+            id: previous.id || item.id,
+            source_url: item.source_url || previous.source_url,
+          }
         : item,
     );
   }
@@ -149,6 +247,23 @@ function mergeVerified(existing = [], discovered = [], keyOf) {
 
 let successfulSections = 0;
 let totalPlayerDiscoveries = 0;
+
+try {
+  const bulk = await fetchFutbinBulk();
+  if (bulk.length > 0) {
+    current.players = mergeVerified(
+      current.players,
+      bulk,
+      (item) => `${item.name ?? ''}|${item.rating ?? ''}|${item.position ?? ''}|${item.version ?? ''}`.toLowerCase(),
+    );
+    successfulSections++;
+    totalPlayerDiscoveries += bulk.length;
+    console.log(`[players:FUTBIN bulk] discovered ${bulk.length}, total ${current.players.length}`);
+  }
+} catch (error) {
+  console.warn(`[players:FUTBIN bulk] sync failed: ${error}`);
+}
+
 for (const source of playerPages) {
   try {
     const text = await reader(source.url);
@@ -199,10 +314,11 @@ current.generated_at = new Date().toISOString();
 current.sources = [
   ...new Set([
     ...(current.sources ?? []),
+    'https://www.futbin.org/futbin/api/getFilteredPlayers',
     ...playerPages.map((item) => item.url),
     ...Object.values(pages),
   ]),
 ];
 
 await writeFile(catalogPath, `${JSON.stringify(current, null, 2)}\n`);
-console.log(`Updated ${catalogPath}; player discoveries this run: ${totalPlayerDiscoveries}`);
+console.log(`Updated ${catalogPath}; player discoveries this run: ${totalPlayerDiscoveries}; total players: ${current.players.length}`);
