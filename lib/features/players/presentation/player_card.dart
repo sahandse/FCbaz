@@ -85,10 +85,11 @@ class _PlayerCardState extends State<PlayerCard> {
             border: Border.all(color: scheme.outline.withValues(alpha: .52)),
           ),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
                 width: 92,
+                height: 116,
                 child: Stack(
                   children: [
                     Positioned.fill(
