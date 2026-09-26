@@ -86,28 +86,13 @@ class FCBazApi {
 
   Future<dynamic> getJson(
     String path, {
-    String? bearerToken,
     bool forceRefresh = false,
     Duration cacheTtl = const Duration(seconds: 60),
   }) =>
       _requestJson(
-        method: 'GET',
         path: path,
-        bearerToken: bearerToken,
         forceRefresh: forceRefresh,
         cacheTtl: cacheTtl,
-      );
-
-  Future<dynamic> postJson(
-    String path, {
-    Map<String, dynamic>? body,
-    String? bearerToken,
-  }) =>
-      _requestJson(
-        method: 'POST',
-        path: path,
-        body: body,
-        bearerToken: bearerToken,
       );
 
   void clearPublicCache() => _cache.clear();
@@ -117,10 +102,7 @@ class FCBazApi {
   }
 
   Future<dynamic> _requestJson({
-    required String method,
     required String path,
-    Map<String, dynamic>? body,
-    String? bearerToken,
     bool forceRefresh = false,
     Duration cacheTtl = Duration.zero,
   }) async {
@@ -128,12 +110,7 @@ class FCBazApi {
       throw const FCBazApiException('Backend FCBaz هنوز متصل نشده است.');
     }
 
-    final isPrivate = bearerToken != null ||
-        path.startsWith('/api/v1/account/') ||
-        path.startsWith('/api/v1/push/');
-    final cacheable = method == 'GET' && !isPrivate && cacheTtl > Duration.zero;
-
-    if (cacheable && !forceRefresh) {
+    if (!forceRefresh && cacheTtl > Duration.zero) {
       final entry = _cache[path];
       if (entry != null &&
           DateTime.now().difference(entry.createdAt) < cacheTtl) {
@@ -142,25 +119,11 @@ class FCBazApi {
     }
 
     final uri = Uri.parse(baseUrl).resolve(path);
-    final request = await (method == 'POST'
-            ? _client.postUrl(uri)
-            : _client.getUrl(uri))
-        .timeout(const Duration(seconds: 8));
+    final request =
+        await _client.getUrl(uri).timeout(const Duration(seconds: 8));
 
     request.headers.set(HttpHeaders.acceptHeader, 'application/json');
     request.headers.set('X-FCBaz-Game-Year', '27');
-
-    if (body != null) {
-      request.headers.contentType = ContentType.json;
-      request.write(jsonEncode(body));
-    }
-
-    if (bearerToken != null && bearerToken.trim().isNotEmpty) {
-      request.headers.set(
-        HttpHeaders.authorizationHeader,
-        'Bearer ' + bearerToken.trim(),
-      );
-    }
 
     final response =
         await request.close().timeout(const Duration(seconds: 15));
@@ -186,7 +149,7 @@ class FCBazApi {
       );
     }
 
-    if (cacheable) {
+    if (cacheTtl > Duration.zero) {
       _cache[path] = _CacheEntry(
         value: decoded,
         createdAt: DateTime.now(),
