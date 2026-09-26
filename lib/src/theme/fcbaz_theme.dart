@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class FCBazTheme {
-  static const darkBackground = Color(0xFF050806);
-  static const darkSurface = Color(0xFF0B100D);
-  static const darkSurfaceHigh = Color(0xFF121A15);
+  static const darkBackground = Color(0xFF030503);
+  static const darkSurface = Color(0xFF080C09);
+  static const darkSurfaceHigh = Color(0xFF101711);
   static const primaryGreen = Color(0xFFC8FF42);
   static const accentBlue = Color(0xFF7DEBFF);
   static const warning = Color(0xFFFFD76A);
@@ -104,7 +104,7 @@ class FCBazTheme {
         space: 1,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 64,
+        height: 62,
         elevation: 0,
         backgroundColor: const Color(0xFF090D0A),
         surfaceTintColor: Colors.transparent,
@@ -137,7 +137,7 @@ class FCBazTheme {
         scrolledUnderElevation: 0,
         backgroundColor: background,
         surfaceTintColor: Colors.transparent,
-        toolbarHeight: 58,
+        toolbarHeight: 56,
         titleTextStyle: TextStyle(
           color: scheme.onSurface,
           fontSize: 18,
