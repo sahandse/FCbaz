@@ -24,6 +24,7 @@ void main() {
     expect(source, contains('FC27 • LIVE'));
     expect(source, contains('SQUAD BUILDING'));
     expect(source, contains('REQUIREMENTS'));
-    expect(source, contains('بررسی راه‌حل واقعی Backend'));
+    expect(source, contains('نمایش راه‌حل و راهنمای عمومی'));
+    expect(source, contains('PUBLIC GUIDE'));
   });
 }

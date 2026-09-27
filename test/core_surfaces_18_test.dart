@@ -20,10 +20,10 @@ void main() {
     expect(source, contains('UNTRADEABLE'));
   });
 
-  test('1.8.1 version is hotfix increment', () {
+  test('1.9 version is production increment', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    final match = RegExp(r'^version: 1\.8\.1\+(\d+)$', multiLine: true).firstMatch(pubspec);
+    final match = RegExp(r'^version: 1\.9\.0\+(\d+)$', multiLine: true).firstMatch(pubspec);
     expect(match, isNotNull);
-    expect(int.parse(match!.group(1)!), greaterThanOrEqualTo(32));
+    expect(int.parse(match!.group(1)!), greaterThanOrEqualTo(33));
   });
 }

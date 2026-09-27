@@ -451,23 +451,24 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
             ),
           ],
           const SizedBox(height: 14),
-          if (sbc.itemScore != null)
+          if (sbc.itemScore != null) ...[
             const _StateCard(
               icon: Icons.stars_rounded,
               title: 'SBC مبتنی بر Item Score',
-              subtitle: 'برای این چالش Rating Combination استفاده نمی‌شود؛ Item Score فقط از داده واقعی خود چالش معتبر است.',
-            )
-          else
-            FilledButton.icon(
-              onPressed: solving ? null : _solve,
-              icon: solving
-                  ? const SizedBox.square(
-                      dimension: 18,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.auto_fix_high_rounded),
-              label: const Text('بررسی راه‌حل واقعی Backend'),
+              subtitle: 'برای این نوع چالش، راهنما بر اساس Item Score و Requirementهای واقعی منبع عمومی ساخته می‌شود.',
             ),
+            const SizedBox(height: 10),
+          ],
+          FilledButton.icon(
+            onPressed: solving ? null : _solve,
+            icon: solving
+                ? const SizedBox.square(
+                    dimension: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.auto_fix_high_rounded),
+            label: const Text('نمایش راه‌حل و راهنمای عمومی'),
+          ),
           if (solveError != null) ...[
             const SizedBox(height: 10),
             _StateCard(
@@ -499,13 +500,13 @@ class _SolutionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('SOLUTION', textDirection: TextDirection.ltr, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+            Text(solution.players.isEmpty ? 'PUBLIC GUIDE' : 'SOLUTION', textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
             const SizedBox(height: 10),
             Row(
               children: [
-                Expanded(child: _MiniStat(label: 'TOTAL COST', value: '${solution.totalCost} C')),
+                Expanded(child: _MiniStat(label: 'TOTAL COST', value: solution.totalCost > 0 ? '${solution.totalCost} C' : '—')),
                 const SizedBox(width: 7),
-                Expanded(child: _MiniStat(label: 'REMAINING', value: '${solution.remainingCost} C')),
+                Expanded(child: _MiniStat(label: 'REMAINING', value: solution.remainingCost > 0 ? '${solution.remainingCost} C' : '—')),
               ],
             ),
             const SizedBox(height: 8),
