@@ -10,7 +10,7 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 1.8.0
+        default: 1.9.0
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -21,10 +21,10 @@ on:
     branches:
       - main
     paths:
-      - '.release/fcbaz-v1.8.0'
+      - '.release/fcbaz-v1.9.0'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.8.0' }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '1.9.0' }}
   RELEASE_BUILD_NUMBER: ${{ github.run_number }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
 
@@ -198,15 +198,12 @@ jobs:
           cat > RELEASE_NOTES.md <<EOF
           ## FCBaz v${RELEASE_VERSION}
 
-          بازطراحی FC27-style برای تجربه بازیکن و My Club.
-
-          - Player Details اکنون از Player Item مشترک Gold/Icon/Hero/TOTW/Holographic استفاده می‌کند.
-          - My Club به Collection Grid دو ستونه تبدیل شده است.
-          - قیمت Console/PC فقط از منبع واقعی و مقدار مثبت نمایش داده می‌شود؛ صفر و داده ناموجود `—` هستند.
-          - PlayStyles، Roles، Chemistry Style، نسخه‌های دیگر بازیکن و Market panel حفظ شده‌اند.
-          - Best Club XI، valuation و اکشن‌های Squad/Evolution همچنان فعال‌اند.
-          - SBC Hub و Evolution Lab جدید نسخه‌های 1.6/1.7 حفظ شده‌اند.
-          - بدون ثبت‌نام و بدون دیتای ساختگی.
+          - قیمت واقعی FC27 از FCData برای کارت‌هایی که قیمت عمومی معتبر دارند.
+          - صفر، Extinct و داده ناموجود به‌عنوان قیمت نمایش داده نمی‌شوند.
+          - SBCها با Requirement، توضیح، Guide و Cost عمومی واقعی غنی‌تر شده‌اند.
+          - راهنمای عمومی SBC حتی بدون Backend اختصاصی قابل نمایش است؛ ترکیب ساختگی ساخته نمی‌شود.
+          - Player Item قیمت PS را با منبع واقعی نمایش می‌دهد؛ PC فقط در صورت منبع مستقل واقعی مقدار دارد.
+          - Catalog زنده FC27 و کش آخرین داده سالم حفظ شده‌اند.
           EOF
 
       - name: Upload release artifact
