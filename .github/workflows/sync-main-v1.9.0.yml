@@ -1,0 +1,27 @@
+name: Sync main into v1.9.0
+
+permissions:
+  contents: write
+
+on:
+  push:
+    branches:
+      - fix/v1.9.0-prices-sbc
+    paths:
+      - '.release/sync-main-v1.9.0'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fix/v1.9.0-prices-sbc
+          fetch-depth: 0
+      - name: Merge latest main
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git fetch origin main
+          git merge origin/main -X ours --no-edit
+          git push origin HEAD:fix/v1.9.0-prices-sbc
