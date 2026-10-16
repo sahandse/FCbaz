@@ -1,6 +1,6 @@
 {
   "game_year": 27,
-  "generated_at": "2026-10-16T04:35:56.649Z",
+  "generated_at": "2026-10-16T11:27:48.372Z",
   "sources": [
     "https://www.fut.gg/players/",
     "https://www.fut.gg/fc-27/ratings/",
@@ -32,11 +32,11 @@
       ],
       "version": "Gold Rare",
       "source_url": "https://www.fut.gg/fc-27/ratings/",
-      "price_ps": 1240000,
-      "market_price": 1240000,
+      "price_ps": 1220000,
+      "market_price": 1220000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.851Z"
+      "price_updated_at": "2026-10-16T11:28:52.382Z"
     },
     {
       "id": "futgg-putellas-base",
@@ -59,11 +59,11 @@
       ],
       "version": "Gold Rare",
       "source_url": "https://www.fut.gg/fc-27/ratings/",
-      "price_ps": 7300000,
-      "market_price": 7300000,
+      "price_ps": 7200000,
+      "market_price": 7200000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.852Z"
+      "price_updated_at": "2026-10-16T11:28:52.383Z"
     },
     {
       "id": "futgg-dembele-base",
@@ -115,7 +115,7 @@
       "market_price": 400,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.853Z"
+      "price_updated_at": "2026-10-16T11:28:52.383Z"
     },
     {
       "id": "futgg-david-luiz-hof",
@@ -134,7 +134,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.853Z"
+      "price_updated_at": "2026-10-16T11:28:52.383Z"
     },
     {
       "id": "futgg-pato-hof",
@@ -153,7 +153,7 @@
       "market_price": 750,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.853Z"
+      "price_updated_at": "2026-10-16T11:28:52.383Z"
     },
     {
       "id": "futgg-balotelli-hof",
@@ -172,7 +172,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.853Z"
+      "price_updated_at": "2026-10-16T11:28:52.384Z"
     },
     {
       "id": "futgg-hulk-hof",
@@ -191,7 +191,7 @@
       "market_price": 750,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.854Z"
+      "price_updated_at": "2026-10-16T11:28:52.384Z"
     },
     {
       "id": "futgg-walcott-hof",
@@ -210,7 +210,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.854Z"
+      "price_updated_at": "2026-10-16T11:28:52.384Z"
     },
     {
       "id": "futgg-valencia-hof",
@@ -229,7 +229,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.855Z"
+      "price_updated_at": "2026-10-16T11:28:52.384Z"
     },
     {
       "id": "futgg-richards-hof",
@@ -248,7 +248,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.855Z"
+      "price_updated_at": "2026-10-16T11:28:52.384Z"
     },
     {
       "id": "futgg-fellaini-hof",
@@ -267,7 +267,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.856Z"
+      "price_updated_at": "2026-10-16T11:28:52.385Z"
     },
     {
       "id": "futgg-mcgeady-hof",
@@ -286,7 +286,7 @@
       "market_price": 300,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.856Z"
+      "price_updated_at": "2026-10-16T11:28:52.385Z"
     },
     {
       "id": "futgg-akinfenwa-hof",
@@ -305,7 +305,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.857Z"
+      "price_updated_at": "2026-10-16T11:28:52.385Z"
     },
     {
       "id": "futgg-guarin-hof",
@@ -324,7 +324,7 @@
       "market_price": 400,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.858Z"
+      "price_updated_at": "2026-10-16T11:28:52.385Z"
     },
     {
       "id": "futgg-ibarbo-hof",
@@ -343,7 +343,7 @@
       "market_price": 400,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.858Z"
+      "price_updated_at": "2026-10-16T11:28:52.386Z"
     },
     {
       "id": "futgg-dos-santos-hof",
@@ -362,7 +362,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.858Z"
+      "price_updated_at": "2026-10-16T11:28:52.386Z"
     },
     {
       "id": "futgg-gervinho-hof",
@@ -381,7 +381,7 @@
       "market_price": 400,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.858Z"
+      "price_updated_at": "2026-10-16T11:28:52.386Z"
     },
     {
       "id": "futgg-doumbia-hof",
@@ -400,7 +400,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.859Z"
+      "price_updated_at": "2026-10-16T11:28:52.387Z"
     },
     {
       "id": "futgg-florenzi-hof",
@@ -419,7 +419,7 @@
       "market_price": 400,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.859Z"
+      "price_updated_at": "2026-10-16T11:28:52.387Z"
     },
     {
       "id": "futgg-elia-hof",
@@ -438,7 +438,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.859Z"
+      "price_updated_at": "2026-10-16T11:28:52.387Z"
     },
     {
       "id": "futgg-layun-hof",
@@ -457,7 +457,7 @@
       "market_price": 300,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.859Z"
+      "price_updated_at": "2026-10-16T11:28:52.387Z"
     },
     {
       "id": "futgg-remy-hof",
@@ -476,7 +476,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.859Z"
+      "price_updated_at": "2026-10-16T11:28:52.388Z"
     },
     {
       "id": "futgg-emenike-hof",
@@ -495,7 +495,7 @@
       "market_price": 300,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.859Z"
+      "price_updated_at": "2026-10-16T11:28:52.388Z"
     },
     {
       "id": "ea-209331",
@@ -571,13 +571,13 @@
       "dribbling": 92,
       "defending": 37,
       "physical": 76,
-      "price_ps": 7300000,
+      "price_ps": 7200000,
       "price_pc": 0,
-      "source_url": "https://www.fut.gg/fc-27/ratings/",
-      "market_price": 7300000,
+      "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0",
+      "market_price": 7200000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.860Z"
+      "price_updated_at": "2026-10-16T11:28:52.388Z"
     },
     {
       "id": "ea-241667",
@@ -629,7 +629,7 @@
       "physical": 69,
       "price_ps": 0,
       "price_pc": 0,
-      "source_url": "https://www.fut.gg/fc-27/ratings/"
+      "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0"
     },
     {
       "id": "ea-231866",
@@ -835,13 +835,13 @@
       "dribbling": 89,
       "defending": 39,
       "physical": 73,
-      "price_ps": 291000,
+      "price_ps": 313000,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0",
-      "market_price": 291000,
+      "market_price": 313000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.860Z"
+      "price_updated_at": "2026-10-16T11:28:52.389Z"
     },
     {
       "id": "ea-277643",
@@ -1307,13 +1307,13 @@
       "dribbling": 87,
       "defending": 56,
       "physical": 79,
-      "price_ps": 645000,
+      "price_ps": 668000,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0",
-      "market_price": 645000,
+      "market_price": 668000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.861Z"
+      "price_updated_at": "2026-10-16T11:28:52.391Z"
     },
     {
       "id": "ea-264012",
@@ -1415,13 +1415,13 @@
       "dribbling": 88,
       "defending": 39,
       "physical": 76,
-      "price_ps": 490000,
+      "price_ps": 488000,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0",
-      "market_price": 490000,
+      "market_price": 488000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.862Z"
+      "price_updated_at": "2026-10-16T11:28:52.391Z"
     },
     {
       "id": "ea-241846",
@@ -2381,13 +2381,13 @@
       "dribbling": 87,
       "defending": 67,
       "physical": 65,
-      "price_ps": 118000,
+      "price_ps": 113000,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0",
-      "market_price": 118000,
+      "market_price": 113000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.865Z"
+      "price_updated_at": "2026-10-16T11:28:52.393Z"
     },
     {
       "id": "ea-265239",
@@ -2463,13 +2463,13 @@
       "dribbling": 80,
       "defending": 36,
       "physical": 91,
-      "price_ps": 50000,
+      "price_ps": 51000,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=0",
-      "market_price": 50000,
+      "market_price": 51000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.865Z"
+      "price_updated_at": "2026-10-16T11:28:52.394Z"
     },
     {
       "id": "ea-227125",
@@ -3455,13 +3455,13 @@
       "dribbling": 24,
       "defending": 56,
       "physical": 85,
-      "price_ps": 2400,
+      "price_ps": 2700,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=100",
-      "market_price": 2400,
+      "market_price": 2700,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.868Z"
+      "price_updated_at": "2026-10-16T11:28:52.397Z"
     },
     {
       "id": "ea-245872",
@@ -4811,13 +4811,13 @@
       "dribbling": 85,
       "defending": 78,
       "physical": 74,
-      "price_ps": 51500,
+      "price_ps": 49000,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=100",
-      "market_price": 51500,
+      "market_price": 49000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.874Z"
+      "price_updated_at": "2026-10-16T11:28:52.402Z"
     },
     {
       "id": "ea-244675",
@@ -5517,13 +5517,13 @@
       "dribbling": 87,
       "defending": 52,
       "physical": 76,
-      "price_ps": 147000,
+      "price_ps": 149000,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=100",
-      "market_price": 147000,
+      "market_price": 149000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.876Z"
+      "price_updated_at": "2026-10-16T11:28:52.405Z"
     },
     {
       "id": "ea-247090",
@@ -6077,7 +6077,7 @@
       "market_price": 15300,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.878Z"
+      "price_updated_at": "2026-10-16T11:28:52.407Z"
     },
     {
       "id": "ea-220697",
@@ -6153,13 +6153,13 @@
       "dribbling": 87,
       "defending": 34,
       "physical": 71,
-      "price_ps": 39300,
+      "price_ps": 37300,
       "price_pc": 0,
       "source_url": "https://drop-api.ea.com/rating/ea-sports-fc?locale=en&limit=100&offset=200",
-      "market_price": 39300,
+      "market_price": 37300,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.879Z"
+      "price_updated_at": "2026-10-16T11:28:52.408Z"
     },
     {
       "id": "ea-241721",
@@ -6791,7 +6791,7 @@
       "market_price": 700,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.881Z"
+      "price_updated_at": "2026-10-16T11:28:52.410Z"
     },
     {
       "id": "ea-217870",
@@ -13565,11 +13565,11 @@
       "rarity": "Gold",
       "card_type": "Gold",
       "source_url": "https://www.fut.gg/fc-27/ratings/",
-      "price_ps": 1240000,
-      "market_price": 1240000,
+      "price_ps": 1220000,
+      "market_price": 1220000,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.887Z"
+      "price_updated_at": "2026-10-16T11:28:52.417Z"
     },
     {
       "id": "futgg-alexia-putellas-91-cm-gold",
@@ -13613,7 +13613,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.887Z"
+      "price_updated_at": "2026-10-16T11:28:52.417Z"
     },
     {
       "id": "futgg-marouane-fellaini-85-cm-base-hall-of-fut",
@@ -13631,7 +13631,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.887Z"
+      "price_updated_at": "2026-10-16T11:28:52.417Z"
     },
     {
       "id": "futgg-loi-c-re-my-84-st-base-hall-of-fut",
@@ -13649,7 +13649,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.887Z"
+      "price_updated_at": "2026-10-16T11:28:52.417Z"
     },
     {
       "id": "futgg-eljero-elia-84-lw-base-hall-of-fut",
@@ -13667,7 +13667,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.887Z"
+      "price_updated_at": "2026-10-16T11:28:52.417Z"
     },
     {
       "id": "futgg-santos-84-st-base-hall-of-fut",
@@ -13685,7 +13685,7 @@
       "market_price": 500,
       "price_source": "fcdata-public",
       "price_source_url": "https://fcdata.io/players/",
-      "price_updated_at": "2026-10-16T04:40:16.888Z"
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
     },
     {
       "id": "futgg-michael-olise-90-rm-gold",
@@ -13699,6 +13699,294 @@
       "rarity": "Gold",
       "card_type": "Gold",
       "source_url": "https://www.fut.gg/fc-27/ratings/"
+    },
+    {
+      "id": "futgg-david-luiz-85-cb-base-hall-of-fut",
+      "name": "David Luiz",
+      "rating": 85,
+      "position": "CB",
+      "positions": [
+        "CB"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
+    },
+    {
+      "id": "futgg-jakub-b-aszczykowski-85-rm-base-hall-of-fut",
+      "name": "Jakub Błaszczykowski",
+      "rating": 85,
+      "position": "RM",
+      "positions": [
+        "RM"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
+    },
+    {
+      "id": "futgg-alexandre-pato-85-st-base-hall-of-fut",
+      "name": "Alexandre Pato",
+      "rating": 85,
+      "position": "ST",
+      "positions": [
+        "ST"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 750,
+      "market_price": 750,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
+    },
+    {
+      "id": "futgg-mario-balotelli-85-st-base-hall-of-fut",
+      "name": "Mario Balotelli",
+      "rating": 85,
+      "position": "ST",
+      "positions": [
+        "ST"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
+    },
+    {
+      "id": "futgg-hulk-85-rw-base-hall-of-fut",
+      "name": "Hulk",
+      "rating": 85,
+      "position": "RW",
+      "positions": [
+        "RW"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 750,
+      "market_price": 750,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
+    },
+    {
+      "id": "futgg-theo-walcott-85-rw-base-hall-of-fut",
+      "name": "Theo Walcott",
+      "rating": 85,
+      "position": "RW",
+      "positions": [
+        "RW"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
+    },
+    {
+      "id": "futgg-antonio-valencia-85-rm-base-hall-of-fut",
+      "name": "Antonio Valencia",
+      "rating": 85,
+      "position": "RM",
+      "positions": [
+        "RM"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
+    },
+    {
+      "id": "futgg-micah-richards-85-rb-base-hall-of-fut",
+      "name": "Micah Richards",
+      "rating": 85,
+      "position": "RB",
+      "positions": [
+        "RB"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.418Z"
+    },
+    {
+      "id": "futgg-aiden-mcgeady-84-rm-base-hall-of-fut",
+      "name": "Aiden McGeady",
+      "rating": 84,
+      "position": "RM",
+      "positions": [
+        "RM"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 300,
+      "market_price": 300,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.419Z"
+    },
+    {
+      "id": "futgg-fredy-guari-n-84-cm-base-hall-of-fut",
+      "name": "Fredy Guarín",
+      "rating": 84,
+      "position": "CM",
+      "positions": [
+        "CM"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.419Z"
+    },
+    {
+      "id": "futgg-vi-ctor-ibarbo-84-rw-base-hall-of-fut",
+      "name": "Víctor Ibarbo",
+      "rating": 84,
+      "position": "RW",
+      "positions": [
+        "RW"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.419Z"
+    },
+    {
+      "id": "futgg-gervinho-84-lw-base-hall-of-fut",
+      "name": "Gervinho",
+      "rating": 84,
+      "position": "LW",
+      "positions": [
+        "LW"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.419Z"
+    },
+    {
+      "id": "futgg-seydou-doumbia-84-st-base-hall-of-fut",
+      "name": "Seydou Doumbia",
+      "rating": 84,
+      "position": "ST",
+      "positions": [
+        "ST"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 500,
+      "market_price": 500,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.419Z"
+    },
+    {
+      "id": "futgg-alessandro-florenzi-84-rb-base-hall-of-fut",
+      "name": "Alessandro Florenzi",
+      "rating": 84,
+      "position": "RB",
+      "positions": [
+        "RB"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 400,
+      "market_price": 400,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.419Z"
+    },
+    {
+      "id": "futgg-miguel-layu-n-84-lb-base-hall-of-fut",
+      "name": "Miguel Layún",
+      "rating": 84,
+      "position": "LB",
+      "positions": [
+        "LB"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 300,
+      "market_price": 300,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.419Z"
+    },
+    {
+      "id": "futgg-emmanuel-emenike-84-st-base-hall-of-fut",
+      "name": "Emmanuel Emenike",
+      "rating": 84,
+      "position": "ST",
+      "positions": [
+        "ST"
+      ],
+      "version": "Base Hall of FUT",
+      "rarity": "Base Hall of FUT",
+      "card_type": "Base Hall of FUT",
+      "source_url": "https://www.fut.gg/hall-of-fut/",
+      "price_ps": 300,
+      "market_price": 300,
+      "price_source": "fcdata-public",
+      "price_source_url": "https://fcdata.io/players/",
+      "price_updated_at": "2026-10-16T11:28:52.419Z"
     }
   ],
   "evolutions": [
@@ -13905,7 +14193,7 @@
       "description": "## [Centre Stage New](https://www.fut.gg/evolutions/2556-centre-stage/)[Command the centre circle with a resolute midfielder primed to reclaim possession, withstand physical pressure, and pick out key forward runs. ![Image 1](https://game-assets.fut.gg/cdn-cgi",
       "source_url": "https://www.fut.gg/evolutions/expired/",
       "details_source_url": "https://www.fut.gg/evolutions/expired/",
-      "cost": 15000
+      "cost": 813104
     },
     {
       "id": "futgg-frontline-paradox-new",
@@ -14559,14 +14847,16 @@
         "+7 Long Pass 76",
         "+7 Defensive Awareness 78"
       ],
-      "details_source_url": "https://www.fut.gg/evolutions/2552-side-step/"
+      "details_source_url": "https://www.fut.gg/evolutions/2552-side-step/",
+      "cost": 813104
     },
     {
       "id": "futgg-future-stars-academy-iii",
       "title": "Future Stars Academy III",
       "description": "[Time to find their signature. Unlock a new PlayStyle and sharpen their pace, shooting or dribbling as your Future Star rises to the next level. ![Image 21](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=300/2027/rarities-level-2-large/0",
       "source_url": "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
-      "details_source_url": "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/"
+      "details_source_url": "https://www.fut.gg/evolutions/2551-future-stars-academy-iii/",
+      "cost": 813104
     },
     {
       "id": "futgg-centre-stage-new",
@@ -14581,7 +14871,8 @@
         "+10 Heading Acc.81",
         "+30 Jumping 85"
       ],
-      "details_source_url": "https://www.fut.gg/evolutions/2556-centre-stage/"
+      "details_source_url": "https://www.fut.gg/evolutions/2556-centre-stage/",
+      "cost": 813104
     },
     {
       "id": "futgg-side-step",
@@ -14597,7 +14888,8 @@
         "+7 Long Pass 76",
         "+7 Defensive Awareness 78"
       ],
-      "details_source_url": "https://www.fut.gg/evolutions/2552-side-step/"
+      "details_source_url": "https://www.fut.gg/evolutions/2552-side-step/",
+      "cost": 813104
     }
   ],
   "sbcs": [
@@ -14646,30 +14938,17 @@
       ],
       "details_source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/",
       "public_solution": {
-        "total_cost": 21650,
-        "remaining_cost": 21650,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Italy v Belgium: Exchange a squad themed around Italy and Belgium.",
-          "Italy v Belgium • شرایط: Nation: Min. 1 player from Italy or Belgium | Clubs: Min. 3",
-          "Italy v Belgium • هزینه تخمینی منبع عمومی: 4,500 سکه",
-          "Norway v Portugal: Exchange a squad themed around Norway and Portugal.",
-          "Norway v Portugal • شرایط: Nation: Min. 1 player from Norway or Portugal | Leagues: Max. 5",
-          "Norway v Portugal • هزینه تخمینی منبع عمومی: 5,800 سکه",
-          "Netherlands v Germany: Exchange a squad themed around Netherlands and Germany.",
-          "Netherlands v Germany • شرایط: Nation: Min. 2 players from Netherlands or Germany",
-          "Netherlands v Germany • هزینه تخمینی منبع عمومی: 6,000 سکه",
-          "England v Spain: Exchange a squad themed around England and Spain.",
-          "England v Spain • شرایط: Nation: Min. 2 players from England or Spain | Leagues: Max. 5 | Team rating: Min. 75",
-          "England v Spain • هزینه تخمینی منبع عمومی: 5,350 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/challenges/27-19-marquee-matchups/"
       },
-      "estimated_cost": 21650,
-      "cost": 21650,
+      "estimated_cost": 4,
+      "cost": 4,
       "cost_source": "fcdata-public",
       "cost_source_url": "https://fcdata.io/",
       "challenge_count": 4,
@@ -14746,22 +15025,15 @@
       "challenge_count": 1,
       "repeatable": true,
       "details_source_url": "https://www.fut.gg/sbc/category/expiring-soon/",
-      "estimated_cost": 12160,
-      "cost": 12160,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 12160,
-        "remaining_cost": 12160,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
       }
@@ -14781,22 +15053,15 @@
       ],
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/category/players/",
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/players/"
       }
@@ -14817,22 +15082,15 @@
       "challenge_count": 1,
       "repeatable": true,
       "details_source_url": "https://www.fut.gg/sbc/category/upgrades/",
-      "estimated_cost": 7210,
-      "cost": 7210,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 7210,
-        "remaining_cost": 7210,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/upgrades/"
       }
@@ -14853,23 +15111,15 @@
       ],
       "challenge_count": 4,
       "details_source_url": "https://www.fut.gg/sbc/category/challenges/",
-      "estimated_cost": 26650,
-      "cost": 26650,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 26650,
-        "remaining_cost": 26650,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
-          "League & Nation Advanced 20,600"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/challenges/"
       }
@@ -14891,14 +15141,14 @@
       "repeatable": true,
       "item_score": 1250,
       "details_source_url": "https://www.fut.gg/sbc/category/foundations/",
-      "estimated_cost": 4000,
-      "cost": 4000,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "guide_fa": [
         "این SBC از نوع Item Score است؛ کارت‌های واجد شرایط را تا رسیدن به 1,250 امتیاز ثبت کن."
       ],
       "public_solution": {
-        "total_cost": 4000,
-        "remaining_cost": 4000,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
@@ -14926,18 +15176,15 @@
       "reward": "Eligible players • 4×87 Rare 87 2×86 Rare 86 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 30,310 Cheapest | 35 cards | 1×85 Rare 85 34×84 Rare 84 | Players for the Cheapest route | • | 31,685 | 15 cards | 5×86 Rare 86 1×85 Rare 85 9×84 Rare 84 | Players for the +5% route | • | 32,840 Recommended | 6 cards | 4×87 Rare 87 2×86 Rare 86 | Recommended Players for the +10% route | • | 34,485 | 5 cards | 1×88 Rare 88 4×87 Rare 87 | Players for the +15% route |",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/players/27-53-cora-zicai/",
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Cora Zicai: Earn a special Future Stars Cora Zicai.",
-          "Cora Zicai • هزینه تخمینی منبع عمومی: 30,310 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-53-cora-zicai/"
       },
@@ -14973,8 +15220,8 @@
       "reward": "Eligible players • 1×87 Rare 87 7×86 Rare 86 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 33,825 Cheapest | 41 cards | 41×84 Rare 84 | Players for the Cheapest route | • | 35,495 | 22 cards | 1×87 Rare 87 3×86 Rare 86 1×85 Rare 85 17×84 Rare 84 | Players for the +5% route | • | 36,810 Recommended | 8 cards | 1×87 Rare 87 7×86 Rare 86 | Recommended Players for the +10% route | • | 38,885 | 6 cards | 1×88 Rare 88 4×87 Rare 87 1×86 Rare 86 | Players for the +15% route |",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/players/27-50-xavi-espart/",
-      "estimated_cost": 33825,
-      "cost": 33825,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenges": [
         {
           "title": "Xavi Espart",
@@ -14988,15 +15235,12 @@
         "Xavi Espart • هزینه تخمینی منبع عمومی: 33,825 سکه"
       ],
       "public_solution": {
-        "total_cost": 33825,
-        "remaining_cost": 33825,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Xavi Espart: Earn a special Future Stars Xavi Espart.",
-          "Xavi Espart • هزینه تخمینی منبع عمومی: 33,825 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-50-xavi-espart/"
       },
@@ -15018,18 +15262,15 @@
       "reward": "Eligible players • 4×87 Rare 87 2×86 Rare 86 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 30,310 Cheapest | 35 cards | 1×85 Rare 85 34×84 Rare 84 | Players for the Cheapest route | • | 31,685 | 15 cards | 5×86 Rare 86 1×85 Rare 85 9×84 Rare 84 | Players for the +5% route | • | 32,840 Recommended | 6 cards | 4×87 Rare 87 2×86 Rare 86 | Recommended Players for the +10% route | • | 34,485 | 5 cards | 1×88 Rare 88 4×87 Rare 87 | Players for the +15% route |",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/players/27-53-cora-zicai/",
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Cora Zicai: Earn a special Future Stars Cora Zicai.",
-          "Cora Zicai • هزینه تخمینی منبع عمومی: 30,310 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-53-cora-zicai/"
       },
@@ -15062,8 +15303,8 @@
       "reward": "Eligible players • 4×87 Rare 87 2×86 Rare 86 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 30,310 Cheapest | 35 cards | 1×85 Rare 85 34×84 Rare 84 | Players for the Cheapest route | • | 31,685 | 15 cards | 5×86 Rare 86 1×85 Rare 85 9×84 Rare 84 | Players for the +5% route | • | 32,840 Recommended | 6 cards | 4×87 Rare 87 2×86 Rare 86 | Recommended Players for the +10% route | • | 34,485 | 5 cards | 1×88 Rare 88 4×87 Rare 87 | Players for the +15% route |",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/players/27-53-cora-zicai/",
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenges": [
         {
           "title": "Cora Zicai",
@@ -15077,15 +15318,12 @@
         "Cora Zicai • هزینه تخمینی منبع عمومی: 30,310 سکه"
       ],
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Cora Zicai: Earn a special Future Stars Cora Zicai.",
-          "Cora Zicai • هزینه تخمینی منبع عمومی: 30,310 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-53-cora-zicai/"
       },
@@ -15107,28 +15345,15 @@
       ],
       "reward": "1 x Large Gold Players Pack • 1 x Mini Gold Pack • 1 x Small Mixed Players Pack • 1 x Small Gold Players Pack • 1 x Large Electrum Players Pack • Club: Min. 1 player from FC Bayern München or RB Leipzig • Quality: Min. 3 Silver players • Club: Min. 1 player from Juventus FC or SS Lazio • Same club: Max. 2 players",
       "details_source_url": "https://www.fut.gg/sbc/challenges/27-45-marquee-matchups/",
-      "estimated_cost": 26650,
-      "cost": 26650,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 26650,
-        "remaining_cost": 26650,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "FC Bayern München v RB Leipzig: Exchange a squad themed around FC Bayern München and RB Leipzig.",
-          "FC Bayern München v RB Leipzig • شرایط: Club: Min. 1 player from FC Bayern München or RB Leipzig | Clubs: Max. 4",
-          "FC Bayern München v RB Leipzig • هزینه تخمینی منبع عمومی: 3,000 سکه",
-          "Juventus FC v SS Lazio: Exchange a squad themed around Juventus FC and SS Lazio.",
-          "Juventus FC v SS Lazio • شرایط: Club: Min. 1 player from Juventus FC or SS Lazio | Leagues: Min. 3",
-          "Juventus FC v SS Lazio • هزینه تخمینی منبع عمومی: 5,450 سکه",
-          "Real Betis v FC Barcelona: Exchange a squad themed around Real Betis and FC Barcelona.",
-          "Real Betis v FC Barcelona • شرایط: Club: Min. 2 players from Real Betis or FC Barcelona",
-          "Real Betis v FC Barcelona • هزینه تخمینی منبع عمومی: 6,850 سکه",
-          "Leeds United v Manchester United: Exchange a squad themed around Leeds United and Manchester United.",
-          "Leeds United v Manchester United • شرایط: Club: Min. 2 players from Leeds United or Man Utd | Leagues: Min. 3 | Team rating: Min. 75",
-          "Leeds United v Manchester United • هزینه تخمینی منبع عمومی: 11,350 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/challenges/27-45-marquee-matchups/"
       },
@@ -15205,18 +15430,15 @@
       ],
       "reward": "Eligible players • 1×87 Rare 87 7×86 Rare 86 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 33,825 Cheapest | 41 cards | 41×84 Rare 84 | Players for the Cheapest route | • | 35,495 | 22 cards | 1×87 Rare 87 3×86 Rare 86 1×85 Rare 85 17×84 Rare 84 | Players for the +5% route | • | 36,810 Recommended | 8 cards | 1×87 Rare 87 7×86 Rare 86 | Recommended Players for the +10% route | • | 38,885 | 6 cards | 1×88 Rare 88 4×87 Rare 87 1×86 Rare 86 | Players for the +15% route |",
       "details_source_url": "https://www.fut.gg/sbc/players/27-50-xavi-espart/",
-      "estimated_cost": 33825,
-      "cost": 33825,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 33825,
-        "remaining_cost": 33825,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Xavi Espart: Earn a special Future Stars Xavi Espart.",
-          "Xavi Espart • هزینه تخمینی منبع عمومی: 33,825 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-50-xavi-espart/"
       },
@@ -15251,18 +15473,15 @@
       "reward": "Intro to Player SBCs • Complete the Intro to Player SBCs to earn Squad Foundations Cristian Espinoza. • Eligible players • Intro to Player SBCs 4,000 4,125 • 1×86 Rare 86 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 4,125 Cheapest | 5 cards | 5×84 Rare 84 | Players for the Cheapest route | • | 4,400 Recommended | 1 card | 1×86 Rare 86 | Recommended Players for the +10% route |",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/",
-      "estimated_cost": 4125,
-      "cost": 4125,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 4125,
-        "remaining_cost": 4125,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Intro to Player SBCs: Complete the Intro to Player SBCs to earn Squad Foundations Cristian Espinoza.",
-          "Intro to Player SBCs • هزینه تخمینی منبع عمومی: 4,125 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/foundations/27-20-intro-to-player-sbcs/"
       },
@@ -15291,18 +15510,15 @@
       "reward": "1 x Giant Gold Pack • Same league: Max. 4 players • Same club: Min. 3 players",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/",
-      "estimated_cost": 1,
-      "cost": 1,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 0,
-        "remaining_cost": 0,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Madrid Dreams: Celebrate Yan Diomandé's transfer to Real Madrid with this challenge!",
-          "Madrid Dreams • شرایط: Clubs: Max. 4 | Nations: Min. 2"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/challenges/27-15-madrid-dreams/"
       },
@@ -15334,19 +15550,15 @@
       "reward": "1 x 2x 79+ Gold Players Pack • Earn a pack containing 2 Gold Player Items, rated 79 or higher. • Players: 10",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/upgrades/27-23-2x-79-upgrade/",
-      "estimated_cost": 6500,
-      "cost": 6500,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 6500,
-        "remaining_cost": 6500,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "2x 79+ Upgrade: Earn a pack containing 2 Gold Player Items, rated 79 or higher.",
-          "2x 79+ Upgrade • شرایط: Players: 10",
-          "2x 79+ Upgrade • هزینه تخمینی منبع عمومی: 6,500 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/upgrades/27-23-2x-79-upgrade/"
       },
@@ -15384,18 +15596,15 @@
       "reward": "1 of 4 Base Hero Player Pick • Who would you pick? • Base Hero Matchday Player Pick • Earn 1 of 4 Base Hero Player Item, between Pablo Aimar, Davor Šuker, Sonia Bompastor and Rafael Márquez.(see Reward Details) • Eligible players",
       "challenge_count": 1,
       "details_source_url": "https://www.fut.gg/sbc/players/27-52-base-hero-matchday-player-pick/",
-      "estimated_cost": 114660,
-      "cost": 114660,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 114660,
-        "remaining_cost": 114660,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Base Hero Matchday Player Pick: Earn 1 of 4 Base Hero Player Item, between Pablo Aimar, Davor Šuker, Sonia Bompastor and Rafael Márquez.(see Reward Details)",
-          "Base Hero Matchday Player Pick • هزینه تخمینی منبع عمومی: 114,660 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-52-base-hero-matchday-player-pick/"
       },
@@ -15427,19 +15636,15 @@
       "challenge_count": 1,
       "repeatable": true,
       "details_source_url": "https://www.fut.gg/sbc/challenges/27-47-future-stars-challenge-2/",
-      "estimated_cost": 2200,
-      "cost": 2200,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 2200,
-        "remaining_cost": 2200,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Future Stars Challenge 2: Complete this challenge to earn a reward.",
-          "Future Stars Challenge 2 • شرایط: Leagues: Min. 2 | Clubs: Min. 3",
-          "Future Stars Challenge 2 • هزینه تخمینی منبع عمومی: 2,200 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/challenges/27-47-future-stars-challenge-2/"
       },
@@ -15472,19 +15677,15 @@
       "challenge_count": 1,
       "repeatable": true,
       "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/",
-      "estimated_cost": 6800,
-      "cost": 6800,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 6800,
-        "remaining_cost": 6800,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "2x 79+ Upgrade: Earn a pack containing 2 Gold Player Items, rated 79 or higher.",
-          "2x 79+ Upgrade • شرایط: Players: 10",
-          "2x 79+ Upgrade • هزینه تخمینی منبع عمومی: 6,800 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
       },
@@ -15519,19 +15720,15 @@
       "challenge_count": 1,
       "repeatable": true,
       "details_source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/",
-      "estimated_cost": 6800,
-      "cost": 6800,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 6800,
-        "remaining_cost": 6800,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "2x 79+ Upgrade: Earn a pack containing 2 Gold Player Items, rated 79 or higher.",
-          "2x 79+ Upgrade • شرایط: Players: 10",
-          "2x 79+ Upgrade • هزینه تخمینی منبع عمومی: 6,800 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
       },
@@ -15564,19 +15761,15 @@
       "challenge_count": 1,
       "repeatable": true,
       "details_source_url": "https://www.fut.gg/sbc/upgrades/27-49-3x-79-upgrade/",
-      "estimated_cost": 6850,
-      "cost": 6850,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 6850,
-        "remaining_cost": 6850,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "3x 79+ Upgrade: Earn a pack containing 3 Gold Player Items, rated 79 or higher.",
-          "3x 79+ Upgrade • شرایط: Players: 10",
-          "3x 79+ Upgrade • هزینه تخمینی منبع عمومی: 6,850 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/upgrades/27-49-3x-79-upgrade/"
       },
@@ -15603,36 +15796,21 @@
       "description": "[![Image 40: League & Nation Advanced](https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=400/2027/sbcs/10.png)](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)",
       "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
       "requirements": [
-        "Leagues: Exactly 3",
-        "Nations: Exactly 2",
-        "Leagues: Exactly 4",
-        "Nations: Exactly 5",
-        "Team rating: Min. 78",
-        "Leagues: Exactly 5",
-        "Nations: Exactly 6",
-        "Team rating: Min. 81"
+        "League &amp; Nation Advanced - EA SPORTS FC 27 SBC - FUT.GG (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':"
       ],
       "reward": "1 x Jumbo Gold Pack • 1 x Small Electrum Players Pack • 1 x Large Electrum Players Pack • 1 x Small Gold Players Pack • 5,000 Coins • Same league: Max. 6 players • Same nation: Max. 6 players",
       "challenge_count": 3,
       "details_source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
-      "estimated_cost": 20600,
-      "cost": 20600,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 20600,
-        "remaining_cost": 20600,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
         "notes": [
-          "3 Leagues & 2 Nations: Exchange a squad with three leagues and two nations.",
-          "3 Leagues & 2 Nations • شرایط: Leagues: Exactly 3 | Nations: Exactly 2",
-          "3 Leagues & 2 Nations • هزینه تخمینی منبع عمومی: 7,550 سکه",
-          "4 Leagues & 5 Nations: Exchange a squad with four leagues and five nations.",
-          "4 Leagues & 5 Nations • شرایط: Leagues: Exactly 4 | Nations: Exactly 5 | Team rating: Min. 78",
-          "4 Leagues & 5 Nations • هزینه تخمینی منبع عمومی: 5,500 سکه",
-          "5 Leagues & 6 Nations: Exchange a squad with five leagues and six nations.",
-          "5 Leagues & 6 Nations • شرایط: Leagues: Exactly 5 | Nations: Exactly 6 | Team rating: Min. 81",
-          "5 Leagues & 6 Nations • هزینه تخمینی منبع عمومی: 7,550 سکه"
+          "League &amp; Nation Advanced - EA SPORTS FC 27 SBC - FUT.GG (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':"
         ],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
@@ -15689,36 +15867,21 @@
       "description": "[Expires in 9 years](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)[Repeatable-](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)[Refreshes Every-](https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/)",
       "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
       "requirements": [
-        "Leagues: Exactly 3",
-        "Nations: Exactly 2",
-        "Leagues: Exactly 4",
-        "Nations: Exactly 5",
-        "Team rating: Min. 78",
-        "Leagues: Exactly 5",
-        "Nations: Exactly 6",
-        "Team rating: Min. 81"
+        "League &amp; Nation Advanced - EA SPORTS FC 27 SBC - FUT.GG (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':"
       ],
       "reward": "1 x Jumbo Gold Pack • 1 x Small Electrum Players Pack • 1 x Large Electrum Players Pack • 1 x Small Gold Players Pack • 5,000 Coins • Same league: Max. 6 players • Same nation: Max. 6 players",
       "challenge_count": 3,
       "details_source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/",
-      "estimated_cost": 20600,
-      "cost": 20600,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 20600,
-        "remaining_cost": 20600,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
         "notes": [
-          "3 Leagues & 2 Nations: Exchange a squad with three leagues and two nations.",
-          "3 Leagues & 2 Nations • شرایط: Leagues: Exactly 3 | Nations: Exactly 2",
-          "3 Leagues & 2 Nations • هزینه تخمینی منبع عمومی: 7,550 سکه",
-          "4 Leagues & 5 Nations: Exchange a squad with four leagues and five nations.",
-          "4 Leagues & 5 Nations • شرایط: Leagues: Exactly 4 | Nations: Exactly 5 | Team rating: Min. 78",
-          "4 Leagues & 5 Nations • هزینه تخمینی منبع عمومی: 5,500 سکه",
-          "5 Leagues & 6 Nations: Exchange a squad with five leagues and six nations.",
-          "5 Leagues & 6 Nations • شرایط: Leagues: Exactly 5 | Nations: Exactly 6 | Team rating: Min. 81",
-          "5 Leagues & 6 Nations • هزینه تخمینی منبع عمومی: 7,550 سکه"
+          "League &amp; Nation Advanced - EA SPORTS FC 27 SBC - FUT.GG (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':"
         ],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/challenges/27-10-league-nation-advanced/"
@@ -15781,26 +15944,17 @@
         "Team rating: Max. 85"
       ],
       "reward": "1 x Small Gold Players Pack • 1 x Large Silver Players Pack • 1 x Gold Pack • 1 x Large Gold Pack • Quality: Min. 11 Bronze players • Quality: Min. 11 Silver players • Quality: Min. 11 Gold players",
-      "estimated_cost": 16600,
-      "cost": 16600,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 3,
       "details_source_url": "https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/",
       "public_solution": {
-        "total_cost": 16600,
-        "remaining_cost": 16600,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Room To Grow: Exchange a full squad with a maximum OVR of 64.",
-          "Room To Grow • شرایط: Team rating: Max. 64",
-          "Room To Grow • هزینه تخمینی منبع عمومی: 2,200 سکه",
-          "Build Up Play: Exchange a full squad with OVRs between 65 and 74.",
-          "Build Up Play • هزینه تخمینی منبع عمومی: 7,050 سکه",
-          "Raw Power: Exchange a full squad with a maximum OVR of 85 and a minimum Team Chemistry rating of 10.",
-          "Raw Power • شرایط: Team rating: Max. 85",
-          "Raw Power • هزینه تخمینی منبع عمومی: 7,350 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/foundations/27-3-intro-to-upgrade-sbcs/"
       },
@@ -15858,22 +16012,15 @@
       "challenge_count": 1,
       "repeatable": true,
       "details_source_url": "https://www.fut.gg/sbc/category/expiring-soon/",
-      "estimated_cost": 12160,
-      "cost": 12160,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 12160,
-        "remaining_cost": 12160,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
       }
@@ -15896,19 +16043,12 @@
       "estimated_cost": 27,
       "cost": 27,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/players/"
       },
@@ -15931,23 +16071,15 @@
       ],
       "challenge_count": 4,
       "details_source_url": "https://www.fut.gg/sbc/category/challenges/",
-      "estimated_cost": 26650,
-      "cost": 26650,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 26650,
-        "remaining_cost": 26650,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
-          "League & Nation Advanced 20,600"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/challenges/"
       }
@@ -15966,8 +16098,8 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "Eligible players • 4×87 Rare 87 2×86 Rare 86 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 30,310 Cheapest | 35 cards | 1×85 Rare 85 34×84 Rare 84 | Players for the Cheapest route | • | 31,685 | 15 cards | 5×86 Rare 86 1×85 Rare 85 9×84 Rare 84 | Players for the +5% route | • | 32,840 Recommended | 6 cards | 4×87 Rare 87 2×86 Rare 86 | Recommended Players for the +10% route | • | 34,485 | 5 cards | 1×88 Rare 88 4×87 Rare 87 | Players for the +15% route |",
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "challenges": [
         {
@@ -15982,15 +16114,12 @@
         "Cora Zicai • هزینه تخمینی منبع عمومی: 30,310 سکه"
       ],
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Cora Zicai: Earn a special Future Stars Cora Zicai.",
-          "Cora Zicai • هزینه تخمینی منبع عمومی: 30,310 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-53-cora-zicai/"
       },
@@ -16012,21 +16141,18 @@
       ],
       "reward": "Süper Lig Future Stars Player Pick • Who would you pick? • Süper Lig Future Stars Pick • Earn a Süper Lig Future Stars Pick between İlhan Fakılı, Franculino, Arda Kurtulan and Ousmane Diabaté. (see Reward Details) • Eligible players • Süper Lig Future Stars Pick 11,000 11,335",
       "public_solution": {
-        "total_cost": 11335,
-        "remaining_cost": 11335,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Süper Lig Future Stars Pick: Earn a Süper Lig Future Stars Pick between İlhan Fakılı, Franculino, Arda Kurtulan and Ousmane Diabaté. (see Reward Details)",
-          "Süper Lig Future Stars Pick • هزینه تخمینی منبع عمومی: 11,335 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-54-super-lig-future-stars-pick/"
       },
       "details_source_url": "https://www.fut.gg/sbc/players/27-54-super-lig-future-stars-pick/",
-      "estimated_cost": 11335,
-      "cost": 11335,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "challenges": [
         {
@@ -16051,8 +16177,8 @@
         "Players: 10"
       ],
       "reward": "1 x 2x 79+ Gold Players Pack • Earn a pack containing 2 Gold Player Items, rated 79 or higher. • Players: 10",
-      "estimated_cost": 6800,
-      "cost": 6800,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "repeatable": true,
       "challenges": [
@@ -16072,16 +16198,12 @@
         "2x 79+ Upgrade • هزینه تخمینی منبع عمومی: 6,800 سکه"
       ],
       "public_solution": {
-        "total_cost": 6800,
-        "remaining_cost": 6800,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "2x 79+ Upgrade: Earn a pack containing 2 Gold Player Items, rated 79 or higher.",
-          "2x 79+ Upgrade • شرایط: Players: 10",
-          "2x 79+ Upgrade • هزینه تخمینی منبع عمومی: 6,800 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/upgrades/27-11-2x-79-upgrade/"
       },
@@ -16099,8 +16221,8 @@
         "Players: 4"
       ],
       "reward": "2 x Silver Pack • 1 x Mixed Players Pack • 1 x Gold Pack • 1 x x2 Gold Players Pack • Exchange 1 Player Item that is below 64 OVR. • Rating: Min. 1 player rated 64 or lower • Players: 1 • 1 x Silver Pack • Exchange 2 Player Items with OVRs between 65 and 74. • Rating: Min. 2 players rated 65+ • Rating: Min. 2 players rated 74 or lower • Players: 2 • Exchange 3 Player Items with OVRs between 65 and 74.",
-      "estimated_cost": 5950,
-      "cost": 5950,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 4,
       "challenges": [
         {
@@ -16153,24 +16275,12 @@
         "A Pair Of Pairs • هزینه تخمینی منبع عمومی: 2,600 سکه"
       ],
       "public_solution": {
-        "total_cost": 5950,
-        "remaining_cost": 5950,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Break Away: Exchange 1 Player Item that is below 64 OVR.",
-          "Break Away • شرایط: Players: 1",
-          "A Brace: Exchange 2 Player Items with OVRs between 65 and 74.",
-          "A Brace • شرایط: Players: 2",
-          "A Brace • هزینه تخمینی منبع عمومی: 1,300 سکه",
-          "Hat-trick: Exchange 3 Player Items with OVRs between 65 and 74.",
-          "Hat-trick • شرایط: Players: 3",
-          "Hat-trick • هزینه تخمینی منبع عمومی: 2,050 سکه",
-          "A Pair Of Pairs: Exchange 4 Player Items with OVRs between 75 and 84.",
-          "A Pair Of Pairs • شرایط: Players: 4",
-          "A Pair Of Pairs • هزینه تخمینی منبع عمومی: 2,600 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/foundations/27-1-intro-to-sbcs/"
       },
@@ -16190,8 +16300,8 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "Eligible players • 4×87 Rare 87 2×86 Rare 86 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 30,310 Cheapest | 35 cards | 1×85 Rare 85 34×84 Rare 84 | Players for the Cheapest route | • | 31,685 | 15 cards | 5×86 Rare 86 1×85 Rare 85 9×84 Rare 84 | Players for the +5% route | • | 32,840 Recommended | 6 cards | 4×87 Rare 87 2×86 Rare 86 | Recommended Players for the +10% route | • | 34,485 | 5 cards | 1×88 Rare 88 4×87 Rare 87 | Players for the +15% route |",
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "challenges": [
         {
@@ -16206,15 +16316,12 @@
         "Cora Zicai • هزینه تخمینی منبع عمومی: 30,310 سکه"
       ],
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Cora Zicai: Earn a special Future Stars Cora Zicai.",
-          "Cora Zicai • هزینه تخمینی منبع عمومی: 30,310 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-53-cora-zicai/"
       },
@@ -16249,22 +16356,18 @@
         "Destined for Glory Challenge 1 • هزینه تخمینی منبع عمومی: 2,700 سکه"
       ],
       "public_solution": {
-        "total_cost": 2700,
-        "remaining_cost": 2700,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Destined for Glory Challenge 1: Complete this challenge to earn a reward.",
-          "Destined for Glory Challenge 1 • شرایط: Nations: Min. 3 | Clubs: Max. 4",
-          "Destined for Glory Challenge 1 • هزینه تخمینی منبع عمومی: 2,700 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/challenges/27-21-destined-for-glory-challenge-1/"
       },
       "details_source_url": "https://www.fut.gg/sbc/challenges/27-21-destined-for-glory-challenge-1/",
-      "estimated_cost": 2700,
-      "cost": 2700
+      "estimated_cost": 813104,
+      "cost": 813104
     },
     {
       "id": "futgg-expires-in-20-hours",
@@ -16280,8 +16383,8 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "View Carlos Espí • Carlos Espí • Earn a special Future Stars Carlos Espí. • Eligible players • | Cost | Total cards | Rating combination | Players |",
-      "estimated_cost": 41035,
-      "cost": 41035,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "repeatable": true,
       "challenges": [
@@ -16297,15 +16400,12 @@
         "Carlos Espí • هزینه تخمینی منبع عمومی: 41,035 سکه"
       ],
       "public_solution": {
-        "total_cost": 41035,
-        "remaining_cost": 41035,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Carlos Espí: Earn a special Future Stars Carlos Espí.",
-          "Carlos Espí • هزینه تخمینی منبع عمومی: 41,035 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-56-carlos-espi/"
       },
@@ -16325,8 +16425,8 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "View Carlos Espí • Carlos Espí • Earn a special Future Stars Carlos Espí. • Eligible players • | Cost | Total cards | Rating combination | Players |",
-      "estimated_cost": 41035,
-      "cost": 41035,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "challenges": [
         {
@@ -16341,15 +16441,12 @@
         "Carlos Espí • هزینه تخمینی منبع عمومی: 41,035 سکه"
       ],
       "public_solution": {
-        "total_cost": 41035,
-        "remaining_cost": 41035,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Carlos Espí: Earn a special Future Stars Carlos Espí.",
-          "Carlos Espí • هزینه تخمینی منبع عمومی: 41,035 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-56-carlos-espi/"
       },
@@ -16370,8 +16467,8 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "Eligible players • | Cost | Total cards | Rating combination | Players |",
-      "estimated_cost": 19435,
-      "cost": 19435,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "repeatable": true,
       "challenges": [
@@ -16387,15 +16484,12 @@
         "Tarciane • هزینه تخمینی منبع عمومی: 19,435 سکه"
       ],
       "public_solution": {
-        "total_cost": 19435,
-        "remaining_cost": 19435,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Tarciane: Earn a special Destined for Glory Tarciane.",
-          "Tarciane • هزینه تخمینی منبع عمومی: 19,435 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-37-tarciane/"
       },
@@ -16414,23 +16508,16 @@
         "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/players/"
       },
@@ -16450,24 +16537,16 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
         "League & Nation Advanced 20,600"
       ],
-      "estimated_cost": 26650,
-      "cost": 26650,
+      "estimated_cost": 23250,
+      "cost": 23250,
       "challenge_count": 4,
       "public_solution": {
-        "total_cost": 26650,
-        "remaining_cost": 26650,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club",
-          "League & Nation Advanced 20,600"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/challenges/"
       },
@@ -16489,8 +16568,8 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "1 x 5x 80+ Gold Players Pack • Earn a pack containing 5 Gold Player Items, rated 80 or higher. • Eligible players • 1×86 Rare 86 1×85 Rare 85 1×84 Rare 84 Players for the +5% route • | Cost | Total cards | Rating combination | Players | • | 7,210 Cheapest | 7 cards | 1×85 Rare 85 6×84 Rare 84 | Players for the Cheapest route | • | 7,485 Recommended | 3 cards | 1×86 Rare 86 1×85 Rare 85 1×84 Rare 84 | Recommended Players for the +5% route | • | 8,270 | 2 cards | 1×87 Rare 87 1×85 Rare 85 | Players for the +15% route | • | 10,445 | 1 card | 1×88 Rare 88 | Players for the +45% route |",
-      "estimated_cost": 6750,
-      "cost": 6750,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "repeatable": true,
       "challenges": [
@@ -16507,15 +16586,12 @@
         "5x 80+ Upgrade • هزینه تخمینی منبع عمومی: 6,750 سکه"
       ],
       "public_solution": {
-        "total_cost": 6750,
-        "remaining_cost": 6750,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "5x 80+ Upgrade: Earn a pack containing 5 Gold Player Items, rated 80 or higher.",
-          "5x 80+ Upgrade • هزینه تخمینی منبع عمومی: 6,750 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/upgrades/27-57-5x-80-upgrade/"
       },
@@ -16535,8 +16611,8 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "1 x 5x 80+ Gold Players Pack • Earn a pack containing 5 Gold Player Items, rated 80 or higher. • Eligible players • 1×86 Rare 86 1×85 Rare 85 1×84 Rare 84 Players for the +5% route • | Cost | Total cards | Rating combination | Players | • | 7,210 Cheapest | 7 cards | 1×85 Rare 85 6×84 Rare 84 | Players for the Cheapest route | • | 7,485 Recommended | 3 cards | 1×86 Rare 86 1×85 Rare 85 1×84 Rare 84 | Recommended Players for the +5% route | • | 8,270 | 2 cards | 1×87 Rare 87 1×85 Rare 85 | Players for the +15% route | • | 10,445 | 1 card | 1×88 Rare 88 | Players for the +45% route |",
-      "estimated_cost": 6750,
-      "cost": 6750,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "repeatable": true,
       "challenges": [
@@ -16553,15 +16629,12 @@
         "5x 80+ Upgrade • هزینه تخمینی منبع عمومی: 6,750 سکه"
       ],
       "public_solution": {
-        "total_cost": 6750,
-        "remaining_cost": 6750,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "5x 80+ Upgrade: Earn a pack containing 5 Gold Player Items, rated 80 or higher.",
-          "5x 80+ Upgrade • هزینه تخمینی منبع عمومی: 6,750 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/upgrades/27-57-5x-80-upgrade/"
       },
@@ -16580,23 +16653,16 @@
         "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
-      "estimated_cost": 12160,
-      "cost": 12160,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "public_solution": {
-        "total_cost": 12160,
-        "remaining_cost": 12160,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/expiring-soon/"
       },
@@ -16617,8 +16683,8 @@
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
       "reward": "Eligible players • 1×87 Rare 87 3×85 Rare 85 Players for the +10% route • | Cost | Total cards | Rating combination | Players | • | 11,290 Cheapest | 13 cards | 1×85 Rare 85 12×84 Rare 84 | Players for the Cheapest route | • | 11,685 | 10 cards | 3×85 Rare 85 7×84 Rare 84 | Players for the +5% route | • | 12,350 Recommended | 4 cards | 1×87 Rare 87 3×85 Rare 85 | Recommended Players for the +10% route | • | 12,805 | 3 cards | 2×87 Rare 87 1×84 Rare 84 | Players for the +15% route |",
-      "estimated_cost": 11290,
-      "cost": 11290,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "challenges": [
         {
@@ -16633,15 +16699,12 @@
         "Weslley Pinto Batista • هزینه تخمینی منبع عمومی: 11,290 سکه"
       ],
       "public_solution": {
-        "total_cost": 11290,
-        "remaining_cost": 11290,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Weslley Pinto Batista: Earn a special Squad Foundations Weslley Pinto Batista",
-          "Weslley Pinto Batista • هزینه تخمینی منبع عمومی: 11,290 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-44-weslley-pinto-batista/"
       },
@@ -16656,8 +16719,8 @@
         "Players: 10"
       ],
       "reward": "View Carlos Espí • Carlos Espí • Earn a special Future Stars Carlos Espí. • Eligible players • | Cost | Total cards | Rating combination | Players |",
-      "estimated_cost": 41035,
-      "cost": 41035,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "challenges": [
         {
@@ -16672,15 +16735,12 @@
         "Carlos Espí • هزینه تخمینی منبع عمومی: 41,035 سکه"
       ],
       "public_solution": {
-        "total_cost": 41035,
-        "remaining_cost": 41035,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "Carlos Espí: Earn a special Future Stars Carlos Espí.",
-          "Carlos Espí • هزینه تخمینی منبع عمومی: 41,035 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-56-carlos-espi/"
       },
@@ -16692,22 +16752,15 @@
       "title_en": "4 Players",
       "description": "[6 Upgrades](https://www.fut.gg/sbc/category/upgrades/)[3 Challenges](https://www.fut.gg/sbc/category/challenges/)[6 Foundations](https://www.fut.gg/sbc/category/foundations/)",
       "source_url": "https://www.fut.gg/sbc/category/players/",
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/players/"
       },
@@ -16764,23 +16817,16 @@
         "Leagues",
         "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
       ],
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "challenge_count": 1,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/players/"
       },
@@ -16791,22 +16837,15 @@
       "title_en": "6 Players",
       "description": "[6 Upgrades](https://www.fut.gg/sbc/category/upgrades/)[3 Challenges](https://www.fut.gg/sbc/category/challenges/)[6 Foundations](https://www.fut.gg/sbc/category/foundations/)",
       "source_url": "https://www.fut.gg/sbc/category/players/",
-      "estimated_cost": 30310,
-      "cost": 30310,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/players/"
       },
@@ -16829,19 +16868,12 @@
       "estimated_cost": 27,
       "cost": 27,
       "public_solution": {
-        "total_cost": 30310,
-        "remaining_cost": 30310,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "PlayersSBCSquad BuilderEvolutionsObjectivesEvo LabGG Club",
-          "Players",
-          "Clubs",
-          "Nations",
-          "Leagues",
-          "Players SBCSquad BuilderEvolutions ObjectivesEvo LabGG GG Club"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/category/players/"
       },
@@ -17744,18 +17776,15 @@
       "title_en": "Expires in 14 days",
       "description": "[Repeatable-](https://www.fut.gg/sbc/players/27-33-laliga-potm-september/)[Refreshes Every-](https://www.fut.gg/sbc/players/27-33-laliga-potm-september/)",
       "source_url": "https://www.fut.gg/sbc/players/27-33-laliga-potm-september/",
-      "estimated_cost": 1292560,
-      "cost": 1292560,
+      "estimated_cost": 813104,
+      "cost": 813104,
       "public_solution": {
-        "total_cost": 1292560,
-        "remaining_cost": 1292560,
+        "total_cost": 813104,
+        "remaining_cost": 813104,
         "players": [],
         "player_ids": [],
         "owned_player_ids": [],
-        "notes": [
-          "LALIGA POTM September: Earn the LALIGA Player of the Month for September.",
-          "LALIGA POTM September • هزینه تخمینی منبع عمومی: 1,292,560 سکه"
-        ],
+        "notes": [],
         "source": "futgg-public",
         "source_url": "https://www.fut.gg/sbc/players/27-33-laliga-potm-september/"
       },
@@ -18007,7 +18036,7 @@
     }
   ],
   "discovery_generated_at": "2026-09-26T21:56:10.898Z",
-  "enriched_at": "2026-10-16T04:39:43.483Z",
-  "market_enriched_at": "2026-10-16T04:40:19.146Z",
-  "priced_players": 41
+  "enriched_at": "2026-10-16T11:28:13.731Z",
+  "market_enriched_at": "2026-10-16T11:29:00.237Z",
+  "priced_players": 57
 }
