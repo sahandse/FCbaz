@@ -44,7 +44,7 @@ class SbcChallenge {
 
     final rawTitle = (json['title'] ?? json['name'] ?? '').toString();
     final titleEn = (json['title_en'] ?? json['name_en'] ?? rawTitle).toString();
-    final titleFa = (json['title_fa'] ?? json['name_fa'] ?? '').toString();
+    final titleFa = (json['titleFA'] ?? json['nameFA'] ?? json['title_fa'] ?? json['name_fa'] ?? '').toString();
     final displayTitle = titleFa.isNotEmpty && titleEn.isNotEmpty && titleFa != titleEn
         ? '$titleFa • $titleEn'
         : (titleFa.isNotEmpty ? titleFa : titleEn);
@@ -55,9 +55,9 @@ class SbcChallenge {
       titleEn: titleEn,
       titleFa: titleFa,
       category: (json['category'] ?? 'SBC').toString(),
-      description: (json['description_fa'] ?? json['description'] ?? '').toString(),
-      reward: (json['reward_fa'] ?? json['reward'] ?? json['rewards'] ?? '').toString(),
-      requirements: asStrings(json['requirements_fa'] ?? json['requirements']),
+      description: (json['descriptionFA'] ?? json['description_fa'] ?? json['description'] ?? '').toString(),
+      reward: (json['rewardFA'] ?? json['reward_fa'] ?? json['reward'] ?? json['rewards'] ?? '').toString(),
+      requirements: asStrings(json['requirementsFA'] ?? json['requirements_fa'] ?? json['requirements']),
       repeatable: json['repeatable'] == true,
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
       estimatedCost: asNullableInt(json['estimated_cost'] ?? json['cost']),

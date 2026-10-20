@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../club/presentation/my_club_screen.dart';
+import '../dns/presentation/dns_screen.dart';
 import '../evolutions/presentation/evolutions_screen.dart';
 import '../market/presentation/market_screen.dart';
+import '../news/presentation/news_screen.dart';
 import '../players/presentation/player_card.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import 'home_local_dashboard_service.dart';
@@ -208,6 +210,8 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 _Hub(label: 'EVOLUTIONS', count: live.evolutions.length, icon: Icons.auto_awesome_rounded, onTap: () => _open(const EvolutionsScreen())),
                 _Hub(label: 'OBJECTIVES', count: live.objectives.length, icon: Icons.flag_rounded, onTap: () => _open(const ObjectivesScreen())),
                 _Hub(label: 'MARKET', count: live.marketMovers.length, icon: Icons.query_stats_rounded, onTap: () => _open(const MarketScreen())),
+                _Hub(label: 'GAMING DNS', count: 20, icon: Icons.dns_rounded, onTap: () => _open(const DnsScreen())),
+                _Hub(label: 'NEWS & PROMOS', count: 12, icon: Icons.newspaper_rounded, onTap: () => _open(const NewsScreen())),
               ],
             ),
           if (error != null) ...[

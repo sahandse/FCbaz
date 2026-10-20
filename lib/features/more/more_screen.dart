@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 
 import '../club/presentation/my_club_screen.dart';
+import '../dns/presentation/dns_screen.dart';
 import '../evolutions/presentation/evolutions_screen.dart';
 import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
 import '../market/presentation/market_tools_screen.dart';
 import '../meta/presentation/meta_screen.dart';
+import '../news/presentation/news_screen.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../settings/profile_screen.dart';
@@ -94,6 +96,18 @@ class MoreScreen extends StatelessWidget {
               subtitle: 'راهنمای فارسی PlayStyle و Roleهای FC27',
               icon: Icons.schema_rounded,
               onTap: () => _open(context, const Fc27ReferenceScreen()),
+            ),
+            _ToolCard(
+              title: 'دی‌ان‌اس گیمینگ',
+              subtitle: '۲۰ سرور برتر ضدتحریم و کاهش پینگ کنسول',
+              icon: Icons.dns_rounded,
+              onTap: () => _open(context, const DnsScreen()),
+            ),
+            _ToolCard(
+              title: 'اخبار و رویدادها',
+              subtitle: 'پچ‌نوت‌ها، رویدادها و اخبار رسمی FC27',
+              icon: Icons.newspaper_rounded,
+              onTap: () => _open(context, const NewsScreen()),
             ),
           ],
         ),

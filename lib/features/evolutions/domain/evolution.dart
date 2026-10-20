@@ -13,10 +13,12 @@ class EvolutionStep {
     List<String> asStrings(dynamic value) =>
         value is List ? value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList() : const [];
 
+    final title = (json['titleFA'] ?? json['nameFA'] ?? json['title_fa'] ?? json['name_fa'] ?? json['title'] ?? json['name'] ?? '').toString();
+
     return EvolutionStep(
-      title: (json['title'] ?? json['name'] ?? '').toString(),
-      requirements: asStrings(json['requirements']),
-      upgrades: asStrings(json['upgrades']),
+      title: title,
+      requirements: asStrings(json['tasksFA'] ?? json['requirementsFA'] ?? json['requirements_fa'] ?? json['requirements'] ?? json['tasks']),
+      upgrades: asStrings(json['upgradesFA'] ?? json['upgrades_fa'] ?? json['upgrades']),
     );
   }
 }
@@ -60,7 +62,7 @@ class Evolution {
             .toList()
         : const [];
 
-    final rawSteps = json['steps'] ?? json['chain'] ?? const [];
+    final rawSteps = json['levels'] ?? json['steps'] ?? json['chain'] ?? const [];
     final rawReq = json['requirements_raw'] ?? json['requirement_data'] ?? const [];
     final rawUpgrade = json['upgrades_raw'] ??
         json['upgrade_data'] ??
@@ -68,14 +70,22 @@ class Evolution {
         json['boosts'] ??
         const [];
 
+    final titleFa = (json['titleFA'] ?? json['nameFA'] ?? json['title_fa'] ?? json['name_fa'] ?? '').toString();
+    final titleEn = (json['title'] ?? json['name'] ?? '').toString();
+    final title = titleFa.isNotEmpty ? titleFa : titleEn;
+
+    final descFa = (json['descriptionFA'] ?? json['description_fa'] ?? '').toString();
+    final descEn = (json['description'] ?? '').toString();
+    final desc = descFa.isNotEmpty ? descFa : descEn;
+
     return Evolution(
       id: (json['id'] ?? '').toString(),
-      title: (json['title'] ?? json['name'] ?? '').toString(),
-      description: (json['description'] ?? '').toString(),
+      title: title,
+      description: desc,
       cost: asInt(json['cost']),
-      requirements: asStrings(json['requirements']),
+      requirements: asStrings(json['requirements_fa'] ?? json['requirementsFA'] ?? json['requirements']),
       requirementData: asMaps(rawReq),
-      upgrades: asStrings(json['upgrades']),
+      upgrades: asStrings(json['upgrades_fa'] ?? json['upgradesFA'] ?? json['upgrades']),
       upgradeData: asMaps(rawUpgrade),
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
       steps: rawSteps is List

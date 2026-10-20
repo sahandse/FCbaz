@@ -24,12 +24,19 @@ class HomeObjectiveTask {
     int asInt(dynamic value) =>
         value is int ? value : int.tryParse((value ?? '0').toString()) ?? 0;
 
+    final titleFa = (json['titleFA'] ?? json['nameFA'] ?? json['title_fa'] ?? json['name_fa'] ?? '').toString();
+    final titleEn = (json['title'] ?? json['name'] ?? '').toString();
+    final descFa = (json['descriptionFA'] ?? json['description_fa'] ?? '').toString();
+    final descEn = (json['description'] ?? '').toString();
+    final rewardFa = (json['rewardFA'] ?? json['reward_fa'] ?? '').toString();
+    final rewardEn = (json['reward'] ?? '').toString();
+
     return HomeObjectiveTask(
       id: (json['id'] ?? json['task_id'] ?? '').toString(),
-      title: (json['title'] ?? json['name'] ?? '').toString(),
-      description: (json['description'] ?? '').toString(),
+      title: titleFa.isNotEmpty ? titleFa : titleEn,
+      description: descFa.isNotEmpty ? descFa : descEn,
       target: asInt(json['target'] ?? json['required'] ?? json['count']),
-      reward: (json['reward'] ?? '').toString(),
+      reward: rewardFa.isNotEmpty ? rewardFa : rewardEn,
     );
   }
 }
@@ -68,11 +75,18 @@ class HomeObjective {
             .toList()
         : const <HomeObjectiveTask>[];
 
+    final titleFa = (json['titleFA'] ?? json['nameFA'] ?? json['title_fa'] ?? json['name_fa'] ?? '').toString();
+    final titleEn = (json['title'] ?? json['name'] ?? '').toString();
+    final descFa = (json['descriptionFA'] ?? json['description_fa'] ?? '').toString();
+    final descEn = (json['description'] ?? '').toString();
+    final rewardFa = (json['rewardFA'] ?? json['reward_fa'] ?? '').toString();
+    final rewardEn = (json['reward'] ?? '').toString();
+
     return HomeObjective(
       id: (json['id'] ?? '').toString(),
-      title: (json['title'] ?? json['name'] ?? '').toString(),
-      description: (json['description'] ?? '').toString(),
-      reward: (json['reward'] ?? '').toString(),
+      title: titleFa.isNotEmpty ? titleFa : titleEn,
+      description: descFa.isNotEmpty ? descFa : descEn,
+      reward: rewardFa.isNotEmpty ? rewardFa : rewardEn,
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
       taskCount: asInt(json['task_count'] ?? tasks.length),
       category: (json['category'] ?? json['group'] ?? json['type'] ?? '').toString(),

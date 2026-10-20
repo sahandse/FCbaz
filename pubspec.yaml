@@ -27,6 +27,7 @@ flutter:
   uses-material-design: true
   assets:
     - assets/icon/fcbaz_app_icon.png
+    - assets/data/
 
 flutter_launcher_icons:
   android: true

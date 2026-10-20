@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LiveCatalogHealth {
@@ -56,6 +57,13 @@ class LiveFc27Catalog {
     if (!forceRefresh && _memory == null) {
       final cached = await _readPersistentCache(maxAge: const Duration(minutes: 30));
       if (cached != null) return cached;
+      final bundled = await _loadBundledCatalog();
+      if (bundled != null) {
+        _memory = bundled;
+        _loadedAt = DateTime.now();
+        _fromPersistentCache = true;
+        return bundled;
+      }
     }
 
     try {
@@ -84,7 +92,23 @@ class LiveFc27Catalog {
       if (_memory != null) return _memory!;
       final cached = await _readPersistentCache();
       if (cached != null) return cached;
+      final bundled = await _loadBundledCatalog();
+      if (bundled != null) {
+        _memory = bundled;
+        _loadedAt = DateTime.now();
+        _fromPersistentCache = true;
+        return bundled;
+      }
       rethrow;
+    }
+  }
+
+  Future<Map<String, dynamic>?> _loadBundledCatalog() async {
+    try {
+      final text = await rootBundle.loadString('assets/data/catalog.json');
+      return _decodeAndValidate(text);
+    } catch (_) {
+      return null;
     }
   }
 

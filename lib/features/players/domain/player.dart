@@ -167,7 +167,18 @@ class Player {
       leagueName: asString(json['league_name'] ?? json['league']),
       nationName: asString(json['nation_name'] ?? json['nation']),
       version: asString(json['version'] ?? json['rarity']),
-      imageUrl: asString(json['image_url'] ?? json['image']),
+      imageUrl: (() {
+        final explicit = asString(json['image_url'] ?? json['image']);
+        if (explicit.isNotEmpty) return explicit;
+        final rawId = asString(
+          json['ea_id'] ?? json['resource_id'] ?? json['id'] ?? '',
+        );
+        final digitsMatch = RegExp(r'\d+').firstMatch(rawId);
+        if (digitsMatch != null && digitsMatch.group(0)!.length >= 4) {
+          return 'https://cdn.futbin.com/content/fifa27/img/players/${digitsMatch.group(0)!}.png';
+        }
+        return '';
+      })(),
       cardImageUrl: asString(json['card_image_url'] ?? json['card_image']),
       pace: asInt(json['pace'] ?? json['pac']),
       shooting: asInt(json['shooting'] ?? json['sho']),
