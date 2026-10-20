@@ -82,7 +82,7 @@ class _SearchScreenState extends State<SearchScreen> {
     debounce?.cancel();
     final query = value.trim();
     setState(() => filter = filter.copyWith(query: query));
-    if (query.length < 2) {
+    if (query.isEmpty) {
       setState(() {
         results = const [];
         error = null;
@@ -95,7 +95,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future<void> _search() async {
     final queryAtStart = filter.query.trim();
-    if (queryAtStart.length < 2) return;
+    if (queryAtStart.isEmpty) return;
     setState(() {
       loading = true;
       error = null;
@@ -129,7 +129,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
     if (result == null) return;
     setState(() => filter = result.copyWith(query: controller.text.trim()));
-    if (controller.text.trim().length >= 2) await _search();
+    if (controller.text.trim().isNotEmpty) await _search();
   }
 
   Future<void> _saveCurrentFilter() async {
@@ -166,7 +166,7 @@ class _SearchScreenState extends State<SearchScreen> {
     final savedQuery = saved.filter.query.trim();
     controller.text = savedQuery;
     setState(() => filter = saved.filter);
-    if (savedQuery.length >= 2) {
+    if (savedQuery.isNotEmpty) {
       await _search();
     } else {
       final data = await repository.advanced(saved.filter);
@@ -205,7 +205,7 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     final query = controller.text.trim();
-    final showingDiscovery = query.length < 2 && results.isEmpty;
+    final showingDiscovery = query.isEmpty && results.isEmpty;
     final scheme = Theme.of(context).colorScheme;
 
     return RefreshIndicator(

@@ -122,7 +122,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                     ),
                     const Spacer(),
                     Text(
-                      loading ? 'SYNCING…' : _sync(live?.liveGeneratedAt),
+                      loading ? 'در حال همگام‌سازی…' : 'کاتالوگ رسمی',
                       textDirection: TextDirection.ltr,
                       style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 9.5, fontWeight: FontWeight.w900),
                     ),
@@ -185,7 +185,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
                 scrollDirection: Axis.horizontal,
                 itemCount: live!.trendingPlayers.take(8).length,
                 separatorBuilder: (_, __) => const SizedBox(width: 7),
-                itemBuilder: (_, index) => SizedBox(width: 168, child: PlayerCard(player: live!.trendingPlayers[index])),
+                itemBuilder: (_, index) => SizedBox(width: 168, child: PlayerCard(player: live.trendingPlayers[index])),
               ),
             )
           else if (!loading)

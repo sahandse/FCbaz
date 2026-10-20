@@ -7,7 +7,7 @@ import '../evolutions/presentation/evolutions_screen.dart';
 import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
 import '../market/presentation/market_tools_screen.dart';
-import '../meta/presentation/meta_screen.dart';
+import '../meta/presentation/meta_screen.dart' hide NewsScreen;
 import '../news/presentation/news_screen.dart';
 import '../sbc/presentation/sbc_screen.dart';
 import '../settings/app_settings_repository.dart';
@@ -33,6 +33,97 @@ class MoreScreen extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
       children: [
+        Container(
+          margin: const EdgeInsets.only(bottom: 20),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              begin: Alignment.topRight,
+              end: Alignment.bottomLeft,
+              colors: [
+                scheme.primary.withValues(alpha: .22),
+                const Color(0xFF0C120D),
+                scheme.surface,
+              ],
+            ),
+            border: Border.all(color: scheme.primary.withValues(alpha: .4)),
+            boxShadow: [
+              BoxShadow(
+                color: scheme.primary.withValues(alpha: .12),
+                blurRadius: 16,
+                offset: const Offset(0, 4),
+              ),
+            ],
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(16),
+              onTap: () => _open(context, const ProfileScreen()),
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: scheme.primary,
+                      foregroundColor: const Color(0xFF10140C),
+                      child: const Icon(Icons.person_rounded, size: 32),
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Text(
+                                'بخش من و باشگاه',
+                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.w900,
+                                      fontSize: 18,
+                                    ),
+                              ),
+                              const SizedBox(width: 8),
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: scheme.primary.withValues(alpha: .2),
+                                  borderRadius: BorderRadius.circular(6),
+                                ),
+                                child: Text(
+                                  'LOCAL',
+                                  style: TextStyle(
+                                    color: scheme.primary,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w900,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'مدیریت باشگاه، کارت‌ها، واچ‌لیست و ترکیب‌های ذخیره‌شده',
+                            style: TextStyle(
+                              color: scheme.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Icon(
+                      Icons.arrow_forward_ios_rounded,
+                      color: scheme.primary,
+                      size: 18,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ),
         Text('ابزارها', style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 4),
         Text(

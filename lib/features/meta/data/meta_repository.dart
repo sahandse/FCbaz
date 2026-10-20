@@ -1,6 +1,5 @@
 import '../../../core/network/fcbaz_api.dart';
 import '../../../core/network/public_fc_data.dart';
-import '../../players/domain/player.dart';
 import '../domain/meta_player_entry.dart';
 
 class MetaRepository {
