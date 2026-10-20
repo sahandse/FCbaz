@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:fcbaz/features/evolutions/domain/evolution.dart';
 import 'package:fcbaz/features/home/home_repository.dart';
 import 'package:fcbaz/features/sbc/domain/sbc.dart';

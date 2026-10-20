@@ -118,6 +118,60 @@ class _DnsScreenState extends State<DnsScreen> {
             onSelected: (cat) => setState(() => selectedCategory = cat),
           ),
           const SizedBox(height: 14),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            decoration: BoxDecoration(
+              color: const Color(0xFF131F15),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: const Color(0xFFCAFF38).withValues(alpha: .2)),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        '⚡ تست پینگ زنده',
+                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5, color: Color(0xFFCAFF38)),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        _isTestingAll ? 'در حال پینگ گرفتن...' : 'سنجش تاخیر واقعی پکت‌ها از نت شما',
+                        style: const TextStyle(fontSize: 11, color: Colors.white70),
+                      ),
+                    ],
+                  ),
+                ),
+                if (_livePings.isNotEmpty) ...[
+                  IconButton(
+                    tooltip: _sortByPing ? 'حالت عادی' : 'مرتب‌سازی بر اساس کمترین پینگ',
+                    icon: Icon(_sortByPing ? Icons.sort_rounded : Icons.filter_list_rounded,
+                        color: _sortByPing ? const Color(0xFFCAFF38) : Colors.white70),
+                    onPressed: () => setState(() => _sortByPing = !_sortByPing),
+                  ),
+                ],
+                ElevatedButton.icon(
+                  onPressed: _isTestingAll ? null : () => _testAllPings(servers),
+                  icon: _isTestingAll
+                      ? const SizedBox(
+                          width: 14,
+                          height: 14,
+                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                        )
+                      : const Icon(Icons.network_check_rounded, size: 16),
+                  label: Text(_isTestingAll ? 'سنجش...' : 'تست همه', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFCAFF38),
+                    foregroundColor: Colors.black,
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    minimumSize: Size.zero,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 14),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [

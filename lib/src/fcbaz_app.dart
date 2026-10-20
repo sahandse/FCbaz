@@ -69,7 +69,7 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
     if (!settings.marketRefreshOnResume || !settings.priceAlertsEnabled) return;
-    priceAlertService.checkNow().catchError((_) {});
+    priceAlertService.checkNow().catchError((_) => const PriceAlertCheckResult(checkedCount: 0, triggeredAlerts: []));
   }
 
   @override
