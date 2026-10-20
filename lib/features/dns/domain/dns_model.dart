@@ -38,6 +38,32 @@ class DnsServer {
     );
   }
 
+  DnsServer copyWith({
+    String? id,
+    String? name,
+    String? nameEn,
+    String? category,
+    String? badge,
+    String? primary,
+    String? secondary,
+    String? ping,
+    String? desc,
+    String? suitable,
+  }) {
+    return DnsServer(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      nameEn: nameEn ?? this.nameEn,
+      category: category ?? this.category,
+      badge: badge ?? this.badge,
+      primary: primary ?? this.primary,
+      secondary: secondary ?? this.secondary,
+      ping: ping ?? this.ping,
+      desc: desc ?? this.desc,
+      suitable: suitable ?? this.suitable,
+    );
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,

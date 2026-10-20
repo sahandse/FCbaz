@@ -8,6 +8,7 @@ class AppSettings {
     this.defaultPlatform = 'console',
     this.priceAlertsEnabled = true,
     this.marketRefreshOnResume = true,
+    this.accentColorValue = 0xFFC8FF42,
   });
 
   final ThemeMode themeMode;
@@ -15,6 +16,9 @@ class AppSettings {
   final String defaultPlatform;
   final bool priceAlertsEnabled;
   final bool marketRefreshOnResume;
+  final int accentColorValue;
+
+  Color get accentColor => Color(accentColorValue);
 
   AppSettings copyWith({
     ThemeMode? themeMode,
@@ -22,6 +26,7 @@ class AppSettings {
     String? defaultPlatform,
     bool? priceAlertsEnabled,
     bool? marketRefreshOnResume,
+    int? accentColorValue,
   }) =>
       AppSettings(
         themeMode: themeMode ?? this.themeMode,
@@ -30,6 +35,7 @@ class AppSettings {
         priceAlertsEnabled: priceAlertsEnabled ?? this.priceAlertsEnabled,
         marketRefreshOnResume:
             marketRefreshOnResume ?? this.marketRefreshOnResume,
+        accentColorValue: accentColorValue ?? this.accentColorValue,
       );
 }
 
@@ -56,6 +62,7 @@ class AppSettingsRepository {
       defaultPlatform: prefs.getString(_platformKey) ?? 'console',
       priceAlertsEnabled: prefs.getBool(_alertsKey) ?? true,
       marketRefreshOnResume: prefs.getBool(_resumeRefreshKey) ?? true,
+      accentColorValue: prefs.getInt('fcbaz_accent_color') ?? 0xFFC8FF42,
     );
   }
 
@@ -74,6 +81,7 @@ class AppSettingsRepository {
       prefs.setString(_platformKey, settings.defaultPlatform),
       prefs.setBool(_alertsKey, settings.priceAlertsEnabled),
       prefs.setBool(_resumeRefreshKey, settings.marketRefreshOnResume),
+      prefs.setInt('fcbaz_accent_color', settings.accentColorValue),
     ]);
   }
 }

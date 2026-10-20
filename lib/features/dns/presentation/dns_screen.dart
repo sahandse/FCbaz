@@ -17,6 +17,34 @@ class _DnsScreenState extends State<DnsScreen> {
   String searchQuery = '';
   bool showTutorial = true;
   final TextEditingController searchController = TextEditingController();
+  final Map<String, int?> _livePings = {};
+  final Set<String> _pingingServers = {};
+  bool _isTestingAll = false;
+  bool _sortByPing = false;
+
+  Future<void> _pingServer(DnsServer server) async {
+    if (_pingingServers.contains(server.id)) return;
+    setState(() => _pingingServers.add(server.id));
+    final ping = await repository.measurePing(server.primary);
+    if (mounted) {
+      setState(() {
+        _pingingServers.remove(server.id);
+        _livePings[server.id] = ping;
+      });
+    }
+  }
+
+  Future<void> _testAllPings(List<DnsServer> servers) async {
+    if (_isTestingAll) return;
+    setState(() => _isTestingAll = true);
+    for (final s in servers) {
+      if (!mounted) break;
+      await _pingServer(s);
+    }
+    if (mounted) {
+      setState(() => _isTestingAll = false);
+    }
+  }
 
   @override
   void dispose() {
@@ -45,7 +73,17 @@ class _DnsScreenState extends State<DnsScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final servers = repository.filter(category: selectedCategory, query: searchQuery);
+    var servers = repository.filter(category: selectedCategory, query: searchQuery);
+    if (_sortByPing) {
+      servers = List.of(servers)..sort((a, b) {
+        final pA = _livePings[a.id];
+        final pB = _livePings[b.id];
+        if (pA != null && pB != null) return pA.compareTo(pB);
+        if (pA != null) return -1;
+        if (pB != null) return 1;
+        return 0;
+      });
+    }
 
     return Scaffold(
       appBar: AppBar(

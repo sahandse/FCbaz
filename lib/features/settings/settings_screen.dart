@@ -132,6 +132,57 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   },
                   title: const Text('مطابق سیستم'),
                 ),
+                const Divider(height: 24),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'رنگ تم اختصاصی باشگاه (Club Accent)',
+                        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                      ),
+                      const SizedBox(height: 8),
+                      Wrap(
+                        spacing: 10,
+                        runSpacing: 8,
+                        children: [
+                          _AccentColorChip(
+                            label: 'سبز EA Sports',
+                            color: const Color(0xFFC8FF42),
+                            isSelected: settings.accentColorValue == 0xFFC8FF42,
+                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFFC8FF42)),
+                          ),
+                          _AccentColorChip(
+                            label: 'فیروزه‌ای City',
+                            color: const Color(0xFF7DEBFF),
+                            isSelected: settings.accentColorValue == 0xFF7DEBFF,
+                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFF7DEBFF)),
+                          ),
+                          _AccentColorChip(
+                            label: 'طلایی آیکان',
+                            color: const Color(0xFFFFD700),
+                            isSelected: settings.accentColorValue == 0xFFFFD700,
+                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFFFFD700)),
+                          ),
+                          _AccentColorChip(
+                            label: 'قرمز بارسا/آرسنال',
+                            color: const Color(0xFFFF3366),
+                            isSelected: settings.accentColorValue == 0xFFFF3366,
+                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFFFF3366)),
+                          ),
+                          _AccentColorChip(
+                            label: 'بنفش هولوگرافیک',
+                            color: const Color(0xFFB388FF),
+                            isSelected: settings.accentColorValue == 0xFFB388FF,
+                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFFB388FF)),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 12),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),
@@ -352,6 +403,48 @@ class _DataChip extends StatelessWidget {
       child: Text(
         label,
         style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800),
+      ),
+    );
+  }
+}
+
+class _AccentColorChip extends StatelessWidget {
+  const _AccentColorChip({
+    required this.label,
+    required this.color,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final String label;
+  final Color color;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(10),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        decoration: BoxDecoration(
+          color: isSelected ? color.withValues(alpha: .2) : Colors.white10,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: isSelected ? color : Colors.transparent, width: 1.5),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 6),
+            Text(label, style: TextStyle(fontSize: 11, fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500)),
+          ],
+        ),
       ),
     );
   }

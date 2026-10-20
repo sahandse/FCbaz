@@ -143,4 +143,49 @@ class SbcRatingCalculator {
     final ratings = counts.keys.toList()..sort();
     return ratings.last - ratings.first;
   }
+
+  /// Suggests the best players from a club inventory to fulfill a target squad rating.
+  /// Prioritizes untradeable and lowest suitable ratings first to minimize coin waste.
+  List<T> solveFromClub<T>({
+    required List<T> clubItems,
+    required int Function(T item) getRating,
+    required bool Function(T item) isUntradeable,
+    required int targetRating,
+    int squadSize = 11,
+  }) {
+    if (clubItems.length < squadSize) return [];
+
+    // Sort items: untradeable first, then by rating ascending
+    final sorted = List<T>.from(clubItems)
+      ..sort((a, b) {
+        final untradeableA = isUntradeable(a) ? 1 : 0;
+        final untradeableB = isUntradeable(b) ? 1 : 0;
+        if (untradeableA != untradeableB) return untradeableB.compareTo(untradeableA);
+        return getRating(a).compareTo(getRating(b));
+      });
+
+    // Greedy pick candidate combinations
+    final selected = <T>[];
+    for (final item in sorted) {
+      selected.add(item);
+      if (selected.length == squadSize) {
+        final ratings = selected.map(getRating).toList();
+        if (calculateSquadRating(ratings) >= targetRating) {
+          return selected;
+        }
+        selected.removeAt(0); // slide window
+      }
+    }
+
+    // Fallback: pick highest rating squadSize items if available
+    final highest = List<T>.from(clubItems)
+      ..sort((a, b) => getRating(b).compareTo(getRating(a)));
+    final topSquad = highest.take(squadSize).toList();
+    if (calculateSquadRating(topSquad.map(getRating).toList()) >= targetRating) {
+      return topSquad;
+    }
+
+    return [];
+  }
+
 }

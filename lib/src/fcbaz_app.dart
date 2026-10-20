@@ -77,8 +77,8 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
     if (!ready) {
       return MaterialApp(
         debugShowCheckedModeBanner: false,
-        theme: FCBazTheme.light,
-        darkTheme: FCBazTheme.dark,
+        theme: FCBazTheme.light(),
+        darkTheme: FCBazTheme.dark(),
         themeMode: ThemeMode.dark,
         home: const Scaffold(
           body: Center(child: CircularProgressIndicator()),
@@ -97,8 +97,8 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
         GlobalCupertinoLocalizations.delegate,
       ],
       themeMode: settings.themeMode,
-      theme: FCBazTheme.light,
-      darkTheme: FCBazTheme.dark,
+      theme: FCBazTheme.light(settings.accentColor),
+      darkTheme: FCBazTheme.dark(settings.accentColor),
       home: MainShell(
         settings: settings,
         onSettingsChanged: _updateSettings,

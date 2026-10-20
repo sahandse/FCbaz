@@ -1,3 +1,4 @@
+import '../draft/presentation/draft_screen.dart';
 import 'package:flutter/material.dart';
 
 import '../club/presentation/my_club_screen.dart';
@@ -96,6 +97,12 @@ class MoreScreen extends StatelessWidget {
               subtitle: 'راهنمای فارسی PlayStyle و Roleهای FC27',
               icon: Icons.schema_rounded,
               onTap: () => _open(context, const Fc27ReferenceScreen()),
+            ),
+            _ToolCard(
+              title: 'شبیه‌ساز درافت',
+              subtitle: 'FUT Draft ۱۱ نفره با شیمی و ریتینگ زنده',
+              icon: Icons.sports_soccer_rounded,
+              onTap: () => _open(context, const DraftScreen()),
             ),
             _ToolCard(
               title: 'دی‌ان‌اس گیمینگ',

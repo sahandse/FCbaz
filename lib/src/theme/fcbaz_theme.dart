@@ -9,22 +9,22 @@ class FCBazTheme {
   static const warning = Color(0xFFFFD76A);
   static const outline = Color(0xFF253127);
 
-  static ThemeData get dark => _build(
+  static ThemeData dark([Color? accent]) => _build(
         brightness: Brightness.dark,
         background: darkBackground,
         surface: darkSurface,
         surfaceHigh: darkSurfaceHigh,
-        primary: primaryGreen,
+        primary: accent ?? primaryGreen,
         secondary: accentBlue,
         outlineColor: outline,
       );
 
-  static ThemeData get light => _build(
+  static ThemeData light([Color? accent]) => _build(
         brightness: Brightness.light,
         background: const Color(0xFFF2F5EE),
         surface: const Color(0xFFFCFFF8),
         surfaceHigh: const Color(0xFFE8EEE2),
-        primary: const Color(0xFF486900),
+        primary: accent ?? const Color(0xFF486900),
         secondary: const Color(0xFF006879),
         outlineColor: const Color(0xFFD3DBC9),
       );

@@ -1,3 +1,6 @@
+import 'dart:async';
+import 'dart:io';
+
 import '../domain/dns_model.dart';
 
 class DnsRepository {
@@ -268,5 +271,28 @@ class DnsRepository {
   int countForCategory(String category) {
     if (category == 'all') return defaultServers.length;
     return defaultServers.where((s) => s.category == category).length;
+  }
+  /// Measures connection latency in milliseconds to the DNS server port (53) or fallback (443/80).
+  /// Returns ping in milliseconds, or null if unreachable / timed out.
+  Future<int?> measurePing(String ip, {Duration timeout = const Duration(milliseconds: 1800)}) async {
+    final cleanIp = ip.trim();
+    if (cleanIp.isEmpty) return null;
+
+    final stopwatch = Stopwatch()..start();
+    try {
+      final socket = await Socket.connect(cleanIp, 53, timeout: timeout);
+      stopwatch.stop();
+      await socket.close();
+      return stopwatch.elapsedMilliseconds;
+    } catch (_) {
+      try {
+        final socket2 = await Socket.connect(cleanIp, 443, timeout: const Duration(milliseconds: 1200));
+        stopwatch.stop();
+        await socket2.close();
+        return stopwatch.elapsedMilliseconds;
+      } catch (_) {
+        return null;
+      }
+    }
   }
 }

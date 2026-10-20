@@ -59,6 +59,25 @@ class PlayerItemVisual extends StatelessWidget {
                 clipBehavior: Clip.hardEdge,
                 children: [
                   Positioned.fill(child: CustomPaint(painter: _Pattern(t))),
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                            colors: [
+                              Colors.white.withValues(alpha: .18),
+                              Colors.white.withValues(alpha: 0.0),
+                              Colors.white.withValues(alpha: .06),
+                              Colors.white.withValues(alpha: 0.0),
+                            ],
+                            stops: const [0.0, 0.35, 0.55, 1.0],
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
                   Positioned(
                     top: h * .045,
                     left: w * .055,
@@ -91,6 +110,31 @@ class PlayerItemVisual extends StatelessWidget {
                               fontSize: compact ? 10 : 12,
                             ),
                           ),
+                          if (player.playStylesPlus.isNotEmpty) ...[
+                            const SizedBox(height: 4),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFFFD700).withValues(alpha: .25),
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: const Color(0xFFFFD700), width: 1),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Icon(Icons.flash_on_rounded, size: 8, color: Color(0xFFFFD700)),
+                                  Text(
+                                    '${player.playStylesPlus.length}+',
+                                    style: const TextStyle(
+                                      fontSize: 8.5,
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0xFFFFD700),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ],
                       ),
                     ),
@@ -238,11 +282,21 @@ class _PlayerImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (primaryUrl.isEmpty && fallbackUrl.isEmpty) return _placeholder();
+    final url = primaryUrl.isNotEmpty ? primaryUrl : fallbackUrl;
     return Image.network(
-      primaryUrl.isNotEmpty ? primaryUrl : fallbackUrl,
+      url,
       fit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
       filterQuality: FilterQuality.medium,
+      cacheWidth: compact ? 220 : 360,
+      frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+        if (wasSynchronouslyLoaded || frame != null) return child;
+        return AnimatedOpacity(
+          opacity: frame == null ? 0.0 : 1.0,
+          duration: const Duration(milliseconds: 200),
+          child: child,
+        );
+      },
       errorBuilder: (_, __, ___) {
         if (primaryUrl.isNotEmpty && fallbackUrl.isNotEmpty && fallbackUrl != primaryUrl) {
           return Image.network(
@@ -250,6 +304,7 @@ class _PlayerImage extends StatelessWidget {
             fit: BoxFit.contain,
             alignment: Alignment.bottomCenter,
             filterQuality: FilterQuality.medium,
+            cacheWidth: compact ? 220 : 360,
             errorBuilder: (_, __, ___) => _placeholder(),
           );
         }
