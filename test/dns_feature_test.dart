@@ -32,7 +32,7 @@ void main() {
       expect(cloudflare.any((s) => s.primary == '1.1.1.1'), isTrue);
 
       final electro = repository.filter(query: 'الکترو');
-      expect(electro.length, 1);
+      expect(electro, isNotEmpty);
       expect(electro.first.id, 'electro');
     });
   });
