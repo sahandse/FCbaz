@@ -1,8 +1,18 @@
 {
-  "source": "Electronic Arts",
-  "source_url": "https://www.ea.com/games/ea-sports-fc/fc-27",
-  "checked_at": "2026-10-19T07:12:27.849Z",
+  "source": "FC27 Hub + EA SPORTS FC",
+  "source_url": "https://sahandse.github.io/FC27/data/fc27-news.json",
+  "checked_at": "2026-10-20T23:14:02.439Z",
   "items": [
+    {
+      "title": "EA SPORTS FC™ 27 | The Grounds Developer Archetypes Update",
+      "url": "https://www.ea.com/games/ea-sports-fc/fc-27/news/fc-27-the-grounds-developer-archetypes-update",
+      "source": "Electronic Arts",
+      "published": "October 19, 2026",
+      "summary": "Explore the latest Archetype and Attribute Points changes to The Grounds and Clubs in EA SPORTS FC™ 27.",
+      "titleFA": "به‌روزرسانی آرکه‌تایپ‌های توسعه‌دهنده در The Grounds — EA SPORTS FC 27",
+      "summaryFA": "آخرین تغییرات Archetype و Attribute Points را در The Grounds و Clubs بازی EA SPORTS FC 27 مرور کنید.",
+      "tagFA": "🏟️ The Grounds و Clubs"
+    },
     {
       "title": "EA SPORTS FC™ 27 | Launch Feedback Update",
       "url": "https://www.ea.com/games/ea-sports-fc/fc-27/news/fc-27-launch-feedback-update",

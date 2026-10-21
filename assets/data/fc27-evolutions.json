@@ -1,7 +1,84 @@
 {
   "source": "FUT.GG",
-  "checked_at": "2026-10-19T13:18:11.459Z",
+  "checked_at": "2026-10-21T11:51:00.132Z",
   "evolutions": [
+    {
+      "name": "Poor Sophia",
+      "url": "https://www.fut.gg/evolutions/2603-poor-sophia/",
+      "description": "Poor Sophia no more! A bit more pace (don’t get excited, still a keeper) and extra skill moves. Enough to nutmeg the striker, then calmly jog back to goal.",
+      "levels": [
+        {
+          "name": "Level 1",
+          "tasks": [
+            "Play 2 matches in Squad Battles on min Semi-Pro difficulty (or Rivals/Champions/Live Events) using your active EVO player in game."
+          ],
+          "upgrades": [
+            "+ 5 OVR → 83",
+            "+ 2 SM → 3",
+            "+ 30 Acceleration → 50",
+            "+ 6 Reactions → 82",
+            "+ 6 Kicking → 81",
+            "+ 6 Reflexes → 84"
+          ],
+          "nameFA": "سطح ۱",
+          "tasksFA": [
+            "۲ مسابقه را بازی کنید، در Squad Battles، روی سختی نیمه‌حرفه‌ای (یا Rivals/Champions/Live Events)، با بازیکن فعال تکامل."
+          ],
+          "upgradesFA": [
+            "+۵ امتیاز کلی (به ۸۳)",
+            "+۲ مهارت‌های توپی (به ۳)",
+            "+۳۰ شتاب (به ۵۰)",
+            "+۶ واکنش (به ۸۲)",
+            "+۶ Kicking (به ۸۱)",
+            "+۶ Reflexes (به ۸۴)"
+          ]
+        },
+        {
+          "name": "Level 2",
+          "tasks": [
+            "Win 2 matches in Squad Battles on min. Semi-Pro difficulty (or Rivals/Champions/Live Events) using your active EVO player in game."
+          ],
+          "upgrades": [
+            "+ 6 POS → 80",
+            "+ 30 Sprint Speed → 50",
+            "+ 6 Diving → 80",
+            "+ 6 Handling → 82"
+          ],
+          "nameFA": "سطح ۲",
+          "tasksFA": [
+            "۲ مسابقه را ببرید، در Squad Battles، روی سختی نیمه‌حرفه‌ای (یا Rivals/Champions/Live Events)، با بازیکن فعال تکامل."
+          ],
+          "upgradesFA": [
+            "+۶ POS (به ۸۰)",
+            "+۳۰ سرعت اسپرینت (به ۵۰)",
+            "+۶ Diving (به ۸۰)",
+            "+۶ Handling (به ۸۲)"
+          ]
+        }
+      ],
+      "requirements": [
+        "Overall: Max. 81",
+        "Position: GK",
+        "Max PS: 7",
+        "Max PS+: 0"
+      ],
+      "details": [
+        "Coins Cost: Free",
+        "Points Cost: Free"
+      ],
+      "detailsFA": [
+        "هزینهٔ سکه: رایگان",
+        "هزینهٔ امتیاز: رایگان"
+      ],
+      "nameFA": "دیگر Sophiaِ ضعیف نه!",
+      "descriptionFA": "دیگر Sophiaِ ضعیف نه! کمی سرعت بیشتر (هیجان‌زده نشوید، هنوز دروازه‌بان است) و حرکت‌های مهارتی اضافه؛ کافی است تا توپ را از لای پای مهاجم رد کنید و آرام به سمت دروازه برگردید.",
+      "requirementsFA": [
+        "حداکثر امتیاز کلی: ۸۱",
+        "پست: GK",
+        "حداکثر PlayStyle-plus: ۷",
+        "حداکثر PlayStyle+: ۰"
+      ]
+    },
     {
       "name": "Zoomaestro",
       "url": "https://www.fut.gg/evolutions/2602-zoomaestro/",

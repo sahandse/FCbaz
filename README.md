@@ -12,9 +12,9 @@ FCBaz is a Persian-first EA SPORTS FC 27 Ultimate Team companion for Android, bu
 
 ## Current data strategy
 
-- Base FC27 player snapshot: official EA ratings endpoint.
-- Special cards, SBC, Evolutions, Objectives and discovery: verified public FUT.GG sources.
-- Public market price lookup: FUTBIN endpoints when available, including EA Resource ID price lookup.
+- Base FC27 player snapshot: the owner's public FC27 Hub (`sahandse.github.io/FC27`), built from the EA SPORTS FC 27 public ratings dataset (`drop-api.ea.com` mirror).
+- Prices: FC27 Hub's verified FUT.GG PlayStation/PC quotes; FUTBIN endpoints remain a secondary public source when available.
+- Special cards, SBC, Evolutions, Objectives and discovery: verified public FUT.GG sources, mirrored by FC27 Hub.
 - Optional production backend can override public sources for richer verified market/history data.
 - Last known valid live catalog is cached locally for offline resilience.
 

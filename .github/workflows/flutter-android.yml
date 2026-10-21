@@ -10,7 +10,7 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 2.0.0
+        default: 2.1.0
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -21,11 +21,12 @@ on:
     branches:
       - main
     paths:
+      - '.release/fcbaz-v2.1.0'
       - '.release/fcbaz-v2.0.0'
       - '.release/fcbaz-v1.9.0'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.0.0' }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.1.0' }}
   RELEASE_BUILD_NUMBER: ${{ github.run_number }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
 
@@ -199,11 +200,12 @@ jobs:
           cat > RELEASE_NOTES.md <<EOF
           ## FCBaz v${RELEASE_VERSION}
 
-          - قیمت واقعی FC27 از FCData برای کارت‌هایی که قیمت عمومی معتبر دارند.
-          - صفر، Extinct و داده ناموجود به‌عنوان قیمت نمایش داده نمی‌شوند.
-          - SBCها با Requirement، توضیح، Guide و Cost عمومی واقعی غنی‌تر شده‌اند.
-          - راهنمای عمومی SBC حتی بدون Backend اختصاصی قابل نمایش است؛ ترکیب ساختگی ساخته نمی‌شود.
-          - Player Item قیمت PS را با منبع واقعی نمایش می‌دهد؛ PC فقط در صورت منبع مستقل واقعی مقدار دارد.
+          - کاتالوگ FC27 از FC27 Hub پر شد: بیش از ۱۹٬۸۰۰ کارت بازیکن با آمار کامل، کلاب، لیگ و ملیت.
+          - قیمت واقعی PS برای بیش از ۱۸٬۴۰۰ کارت از نقل‌قول‌های تأییدشده FUT.GG؛ PC فقط در صورت منبع مستقل واقعی مقدار دارد.
+          - ۲۷ SBC، ۴۱ Objective و ۱۸ Evolution با Requirement، جایزه و راهنمای فارسی؛ داده ساختگی ساخته نمی‌شود.
+          - ۱۳ خبر FC27 به فارسی، همراه با تصاویر کارت و پرتره بازیکنان.
+          - آمار دروازه‌بان‌ها با DIV/HAN/KIC/REF/SPD/POS نمایش داده می‌شود.
+          - داده‌های FC26 فیلتر می‌شوند و کاتالوگ به‌صورت خودکار هر ۶ ساعت به‌روزرسانی می‌شود.
           - Catalog زنده FC27 و کش آخرین داده سالم حفظ شده‌اند.
           EOF
 

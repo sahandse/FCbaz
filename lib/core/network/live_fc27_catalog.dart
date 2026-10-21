@@ -73,7 +73,7 @@ class LiveFc27Catalog {
       request.headers.set(HttpHeaders.acceptHeader, 'application/json');
       request.headers.set(
         HttpHeaders.userAgentHeader,
-        'FCBaz/1.4 Android FC27 companion',
+        'FCBaz/2.1 Android FC27 companion',
       );
 
       final response = await request.close().timeout(const Duration(seconds: 12));

@@ -39,6 +39,9 @@ jobs:
       - name: Enrich public player and SBC prices
         run: node tool/enrich_public_market.mjs
 
+      - name: Rebuild catalog from verified FC27 Hub snapshots
+        run: node tool/sync_fc27_site_data.mjs --live-only
+
       - name: Validate catalog
         run: |
           node - <<'NODE'
@@ -47,9 +50,11 @@ jobs:
           if (Number(c.game_year) !== 27) throw new Error('wrong game year');
           const generated = new Date(c.generated_at);
           if (!Number.isFinite(generated.getTime())) throw new Error('invalid generated_at');
-          if (!Array.isArray(c.players) || c.players.length < 200) {
+          if (!Array.isArray(c.players) || c.players.length < 18000) {
             throw new Error(`players catalog too small: ${c.players?.length ?? 0}`);
           }
+          const pricedPlayers = c.players.filter((p) => Number(p.price_ps || 0) > 0).length;
+          if (pricedPlayers < 10000) throw new Error(`not enough priced players: ${pricedPlayers}`);
 
           for (const key of ['players', 'evolutions', 'sbcs', 'objectives']) {
             if (!Array.isArray(c[key]) || c[key].length === 0) {
@@ -90,7 +95,6 @@ jobs:
             (Array.isArray(item.guide_fa) && item.guide_fa.length) ||
             (Array.isArray(item.challenges) && item.challenges.length)
           ).length;
-          const pricedPlayers = c.players.filter((p) => Number(p.price_ps || p.market_price || 0) > 0).length;
 
           if (sbcGuides === 0) throw new Error('no SBC detail/guide data after enrichment');
 

@@ -1,8 +1,59 @@
 {
   "source": "FUT.GG",
-  "checked_at": "2026-10-19T13:17:46.375Z",
+  "checked_at": "2026-10-21T11:50:39.002Z",
   "sections": {
     "objectives": [
+      {
+        "name": "Weekly Rush Points",
+        "category": "seasonal",
+        "description": "Complete Rush Bonuses alongside your teammates to earn Rush Points and pack rewards! All rewards are untradeable.",
+        "url": "https://www.fut.gg/objectives/seasonal/148-weekly-rush-points/",
+        "nameFA": "امتیازهای Rush هفتگی",
+        "descriptionFA": "در کنار هم‌تیمی‌های خود پاداش‌های Rush را کامل کنید و امتیاز Rush و جایزهٔ بسته بگیرید. همهٔ جایزه‌ها غیرقابل‌فروش‌اند.",
+        "tasks": [
+          {
+            "name": "35,000 Rush Points",
+            "description": "Earn 35,000 points by completing bonuses in Rush.",
+            "reward": "83+ Gold Player Pack",
+            "descriptionFA": "۳۵,۰۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
+            "rewardFA": "بستهٔ بازیکن طلایی ۸۳+",
+            "nameFA": "۳۵,۰۰۰ امتیاز Rush"
+          },
+          {
+            "name": "25,000 Rush Points",
+            "description": "Earn 25,000 points by completing bonuses in Rush.",
+            "reward": "2X 82+ Gold Players Pack",
+            "descriptionFA": "۲۵,۰۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
+            "rewardFA": "۲ عدد بستهٔ بازیکن طلایی ۸۲+",
+            "nameFA": "۲۵,۰۰۰ امتیاز Rush"
+          },
+          {
+            "name": "20,000 Rush Points",
+            "description": "Earn 20,000 points by completing bonuses in Rush.",
+            "reward": "2X 80+ Gold Players Pack",
+            "descriptionFA": "۲۰,۰۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
+            "rewardFA": "۲ عدد بستهٔ بازیکن طلایی ۸۰+",
+            "nameFA": "۲۰,۰۰۰ امتیاز Rush"
+          },
+          {
+            "name": "10,000 Rush Points",
+            "description": "Earn 10,000 points by completing bonuses in Rush.",
+            "reward": "3X 78+ Gold Players Pack",
+            "descriptionFA": "۱۰,۰۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
+            "rewardFA": "۳ عدد بستهٔ بازیکن طلایی ۷۸+",
+            "nameFA": "۱۰,۰۰۰ امتیاز Rush"
+          },
+          {
+            "name": "2,500 Rush Points",
+            "description": "Earn 2,500 points by completing bonuses in Rush.",
+            "reward": "3X 77+ Gold Players Pack",
+            "descriptionFA": "۲,۵۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
+            "rewardFA": "۳ عدد بستهٔ بازیکن طلایی ۷۷+",
+            "nameFA": "۲,۵۰۰ امتیاز Rush"
+          }
+        ],
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
+      },
       {
         "name": "Squad Battles: Champions Qualification Points",
         "category": "seasonal",
@@ -36,7 +87,7 @@
             "nameFA": "۱۰ برد"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "No Room for Racism",
@@ -55,7 +106,7 @@
             "nameFA": "۳ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Season 1 SP Chase",
@@ -108,7 +159,7 @@
           }
         ],
         "reward": "7,000 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Weekly Objectives",
@@ -161,7 +212,7 @@
           }
         ],
         "reward": "3,000 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Daily Objectives",
@@ -190,58 +241,7 @@
           }
         ],
         "reward": "30 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
-      },
-      {
-        "name": "Weekly Rush Points",
-        "category": "seasonal",
-        "description": "Complete Rush Bonuses alongside your teammates to earn Rush Points and pack rewards! All rewards are untradeable.",
-        "url": "https://www.fut.gg/objectives/seasonal/76-weekly-rush-points/",
-        "nameFA": "امتیازهای Rush هفتگی",
-        "descriptionFA": "در کنار هم‌تیمی‌های خود پاداش‌های Rush را کامل کنید و امتیاز Rush و جایزهٔ بسته بگیرید. همهٔ جایزه‌ها غیرقابل‌فروش‌اند.",
-        "tasks": [
-          {
-            "name": "35,000 Rush Points",
-            "description": "Earn 35,000 points by completing bonuses in Rush.",
-            "reward": "83+ Gold Player Pack",
-            "descriptionFA": "۳۵,۰۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
-            "rewardFA": "بستهٔ بازیکن طلایی ۸۳+",
-            "nameFA": "۳۵,۰۰۰ امتیاز Rush"
-          },
-          {
-            "name": "25,000 Rush Points",
-            "description": "Earn 25,000 points by completing bonuses in Rush.",
-            "reward": "2X 82+ Gold Players Pack",
-            "descriptionFA": "۲۵,۰۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
-            "rewardFA": "۲ عدد بستهٔ بازیکن طلایی ۸۲+",
-            "nameFA": "۲۵,۰۰۰ امتیاز Rush"
-          },
-          {
-            "name": "20,000 Rush Points",
-            "description": "Earn 20,000 points by completing bonuses in Rush.",
-            "reward": "2X 80+ Gold Players Pack",
-            "descriptionFA": "۲۰,۰۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
-            "rewardFA": "۲ عدد بستهٔ بازیکن طلایی ۸۰+",
-            "nameFA": "۲۰,۰۰۰ امتیاز Rush"
-          },
-          {
-            "name": "10,000 Rush Points",
-            "description": "Earn 10,000 points by completing bonuses in Rush.",
-            "reward": "2X 78+ Gold Players Pack",
-            "descriptionFA": "۱۰,۰۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
-            "rewardFA": "۲ عدد بستهٔ بازیکن طلایی ۷۸+",
-            "nameFA": "۱۰,۰۰۰ امتیاز Rush"
-          },
-          {
-            "name": "2,500 Rush Points",
-            "description": "Earn 2,500 points by completing bonuses in Rush.",
-            "reward": "2X 75+ Gold Players Pack",
-            "descriptionFA": "۲,۵۰۰ points کسب کنید، با کامل کردن بونوس‌های Rush.",
-            "rewardFA": "۲ عدد بستهٔ بازیکن طلایی ۷۵+",
-            "nameFA": "۲,۵۰۰ امتیاز Rush"
-          }
-        ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Seasonal Objective",
@@ -294,7 +294,7 @@
           }
         ],
         "reward": "3,000 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Icon Home Kit",
@@ -331,7 +331,7 @@
           }
         ],
         "reward": "2,000 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Claim the Armband",
@@ -350,7 +350,7 @@
             "nameFA": "۱ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ones We Watched Legendary Challenge",
@@ -393,7 +393,7 @@
             "nameFA": "۱ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Season 1: Ones to Watch Exhibition",
@@ -460,7 +460,7 @@
             "nameFA": "۱ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Season 1: Ones to Watch Exhibition Weekly Play",
@@ -479,7 +479,7 @@
             "nameFA": "۹ گل"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Season 1: Ones to Watch Exhibition Completionist",
@@ -522,7 +522,7 @@
             "nameFA": "۱ بار کامل کردن"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ones We Watched Challenge Completionist",
@@ -565,7 +565,7 @@
             "rewardFA": "۲,۵۰۰ سکه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ones We Watched Kick Off Challenge",
@@ -608,7 +608,7 @@
             "nameFA": "۱ گل"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ones We Watched Semi-Pro Challenge",
@@ -651,7 +651,7 @@
             "nameFA": "۱ گل"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ones We Watched Professional Challenge",
@@ -694,7 +694,7 @@
             "nameFA": "۱ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ones We Watched World Class Challenge",
@@ -736,7 +736,7 @@
             "rewardFA": "۲ عدد بستهٔ بازیکن طلایی ۷۵+"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Heart of the Pitch",
@@ -771,7 +771,7 @@
             "nameFA": "۳ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Future Stars: Milton Delgado",
@@ -814,7 +814,7 @@
             "rewardFA": "آیتم مصرفی"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Future Stardom",
@@ -865,7 +865,7 @@
             "rewardFA": "۱,۰۰۰ سکه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Future Stars SP",
@@ -910,7 +910,7 @@
           }
         ],
         "reward": "1,500 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ultimate Gauntlet 2",
@@ -1000,7 +1000,7 @@
             "nameFA": "۱ گل"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Future Stars Academy",
@@ -1051,7 +1051,7 @@
             "rewardFA": "۲ عدد بستهٔ بازیکن طلایی ۷۵+"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Rising Through the Ranks",
@@ -1104,7 +1104,7 @@
           }
         ],
         "reward": "250 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "First Team Dreams",
@@ -1141,7 +1141,7 @@
           }
         ],
         "reward": "400 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "The Journey Begins",
@@ -1186,7 +1186,7 @@
           }
         ],
         "reward": "100 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Total Football",
@@ -1223,7 +1223,7 @@
           }
         ],
         "reward": "300 total",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Gallery Foundations",
@@ -1274,7 +1274,7 @@
             "rewardFA": "۲۵۰ سکه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ted Lasso's Masterclass",
@@ -1333,7 +1333,7 @@
             "rewardFA": "جایزه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Squad Battles Milestone",
@@ -1368,7 +1368,7 @@
             "nameFA": "۵ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Draft Milestone",
@@ -1403,7 +1403,7 @@
             "nameFA": "۵ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Co-Op Milestone",
@@ -1438,7 +1438,7 @@
             "nameFA": "۵ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Rush Milestone",
@@ -1497,7 +1497,7 @@
             "nameFA": "۵ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Moments Stars Milestone",
@@ -1532,7 +1532,7 @@
             "nameFA": "۱۵ ستاره"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Squad Building Milestone",
@@ -1567,7 +1567,7 @@
             "nameFA": "۵ SBC"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Transfer Market Milestone",
@@ -1610,7 +1610,7 @@
             "nameFA": "۲۵ خرید Buy Now"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Live Events Milestone",
@@ -1645,7 +1645,7 @@
             "nameFA": "۵ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Rivals Milestone",
@@ -1680,7 +1680,7 @@
             "nameFA": "۵ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Champions Milestone",
@@ -1715,7 +1715,7 @@
             "nameFA": "۵ مسابقه"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Gallery Milestone",
@@ -1765,10 +1765,39 @@
             "nameFA": "سطح ۵"
           }
         ],
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       }
     ],
     "sbc": [
+      {
+        "name": "MLS Future Stars Player Pick",
+        "category": "players",
+        "description": "Earn an MLS Future Stars Pick between Niko Tsakiris, Tate Johnson, Manu Duah and Frankie Westfield. (See Reward Details).",
+        "url": "https://www.fut.gg/sbc/players/27-64-mls-future-stars-player-pick/",
+        "price": null,
+        "rewardFA": "انتخاب بازیکن MLS Future Stars",
+        "reward": "MLS Future Stars Player Pick",
+        "challenges": 1,
+        "squads": [
+          {
+            "name": "MLS Future Stars Player Pick",
+            "description": "Earn an MLS Future Stars Pick between Niko Tsakiris, Tate Johnson, Manu Duah and Frankie Westfield. (See Reward Details).",
+            "score": 13000,
+            "requirements": [
+              "Rating: Min. 45"
+            ],
+            "requirementsFA": [
+              "حداقل امتیاز بازیکن: ۴۵"
+            ],
+            "nameFA": "انتخاب بازیکن Future Stars لیگ MLS",
+            "descriptionFA": "یکی از بازیکنان Future Stars لیگ MLS را از میان Niko Tsakiris، Tate Johnson، Manu Duah و Frankie Westfield انتخاب کنید (جزئیات جایزه را ببینید)."
+          }
+        ],
+        "squads_checked_at": "2026-10-21T11:50:39.002Z",
+        "detail_checked_at": "2026-10-21T11:50:39.002Z",
+        "nameFA": "انتخاب بازیکن Future Stars لیگ MLS",
+        "descriptionFA": "یکی از بازیکنان Future Stars لیگ MLS را از میان Niko Tsakiris، Tate Johnson، Manu Duah و Frankie Westfield انتخاب کنید (جزئیات جایزه را ببینید)."
+      },
       {
         "name": "Assane Diao",
         "category": "players",
@@ -1794,7 +1823,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Liga Portugal Future Stars Player Pick",
@@ -1823,7 +1852,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Johan Manzambi",
@@ -1850,7 +1879,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Cora Zicai",
@@ -1877,34 +1906,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
-      },
-      {
-        "name": "Xavi Espart",
-        "category": "players",
-        "description": "Earn a special Future Stars Xavi Espart.",
-        "url": "https://www.fut.gg/sbc/players/27-50-xavi-espart/",
-        "price": null,
-        "nameFA": "چالش بازیکن: Xavi Espart",
-        "descriptionFA": "کارت ویژهٔ «Future Stars Xavi Espart» را بگیرید.",
-        "challenges": 1,
-        "squads": [
-          {
-            "name": "Xavi Espart",
-            "description": "Earn a special Future Stars Xavi Espart.",
-            "score": 34000,
-            "requirements": [
-              "Rating: Min. 45"
-            ],
-            "nameFA": "چالش بازیکن: Xavi Espart",
-            "descriptionFA": "کارت ویژهٔ «Future Stars Xavi Espart» را بگیرید.",
-            "requirementsFA": [
-              "حداقل امتیاز بازیکن: ۴۵"
-            ]
-          }
-        ],
-        "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Ligue 1 POTM September",
@@ -1931,36 +1933,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
-      },
-      {
-        "name": "Süper Lig Future Stars Pick",
-        "category": "players",
-        "description": "Earn a Süper Lig Future Stars Pick between İlhan Fakılı, Franculino, Arda Kurtulan and Ousmane Diabaté. (see Reward Details)",
-        "url": "https://www.fut.gg/sbc/players/27-54-super-lig-future-stars-pick/",
-        "price": null,
-        "nameFA": "انتخاب بازیکن Future Stars سوپرلیگ",
-        "descriptionFA": "پیک «Süper Lig Future Stars» را از میان İlhan Fakılı، Franculino، Arda Kurtulan و Ousmane Diabaté بگیرید.",
-        "rewardFA": "انتخاب بازیکن Süper Lig Future Stars",
-        "reward": "Süper Lig Future Stars Player Pick",
-        "challenges": 1,
-        "squads": [
-          {
-            "name": "Süper Lig Future Stars Pick",
-            "description": "Earn a Süper Lig Future Stars Pick between İlhan Fakılı, Franculino, Arda Kurtulan and Ousmane Diabaté. (see Reward Details)",
-            "score": 11000,
-            "requirements": [
-              "Rating: Min. 45"
-            ],
-            "nameFA": "انتخاب بازیکن Future Stars سوپرلیگ",
-            "descriptionFA": "پیک «Süper Lig Future Stars» را از میان İlhan Fakılı، Franculino، Arda Kurtulan و Ousmane Diabaté بگیرید.",
-            "requirementsFA": [
-              "حداقل امتیاز بازیکن: ۴۵"
-            ]
-          }
-        ],
-        "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Liga F POTM September",
@@ -1987,7 +1960,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "LALIGA POTM September",
@@ -2014,7 +1987,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Premier League POTM September",
@@ -2041,7 +2014,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Bundesliga POTM September",
@@ -2068,7 +2041,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Serie A POTM September",
@@ -2095,7 +2068,100 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
+      },
+      {
+        "name": "2x 83+ Upgrade",
+        "category": "upgrades",
+        "description": "Earn a pack containing 2 Gold Player Items, rated 83 or higher.",
+        "url": "https://www.fut.gg/sbc/upgrades/27-71-2x-83-upgrade/",
+        "price": null,
+        "nameFA": "2x 83+ — ارتقا",
+        "descriptionFA": "بستهٔ شامل ۲ بازیکن طلایی با امتیاز ۸۳ یا بالاتر را بگیرید.",
+        "rewardFA": "۱ عدد بستهٔ بازیکن طلایی ۲× ۸۳+",
+        "reward": "1 x 2x 83+ Gold Players Pack",
+        "challenges": 1,
+        "repeatable": "1",
+        "refreshes": "2 days",
+        "squads": [
+          {
+            "name": "2x 83+ Upgrade",
+            "description": "Earn a pack containing 2 Gold Player Items, rated 83 or higher.",
+            "score": 5500,
+            "requirements": [
+              "Rating: Min. 45"
+            ],
+            "nameFA": "2x 83+ — ارتقا",
+            "descriptionFA": "بستهٔ شامل ۲ بازیکن طلایی با امتیاز ۸۳ یا بالاتر را بگیرید.",
+            "requirementsFA": [
+              "حداقل امتیاز بازیکن: ۴۵"
+            ]
+          }
+        ],
+        "squads_checked_at": "2026-10-20T17:08:43.224Z",
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
+      },
+      {
+        "name": "Max. 87 Base Hero Upgrade",
+        "category": "upgrades",
+        "description": "Earn a pack containing 1 Base Hero Player Item, rated 87 or lower.",
+        "url": "https://www.fut.gg/sbc/upgrades/27-69-max-87-base-hero-upgrade/",
+        "price": null,
+        "nameFA": "Max. 87 Base Hero — ارتقا",
+        "rewardFA": "۱ عدد بسته Max. 87 Hero پایه",
+        "reward": "1 x Max. 87 Base Hero Pack",
+        "challenges": 1,
+        "repeatable": "1",
+        "refreshes": "3 days",
+        "squads": [
+          {
+            "name": "Max. 87 Base Hero Upgrade",
+            "description": "Earn a pack containing 1 Base Hero Player Item, rated 87 or lower.",
+            "score": 115000,
+            "requirements": [
+              "Rating: Min. 45"
+            ],
+            "nameFA": "Max. 87 Base Hero — ارتقا",
+            "requirementsFA": [
+              "حداقل امتیاز بازیکن: ۴۵"
+            ],
+            "descriptionFA": "بسته‌ای شامل ۱ آیتم بازیکن Hero پایه با امتیاز حداکثر ۸۷ بگیرید."
+          }
+        ],
+        "squads_checked_at": "2026-10-19T22:22:00.217Z",
+        "detail_checked_at": "2026-10-21T11:50:39.002Z",
+        "descriptionFA": "بسته‌ای شامل ۱ آیتم بازیکن Hero پایه با امتیاز حداکثر ۸۷ بگیرید."
+      },
+      {
+        "name": "1 of 3 79+ Gold Player Pick",
+        "category": "upgrades",
+        "description": "Earn 1 of 3 Gold Player Items, rated 79 or higher.",
+        "url": "https://www.fut.gg/sbc/upgrades/27-66-1-of-3-79-gold-player-pick/",
+        "price": null,
+        "rewardFA": "انتخاب بازیکن طلایی ۷۹+ (۱ از ۳)",
+        "reward": "1 of 3 79+ Gold Player Pick",
+        "challenges": 1,
+        "repeatable": "∞",
+        "squads": [
+          {
+            "name": "1 of 3 79+ Gold Player Pick",
+            "description": "Earn 1 of 3 Gold Player Items, rated 79 or higher.",
+            "requirements": [
+              "Quality: Min. Gold",
+              "Players: 10"
+            ],
+            "requirementsFA": [
+              "حداقل کیفیت: بازیکن طلایی",
+              "تعداد بازیکنان: ۱۰"
+            ],
+            "nameFA": "انتخاب بازیکن طلایی ۷۹+ (۱ از ۳)",
+            "descriptionFA": "از میان ۳ آیتم بازیکن طلایی با امتیاز ۷۹ یا بالاتر، ۱ مورد را انتخاب کنید."
+          }
+        ],
+        "squads_checked_at": "2026-10-21T11:50:39.002Z",
+        "detail_checked_at": "2026-10-21T11:50:39.002Z",
+        "nameFA": "انتخاب بازیکن طلایی ۷۹+ (۱ از ۳)",
+        "descriptionFA": "از میان ۳ آیتم بازیکن طلایی با امتیاز ۷۹ یا بالاتر، ۱ مورد را انتخاب کنید."
       },
       {
         "name": "TOTW Upgrade",
@@ -2124,69 +2190,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
-      },
-      {
-        "name": "5x 80+ Upgrade",
-        "category": "upgrades",
-        "description": "Earn a pack containing 5 Gold Player Items, rated 80 or higher.",
-        "url": "https://www.fut.gg/sbc/upgrades/27-57-5x-80-upgrade/",
-        "price": null,
-        "nameFA": "5x 80+ — ارتقا",
-        "descriptionFA": "بستهٔ شامل ۵ بازیکن طلایی با امتیاز ۸۰ یا بالاتر را بگیرید.",
-        "rewardFA": "۱ عدد بستهٔ بازیکن طلایی ۵× ۸۰+",
-        "reward": "1 x 5x 80+ Gold Players Pack",
-        "challenges": 1,
-        "repeatable": "1",
-        "refreshes": "2 days",
-        "squads": [
-          {
-            "name": "5x 80+ Upgrade",
-            "description": "Earn a pack containing 5 Gold Player Items, rated 80 or higher.",
-            "score": 6750,
-            "requirements": [
-              "Rating: Min. 45"
-            ],
-            "nameFA": "5x 80+ — ارتقا",
-            "descriptionFA": "بستهٔ شامل ۵ بازیکن طلایی با امتیاز ۸۰ یا بالاتر را بگیرید.",
-            "requirementsFA": [
-              "حداقل امتیاز بازیکن: ۴۵"
-            ]
-          }
-        ],
-        "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
-      },
-      {
-        "name": "3x 79+ Upgrade",
-        "category": "upgrades",
-        "description": "Earn a pack containing 3 Gold Player Items, rated 79 or higher.",
-        "url": "https://www.fut.gg/sbc/upgrades/27-49-3x-79-upgrade/",
-        "price": null,
-        "nameFA": "3x 79+ — ارتقا",
-        "descriptionFA": "بستهٔ شامل ۳ بازیکن طلایی با امتیاز ۷۹ یا بالاتر را بگیرید.",
-        "rewardFA": "۱ عدد بستهٔ بازیکن طلایی ۳× ۷۹+",
-        "reward": "1 x 3x 79+ Gold Players Pack",
-        "challenges": 1,
-        "repeatable": "∞",
-        "squads": [
-          {
-            "name": "3x 79+ Upgrade",
-            "description": "Earn a pack containing 3 Gold Player Items, rated 79 or higher.",
-            "requirements": [
-              "Quality: Gold only",
-              "Players: 10"
-            ],
-            "nameFA": "3x 79+ — ارتقا",
-            "descriptionFA": "بستهٔ شامل ۳ بازیکن طلایی با امتیاز ۷۹ یا بالاتر را بگیرید.",
-            "requirementsFA": [
-              "فقط بازیکن طلایی",
-              "تعداد بازیکنان: ۱۰"
-            ]
-          }
-        ],
-        "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Gold Upgrade",
@@ -2215,7 +2219,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Silver Upgrade",
@@ -2244,7 +2248,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Bronze Upgrade",
@@ -2273,7 +2277,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T17:20:01.281Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Future Stars Challenge 3",
@@ -2311,7 +2315,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Marquee Matchups",
@@ -2421,7 +2425,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "League & Nation Advanced",
@@ -2507,7 +2511,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Intro to Player SBCs",
@@ -2534,7 +2538,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Gold Re-Roll",
@@ -2564,7 +2568,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Bronze and Silver Re-roll",
@@ -2594,7 +2598,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Intro to Streamlined SBCs",
@@ -2670,7 +2674,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Intro to Upgrade SBCs",
@@ -2734,7 +2738,7 @@
           }
         ],
         "squads_checked_at": "2026-10-11T07:00:00Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       },
       {
         "name": "Intro to SBCs",
@@ -2820,7 +2824,7 @@
           }
         ],
         "squads_checked_at": "2026-10-18T18:00:00.439Z",
-        "detail_checked_at": "2026-10-19T13:17:46.375Z"
+        "detail_checked_at": "2026-10-21T11:50:39.002Z"
       }
     ]
   }

@@ -266,7 +266,7 @@ class PublicFcData {
     request.headers.set(HttpHeaders.acceptHeader, 'application/json');
     request.headers.set(
       HttpHeaders.userAgentHeader,
-      'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 FCBaz/1.4',
+      'Mozilla/5.0 (Linux; Android 13) AppleWebKit/537.36 FCBaz/2.1',
     );
     request.headers.set('Referer', 'https://www.futbin.com/');
     request.headers.set('Origin', 'https://www.futbin.com');

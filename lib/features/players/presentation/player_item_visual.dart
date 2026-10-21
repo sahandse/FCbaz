@@ -33,6 +33,13 @@ class PlayerItemVisual extends StatelessWidget {
     final version = player.version.isNotEmpty
         ? player.version
         : (player.rarity.isNotEmpty ? player.rarity : player.cardType);
+    final goalkeeping = player.position.toUpperCase() == 'GK';
+    final statLabels = goalkeeping
+        ? const ['DIV', 'HAN', 'KIC', 'REF', 'SPD', 'POS']
+        : const ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'];
+    final statValues = goalkeeping
+        ? [for (final label in statLabels) player.inGameStats[label] ?? 0]
+        : [player.pace, player.shooting, player.passing, player.dribbling, player.defending, player.physical];
 
     return AspectRatio(
       aspectRatio: compact ? .72 : .70,
@@ -213,15 +220,13 @@ class PlayerItemVisual extends StatelessWidget {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Row(children: [
-                                _Stat('PAC', player.pace, t.text),
-                                _Stat('SHO', player.shooting, t.text),
-                                _Stat('PAS', player.passing, t.text),
+                                for (var i = 0; i < 3; i++)
+                                  _Stat(statLabels[i], statValues[i], t.text),
                               ]),
                               const SizedBox(height: 3),
                               Row(children: [
-                                _Stat('DRI', player.dribbling, t.text),
-                                _Stat('DEF', player.defending, t.text),
-                                _Stat('PHY', player.physical, t.text),
+                                for (var i = 3; i < 6; i++)
+                                  _Stat(statLabels[i], statValues[i], t.text),
                               ]),
                             ],
                           ),

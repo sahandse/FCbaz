@@ -7,18 +7,24 @@
 - Personal data remains local.
 
 ## Players
-Primary base-card source: official EA ratings endpoint (`drop-api.ea.com/rating/ea-sports-fc`).
-Special cards/discovery: verified public FUT.GG pages and the project live catalog.
+Primary base-card source: the public FC27 Hub snapshot (`sahandse.github.io/FC27/data/fc27-players.json`), built from the EA SPORTS FC 27 public ratings dataset and attributed to `drop-api.ea.com/rating/ea-sports-fc` per player.
+Special cards/discovery: verified public FUT.GG pages and previously verified catalog entries; entries the hub does not publish are preserved instead of dropped.
 The last valid catalog is persisted on-device for offline resilience.
 
 ## Prices
 Source priority:
 1. Configured FCBaz production backend when it returns a positive verified value.
-2. Public FUTBIN endpoints when available.
-3. For official EA catalog IDs (`ea-<resourceId>`), try FUTBIN `fetchPriceInformation` using `playerresource` and platform PS/PC.
-4. No value => unavailable (`—`).
+2. FC27 Hub verified FUT.GG PlayStation/PC quotes (`fc27-prices.json`, status `verified`).
+3. Public FUTBIN endpoints when available.
+4. For official EA catalog IDs (`ea-<resourceId>`), try FUTBIN `fetchPriceInformation` using `playerresource` and platform PS/PC.
+5. No value => unavailable (`—`).
 
 A zero value is never treated as a real market price. 24h change and price history remain null/unavailable unless a real provider supplies them.
+
+## FC27 Hub
+`https://sahandse.github.io/FC27/data/` publishes FC27-only snapshots used as the primary feed:
+`fc27-players.json` (EA ratings mirror), `fc27-prices.json` (verified FUT.GG quotes), `fc27-challenges.json` (SBC + objectives), `fc27-evolutions.json`, `fc27-news.json`, `fc27-card-art.json` (card art hashes) and `available-portraits.json`.
+Cards with an FC26 label in the hub evolution feed are rejected.
 
 ## FUT.GG
 Used as a public reference for FC27 player/card discovery, rarity pages, SBC, Evolutions, Objectives, What's Hot/What's New and public market/price-range references. The app does not invent current prices from price ranges.

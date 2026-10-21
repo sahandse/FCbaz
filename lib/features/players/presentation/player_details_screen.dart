@@ -117,14 +117,23 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    final stats = <(String, int)>[
-      ('PAC', player.pace),
-      ('SHO', player.shooting),
-      ('PAS', player.passing),
-      ('DRI', player.dribbling),
-      ('DEF', player.defending),
-      ('PHY', player.physical),
-    ];
+    final stats = player.position.toUpperCase() == 'GK'
+        ? <(String, int)>[
+            ('DIV', player.inGameStats['DIV'] ?? 0),
+            ('HAN', player.inGameStats['HAN'] ?? 0),
+            ('KIC', player.inGameStats['KIC'] ?? 0),
+            ('REF', player.inGameStats['REF'] ?? 0),
+            ('SPD', player.inGameStats['SPD'] ?? 0),
+            ('POS', player.inGameStats['POS'] ?? 0),
+          ]
+        : <(String, int)>[
+            ('PAC', player.pace),
+            ('SHO', player.shooting),
+            ('PAS', player.passing),
+            ('DRI', player.dribbling),
+            ('DEF', player.defending),
+            ('PHY', player.physical),
+          ];
     final chem = chemistryAdvisor.suggest(player);
 
     return Scaffold(
