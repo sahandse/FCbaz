@@ -12,6 +12,7 @@ import '../../settings/app_settings_repository.dart';
 import '../data/my_club_repository.dart';
 import '../domain/club_inventory_analysis.dart';
 import '../my_club_service.dart';
+import 'add_club_player_dialog.dart';
 
 class MyClubScreen extends StatefulWidget {
   const MyClubScreen({this.embedded = false, super.key});
@@ -41,7 +42,8 @@ class _MyClubScreenState extends State<MyClubScreen> {
   String? valueError;
 
   List<MyClubItem> get visibleItems => inventoryAnalysis.filter(items, filter);
-  List<ClubDuplicateGroup> get duplicates => inventoryAnalysis.duplicateGroups(items);
+  List<ClubDuplicateGroup> get duplicates =>
+      inventoryAnalysis.duplicateGroups(items);
 
   @override
   void initState() {
@@ -83,7 +85,11 @@ class _MyClubScreenState extends State<MyClubScreen> {
       valueError = null;
     });
     try {
-      final data = await clubService.valueClub(items, platform: platform, forceRefresh: forceRefresh);
+      final data = await clubService.valueClub(
+        items,
+        platform: platform,
+        forceRefresh: forceRefresh,
+      );
       if (mounted) setState(() => valuation = data);
     } catch (e) {
       if (mounted) setState(() => valueError = e.toString());
@@ -98,7 +104,9 @@ class _MyClubScreenState extends State<MyClubScreen> {
       players = await playerRepository.getPlayers();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
       return;
     }
     if (!mounted) return;
@@ -110,9 +118,15 @@ class _MyClubScreenState extends State<MyClubScreen> {
     );
     if (selected == null || !mounted) return;
 
-    final result = await showDialog<_AddResult>(context: context, builder: (_) => _AddDialog(player: selected));
+    final result = await AddClubPlayerDialog.show(context, selected);
     if (result == null) return;
-    await clubRepository.upsert(MyClubItem.fromPlayer(selected, acquisitionPrice: result.price, untradeable: result.untradeable));
+    await clubRepository.upsert(
+      MyClubItem.fromPlayer(
+        selected,
+        acquisitionPrice: result.price,
+        untradeable: result.untradeable,
+      ),
+    );
     await _load();
   }
 
@@ -124,14 +138,21 @@ class _MyClubScreenState extends State<MyClubScreen> {
   Future<void> _saveBestSquad() async {
     final best = bestSquad;
     if (best == null) return;
-    await squadRepository.upsert(SquadStateModel(
-      id: 'club_best_${DateTime.now().millisecondsSinceEpoch}',
-      name: 'بهترین ترکیب باشگاه من',
-      formationId: best.formation.id,
-      playersBySlot: {for (final entry in best.playersBySlot.entries) entry.key: entry.value.toPlayer()},
-    ));
+    await squadRepository.upsert(
+      SquadStateModel(
+        id: 'club_best_${DateTime.now().millisecondsSinceEpoch}',
+        name: 'بهترین ترکیب باشگاه من',
+        formationId: best.formation.id,
+        playersBySlot: {
+          for (final entry in best.playersBySlot.entries)
+            entry.key: entry.value.toPlayer(),
+        },
+      ),
+    );
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('ترکیب در تیم‌ساز ذخیره شد')));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('ترکیب در تیم‌ساز ذخیره شد')));
   }
 
   ClubPlayerValue? _valueFor(String id) {
@@ -143,8 +164,10 @@ class _MyClubScreenState extends State<MyClubScreen> {
 
   String _coins(int value) {
     if (value <= 0) return '—';
-    if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(value >= 10000000 ? 0 : 1)}M';
-    if (value >= 1000) return '${(value / 1000).toStringAsFixed(value >= 100000 ? 0 : 1)}K';
+    if (value >= 1000000)
+      return '${(value / 1000000).toStringAsFixed(value >= 10000000 ? 0 : 1)}M';
+    if (value >= 1000)
+      return '${(value / 1000).toStringAsFixed(value >= 100000 ? 0 : 1)}K';
     return '$value';
   }
 
@@ -180,7 +203,9 @@ class _MyClubScreenState extends State<MyClubScreen> {
                   ),
                   const Spacer(),
                   IconButton(
-                    onPressed: loadingValue ? null : () => _refreshValue(forceRefresh: true),
+                    onPressed: loadingValue
+                        ? null
+                        : () => _refreshValue(forceRefresh: true),
                     icon: const Icon(Icons.refresh_rounded),
                     tooltip: 'بروزرسانی قیمت',
                   ),
@@ -193,117 +218,267 @@ class _MyClubScreenState extends State<MyClubScreen> {
               ),
             ),
           Container(
-              padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: scheme.surface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: scheme.primary.withValues(alpha: .28)),
+              gradient: LinearGradient(
+                begin: Alignment.topRight,
+                end: Alignment.bottomLeft,
+                colors: [
+                  scheme.primary.withValues(alpha: .11),
+                  scheme.surface,
+                  scheme.secondary.withValues(alpha: .04),
+                ],
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: scheme.primary,
+                        borderRadius: BorderRadius.circular(7),
+                      ),
+                      child: Text(
+                        'FC27 • LOCAL CLUB',
+                        textDirection: TextDirection.ltr,
+                        style: TextStyle(
+                          color: scheme.onPrimary,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    Text(
+                      '${items.length} ITEMS',
+                      textDirection: TextDirection.ltr,
+                      style: TextStyle(
+                        color: scheme.onSurfaceVariant,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 14),
+                Text(
+                  'YOUR CLUB\nCOLLECTION',
+                  textDirection: TextDirection.ltr,
+                  style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                    height: .94,
+                    fontWeight: FontWeight.w900,
+                    letterSpacing: -1.1,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'کارت‌ها، ارزش بازار، Duplicateها و بهترین ترکیب فقط روی دستگاه خودت.',
+                  style: TextStyle(
+                    color: scheme.onSurfaceVariant,
+                    fontSize: 11.5,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          _Summary(
+            count: items.length,
+            valuation: valuation,
+            loading: loadingValue,
+            duplicates: duplicates.length,
+            coins: _coins,
+          ),
+          if (valueError != null) ...[
+            const SizedBox(height: 8),
+            _StateLine(
+              icon: Icons.cloud_off_rounded,
+              text: 'قیمت زنده در دسترس نیست؛ مقدار ساختگی نمایش داده نمی‌شود.',
+            ),
+          ],
+          const SizedBox(height: 10),
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment(
+                value: 'console',
+                label: Text('Console'),
+                icon: Icon(Icons.sports_esports_rounded),
+              ),
+              ButtonSegment(
+                value: 'pc',
+                label: Text('PC'),
+                icon: Icon(Icons.computer_rounded),
+              ),
+            ],
+            selected: {platform},
+            onSelectionChanged: (value) async {
+              setState(() => platform = value.first);
+              await _refreshValue(forceRefresh: true);
+            },
+          ),
+          if (bestSquad != null) ...[
+            const SizedBox(height: 10),
+            Container(
+              padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
                 color: scheme.surface,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: scheme.primary.withValues(alpha: .28)),
-                gradient: LinearGradient(
-                  begin: Alignment.topRight,
-                  end: Alignment.bottomLeft,
-                  colors: [scheme.primary.withValues(alpha: .11), scheme.surface, scheme.secondary.withValues(alpha: .04)],
-                ),
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(color: scheme.outline.withValues(alpha: .6)),
               ),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                Row(children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
-                    decoration: BoxDecoration(color: scheme.primary, borderRadius: BorderRadius.circular(7)),
-                    child: Text('FC27 • LOCAL CLUB', textDirection: TextDirection.ltr, style: TextStyle(color: scheme.onPrimary, fontSize: 10, fontWeight: FontWeight.w800)),
-                  ),
-                  const Spacer(),
-                  Text('${items.length} ITEMS', textDirection: TextDirection.ltr, style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 9, fontWeight: FontWeight.w900)),
-                ]),
-                const SizedBox(height: 14),
-                Text('YOUR CLUB\nCOLLECTION', textDirection: TextDirection.ltr, style: Theme.of(context).textTheme.headlineMedium?.copyWith(height: .94, fontWeight: FontWeight.w900, letterSpacing: -1.1)),
-                const SizedBox(height: 8),
-                Text('کارت‌ها، ارزش بازار، Duplicateها و بهترین ترکیب فقط روی دستگاه خودت.', style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11.5)),
-              ]),
-            ),
-            const SizedBox(height: 10),
-            _Summary(count: items.length, valuation: valuation, loading: loadingValue, duplicates: duplicates.length, coins: _coins),
-            if (valueError != null) ...[
-              const SizedBox(height: 8),
-              _StateLine(icon: Icons.cloud_off_rounded, text: 'قیمت زنده در دسترس نیست؛ مقدار ساختگی نمایش داده نمی‌شود.'),
-            ],
-            const SizedBox(height: 10),
-            SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'console', label: Text('Console'), icon: Icon(Icons.sports_esports_rounded)),
-                ButtonSegment(value: 'pc', label: Text('PC'), icon: Icon(Icons.computer_rounded)),
-              ],
-              selected: {platform},
-              onSelectionChanged: (value) async {
-                setState(() => platform = value.first);
-                await _refreshValue(forceRefresh: true);
-              },
-            ),
-            if (bestSquad != null) ...[
-              const SizedBox(height: 10),
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(color: scheme.surface, borderRadius: BorderRadius.circular(10), border: Border.all(color: scheme.outline.withValues(alpha: .6))),
-                child: Row(children: [
+              child: Row(
+                children: [
                   Icon(Icons.stadium_rounded, color: scheme.primary),
                   const SizedBox(width: 9),
-                  Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                    const Text('BEST CLUB XI', textDirection: TextDirection.ltr, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 10)),
-                    Text('${bestSquad!.formation.name} • شیمی ${bestSquad!.chemistry.total}/33 • میانگین ${bestSquad!.averageRating.toStringAsFixed(1)}', style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11)),
-                  ])),
-                  IconButton(onPressed: _saveBestSquad, icon: const Icon(Icons.save_alt_rounded), tooltip: 'ذخیره در تیم‌ساز'),
-                ]),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'BEST CLUB XI',
+                          textDirection: TextDirection.ltr,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 10,
+                          ),
+                        ),
+                        Text(
+                          '${bestSquad!.formation.name} • شیمی ${bestSquad!.chemistry.total}/33 • میانگین ${bestSquad!.averageRating.toStringAsFixed(1)}',
+                          style: TextStyle(
+                            color: scheme.onSurfaceVariant,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: _saveBestSquad,
+                    icon: const Icon(Icons.save_alt_rounded),
+                    tooltip: 'ذخیره در تیم‌ساز',
+                  ),
+                ],
+              ),
+            ),
+          ],
+          const SizedBox(height: 14),
+          TextField(
+            controller: searchController,
+            onChanged: (value) =>
+                setState(() => filter = filter.copyWith(query: value)),
+            decoration: const InputDecoration(
+              hintText: 'جستجو در Collection...',
+              prefixIcon: Icon(Icons.search_rounded),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'CLUB ITEMS',
+                  textDirection: TextDirection.ltr,
+                  style: TextStyle(fontWeight: FontWeight.w900, fontSize: 12),
+                ),
+              ),
+              Text(
+                '${visible.length}/${items.length}',
+                textDirection: TextDirection.ltr,
+                style: TextStyle(
+                  color: scheme.onSurfaceVariant,
+                  fontWeight: FontWeight.w900,
+                  fontSize: 10,
+                ),
               ),
             ],
-            const SizedBox(height: 14),
-            TextField(
-              controller: searchController,
-              onChanged: (value) => setState(() => filter = filter.copyWith(query: value)),
-              decoration: const InputDecoration(hintText: 'جستجو در Collection...', prefixIcon: Icon(Icons.search_rounded)),
-            ),
-            const SizedBox(height: 12),
-            Row(children: [
-              const Expanded(child: Text('CLUB ITEMS', textDirection: TextDirection.ltr, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 12))),
-              Text('${visible.length}/${items.length}', textDirection: TextDirection.ltr, style: TextStyle(color: scheme.onSurfaceVariant, fontWeight: FontWeight.w900, fontSize: 10)),
-            ]),
-            const SizedBox(height: 8),
-            if (items.isEmpty)
-              const _EmptyClub()
-            else if (visible.isEmpty)
-              const _StateLine(icon: Icons.filter_alt_off_rounded, text: 'کارت مطابق جستجو پیدا نشد')
-            else
-              GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: visible.length,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 10, childAspectRatio: .67),
-                itemBuilder: (_, i) {
-                  final item = visible[i];
-                  final value = _valueFor(item.playerId);
-                  final p = item.toPlayer();
-                  return GestureDetector(
-                    onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: p))),
-                    onLongPress: () => _showActions(item, value),
-                    child: Stack(children: [
-                      Positioned.fill(child: PlayerItemVisual(player: p, compact: true, showPrices: true)),
+          ),
+          const SizedBox(height: 8),
+          if (items.isEmpty)
+            const _EmptyClub()
+          else if (visible.isEmpty)
+            const _StateLine(
+              icon: Icons.filter_alt_off_rounded,
+              text: 'کارت مطابق جستجو پیدا نشد',
+            )
+          else
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: visible.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 8,
+                mainAxisSpacing: 10,
+                childAspectRatio: .67,
+              ),
+              itemBuilder: (_, i) {
+                final item = visible[i];
+                final value = _valueFor(item.playerId);
+                final p = item.toPlayer();
+                return GestureDetector(
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => PlayerDetailsScreen(player: p),
+                    ),
+                  ),
+                  onLongPress: () => _showActions(item, value),
+                  child: Stack(
+                    children: [
+                      Positioned.fill(
+                        child: PlayerItemVisual(
+                          player: p,
+                          compact: true,
+                          showPrices: true,
+                        ),
+                      ),
                       if (item.untradeable)
                         Positioned(
                           top: 8,
                           right: 8,
                           child: Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
-                            decoration: BoxDecoration(color: const Color(0xFF050806).withValues(alpha: .8), borderRadius: BorderRadius.circular(6)),
-                            child: const Text('UNTRADEABLE', textDirection: TextDirection.ltr, style: TextStyle(color: Colors.white, fontSize: 7, fontWeight: FontWeight.w900)),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(
+                                0xFF050806,
+                              ).withValues(alpha: .8),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              'UNTRADEABLE',
+                              textDirection: TextDirection.ltr,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 7,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
                           ),
                         ),
-                    ]),
-                  );
-                },
-              ),
-            const SizedBox(height: 10),
-            Text('برای اکشن‌های بیشتر روی کارت نگه دار.', style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 10.5), textAlign: TextAlign.center),
-          ],
-        ),
-      );
+                    ],
+                  ),
+                );
+              },
+            ),
+          const SizedBox(height: 10),
+          Text(
+            'برای اکشن‌های بیشتر روی کارت نگه دار.',
+            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 10.5),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
 
     if (widget.embedded) return body;
 
@@ -311,8 +486,18 @@ class _MyClubScreenState extends State<MyClubScreen> {
       appBar: AppBar(
         title: const Text('باشگاه من'),
         actions: [
-          IconButton(onPressed: loadingValue ? null : () => _refreshValue(forceRefresh: true), icon: const Icon(Icons.refresh_rounded), tooltip: 'بروزرسانی قیمت'),
-          IconButton(onPressed: _addPlayer, icon: const Icon(Icons.add_rounded), tooltip: 'افزودن کارت'),
+          IconButton(
+            onPressed: loadingValue
+                ? null
+                : () => _refreshValue(forceRefresh: true),
+            icon: const Icon(Icons.refresh_rounded),
+            tooltip: 'بروزرسانی قیمت',
+          ),
+          IconButton(
+            onPressed: _addPlayer,
+            icon: const Icon(Icons.add_rounded),
+            tooltip: 'افزودن کارت',
+          ),
         ],
       ),
       body: body,
@@ -327,13 +512,63 @@ class _MyClubScreenState extends State<MyClubScreen> {
       builder: (context) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(14, 0, 14, 18),
-          child: Column(mainAxisSize: MainAxisSize.min, children: [
-            ListTile(title: Text(item.playerName, style: const TextStyle(fontWeight: FontWeight.w900)), subtitle: Text(value?.currentPrice == null ? 'قیمت زنده: —' : 'قیمت زنده: ${_coins(value!.currentPrice!)} سکه')),
-            ListTile(leading: const Icon(Icons.person_search_rounded), title: const Text('جزئیات بازیکن'), onTap: () { Navigator.pop(context); Navigator.of(context).push(MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: item.toPlayer()))); }),
-            ListTile(leading: const Icon(Icons.stadium_rounded), title: const Text('باز کردن تیم‌ساز'), onTap: () { Navigator.pop(context); Navigator.of(context).push(MaterialPageRoute(builder: (_) => const SquadScreen())); }),
-            ListTile(leading: const Icon(Icons.auto_awesome_rounded), title: const Text('بررسی Evolution'), onTap: () { Navigator.pop(context); Navigator.of(context).push(MaterialPageRoute(builder: (_) => const EvolutionsScreen())); }),
-            ListTile(leading: const Icon(Icons.delete_outline_rounded), title: const Text('حذف از باشگاه'), onTap: () async { Navigator.pop(context); await _remove(item.playerId); }),
-          ]),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ListTile(
+                title: Text(
+                  item.playerName,
+                  style: const TextStyle(fontWeight: FontWeight.w900),
+                ),
+                subtitle: Text(
+                  value?.currentPrice == null
+                      ? 'قیمت زنده: —'
+                      : 'قیمت زنده: ${_coins(value!.currentPrice!)} سکه',
+                ),
+              ),
+              ListTile(
+                leading: const Icon(Icons.person_search_rounded),
+                title: const Text('جزئیات بازیکن'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          PlayerDetailsScreen(player: item.toPlayer()),
+                    ),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.stadium_rounded),
+                title: const Text('باز کردن تیم‌ساز'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SquadScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.auto_awesome_rounded),
+                title: const Text('بررسی Evolution'),
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const EvolutionsScreen()),
+                  );
+                },
+              ),
+              ListTile(
+                leading: const Icon(Icons.delete_outline_rounded),
+                title: const Text('حذف از باشگاه'),
+                onTap: () async {
+                  Navigator.pop(context);
+                  await _remove(item.playerId);
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -341,7 +576,13 @@ class _MyClubScreenState extends State<MyClubScreen> {
 }
 
 class _Summary extends StatelessWidget {
-  const _Summary({required this.count, required this.valuation, required this.loading, required this.duplicates, required this.coins});
+  const _Summary({
+    required this.count,
+    required this.valuation,
+    required this.loading,
+    required this.duplicates,
+    required this.coins,
+  });
   final int count;
   final ClubValuation? valuation;
   final bool loading;
@@ -358,8 +599,18 @@ class _Summary extends StatelessWidget {
       childAspectRatio: .95,
       children: [
         _Metric(label: 'ITEMS', value: '$count'),
-        _Metric(label: 'VALUE', value: loading ? '…' : data == null ? '—' : coins(data.totalMarketValue)),
-        _Metric(label: 'TRADE', value: data == null ? '—' : coins(data.tradeableMarketValue)),
+        _Metric(
+          label: 'VALUE',
+          value: loading
+              ? '…'
+              : data == null
+              ? '—'
+              : coins(data.totalMarketValue),
+        ),
+        _Metric(
+          label: 'TRADE',
+          value: data == null ? '—' : coins(data.tradeableMarketValue),
+        ),
         _Metric(label: 'DUPES', value: '$duplicates'),
       ],
     );
@@ -375,12 +626,35 @@ class _Metric extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(8),
-      decoration: BoxDecoration(color: scheme.surface, borderRadius: BorderRadius.circular(9), border: Border.all(color: scheme.outline.withValues(alpha: .6))),
-      child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-        Text(value, textDirection: TextDirection.ltr, style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w900, fontSize: 16)),
-        const SizedBox(height: 2),
-        Text(label, textDirection: TextDirection.ltr, style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 7.5, fontWeight: FontWeight.w900)),
-      ]),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(9),
+        border: Border.all(color: scheme.outline.withValues(alpha: .6)),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text(
+            value,
+            textDirection: TextDirection.ltr,
+            style: TextStyle(
+              color: scheme.primary,
+              fontWeight: FontWeight.w900,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            label,
+            textDirection: TextDirection.ltr,
+            style: TextStyle(
+              color: scheme.onSurfaceVariant,
+              fontSize: 7.5,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -394,8 +668,20 @@ class _StateLine extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(11),
-      decoration: BoxDecoration(color: scheme.surface, borderRadius: BorderRadius.circular(10), border: Border.all(color: scheme.outline.withValues(alpha: .6))),
-      child: Row(children: [Icon(icon, color: scheme.primary), const SizedBox(width: 8), Expanded(child: Text(text, style: TextStyle(color: scheme.onSurfaceVariant)))]),
+      decoration: BoxDecoration(
+        color: scheme.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: scheme.outline.withValues(alpha: .6)),
+      ),
+      child: Row(
+        children: [
+          Icon(icon, color: scheme.primary),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(text, style: TextStyle(color: scheme.onSurfaceVariant)),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -403,38 +689,9 @@ class _StateLine extends StatelessWidget {
 class _EmptyClub extends StatelessWidget {
   const _EmptyClub();
   @override
-  Widget build(BuildContext context) => const _StateLine(icon: Icons.inventory_2_outlined, text: 'باشگاه خالی است؛ از دکمه + کارت واقعی FC27 اضافه کن.');
-}
-
-class _AddResult {
-  const _AddResult({required this.price, required this.untradeable});
-  final int price;
-  final bool untradeable;
-}
-
-class _AddDialog extends StatefulWidget {
-  const _AddDialog({required this.player});
-  final Player player;
-  @override
-  State<_AddDialog> createState() => _AddDialogState();
-}
-
-class _AddDialogState extends State<_AddDialog> {
-  final controller = TextEditingController();
-  bool untradeable = false;
-  @override
-  void dispose() { controller.dispose(); super.dispose(); }
-  @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: Text(widget.player.name),
-    content: Column(mainAxisSize: MainAxisSize.min, children: [
-      SwitchListTile(contentPadding: EdgeInsets.zero, value: untradeable, onChanged: (v) => setState(() => untradeable = v), title: const Text('غیرقابل فروش')),
-      if (!untradeable) TextField(controller: controller, keyboardType: TextInputType.number, decoration: const InputDecoration(labelText: 'قیمت خرید واقعی', suffixText: 'Coins')),
-    ]),
-    actions: [
-      TextButton(onPressed: () => Navigator.pop(context), child: const Text('انصراف')),
-      FilledButton(onPressed: () => Navigator.pop(context, _AddResult(price: untradeable ? 0 : int.tryParse(controller.text.trim()) ?? 0, untradeable: untradeable)), child: const Text('ذخیره')),
-    ],
+  Widget build(BuildContext context) => const _StateLine(
+    icon: Icons.inventory_2_outlined,
+    text: 'باشگاه خالی است؛ از دکمه + کارت واقعی FC27 اضافه کن.',
   );
 }
 
@@ -450,24 +707,58 @@ class _PlayerPickerState extends State<_PlayerPicker> {
   @override
   Widget build(BuildContext context) {
     final q = query.trim().toLowerCase();
-    final data = widget.players.where((p) => q.isEmpty || p.name.toLowerCase().contains(q) || p.clubName.toLowerCase().contains(q) || p.position.toLowerCase().contains(q)).toList()..sort((a, b) => b.rating.compareTo(a.rating));
-    return SafeArea(child: SizedBox(
-      height: MediaQuery.sizeOf(context).height * .82,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 4, 14, 14),
-        child: Column(children: [
-          TextField(onChanged: (v) => setState(() => query = v), decoration: const InputDecoration(hintText: 'جستجوی بازیکن FC27...', prefixIcon: Icon(Icons.search_rounded))),
-          const SizedBox(height: 10),
-          Expanded(child: GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 2, crossAxisSpacing: 8, mainAxisSpacing: 8, childAspectRatio: .67),
-            itemCount: data.length,
-            itemBuilder: (_, i) {
-              final p = data[i];
-              return GestureDetector(onTap: () => Navigator.pop(context, p), child: PlayerItemVisual(player: p, compact: true, showPrices: true));
-            },
-          )),
-        ]),
+    final data =
+        widget.players
+            .where(
+              (p) =>
+                  q.isEmpty ||
+                  p.name.toLowerCase().contains(q) ||
+                  p.clubName.toLowerCase().contains(q) ||
+                  p.position.toLowerCase().contains(q),
+            )
+            .toList()
+          ..sort((a, b) => b.rating.compareTo(a.rating));
+    return SafeArea(
+      child: SizedBox(
+        height: MediaQuery.sizeOf(context).height * .82,
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(14, 4, 14, 14),
+          child: Column(
+            children: [
+              TextField(
+                onChanged: (v) => setState(() => query = v),
+                decoration: const InputDecoration(
+                  hintText: 'جستجوی بازیکن FC27...',
+                  prefixIcon: Icon(Icons.search_rounded),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Expanded(
+                child: GridView.builder(
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                    childAspectRatio: .67,
+                  ),
+                  itemCount: data.length,
+                  itemBuilder: (_, i) {
+                    final p = data[i];
+                    return GestureDetector(
+                      onTap: () => Navigator.pop(context, p),
+                      child: PlayerItemVisual(
+                        player: p,
+                        compact: true,
+                        showPrices: true,
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
-    ));
+    );
   }
 }

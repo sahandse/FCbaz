@@ -136,21 +136,23 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
         final player = await playerRepository.getPlayer(id);
         if (!mounted) return;
         await Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
+          MaterialPageRoute(
+            builder: (_) => PlayerDetailsScreen(player: player),
+          ),
         );
       } catch (_) {}
       return;
     }
     if (type == 'objective') {
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ObjectivesScreen()),
-      );
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const ObjectivesScreen()));
       return;
     }
     if (type == 'evolution') {
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const EvolutionsScreen()),
-      );
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const EvolutionsScreen()));
     }
   }
 
@@ -161,9 +163,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 
   Future<void> _openNotifications() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const NotificationCenterScreen()),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const NotificationCenterScreen()));
     await _refreshUnread();
   }
 
@@ -173,9 +175,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     final pages = [
       HomeDashboardScreen(
         onOpenPlayers: () => _selectTab(1),
-        onOpenSearch: _openGlobalSearch,
-        onOpenSquad: () => _selectTab(3),
-        onOpenMore: () => _selectTab(4),
+        onOpenClub: () => _selectTab(2),
       ),
       CardsScreen(focusRequests: searchRequests),
       const MyClubScreen(embedded: true),

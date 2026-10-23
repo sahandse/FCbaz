@@ -28,8 +28,8 @@ void main() {
     ).readAsStringSync();
 
     expect(source, contains('PlayerItemVisual'));
-    expect(source, contains("const _SectionLabel('FACE STATS')"));
-    expect(source, contains("const _SectionLabel('CHEMISTRY STYLE')"));
+    expect(source, contains("kicker: 'FACE STATS'"));
+    expect(source, contains("kicker: 'CHEMISTRY STYLE'"));
     expect(source, contains("'مقایسه'"));
     expect(source, contains("'یادداشت شخصی'"));
     expect(source, contains("'هنوز نظری ثبت نشده'"));

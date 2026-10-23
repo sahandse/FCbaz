@@ -14,13 +14,15 @@ void main() {
       'lib/features/navigation/main_shell.dart',
     ).readAsStringSync();
 
-    expect(screen, contains('YOUR CLUB.'));
-    expect(screen, contains('HOT ITEMS'));
-    expect(screen, contains('LIVE HUB'));
-    expect(screen, contains("label: 'SBC'"));
-    expect(screen, contains("label: 'EVOLUTIONS'"));
-    expect(screen, contains("label: 'OBJECTIVES'"));
-    expect(screen, contains('فقط داده معتبر'));
+    expect(screen, contains('StadiumHero'));
+    expect(screen, contains('DeadlineChip'));
+    expect(screen, contains('PriceDelta'));
+    expect(screen, contains('SourceBadge'));
+    expect(screen, contains("title: 'امروز'"));
+    expect(screen, contains("title: 'کارت‌های داغ'"));
+    expect(screen, contains('onOpenClub'));
+    expect(screen, contains('جایگزین جعلی'));
+    expect(screen, contains("source: 'FC27 Hub'"));
     expect(service, contains('WatchlistRepository'));
     expect(service, contains('ObjectiveProgressRepository'));
     expect(service, contains('MyClubRepository'));
