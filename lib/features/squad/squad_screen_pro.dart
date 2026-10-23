@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
+import 'squad_screenshot_analyzer.dart';
+
 import '../players/data/player_repository.dart';
 import '../players/domain/player.dart';
 import 'data/squad_repository.dart';
 import 'domain/chemistry_engine.dart';
+import 'domain/squad_chemistry_optimizer.dart';
 import 'domain/squad_formation_migrator.dart';
 import 'domain/squad_models.dart';
 import 'presentation/formation_picker_sheet.dart';
@@ -22,6 +25,9 @@ class _SquadScreenProState extends State<SquadScreenPro> {
   final playerRepository = PlayerRepository();
   final chemistryEngine = const ChemistryEngineFC27();
   final formationMigrator = const SquadFormationMigrator();
+  final chemistryOptimizer = const SquadChemistryOptimizer();
+  final screenshotAnalyzer = SquadScreenshotAnalyzer();
+  bool importingScreenshot = false;
 
   List<SquadStateModel> savedSquads = const [];
   late SquadStateModel squad;
@@ -152,6 +158,130 @@ class _SquadScreenProState extends State<SquadScreenPro> {
     );
     if (result == null) return;
     setState(() => squad = squad.copyWith(tactics: result));
+  }
+
+  Future<void> _importConsoleScreenshot() async {
+    if (importingScreenshot) return;
+    setState(() => importingScreenshot = true);
+    try {
+      final catalog = await playerRepository.getPlayers();
+      if (!mounted) return;
+      final analysis = await screenshotAnalyzer.pickAndAnalyze(
+        catalog: catalog,
+        formation: formation,
+      );
+      if (!mounted || analysis == null) return;
+      if (analysis.matchedCount == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('بازیکنی از تصویر شناسایی نشد؛ تصویر واضح‌تر و کامل‌تری انتخاب کن.'),
+          ),
+        );
+        return;
+      }
+
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('بررسی ترکیب شناسایی‌شده'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  '${analysis.matchedCount} بازیکن از تصویر شناسایی شد.',
+                  style: Theme.of(dialogContext).textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                const Text(
+                  'جای‌گذاری اولیه بر اساس موقعیت بازیکنان در تصویر انجام شده است. قبل از ذخیره، ترکیب و شیمی را بررسی کن.',
+                ),
+                const SizedBox(height: 12),
+                for (final slot in formation.slots)
+                  if (analysis.playersBySlot[slot.id] != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 5),
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: 48,
+                            child: Text(
+                              slot.position,
+                              style: const TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          Expanded(child: Text(analysis.playersBySlot[slot.id]!.name)),
+                        ],
+                      ),
+                    ),
+                if (analysis.unmatchedNames.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text(
+                    'متن‌های شناسایی‌شده‌ای که با دیتابیس بازیکنان تطبیق نداشتند: ${analysis.unmatchedNames.take(5).join('، ')}',
+                    style: Theme.of(dialogContext).textTheme.bodySmall,
+                  ),
+                ],
+                if (squad.playersBySlot.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  const Text(
+                    'تأیید این مرحله، بازیکنان ترکیب اصلی فعلی را جایگزین می‌کند.',
+                    style: TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                ],
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('انصراف'),
+            ),
+            FilledButton.icon(
+              onPressed: () => Navigator.pop(dialogContext, true),
+              icon: const Icon(Icons.check_rounded),
+              label: const Text('اعمال ترکیب'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !mounted) return;
+
+      var importedPlayers = Map<String, Player>.from(analysis.playersBySlot);
+      if (importedPlayers.length == formation.slots.length) {
+        final optimized = chemistryOptimizer.optimize(
+          formation: formation,
+          current: importedPlayers,
+          engine: chemistryEngine,
+          manager: squad.manager,
+        );
+        importedPlayers = Map<String, Player>.from(optimized.playersBySlot);
+      }
+
+      setState(() {
+        squad = squad.copyWith(
+          playersBySlot: importedPlayers,
+          playerConfigs: const {},
+          bench: const [],
+        );
+      });
+      await _save();
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            'ترکیب وارد شد؛ شیمی فعلی ${chemistry.total}/${chemistry.maxForFilledPlayers} است. پیشنهادها پایین صفحه نمایش داده می‌شوند.',
+          ),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('وارد کردن تصویر ناموفق بود: $error')),
+      );
+    } finally {
+      if (mounted) setState(() => importingScreenshot = false);
+    }
   }
 
   Future<void> _pickPlayer(FormationSlot slot) async {
@@ -291,6 +421,25 @@ class _SquadScreenProState extends State<SquadScreenPro> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: importingScreenshot ? null : _importConsoleScreenshot,
+              icon: importingScreenshot
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.document_scanner_rounded),
+              label: Text(
+                importingScreenshot
+                    ? 'در حال شناسایی بازیکنان...'
+                    : 'وارد کردن عکس ترکیب کنسول',
+              ),
+            ),
           ),
           const SizedBox(height: 8),
           Align(
