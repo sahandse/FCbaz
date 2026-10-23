@@ -22,7 +22,9 @@ Source priority:
 A zero value is never treated as a real market price. 24h change and price history remain null/unavailable unless a real provider supplies them.
 
 ## FC27 Hub
-`https://sahandse.github.io/FC27/data/` publishes FC27-only snapshots used as the primary feed:
+`LiveFc27Catalog` now reads the published feeds directly from `https://sahandse.github.io/FC27/data/` and merges them into the app's validated in-memory catalog. It fetches the player, price, challenge/objective, evolution, news, card-art and portrait-index feeds independently, so an unavailable optional feed does not block player data. The live catalog is refreshed in-app, cached on-device, and falls back to the last valid cache/bundled catalog when offline. Player parsing accepts common portrait/card-image field variants; when no image URL is supplied, the existing player-image fallback remains in place.
+
+The Hub publishes these FC27-only snapshots used as the primary feed:
 `fc27-players.json` (EA ratings mirror), `fc27-prices.json` (verified FUT.GG quotes), `fc27-challenges.json` (SBC + objectives), `fc27-evolutions.json`, `fc27-news.json`, `fc27-card-art.json` (card art hashes) and `available-portraits.json`.
 Cards with an FC26 label in the hub evolution feed are rejected.
 
