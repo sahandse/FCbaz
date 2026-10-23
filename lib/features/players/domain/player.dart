@@ -168,7 +168,18 @@ class Player {
       nationName: asString(json['nation_name'] ?? json['nation']),
       version: asString(json['version'] ?? json['rarity']),
       imageUrl: (() {
-        final explicit = asString(json['image_url'] ?? json['image']);
+        final explicit = asString(
+          json['image_url'] ??
+              json['imageUrl'] ??
+              json['image'] ??
+              json['portrait_url'] ??
+              json['portraitUrl'] ??
+              json['headshot_url'] ??
+              json['headshot'] ??
+              json['player_image'] ??
+              json['playerImage'] ??
+              json['face_url'],
+        );
         if (explicit.isNotEmpty) return explicit;
         final rawId = asString(
           json['ea_id'] ?? json['resource_id'] ?? json['id'] ?? '',
@@ -179,7 +190,13 @@ class Player {
         }
         return '';
       })(),
-      cardImageUrl: asString(json['card_image_url'] ?? json['card_image']),
+      cardImageUrl: asString(
+        json['card_image_url'] ??
+            json['cardImageUrl'] ??
+            json['card_image'] ??
+            json['item_image_url'] ??
+            json['itemImageUrl'],
+      ),
       pace: asInt(json['pace'] ?? json['pac']),
       shooting: asInt(json['shooting'] ?? json['sho']),
       passing: asInt(json['passing'] ?? json['pas']),
