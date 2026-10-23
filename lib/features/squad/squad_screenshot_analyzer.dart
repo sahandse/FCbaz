@@ -138,7 +138,9 @@ class SquadScreenshotAnalyzer {
       double score;
       if (query == name) {
         score = 1;
-      } else if (query.contains(name) || name.contains(query)) {
+      } else if (query.contains(name)) {
+        score = math.min(query.length, name.length) / math.max(query.length, name.length);
+      } else if (name.contains(query) && query.contains(' ')) {
         score = math.min(query.length, name.length) / math.max(query.length, name.length);
       } else {
         final qTokens = query.split(' ').where((e) => e.length > 1).toSet();
