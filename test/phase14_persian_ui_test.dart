@@ -37,15 +37,14 @@ void main() {
     expect(source, contains("('WEAK FOOT'"));
   });
 
-  test('search discovery and price labels stay Persian', () {
+  test('cards discovery keeps Persian labels', () {
     final source = File(
-      'lib/features/search/search_screen.dart',
+      'lib/features/players/presentation/cards_screen.dart',
     ).readAsStringSync();
 
-    expect(source, contains('بازیکنان ترند'));
-    expect(source, contains('جستجوهای محبوب'));
-    expect(source, contains('قیمت رایانه'));
-    expect(source, contains('قیمت کنسول'));
+    expect(source, contains('کارت‌های داغ'));
+    expect(source, contains('جستجوهای اخیر'));
+    expect(source, contains('کاتالوگ FC27'));
 
     expect(source, isNot(contains('Trending Players')));
     expect(source, isNot(contains('Popular Searches')));

@@ -28,6 +28,16 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   fonts:
+    - family: Vazirmatn
+      fonts:
+        - asset: assets/fonts/Vazirmatn-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Vazirmatn-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Vazirmatn-Bold.ttf
+          weight: 700
+        - asset: assets/fonts/Vazirmatn-ExtraBold.ttf
+          weight: 800
     - family: BarlowCondensed
       fonts:
         - asset: assets/fonts/BarlowCondensed-SemiBoldItalic.ttf
@@ -40,6 +50,7 @@ flutter:
     - assets/icon/fcbaz_app_icon.png
     - assets/data/
     - assets/fonts/OFL.txt
+    - assets/fonts/Vazirmatn-OFL.txt
 
 flutter_launcher_icons:
   android: true

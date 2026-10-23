@@ -14,7 +14,10 @@ import '../domain/club_inventory_analysis.dart';
 import '../my_club_service.dart';
 
 class MyClubScreen extends StatefulWidget {
-  const MyClubScreen({super.key});
+  const MyClubScreen({this.embedded = false, super.key});
+
+  final bool embedded;
+
   @override
   State<MyClubScreen> createState() => _MyClubScreenState();
 }
@@ -148,23 +151,48 @@ class _MyClubScreenState extends State<MyClubScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    if (loading) return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    if (loading) {
+      const progress = Center(child: CircularProgressIndicator());
+      return widget.embedded ? progress : const Scaffold(body: progress);
+    }
     final visible = visibleItems;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('MY CLUB'),
-        actions: [
-          IconButton(onPressed: loadingValue ? null : () => _refreshValue(forceRefresh: true), icon: const Icon(Icons.refresh_rounded), tooltip: 'بروزرسانی قیمت'),
-          IconButton(onPressed: _addPlayer, icon: const Icon(Icons.add_rounded), tooltip: 'افزودن کارت'),
-        ],
-      ),
-      body: RefreshIndicator(
-        onRefresh: () => _load(forceRefresh: true),
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(14, 8, 14, 28),
-          children: [
-            Container(
+    final body = RefreshIndicator(
+      onRefresh: () => _load(forceRefresh: true),
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(14, 8, 14, 28),
+        children: [
+          if (widget.embedded)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  Text(
+                    'CLUB INVENTORY',
+                    textDirection: TextDirection.ltr,
+                    style: TextStyle(
+                      fontFamily: 'BarlowCondensed',
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1.1,
+                      color: scheme.primary,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: loadingValue ? null : () => _refreshValue(forceRefresh: true),
+                    icon: const Icon(Icons.refresh_rounded),
+                    tooltip: 'بروزرسانی قیمت',
+                  ),
+                  IconButton(
+                    onPressed: _addPlayer,
+                    icon: const Icon(Icons.add_rounded),
+                    tooltip: 'افزودن کارت',
+                  ),
+                ],
+              ),
+            ),
+          Container(
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
                 color: scheme.surface,
@@ -181,7 +209,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
                     decoration: BoxDecoration(color: scheme.primary, borderRadius: BorderRadius.circular(7)),
-                    child: const Text('FC27 • LOCAL CLUB', textDirection: TextDirection.ltr, style: TextStyle(color: Color(0xFF10140C), fontSize: 9, fontWeight: FontWeight.w900)),
+                    child: Text('FC27 • LOCAL CLUB', textDirection: TextDirection.ltr, style: TextStyle(color: scheme.onPrimary, fontSize: 10, fontWeight: FontWeight.w800)),
                   ),
                   const Spacer(),
                   Text('${items.length} ITEMS', textDirection: TextDirection.ltr, style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 9, fontWeight: FontWeight.w900)),
@@ -275,7 +303,19 @@ class _MyClubScreenState extends State<MyClubScreen> {
             Text('برای اکشن‌های بیشتر روی کارت نگه دار.', style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 10.5), textAlign: TextAlign.center),
           ],
         ),
+      );
+
+    if (widget.embedded) return body;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('باشگاه من'),
+        actions: [
+          IconButton(onPressed: loadingValue ? null : () => _refreshValue(forceRefresh: true), icon: const Icon(Icons.refresh_rounded), tooltip: 'بروزرسانی قیمت'),
+          IconButton(onPressed: _addPlayer, icon: const Icon(Icons.add_rounded), tooltip: 'افزودن کارت'),
+        ],
       ),
+      body: body,
     );
   }
 

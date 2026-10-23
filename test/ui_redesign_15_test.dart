@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('1.5 player collection keeps FC27 item families', () {
-    final source = File('lib/features/players/players_screen.dart').readAsStringSync();
+    final source = File('lib/features/players/presentation/cards_screen.dart').readAsStringSync();
     for (final token in ['Gold', 'ICON', 'Hero', 'TOTW', 'Hall', 'Holo', 'Silver', 'Bronze']) {
       expect(source, contains(token));
     }
