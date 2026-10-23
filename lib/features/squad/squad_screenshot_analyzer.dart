@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
@@ -146,7 +147,7 @@ class SquadScreenshotAnalyzer {
         final overlap = qTokens.intersection(nTokens).length;
         score = overlap / math.max(qTokens.length, nTokens.length);
         if (qTokens.any((q) => nTokens.any((n) => n.startsWith(q) && q.length >= 3))) {
-          score = math.max(score, .72);
+          score = math.max(score, .72).toDouble();
         }
       }
       if (score > bestScore) {
@@ -224,7 +225,7 @@ class SquadScreenshotAnalyzer {
     return cleaned.length >= 5 && cleaned.contains(' ');
   }
 
-  Future<void> dispose() async {
-    await _textRecognizer.close();
+  void dispose() {
+    unawaited(_textRecognizer.close());
   }
 }
