@@ -189,8 +189,25 @@ class SquadScreenshotAnalyzer {
       final remainingSlots = [...slots];
       final map = <String, Player>{};
       var cost = 0.0;
+      double distanceToNearestSlot(_DetectedPlayer item) {
+        final point = transform(item.x, item.y);
+        var nearestDistance = double.infinity;
+        for (final slot in slots) {
+          final dx = point.$1 - slot.x;
+          final dy = point.$2 - slot.y;
+          final distance = math.sqrt(dx * dx + dy * dy);
+          if (distance < nearestDistance) nearestDistance = distance;
+        }
+        return nearestDistance;
+      }
+
+      // Console screenshots can also show bench cards. Prefer OCR detections
+      // nearest to actual pitch slots before assigning any remaining players.
       final sorted = [...detected]
-        ..sort((a, b) => b.confidence.compareTo(a.confidence));
+        ..sort((a, b) {
+          final distance = distanceToNearestSlot(a).compareTo(distanceToNearestSlot(b));
+          return distance != 0 ? distance : b.confidence.compareTo(a.confidence);
+        });
       for (final item in sorted) {
         if (remainingSlots.isEmpty) break;
         final point = transform(item.x, item.y);
