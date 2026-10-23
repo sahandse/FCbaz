@@ -25,6 +25,9 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
+      - name: Regenerate missing Android platform scaffolding
+        run: flutter create --platforms=android .
+
       - name: Install dependencies
         run: flutter pub get
 
