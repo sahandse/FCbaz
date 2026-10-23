@@ -7,6 +7,9 @@ void main() {
     final source = File(
       'lib/features/players/presentation/player_item_visual.dart',
     ).readAsStringSync();
+    final themes = File(
+      'lib/features/players/presentation/card/player_card_theme.dart',
+    ).readAsStringSync();
 
     for (final token in [
       'icon',
@@ -18,7 +21,7 @@ void main() {
       'silver',
       'bronze',
     ]) {
-      expect(source.toLowerCase(), contains(token));
+      expect(themes.toLowerCase(), contains(token));
     }
 
     expect(source, contains("label: 'PS'"));
