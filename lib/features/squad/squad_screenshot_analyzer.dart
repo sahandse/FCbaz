@@ -121,7 +121,7 @@ class SquadScreenshotAnalyzer {
     );
   }
 
-  ({Player, double})? _matchPlayer(
+  (Player, double)? _matchPlayer(
     String raw,
     List<Player> catalog,
     Set<String> usedIds,
