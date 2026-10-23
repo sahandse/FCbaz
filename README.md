@@ -30,6 +30,7 @@ FCBaz 1.5 uses an original FC27-inspired visual system: dark club/stadium surfac
 - Watchlist and Android local price alerts
 - My Club local inventory
 - Squad Builder, chemistry, formations and tactics
+- Console squad screenshot import using on-device OCR, player-name matching, formation-slot estimation, and a confirmation step before replacing the current XI
 - SBC Center and rating combinations
 - Evolutions and eligibility tools
 - Objectives
