@@ -59,9 +59,6 @@ void main() {
 
   test('2.2 version is production increment', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(RegExp(r'^version: 2\.2\.0\+\d+, multiLine: true).hasMatch(pubspec), isTrue);
-  });
-}
-, multiLine: true).hasMatch(pubspec), isTrue);
+    expect(RegExp(r'^version: 2\.2\.0\+\d+$', multiLine: true).hasMatch(pubspec), isTrue);
   });
 }
