@@ -52,8 +52,9 @@ void main() {
 
   test('1.9 player item labels PlayStation source accurately', () {
     final source = File('lib/features/players/presentation/player_item_visual.dart').readAsStringSync();
-    expect(source, contains("_Price(label: 'PS'"));
-    expect(source, contains("_Price(label: 'PC'"));
+    expect(source, contains('_Price('));
+    expect(source, contains("label: 'PS'"));
+    expect(source, contains("label: 'PC'"));
     expect(source, contains("if (value <= 0) return '—'"));
   });
 

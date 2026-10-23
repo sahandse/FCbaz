@@ -440,27 +440,28 @@ class _MyClubScreenState extends State<MyClubScreen> {
                         ),
                       ),
                       if (item.untradeable)
-                        Positioned(
-                          top: 8,
-                          right: 8,
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 6,
-                              vertical: 3,
-                            ),
-                            decoration: BoxDecoration(
-                              color: const Color(
-                                0xFF050806,
-                              ).withValues(alpha: .8),
-                              borderRadius: BorderRadius.circular(6),
-                            ),
-                            child: const Text(
-                              'UNTRADEABLE',
-                              textDirection: TextDirection.ltr,
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 7,
-                                fontWeight: FontWeight.w900,
+                        Positioned.fill(
+                          child: Align(
+                            alignment: const Alignment(.36, -.64),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 6,
+                                vertical: 3,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(
+                                  0xFF050806,
+                                ).withValues(alpha: .8),
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              child: const Text(
+                                'UNTRADEABLE',
+                                textDirection: TextDirection.ltr,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 7,
+                                  fontWeight: FontWeight.w900,
+                                ),
                               ),
                             ),
                           ),

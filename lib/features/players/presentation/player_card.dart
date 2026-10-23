@@ -51,7 +51,9 @@ class _PlayerCardState extends State<PlayerCard> {
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
         onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
+          MaterialPageRoute(
+            builder: (_) => PlayerDetailsScreen(player: player),
+          ),
         ),
         child: LayoutBuilder(
           builder: (context, constraints) {
@@ -64,28 +66,33 @@ class _PlayerCardState extends State<PlayerCard> {
                   compact: true,
                   showPrices: true,
                 ),
-                Positioned(
-                  top: heart * .28,
-                  right: heart * .28,
-                  child: Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      onTap: _toggleFavorite,
-                      customBorder: const CircleBorder(),
-                      child: Container(
-                        width: heart,
-                        height: heart,
-                        decoration: BoxDecoration(
-                          color: Colors.black.withValues(alpha: .34),
-                          shape: BoxShape.circle,
-                          border: Border.all(color: Colors.white.withValues(alpha: .18)),
-                        ),
-                        child: Icon(
-                          favorite ? Icons.favorite_rounded : Icons.favorite_border_rounded,
-                          size: heart * .53,
-                          color: favorite
-                              ? const Color(0xFFFF5F72)
-                              : Colors.white.withValues(alpha: .92),
+                Positioned.fill(
+                  child: Align(
+                    alignment: const Alignment(.52, -.8),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: _toggleFavorite,
+                        customBorder: const CircleBorder(),
+                        child: Container(
+                          width: heart,
+                          height: heart,
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: .34),
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: .18),
+                            ),
+                          ),
+                          child: Icon(
+                            favorite
+                                ? Icons.favorite_rounded
+                                : Icons.favorite_border_rounded,
+                            size: heart * .53,
+                            color: favorite
+                                ? const Color(0xFFFF5F72)
+                                : Colors.white.withValues(alpha: .92),
+                          ),
                         ),
                       ),
                     ),
