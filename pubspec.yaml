@@ -27,9 +27,19 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  fonts:
+    - family: BarlowCondensed
+      fonts:
+        - asset: assets/fonts/BarlowCondensed-SemiBoldItalic.ttf
+          weight: 600
+          style: italic
+        - asset: assets/fonts/BarlowCondensed-ExtraBoldItalic.ttf
+          weight: 800
+          style: italic
   assets:
     - assets/icon/fcbaz_app_icon.png
     - assets/data/
+    - assets/fonts/OFL.txt
 
 flutter_launcher_icons:
   android: true
