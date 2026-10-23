@@ -69,13 +69,6 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
   }
 
-  String _sync(DateTime? at) {
-    if (at == null) return 'LIVE CATALOG';
-    final v = at.toLocal();
-    String two(int n) => n.toString().padLeft(2, '0');
-    return 'SYNC ${two(v.hour)}:${two(v.minute)}';
-  }
-
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
