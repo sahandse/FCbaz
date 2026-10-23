@@ -148,12 +148,15 @@ class Player {
             json['playername'] ??
             json['common_name'],
       ),
-      rating: asInt(json['rating'] ?? json['overall']),
-      position: asString(json['position']),
+      rating: asInt(json['rating'] ?? json['overall'] ?? json['overall_rating'] ?? json['rat']),
+      position: asString(json['position'] ?? json['pos']),
       positions: (() {
         final value = json['positions'] ??
             json['alternative_positions'] ??
-            json['pos_all'];
+            json['alternate_positions'] ??
+            json['altPos'] ??
+            json['pos_all'] ??
+            json['pos'];
         if (value is String) {
           return value
               .split(',')
@@ -164,8 +167,8 @@ class Player {
         return asStrings(value);
       })(),
       clubName: asString(json['club_name'] ?? json['club']),
-      leagueName: asString(json['league_name'] ?? json['league']),
-      nationName: asString(json['nation_name'] ?? json['nation']),
+      leagueName: asString(json['league_name'] ?? json['league'] ?? json['leagueFA']),
+      nationName: asString(json['nation_name'] ?? json['nation'] ?? json['nationality'] ?? json['nat']),
       version: asString(json['version'] ?? json['rarity']),
       imageUrl: (() {
         final explicit = asString(
@@ -197,28 +200,28 @@ class Player {
             json['item_image_url'] ??
             json['itemImageUrl'],
       ),
-      pace: asInt(json['pace'] ?? json['pac']),
-      shooting: asInt(json['shooting'] ?? json['sho']),
-      passing: asInt(json['passing'] ?? json['pas']),
-      dribbling: asInt(json['dribbling'] ?? json['dri']),
-      defending: asInt(json['defending'] ?? json['def']),
-      physical: asInt(json['physical'] ?? json['phy']),
-      skillMoves: asInt(json['skill_moves']),
-      weakFoot: asInt(json['weak_foot']),
+      pace: asInt(json['pace'] ?? json['pac'] ?? (json['stats'] is Map ? (json['stats'] as Map)['PAC'] : null)),
+      shooting: asInt(json['shooting'] ?? json['sho'] ?? (json['stats'] is Map ? (json['stats'] as Map)['SHO'] : null)),
+      passing: asInt(json['passing'] ?? json['pas'] ?? (json['stats'] is Map ? (json['stats'] as Map)['PAS'] : null)),
+      dribbling: asInt(json['dribbling'] ?? json['dri'] ?? (json['stats'] is Map ? (json['stats'] as Map)['DRI'] : null)),
+      defending: asInt(json['defending'] ?? json['def'] ?? (json['stats'] is Map ? (json['stats'] as Map)['DEF'] : null)),
+      physical: asInt(json['physical'] ?? json['physicality'] ?? json['phy'] ?? (json['stats'] is Map ? (json['stats'] as Map)['PHY'] : null)),
+      skillMoves: asInt(json['skill_moves'] ?? json['skillMoves']),
+      weakFoot: asInt(json['weak_foot'] ?? json['weakFoot']),
       playStyles: asStrings(json['playstyles'] ?? json['play_styles']),
       playStylesPlus: asStrings(
         json['playstyles_plus'] ?? json['play_styles_plus'],
       ),
       roles: asStrings(json['roles'] ?? json['player_roles']),
       inGameStats: asStats(
-        json['in_game_stats'] ?? json['detailed_stats'] ?? json['attributes'],
+        json['in_game_stats'] ?? json['detailed_stats'] ?? json['attributes'] ?? json['stats'],
       ),
       traits: asStrings(json['traits']),
-      foot: asString(json['foot'] ?? json['preferred_foot']),
+      foot: asString(json['foot'] ?? json['preferred_foot'] ?? json['preferredFoot']),
       height: asString(json['height']),
       workRates: asString(json['work_rates'] ?? json['workrates']),
       rarity: asString(json['rarity'] ?? json['raretype']),
-      cardType: asString(json['card_type'] ?? json['type']),
+      cardType: asString(json['card_type'] ?? json['cardType'] ?? json['type']),
       pricePs: asInt(
         json['price_ps'] ??
             json['price_ps_coins'] ??
