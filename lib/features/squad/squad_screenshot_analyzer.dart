@@ -144,9 +144,14 @@ class SquadScreenshotAnalyzer {
         final qTokens = query.split(' ').where((e) => e.length > 1).toSet();
         final nTokens = name.split(' ').where((e) => e.length > 1).toSet();
         if (qTokens.isEmpty || nTokens.isEmpty) continue;
-        final overlap = qTokens.intersection(nTokens).length;
-        score = overlap / math.max(qTokens.length, nTokens.length);
-        if (qTokens.any((q) => nTokens.any((n) => n.startsWith(q) && q.length >= 3))) {
+        final exactTokens = qTokens.intersection(nTokens).length;
+        score = exactTokens / math.max(qTokens.length, nTokens.length);
+        if (qTokens.length == 1 &&
+            nTokens.any((n) => n == query && n.length >= 4)) {
+          score = .84;
+        }
+        if (qTokens.any((q) =>
+            nTokens.any((n) => n.startsWith(q) && q.length >= 3))) {
           score = math.max(score, .72).toDouble();
         }
       }
