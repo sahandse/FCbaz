@@ -281,9 +281,14 @@ class _SquadScreenProState extends State<SquadScreenPro> {
         ),
       );
     } catch (error) {
+      debugPrint('Squad screenshot import failed: $error');
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('وارد کردن تصویر ناموفق بود: $error')),
+        const SnackBar(
+          content: Text(
+            'خواندن ترکیب از تصویر ممکن نشد. تصویر واضح‌تری از صفحه ترکیب انتخاب کنید.',
+          ),
+        ),
       );
     } finally {
       if (mounted) setState(() => importingScreenshot = false);
