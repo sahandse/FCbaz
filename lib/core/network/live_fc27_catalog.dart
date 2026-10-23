@@ -27,8 +27,9 @@ class LiveCatalogHealth {
 
   bool get isFresh {
     final at = generatedAt;
-    if (at == null) return false;
-    return DateTime.now().toUtc().difference(at.toUtc()) < const Duration(hours: 24);
+    return at != null &&
+        DateTime.now().toUtc().difference(at.toUtc()) <
+            const Duration(hours: 24);
   }
 }
 
@@ -37,10 +38,21 @@ class LiveFc27Catalog {
 
   final HttpClient _client;
 
-  static const _url =
-      'https://raw.githubusercontent.com/sahandse/FCbaz/main/data/live/catalog.json';
-  static const _cacheJsonKey = 'fcbaz_live_fc27_catalog_json_v1';
-  static const _cacheSavedAtKey = 'fcbaz_live_fc27_catalog_saved_at_v1';
+  // FC27 Hub is the canonical public data source. Do not point this back at
+  // FCBaz: that created a circular dependency and prevented source updates.
+  static const _hubBase = 'https://sahandse.github.io/FC27/data/';
+  static const _cacheJsonKey = 'fcbaz_live_fc27_catalog_json_v2';
+  static const _cacheSavedAtKey = 'fcbaz_live_fc27_catalog_saved_at_v2';
+
+  static const _feedNames = <String>[
+    'fc27-players.json',
+    'fc27-prices.json',
+    'fc27-challenges.json',
+    'fc27-evolutions.json',
+    'fc27-news.json',
+    'fc27-card-art.json',
+    'available-portraits.json',
+  ];
 
   static Map<String, dynamic>? _memory;
   static DateTime? _loadedAt;
@@ -55,7 +67,9 @@ class LiveFc27Catalog {
     }
 
     if (!forceRefresh && _memory == null) {
-      final cached = await _readPersistentCache(maxAge: const Duration(minutes: 30));
+      final cached = await _readPersistentCache(
+        maxAge: const Duration(minutes: 30),
+      );
       if (cached != null) return cached;
       final bundled = await _loadBundledCatalog();
       if (bundled != null) {
@@ -67,22 +81,8 @@ class LiveFc27Catalog {
     }
 
     try {
-      final request = await _client.getUrl(Uri.parse(_url)).timeout(
-            const Duration(seconds: 8),
-          );
-      request.headers.set(HttpHeaders.acceptHeader, 'application/json');
-      request.headers.set(
-        HttpHeaders.userAgentHeader,
-        'FCBaz/2.1 Android FC27 companion',
-      );
-
-      final response = await request.close().timeout(const Duration(seconds: 12));
-      if (response.statusCode < 200 || response.statusCode >= 300) {
-        throw HttpException('Live catalog HTTP ${response.statusCode}');
-      }
-
-      final text = await utf8.decoder.bind(response).join();
-      final data = _decodeAndValidate(text);
+      final data = await _loadHubCatalog();
+      final text = jsonEncode(data);
       _memory = data;
       _loadedAt = DateTime.now();
       _fromPersistentCache = false;
@@ -103,10 +103,208 @@ class LiveFc27Catalog {
     }
   }
 
+  Future<Map<String, dynamic>> _loadHubCatalog() async {
+    // Read all feeds independently so one optional feed being temporarily
+    // unavailable does not hide the player database or other valid sections.
+    final results = await Future.wait(
+      _feedNames.map((name) async {
+        try {
+          return MapEntry(name, await _getJson(Uri.parse('$_hubBase$name')));
+        } catch (_) {
+          return MapEntry<String, dynamic>(name, null);
+        }
+      }),
+    );
+    final feeds = Map<String, dynamic>.fromEntries(results);
+
+    final playersFeed = feeds['fc27-players.json'];
+    final players = _extractList(playersFeed, const [
+      'players',
+      'data',
+      'items',
+      'results',
+    ]);
+    if (players.isEmpty) {
+      throw const FormatException('FC27 Hub returned no player records');
+    }
+
+    final priceFeed = feeds['fc27-prices.json'];
+    final priceRows = _extractList(priceFeed, const [
+      'prices',
+      'players',
+      'data',
+      'items',
+      'quotes',
+    ]);
+    final pricesById = <String, Map<String, dynamic>>{};
+    for (final row in priceRows) {
+      final id = _recordId(row);
+      if (id.isNotEmpty) pricesById[id] = row;
+    }
+
+    final mergedPlayers = players.map((raw) {
+      final player = Map<String, dynamic>.from(raw);
+      final id = _recordId(player);
+      final price = pricesById[id];
+      if (price != null) {
+        // Preserve source fields; only fill absent market fields.
+        _copyIfMissing(player, price, const [
+          'price_ps',
+          'price_pc',
+          'pricePs',
+          'pricePc',
+          'prices',
+          'market_prices',
+          'platforms',
+        ]);
+      }
+      return player;
+    }).toList();
+
+    final challenges = _asMap(feeds['fc27-challenges.json']);
+    final sections = _asMap(challenges['sections']);
+    final sbcs = _extractListFromValue(
+      sections['sbc'] ?? sections['sbcs'] ?? sections['challenges'],
+    );
+    final objectives = _extractListFromValue(
+      sections['objectives'] ?? sections['objective'],
+    );
+    final evolutionFeed = _asMap(feeds['fc27-evolutions.json']);
+    final evolutions = _extractList(
+      evolutionFeed,
+      const ['evolutions', 'data', 'items', 'results'],
+    ).where((item) {
+      final text = jsonEncode(item).toLowerCase();
+      return !text.contains('fc26');
+    }).toList();
+    final newsFeed = _asMap(feeds['fc27-news.json']);
+    final news = _extractList(newsFeed, const ['items', 'news', 'data']);
+    final artFeed = _asMap(feeds['fc27-card-art.json']);
+    final portraitsFeed = _asMap(feeds['available-portraits.json']);
+
+    final timestamps = feeds.values
+        .whereType<Map>()
+        .map((value) => value['checked_at'] ?? value['updated_at'])
+        .whereType<String>()
+        .map(DateTime.tryParse)
+        .whereType<DateTime>()
+        .toList()
+      ..sort((a, b) => b.compareTo(a));
+
+    return <String, dynamic>{
+      'game_year': '27',
+      'generated_at': timestamps.isEmpty
+          ? DateTime.now().toUtc().toIso8601String()
+          : timestamps.first.toUtc().toIso8601String(),
+      'players': mergedPlayers,
+      'sbcs': sbcs,
+      'evolutions': evolutions,
+      'objectives': objectives,
+      'news': news,
+      'card_art': _asMap(artFeed['art']),
+      'available_portraits': _extractList(
+        portraitsFeed,
+        const ['ids', 'portraits', 'items'],
+      ),
+      'sources': _feedNames
+          .where((name) => feeds[name] != null)
+          .map((name) => '$_hubBase$name')
+          .toList(),
+    };
+  }
+
+  Future<dynamic> _getJson(Uri uri) async {
+    final request = await _client.getUrl(uri).timeout(
+          const Duration(seconds: 10),
+        );
+    request.headers.set(HttpHeaders.acceptHeader, 'application/json');
+    request.headers.set(
+      HttpHeaders.userAgentHeader,
+      'FCBaz Android companion; FC27 public-data sync',
+    );
+    final response = await request.close().timeout(const Duration(seconds: 20));
+    final text = await utf8.decoder.bind(response).join();
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw HttpException('FC27 Hub HTTP ${response.statusCode}');
+    }
+    return jsonDecode(text);
+  }
+
+  List<Map<String, dynamic>> _extractList(
+    dynamic value,
+    List<String> candidateKeys,
+  ) {
+    if (value is List) {
+      return value.whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+    final map = _asMap(value);
+    for (final key in candidateKeys) {
+      final list = _extractListFromValue(map[key]);
+      if (list.isNotEmpty) return list;
+    }
+    return const [];
+  }
+
+  List<Map<String, dynamic>> _extractListFromValue(dynamic value) {
+    if (value is List) {
+      return value.whereType<Map>()
+          .map((e) => Map<String, dynamic>.from(e))
+          .toList();
+    }
+    if (value is Map) {
+      for (final key in const ['items', 'data', 'results', 'challenges']) {
+        final nested = value[key];
+        if (nested is List) {
+          return nested.whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList();
+        }
+      }
+    }
+    return const [];
+  }
+
+  Map<String, dynamic> _asMap(dynamic value) =>
+      value is Map ? Map<String, dynamic>.from(value) : <String, dynamic>{};
+
+  String _recordId(Map<String, dynamic> record) {
+    for (final key in const [
+      'id',
+      'player_id',
+      'playerId',
+      'resource_id',
+      'resourceId',
+      'ea_resource_id',
+      'base_id',
+    ]) {
+      final value = record[key];
+      if (value != null && value.toString().trim().isNotEmpty) {
+        return value.toString();
+      }
+    }
+    return '';
+  }
+
+  void _copyIfMissing(
+    Map<String, dynamic> target,
+    Map<String, dynamic> source,
+    List<String> keys,
+  ) {
+    for (final key in keys) {
+      final current = target[key];
+      if (current == null || current.toString().trim().isEmpty) {
+        if (source.containsKey(key)) target[key] = source[key];
+      }
+    }
+  }
+
   Future<Map<String, dynamic>?> _loadBundledCatalog() async {
     try {
-      final text = await rootBundle.loadString('assets/data/catalog.json');
-      return _decodeAndValidate(text);
+      return _decodeAndValidate(
+        await rootBundle.loadString('assets/data/catalog.json'),
+      );
     } catch (_) {
       return null;
     }
@@ -117,12 +315,10 @@ class LiveFc27Catalog {
     if (decoded is! Map) {
       throw const FormatException('Live FC27 catalog is not a JSON object');
     }
-
     final data = Map<String, dynamic>.from(decoded);
     if ((data['game_year'] ?? '').toString() != '27') {
       throw const FormatException('Live catalog is not FC27 data');
     }
-
     final players = data['players'];
     if (players is! List || players.isEmpty) {
       throw const FormatException('Live FC27 catalog has no players');
@@ -134,9 +330,12 @@ class LiveFc27Catalog {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_cacheJsonKey, text);
-      await prefs.setString(_cacheSavedAtKey, DateTime.now().toUtc().toIso8601String());
+      await prefs.setString(
+        _cacheSavedAtKey,
+        DateTime.now().toUtc().toIso8601String(),
+      );
     } catch (_) {
-      // Memory cache is still usable even if the platform cache cannot be written.
+      // Memory cache is still usable if persistent storage is unavailable.
     }
   }
 
@@ -145,14 +344,15 @@ class LiveFc27Catalog {
       final prefs = await SharedPreferences.getInstance();
       final text = prefs.getString(_cacheJsonKey);
       if (text == null || text.trim().isEmpty) return null;
-
       if (maxAge != null) {
-        final savedAt = DateTime.tryParse(prefs.getString(_cacheSavedAtKey) ?? '');
-        if (savedAt == null || DateTime.now().toUtc().difference(savedAt.toUtc()) > maxAge) {
+        final savedAt = DateTime.tryParse(
+          prefs.getString(_cacheSavedAtKey) ?? '',
+        );
+        if (savedAt == null ||
+            DateTime.now().toUtc().difference(savedAt.toUtc()) > maxAge) {
           return null;
         }
       }
-
       final data = _decodeAndValidate(text);
       _memory = data;
       _loadedAt = DateTime.now();
@@ -170,8 +370,7 @@ class LiveFc27Catalog {
     final data = await load(forceRefresh: forceRefresh);
     final raw = data[key];
     if (raw is! List) return const [];
-    return raw
-        .whereType<Map>()
+    return raw.whereType<Map>()
         .map((e) => Map<String, dynamic>.from(e))
         .where((e) => e.isNotEmpty)
         .toList();
@@ -189,7 +388,6 @@ class LiveFc27Catalog {
     final sources = rawSources is List
         ? rawSources.map((e) => e.toString()).where((e) => e.isNotEmpty).toList()
         : const <String>[];
-
     return LiveCatalogHealth(
       generatedAt: DateTime.tryParse((data['generated_at'] ?? '').toString()),
       loadedAt: _loadedAt,
