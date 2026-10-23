@@ -103,6 +103,40 @@ class Player {
     int asInt(dynamic value) =>
         value is int ? value : int.tryParse(value?.toString() ?? '') ?? 0;
 
+    int priceFor(String platform, List<String> keys) {
+      for (final key in keys) {
+        final value = asInt(json[key]);
+        if (value > 0) return value;
+      }
+      final prices = json['prices'];
+      if (prices is Map) {
+        final raw = prices[platform] ?? prices[platform.toLowerCase()];
+        if (raw is Map) {
+          for (final key in const ['LCPrice', 'price', 'current', 'value']) {
+            final value = asInt(raw[key]);
+            if (value > 0) return value;
+          }
+        } else {
+          final value = asInt(raw);
+          if (value > 0) return value;
+        }
+      }
+      final market = json['market_prices'] ?? json['marketPrices'];
+      if (market is Map) {
+        final raw = market[platform] ?? market[platform.toLowerCase()];
+        if (raw is Map) {
+          for (final key in const ['LCPrice', 'price', 'current', 'value']) {
+            final value = asInt(raw[key]);
+            if (value > 0) return value;
+          }
+        } else {
+          final value = asInt(raw);
+          if (value > 0) return value;
+        }
+      }
+      return 0;
+    }
+
     String asString(dynamic value) => value?.toString() ?? '';
 
     List<String> asStrings(dynamic value) {
@@ -222,16 +256,20 @@ class Player {
       workRates: asString(json['work_rates'] ?? json['workrates']),
       rarity: asString(json['rarity'] ?? json['raretype']),
       cardType: asString(json['card_type'] ?? json['cardType'] ?? json['type']),
-      pricePs: asInt(
-        json['price_ps'] ??
-            json['price_ps_coins'] ??
-            json['ps_LCPrice'],
-      ),
-      pricePc: asInt(
-        json['price_pc'] ??
-            json['price_pc_coins'] ??
-            json['pc_LCPrice'],
-      ),
+      pricePs: priceFor('PS', const [
+        'price_ps',
+        'price_ps_coins',
+        'ps_LCPrice',
+        'psPrice',
+        'playstation_price',
+      ]),
+      pricePc: priceFor('PC', const [
+        'price_pc',
+        'price_pc_coins',
+        'pc_LCPrice',
+        'pcPrice',
+        'pc_price',
+      ]),
     );
   }
 }
