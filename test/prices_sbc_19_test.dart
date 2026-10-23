@@ -57,8 +57,11 @@ void main() {
     expect(source, contains("if (value <= 0) return '—'"));
   });
 
-  test('2.1 version is production increment', () {
+  test('2.2 version is production increment', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(RegExp(r'^version: 2\.1\.0\+\d+$', multiLine: true).hasMatch(pubspec), isTrue);
+    expect(RegExp(r'^version: 2\.2\.0\+\d+, multiLine: true).hasMatch(pubspec), isTrue);
+  });
+}
+, multiLine: true).hasMatch(pubspec), isTrue);
   });
 }
