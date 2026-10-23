@@ -48,6 +48,12 @@ class _SquadScreenProState extends State<SquadScreenPro> {
     _load();
   }
 
+  @override
+  void dispose() {
+    screenshotAnalyzer.dispose();
+    super.dispose();
+  }
+
   SquadStateModel _newSquad() => SquadStateModel(
         id: DateTime.now().microsecondsSinceEpoch.toString(),
         name: 'ترکیب من',
