@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
+import '../club/presentation/my_club_screen.dart';
 import '../evolutions/presentation/evolutions_screen.dart';
-import '../home/home_dashboard_screen.dart';
 import '../home/objectives_screen.dart';
 import '../more/more_screen.dart';
+import '../news/presentation/news_screen.dart';
 import '../notifications/deadline_alert_service.dart';
 import '../notifications/notification_center_screen.dart';
 import '../notifications/notification_repository.dart';
 import '../notifications/price_alert_service.dart';
 import '../notifications/system_notification_service.dart';
 import '../players/data/player_repository.dart';
-import '../players/players_screen.dart';
+import '../players/presentation/cards_screen.dart';
 import '../players/presentation/player_details_screen.dart';
-import '../search/search_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../squad/squad_screen_pro.dart';
+import '../../src/theme/fcbaz_theme.dart';
+import '../../src/ui/fcbaz_top_bar.dart';
 import 'app_navigation_repository.dart';
 
 class MainShell extends StatefulWidget {
@@ -32,12 +35,15 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
+  static const _titles = ['اخبار', 'کارت‌ها', 'باشگاه', 'تیم', 'بیشتر'];
+
   final notificationRepository = NotificationRepository();
   final priceAlertService = PriceAlertService();
   final deadlineAlertService = DeadlineAlertService();
   final systemNotifications = SystemNotificationService.instance;
   final navigationRepository = AppNavigationRepository();
   final playerRepository = PlayerRepository();
+  final searchRequests = ValueNotifier<int>(0);
 
   int index = 0;
   int unread = 0;
@@ -54,6 +60,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    searchRequests.dispose();
     super.dispose();
   }
 
@@ -92,9 +99,16 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 
   Future<void> _selectTab(int value) async {
-    if (!mounted) return;
+    if (!mounted || value == index) return;
+    HapticFeedback.selectionClick();
     setState(() => index = value);
     await navigationRepository.saveTab(value);
+  }
+
+  Future<void> _openGlobalSearch() async {
+    if (index != 1) await _selectTab(1);
+    if (!mounted) return;
+    searchRequests.value++;
   }
 
   Future<void> _openPendingPlayer() async {
@@ -122,21 +136,23 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
         final player = await playerRepository.getPlayer(id);
         if (!mounted) return;
         await Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
+          MaterialPageRoute(
+            builder: (_) => PlayerDetailsScreen(player: player),
+          ),
         );
       } catch (_) {}
       return;
     }
     if (type == 'objective') {
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ObjectivesScreen()),
-      );
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const ObjectivesScreen()));
       return;
     }
     if (type == 'evolution') {
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const EvolutionsScreen()),
-      );
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const EvolutionsScreen()));
     }
   }
 
@@ -147,24 +163,19 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 
   Future<void> _openNotifications() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const NotificationCenterScreen()),
-    );
+    await Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const NotificationCenterScreen()));
     await _refreshUnread();
   }
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+    final palette = context.palette;
     final pages = [
-      HomeDashboardScreen(
-        onOpenPlayers: () => _selectTab(1),
-        onOpenSearch: () => _selectTab(2),
-        onOpenSquad: () => _selectTab(3),
-        onOpenMore: () => _selectTab(4),
-      ),
-      const PlayersScreen(),
-      const SearchScreen(),
+      const NewsScreen(embedded: true),
+      CardsScreen(focusRequests: searchRequests),
+      const MyClubScreen(embedded: true),
       const SquadScreenPro(),
       MoreScreen(
         settings: widget.settings,
@@ -178,87 +189,49 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
         if (!didPop && index != 0) _selectTab(0);
       },
       child: Scaffold(
-        appBar: AppBar(
-          toolbarHeight: 56,
-          titleSpacing: 14,
-          title: Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: scheme.primary,
-                  borderRadius: BorderRadius.circular(9),
-                  boxShadow: [
-                    BoxShadow(
-                      color: scheme.primary.withValues(alpha: .20),
-                      blurRadius: 18,
-                      spreadRadius: -5,
-                    ),
-                  ],
-                ),
-                alignment: Alignment.center,
-                child: const Text(
-                  'FC',
-                  textDirection: TextDirection.ltr,
-                  style: TextStyle(
-                    color: Color(0xFF10140C),
-                    fontWeight: FontWeight.w900,
-                    fontSize: 12,
-                    letterSpacing: -.8,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 9),
-              const Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('FCBaz', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
-                  Text(
-                    'ULTIMATE TEAM • FC27',
-                    textDirection: TextDirection.ltr,
-                    style: TextStyle(fontSize: 8.5, fontWeight: FontWeight.w800, letterSpacing: .4),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          actions: [
-            Badge(
-              isLabelVisible: unread > 0,
-              label: Text(unread > 99 ? '99+' : unread.toString()),
-              child: IconButton(
-                onPressed: _openNotifications,
-                icon: const Icon(Icons.notifications_none_rounded),
-                tooltip: 'اعلان‌ها',
-              ),
-            ),
-            const SizedBox(width: 5),
-          ],
+        appBar: FcbazTopBar(
+          title: _titles[index],
+          onSearch: _openGlobalSearch,
+          onNotifications: _openNotifications,
+          unread: unread,
         ),
         body: IndexedStack(index: index, children: pages),
-        bottomNavigationBar: SafeArea(
-          top: false,
-          child: Container(
-            margin: const EdgeInsets.fromLTRB(10, 0, 10, 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF090D0A),
-              borderRadius: BorderRadius.circular(14),
-              border: Border.all(color: scheme.outline.withValues(alpha: .75)),
-              boxShadow: const [
-                BoxShadow(color: Color(0x55000000), blurRadius: 20, offset: Offset(0, 8)),
-              ],
-            ),
-            clipBehavior: Clip.antiAlias,
+        bottomNavigationBar: DecoratedBox(
+          decoration: BoxDecoration(
+            color: palette.surface,
+            border: Border(top: BorderSide(color: palette.line)),
+          ),
+          child: SafeArea(
+            top: false,
             child: NavigationBar(
               selectedIndex: index,
               onDestinationSelected: _selectTab,
               destinations: const [
-                NavigationDestination(icon: Icon(Icons.home_outlined), selectedIcon: Icon(Icons.home_rounded), label: 'خانه'),
-                NavigationDestination(icon: Icon(Icons.style_outlined), selectedIcon: Icon(Icons.style_rounded), label: 'بازیکنان'),
-                NavigationDestination(icon: Icon(Icons.search_rounded), label: 'جستجو'),
-                NavigationDestination(icon: Icon(Icons.stadium_outlined), selectedIcon: Icon(Icons.stadium_rounded), label: 'تیم‌ساز'),
-                NavigationDestination(icon: Icon(Icons.grid_view_rounded), selectedIcon: Icon(Icons.grid_view_rounded), label: 'بیشتر'),
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home_rounded),
+                  label: 'خانه',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.style_outlined),
+                  selectedIcon: Icon(Icons.style_rounded),
+                  label: 'کارت‌ها',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.inventory_2_outlined),
+                  selectedIcon: Icon(Icons.inventory_2_rounded),
+                  label: 'باشگاه',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.stadium_outlined),
+                  selectedIcon: Icon(Icons.stadium_rounded),
+                  label: 'تیم',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.grid_view_rounded),
+                  selectedIcon: Icon(Icons.grid_view_rounded),
+                  label: 'بیشتر',
+                ),
               ],
             ),
           ),

@@ -52,13 +52,14 @@ void main() {
 
   test('1.9 player item labels PlayStation source accurately', () {
     final source = File('lib/features/players/presentation/player_item_visual.dart').readAsStringSync();
-    expect(source, contains("_Price(label: 'PS'"));
-    expect(source, contains("_Price(label: 'PC'"));
+    expect(source, contains('_Price('));
+    expect(source, contains("label: 'PS'"));
+    expect(source, contains("label: 'PC'"));
     expect(source, contains("if (value <= 0) return '—'"));
   });
 
-  test('2.2 version is production increment', () {
+  test('2.3 version is production increment', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(RegExp(r'^version: 2\.2\.0\+\d+$', multiLine: true).hasMatch(pubspec), isTrue);
+    expect(RegExp(r'^version: 2\.3\.0\+\d+$', multiLine: true).hasMatch(pubspec), isTrue);
   });
 }

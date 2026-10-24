@@ -1,133 +1,322 @@
 import 'package:flutter/material.dart';
 
+@immutable
+class FcbazPalette extends ThemeExtension<FcbazPalette> {
+  const FcbazPalette({
+    required this.canvas,
+    required this.surface,
+    required this.surfaceRaised,
+    required this.line,
+    required this.lineStrong,
+    required this.text,
+    required this.textMuted,
+    required this.primary,
+    required this.onPrimary,
+    required this.secondary,
+    required this.warning,
+    required this.danger,
+    required this.success,
+  });
+
+  final Color canvas;
+  final Color surface;
+  final Color surfaceRaised;
+  final Color line;
+  final Color lineStrong;
+  final Color text;
+  final Color textMuted;
+  final Color primary;
+  final Color onPrimary;
+  final Color secondary;
+  final Color warning;
+  final Color danger;
+  final Color success;
+
+  static const dark = FcbazPalette(
+    canvas: Color(0xFF050706),
+    surface: Color(0xFF0B100C),
+    surfaceRaised: Color(0xFF121A13),
+    line: Color(0xFF26352A),
+    lineStrong: Color(0xFF354839),
+    text: Color(0xFFF2F6EF),
+    textMuted: Color(0xFFA7B4A9),
+    primary: Color(0xFFC8FF42),
+    onPrimary: Color(0xFF10140C),
+    secondary: Color(0xFF7DEBFF),
+    warning: Color(0xFFFFD76A),
+    danger: Color(0xFFFF5F72),
+    success: Color(0xFF6EE7A0),
+  );
+
+  static const light = FcbazPalette(
+    canvas: Color(0xFFF2F5EE),
+    surface: Color(0xFFFFFFFF),
+    surfaceRaised: Color(0xFFE8EEE2),
+    line: Color(0xFFD3DBC9),
+    lineStrong: Color(0xFFB9C6B0),
+    text: Color(0xFF121711),
+    textMuted: Color(0xFF5C6B5A),
+    primary: Color(0xFF486900),
+    onPrimary: Color(0xFFFFFFFF),
+    secondary: Color(0xFF006879),
+    warning: Color(0xFF8A5B00),
+    danger: Color(0xFFB3263A),
+    success: Color(0xFF1F6B3A),
+  );
+
+  @override
+  FcbazPalette copyWith({
+    Color? canvas,
+    Color? surface,
+    Color? surfaceRaised,
+    Color? line,
+    Color? lineStrong,
+    Color? text,
+    Color? textMuted,
+    Color? primary,
+    Color? onPrimary,
+    Color? secondary,
+    Color? warning,
+    Color? danger,
+    Color? success,
+  }) {
+    return FcbazPalette(
+      canvas: canvas ?? this.canvas,
+      surface: surface ?? this.surface,
+      surfaceRaised: surfaceRaised ?? this.surfaceRaised,
+      line: line ?? this.line,
+      lineStrong: lineStrong ?? this.lineStrong,
+      text: text ?? this.text,
+      textMuted: textMuted ?? this.textMuted,
+      primary: primary ?? this.primary,
+      onPrimary: onPrimary ?? this.onPrimary,
+      secondary: secondary ?? this.secondary,
+      warning: warning ?? this.warning,
+      danger: danger ?? this.danger,
+      success: success ?? this.success,
+    );
+  }
+
+  @override
+  FcbazPalette lerp(covariant FcbazPalette? other, double t) {
+    if (other == null) return this;
+    Color mix(Color a, Color b) => Color.lerp(a, b, t)!;
+    return FcbazPalette(
+      canvas: mix(canvas, other.canvas),
+      surface: mix(surface, other.surface),
+      surfaceRaised: mix(surfaceRaised, other.surfaceRaised),
+      line: mix(line, other.line),
+      lineStrong: mix(lineStrong, other.lineStrong),
+      text: mix(text, other.text),
+      textMuted: mix(textMuted, other.textMuted),
+      primary: mix(primary, other.primary),
+      onPrimary: mix(onPrimary, other.onPrimary),
+      secondary: mix(secondary, other.secondary),
+      warning: mix(warning, other.warning),
+      danger: mix(danger, other.danger),
+      success: mix(success, other.success),
+    );
+  }
+}
+
+extension FcbazThemeContext on BuildContext {
+  FcbazPalette get palette =>
+      Theme.of(this).extension<FcbazPalette>() ?? FcbazPalette.dark;
+}
+
+abstract final class FcbazSpace {
+  static const xs = 4.0;
+  static const sm = 8.0;
+  static const md = 12.0;
+  static const lg = 16.0;
+  static const xl = 24.0;
+  static const xxl = 32.0;
+  static const page = 16.0;
+}
+
+abstract final class FcbazRadius {
+  static const sm = 8.0;
+  static const md = 12.0;
+  static const lg = 18.0;
+  static const pill = 999.0;
+}
+
 class FCBazTheme {
-  static const darkBackground = Color(0xFF030503);
-  static const darkSurface = Color(0xFF080C09);
-  static const darkSurfaceHigh = Color(0xFF101711);
+  static const darkBackground = Color(0xFF050706);
+  static const darkSurface = Color(0xFF0B100C);
+  static const darkSurfaceHigh = Color(0xFF121A13);
   static const primaryGreen = Color(0xFFC8FF42);
   static const accentBlue = Color(0xFF7DEBFF);
   static const warning = Color(0xFFFFD76A);
-  static const outline = Color(0xFF253127);
+  static const outline = Color(0xFF26352A);
 
   static ThemeData dark([Color? accent]) => _build(
         brightness: Brightness.dark,
-        background: darkBackground,
-        surface: darkSurface,
-        surfaceHigh: darkSurfaceHigh,
-        primary: accent ?? primaryGreen,
-        secondary: accentBlue,
-        outlineColor: outline,
+        palette: accent == null
+            ? FcbazPalette.dark
+            : FcbazPalette.dark.copyWith(
+                primary: accent,
+                onPrimary: _onColor(accent),
+              ),
       );
 
   static ThemeData light([Color? accent]) => _build(
         brightness: Brightness.light,
-        background: const Color(0xFFF2F5EE),
-        surface: const Color(0xFFFCFFF8),
-        surfaceHigh: const Color(0xFFE8EEE2),
-        primary: accent ?? const Color(0xFF486900),
-        secondary: const Color(0xFF006879),
-        outlineColor: const Color(0xFFD3DBC9),
+        palette: accent == null
+            ? FcbazPalette.light
+            : FcbazPalette.light.copyWith(
+                primary: accent,
+                onPrimary: _onColor(accent),
+              ),
       );
+
+  static Color _onColor(Color color) =>
+      ThemeData.estimateBrightnessForColor(color) == Brightness.dark
+          ? Colors.white
+          : const Color(0xFF10140C);
 
   static ThemeData _build({
     required Brightness brightness,
-    required Color background,
-    required Color surface,
-    required Color surfaceHigh,
-    required Color primary,
-    required Color secondary,
-    required Color outlineColor,
+    required FcbazPalette palette,
   }) {
     final scheme = ColorScheme.fromSeed(
-      seedColor: primary,
+      seedColor: palette.primary,
       brightness: brightness,
-      surface: surface,
+      surface: palette.surface,
     ).copyWith(
-      primary: primary,
-      secondary: secondary,
-      surface: surface,
-      surfaceContainerHighest: surfaceHigh,
-      outline: outlineColor,
+      primary: palette.primary,
+      onPrimary: palette.onPrimary,
+      secondary: palette.secondary,
+      surface: palette.surface,
+      surfaceContainerHighest: palette.surfaceRaised,
+      onSurface: palette.text,
+      onSurfaceVariant: palette.textMuted,
+      outline: palette.line,
+      outlineVariant: palette.lineStrong,
+      error: palette.danger,
     );
 
     final base = ThemeData(
       useMaterial3: true,
       brightness: brightness,
       colorScheme: scheme,
-      scaffoldBackgroundColor: background,
+      scaffoldBackgroundColor: palette.canvas,
       splashFactory: InkSparkle.splashFactory,
       visualDensity: VisualDensity.compact,
+      fontFamily: 'Vazirmatn',
     );
 
-    final angular = RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(12),
-      side: BorderSide(color: outlineColor.withValues(alpha: .78)),
+    final shape = RoundedRectangleBorder(
+      borderRadius: BorderRadius.circular(FcbazRadius.md),
+      side: BorderSide(color: palette.line),
     );
 
     return base.copyWith(
-      textTheme: base.textTheme.copyWith(
-        displaySmall: base.textTheme.displaySmall?.copyWith(
-          fontWeight: FontWeight.w900,
-          letterSpacing: -1.6,
-        ),
-        headlineMedium: base.textTheme.headlineMedium?.copyWith(
-          fontWeight: FontWeight.w900,
-          letterSpacing: -1.1,
-        ),
-        headlineSmall: base.textTheme.headlineSmall?.copyWith(
-          fontWeight: FontWeight.w900,
-          letterSpacing: -.8,
-        ),
-        titleLarge: base.textTheme.titleLarge?.copyWith(
-          fontWeight: FontWeight.w900,
-          letterSpacing: -.45,
-        ),
-        titleMedium: base.textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w800,
-        ),
-        bodyMedium: base.textTheme.bodyMedium?.copyWith(height: 1.5),
-        labelLarge: base.textTheme.labelLarge?.copyWith(
-          fontWeight: FontWeight.w900,
-          letterSpacing: .1,
-        ),
-      ),
+      extensions: [palette],
+      textTheme: base.textTheme
+          .apply(
+            fontFamily: 'Vazirmatn',
+            bodyColor: palette.text,
+            displayColor: palette.text,
+          )
+          .copyWith(
+            displaySmall: TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w800,
+              fontSize: 32,
+              height: 1.25,
+              color: palette.text,
+            ),
+            headlineMedium: TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w800,
+              fontSize: 26,
+              height: 1.3,
+              color: palette.text,
+            ),
+            headlineSmall: TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w800,
+              fontSize: 20,
+              height: 1.35,
+              color: palette.text,
+            ),
+            titleLarge: TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w700,
+              fontSize: 17,
+              height: 1.4,
+              color: palette.text,
+            ),
+            titleMedium: TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w700,
+              fontSize: 15,
+              height: 1.45,
+              color: palette.text,
+            ),
+            bodyMedium: TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+              height: 1.7,
+              color: palette.text,
+            ),
+            bodySmall: TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w400,
+              fontSize: 12.5,
+              height: 1.6,
+              color: palette.textMuted,
+            ),
+            labelLarge: TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+              height: 1.4,
+              color: palette.text,
+            ),
+          ),
       cardTheme: CardThemeData(
         elevation: 0,
         margin: EdgeInsets.zero,
-        color: surface,
+        color: palette.surface,
         surfaceTintColor: Colors.transparent,
-        shape: angular,
+        shape: shape,
       ),
       dividerTheme: DividerThemeData(
-        color: outlineColor.withValues(alpha: .65),
+        color: palette.line,
         thickness: 1,
         space: 1,
       ),
       navigationBarTheme: NavigationBarThemeData(
-        height: 62,
+        height: 64,
         elevation: 0,
-        backgroundColor: const Color(0xFF090D0A),
+        backgroundColor: palette.surface,
         surfaceTintColor: Colors.transparent,
-        indicatorColor: primary,
+        indicatorColor: palette.primary,
         indicatorShape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(9),
+          borderRadius: BorderRadius.circular(FcbazRadius.sm),
         ),
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         iconTheme: WidgetStateProperty.resolveWith(
           (states) => IconThemeData(
             size: 21,
             color: states.contains(WidgetState.selected)
-                ? const Color(0xFF10140C)
-                : scheme.onSurfaceVariant,
+                ? palette.onPrimary
+                : palette.textMuted,
           ),
         ),
         labelTextStyle: WidgetStateProperty.resolveWith(
           (states) => TextStyle(
-            fontSize: 9.5,
-            fontWeight: FontWeight.w900,
+            fontFamily: 'Vazirmatn',
+            fontSize: 11,
+            fontWeight: states.contains(WidgetState.selected)
+                ? FontWeight.w700
+                : FontWeight.w500,
             color: states.contains(WidgetState.selected)
-                ? primary
-                : scheme.onSurfaceVariant,
+                ? palette.primary
+                : palette.textMuted,
           ),
         ),
       ),
@@ -135,206 +324,273 @@ class FCBazTheme {
         centerTitle: false,
         elevation: 0,
         scrolledUnderElevation: 0,
-        backgroundColor: background,
+        backgroundColor: palette.canvas,
         surfaceTintColor: Colors.transparent,
-        toolbarHeight: 56,
+        toolbarHeight: 58,
         titleTextStyle: TextStyle(
-          color: scheme.onSurface,
+          fontFamily: 'Vazirmatn',
+          color: palette.text,
           fontSize: 18,
-          fontWeight: FontWeight.w900,
-          letterSpacing: -.45,
+          fontWeight: FontWeight.w700,
         ),
       ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: surfaceHigh.withValues(alpha: .72),
+        fillColor: palette.surfaceRaised.withValues(alpha: .7),
         hintStyle: TextStyle(
-          color: scheme.onSurfaceVariant.withValues(alpha: .82),
-          fontSize: 12.5,
+          fontFamily: 'Vazirmatn',
+          color: palette.textMuted,
+          fontSize: 13,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 13),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(11),
-          borderSide: BorderSide(color: outlineColor),
+          borderRadius: BorderRadius.circular(FcbazRadius.md),
+          borderSide: BorderSide(color: palette.line),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(11),
-          borderSide: BorderSide(color: outlineColor.withValues(alpha: .8)),
+          borderRadius: BorderRadius.circular(FcbazRadius.md),
+          borderSide: BorderSide(color: palette.line),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(11),
-          borderSide: BorderSide(color: primary, width: 1.4),
+          borderRadius: BorderRadius.circular(FcbazRadius.md),
+          borderSide: BorderSide(color: palette.primary, width: 1.4),
         ),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
-          minimumSize: const Size(46, 45),
+          minimumSize: const Size(46, 46),
           elevation: 0,
-          foregroundColor: const Color(0xFF10140C),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          textStyle: const TextStyle(fontWeight: FontWeight.w900),
+          foregroundColor: palette.onPrimary,
+          backgroundColor: palette.primary,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(FcbazRadius.md),
+          ),
+          textStyle: const TextStyle(
+            fontFamily: 'Vazirmatn',
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+          ),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
-          minimumSize: const Size(46, 45),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-          side: BorderSide(color: outlineColor.withValues(alpha: .9)),
-          textStyle: const TextStyle(fontWeight: FontWeight.w900),
+          minimumSize: const Size(46, 46),
+          foregroundColor: palette.text,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(FcbazRadius.md),
+          ),
+          side: BorderSide(color: palette.lineStrong),
+          textStyle: const TextStyle(
+            fontFamily: 'Vazirmatn',
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+          ),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
-          foregroundColor: primary,
-          textStyle: const TextStyle(fontWeight: FontWeight.w900),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+          foregroundColor: palette.primary,
+          textStyle: const TextStyle(
+            fontFamily: 'Vazirmatn',
+            fontWeight: FontWeight.w700,
+            fontSize: 13,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(FcbazRadius.sm),
+          ),
         ),
       ),
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
-          minimumSize: const Size(39, 39),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          minimumSize: const Size(44, 44),
+          foregroundColor: palette.text,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(FcbazRadius.sm),
+          ),
         ),
       ),
       segmentedButtonTheme: SegmentedButtonThemeData(
         style: ButtonStyle(
           backgroundColor: WidgetStateProperty.resolveWith(
             (states) => states.contains(WidgetState.selected)
-                ? primary
-                : surfaceHigh.withValues(alpha: .75),
+                ? palette.primary
+                : palette.surfaceRaised.withValues(alpha: .75),
           ),
           foregroundColor: WidgetStateProperty.resolveWith(
             (states) => states.contains(WidgetState.selected)
-                ? const Color(0xFF10140C)
-                : scheme.onSurface,
+                ? palette.onPrimary
+                : palette.text,
           ),
-          side: WidgetStatePropertyAll(
-            BorderSide(color: outlineColor.withValues(alpha: .85)),
-          ),
+          side: WidgetStatePropertyAll(BorderSide(color: palette.line)),
           shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(FcbazRadius.sm),
+            ),
           ),
           textStyle: const WidgetStatePropertyAll(
-            TextStyle(fontWeight: FontWeight.w900, fontSize: 11),
+            TextStyle(
+              fontFamily: 'Vazirmatn',
+              fontWeight: FontWeight.w700,
+              fontSize: 12,
+            ),
           ),
         ),
       ),
       tabBarTheme: TabBarThemeData(
-        indicatorColor: primary,
+        indicatorColor: palette.primary,
         indicatorSize: TabBarIndicatorSize.tab,
-        dividerColor: outlineColor.withValues(alpha: .55),
-        labelColor: primary,
-        unselectedLabelColor: scheme.onSurfaceVariant,
-        labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 11),
-        unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 11),
+        dividerColor: palette.line,
+        labelColor: palette.primary,
+        unselectedLabelColor: palette.textMuted,
+        labelStyle: const TextStyle(
+          fontFamily: 'Vazirmatn',
+          fontWeight: FontWeight.w700,
+          fontSize: 12.5,
+        ),
+        unselectedLabelStyle: const TextStyle(
+          fontFamily: 'Vazirmatn',
+          fontWeight: FontWeight.w500,
+          fontSize: 12.5,
+        ),
       ),
       expansionTileTheme: ExpansionTileThemeData(
-        backgroundColor: surface,
-        collapsedBackgroundColor: surface,
-        iconColor: primary,
-        collapsedIconColor: scheme.onSurfaceVariant,
-        textColor: scheme.onSurface,
-        collapsedTextColor: scheme.onSurface,
-        shape: angular,
-        collapsedShape: angular,
+        backgroundColor: palette.surface,
+        collapsedBackgroundColor: palette.surface,
+        iconColor: palette.primary,
+        collapsedIconColor: palette.textMuted,
+        textColor: palette.text,
+        collapsedTextColor: palette.text,
+        shape: shape,
+        collapsedShape: shape,
         tilePadding: const EdgeInsets.symmetric(horizontal: 13, vertical: 2),
         childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 10),
       ),
       floatingActionButtonTheme: FloatingActionButtonThemeData(
         elevation: 0,
-        backgroundColor: primary,
-        foregroundColor: const Color(0xFF10140C),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        backgroundColor: palette.primary,
+        foregroundColor: palette.onPrimary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(FcbazRadius.md),
+        ),
       ),
       popupMenuTheme: PopupMenuThemeData(
-        color: surfaceHigh,
+        color: palette.surfaceRaised,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(11),
-          side: BorderSide(color: outlineColor.withValues(alpha: .85)),
+          borderRadius: BorderRadius.circular(FcbazRadius.md),
+          side: BorderSide(color: palette.line),
         ),
-        textStyle: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w700),
+        textStyle: TextStyle(
+          fontFamily: 'Vazirmatn',
+          color: palette.text,
+          fontWeight: FontWeight.w500,
+        ),
       ),
       badgeTheme: BadgeThemeData(
-        backgroundColor: primary,
-        textColor: const Color(0xFF10140C),
+        backgroundColor: palette.primary,
+        textColor: palette.onPrimary,
         largeSize: 18,
-        textStyle: const TextStyle(fontSize: 9, fontWeight: FontWeight.w900),
+        textStyle: const TextStyle(
+          fontFamily: 'Vazirmatn',
+          fontSize: 9.5,
+          fontWeight: FontWeight.w700,
+        ),
       ),
       tooltipTheme: TooltipThemeData(
         decoration: BoxDecoration(
-          color: surfaceHigh,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: outlineColor.withValues(alpha: .8)),
+          color: palette.surfaceRaised,
+          borderRadius: BorderRadius.circular(FcbazRadius.sm),
+          border: Border.all(color: palette.line),
         ),
-        textStyle: TextStyle(color: scheme.onSurface, fontWeight: FontWeight.w700, fontSize: 11),
+        textStyle: TextStyle(
+          fontFamily: 'Vazirmatn',
+          color: palette.text,
+          fontWeight: FontWeight.w500,
+          fontSize: 11.5,
+        ),
       ),
       dialogTheme: DialogThemeData(
-        backgroundColor: surface,
+        backgroundColor: palette.surface,
         surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: outlineColor.withValues(alpha: .8)),
+          borderRadius: BorderRadius.circular(FcbazRadius.lg),
+          side: BorderSide(color: palette.line),
         ),
       ),
       bottomSheetTheme: BottomSheetThemeData(
-        backgroundColor: surface,
+        backgroundColor: palette.surface,
         surfaceTintColor: Colors.transparent,
         showDragHandle: true,
-        dragHandleColor: primary.withValues(alpha: .55),
+        dragHandleColor: palette.primary.withValues(alpha: .55),
         shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(top: Radius.circular(18)),
+          borderRadius: BorderRadius.vertical(
+            top: Radius.circular(FcbazRadius.lg),
+          ),
         ),
       ),
       snackBarTheme: SnackBarThemeData(
         behavior: SnackBarBehavior.floating,
-        backgroundColor: surfaceHigh,
+        backgroundColor: palette.surfaceRaised,
         contentTextStyle: TextStyle(
-          color: scheme.onSurface,
-          fontWeight: FontWeight.w800,
+          fontFamily: 'Vazirmatn',
+          color: palette.text,
+          fontWeight: FontWeight.w500,
         ),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: BorderSide(color: outlineColor.withValues(alpha: .8)),
+          borderRadius: BorderRadius.circular(FcbazRadius.md),
+          side: BorderSide(color: palette.line),
         ),
       ),
       listTileTheme: ListTileThemeData(
         minVerticalPadding: 7,
-        iconColor: scheme.onSurfaceVariant,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+        iconColor: palette.textMuted,
+        textColor: palette.text,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(FcbazRadius.sm),
+        ),
       ),
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
-              ? primary
-              : scheme.onSurfaceVariant,
+              ? palette.primary
+              : palette.textMuted,
         ),
         trackColor: WidgetStateProperty.resolveWith(
           (states) => states.contains(WidgetState.selected)
-              ? primary.withValues(alpha: .28)
-              : surfaceHigh,
+              ? palette.primary.withValues(alpha: .28)
+              : palette.surfaceRaised,
         ),
       ),
       checkboxTheme: CheckboxThemeData(
         fillColor: WidgetStateProperty.resolveWith(
-          (states) => states.contains(WidgetState.selected) ? primary : Colors.transparent,
+          (states) => states.contains(WidgetState.selected)
+              ? palette.primary
+              : Colors.transparent,
         ),
-        checkColor: const WidgetStatePropertyAll(Color(0xFF10140C)),
-        side: BorderSide(color: outlineColor),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+        checkColor: WidgetStatePropertyAll(palette.onPrimary),
+        side: BorderSide(color: palette.line),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(4),
+        ),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
-        color: primary,
-        linearTrackColor: surfaceHigh,
-        circularTrackColor: surfaceHigh,
+        color: palette.primary,
+        linearTrackColor: palette.surfaceRaised,
+        circularTrackColor: palette.surfaceRaised,
       ),
       chipTheme: base.chipTheme.copyWith(
-        backgroundColor: surfaceHigh.withValues(alpha: .72),
-        selectedColor: primary,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        side: BorderSide(color: outlineColor.withValues(alpha: .8)),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w900, fontSize: 10.5),
-        padding: const EdgeInsets.symmetric(horizontal: 7),
+        backgroundColor: palette.surfaceRaised.withValues(alpha: .72),
+        selectedColor: palette.primary,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(FcbazRadius.sm),
+        ),
+        side: BorderSide(color: palette.line),
+        labelStyle: const TextStyle(
+          fontFamily: 'Vazirmatn',
+          fontWeight: FontWeight.w600,
+          fontSize: 12,
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 8),
       ),
     );
   }

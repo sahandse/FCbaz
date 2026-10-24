@@ -24,13 +24,13 @@ class _SbcScreenState extends State<SbcScreen> {
     _load();
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool forceRefresh = false}) async {
     setState(() {
       loading = true;
       error = null;
     });
     try {
-      final data = await repository.getActive();
+      final data = await repository.getActive(forceRefresh: forceRefresh);
       if (!mounted) return;
       setState(() => items = data);
     } catch (e) {
@@ -42,9 +42,9 @@ class _SbcScreenState extends State<SbcScreen> {
   }
 
   void _openTools() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const SbcToolsScreen()),
-    );
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SbcToolsScreen()));
   }
 
   @override
@@ -62,7 +62,7 @@ class _SbcScreenState extends State<SbcScreen> {
         ],
       ),
       body: RefreshIndicator(
-        onRefresh: _load,
+        onRefresh: () => _load(forceRefresh: true),
         child: ListView(
           padding: const EdgeInsets.fromLTRB(14, 8, 14, 28),
           children: [
@@ -71,7 +71,9 @@ class _SbcScreenState extends State<SbcScreen> {
               decoration: BoxDecoration(
                 color: scheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: scheme.primary.withValues(alpha: .28)),
+                border: Border.all(
+                  color: scheme.primary.withValues(alpha: .28),
+                ),
                 gradient: LinearGradient(
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
@@ -88,7 +90,10 @@ class _SbcScreenState extends State<SbcScreen> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 5,
+                        ),
                         decoration: BoxDecoration(
                           color: scheme.primary,
                           borderRadius: BorderRadius.circular(7),
@@ -120,10 +125,10 @@ class _SbcScreenState extends State<SbcScreen> {
                     'SQUAD BUILDING\nCHALLENGES',
                     textDirection: TextDirection.ltr,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          fontWeight: FontWeight.w900,
-                          height: .95,
-                          letterSpacing: -1.2,
-                        ),
+                      fontWeight: FontWeight.w900,
+                      height: .95,
+                      letterSpacing: -1.2,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -157,13 +162,15 @@ class _SbcScreenState extends State<SbcScreen> {
                 icon: Icons.cloud_off_rounded,
                 title: 'SBC در دسترس نیست',
                 subtitle: error!,
-                action: _load,
+                action: () => _load(forceRefresh: true),
               )
             else if (items.isEmpty)
-              const _StateCard(
+              _StateCard(
                 icon: Icons.extension_off_rounded,
                 title: 'SBC فعالی پیدا نشد',
-                subtitle: 'داده نمونه نمایش داده نمی‌شود. با در دسترس شدن منبع واقعی، چالش‌ها اینجا ظاهر می‌شوند.',
+                subtitle:
+                    'داده نمونه نمایش داده نمی‌شود. با در دسترس شدن منبع واقعی، چالش‌ها اینجا ظاهر می‌شوند.',
+                action: () => _load(forceRefresh: true),
               )
             else
               for (final item in items) ...[
@@ -196,9 +203,9 @@ class _SbcCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         borderRadius: BorderRadius.circular(12),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => SbcDetailScreen(sbc: item)),
-        ),
+        onTap: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => SbcDetailScreen(sbc: item))),
         child: Container(
           padding: const EdgeInsets.all(14),
           decoration: BoxDecoration(
@@ -218,7 +225,9 @@ class _SbcCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: scheme.primary.withValues(alpha: .12),
                       borderRadius: BorderRadius.circular(9),
-                      border: Border.all(color: scheme.primary.withValues(alpha: .25)),
+                      border: Border.all(
+                        color: scheme.primary.withValues(alpha: .25),
+                      ),
                     ),
                     child: Icon(Icons.extension_rounded, color: scheme.primary),
                   ),
@@ -231,7 +240,10 @@ class _SbcCard extends StatelessWidget {
                           item.title,
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 14),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 14,
+                          ),
                         ),
                         if (item.category.isNotEmpty) ...[
                           const SizedBox(height: 3),
@@ -249,7 +261,12 @@ class _SbcCard extends StatelessWidget {
                     ),
                   ),
                   if (item.repeatable)
-                    const Chip(label: Text('REPEATABLE', textDirection: TextDirection.ltr)),
+                    const Chip(
+                      label: Text(
+                        'REPEATABLE',
+                        textDirection: TextDirection.ltr,
+                      ),
+                    ),
                 ],
               ),
               if (item.description.isNotEmpty) ...[
@@ -258,7 +275,10 @@ class _SbcCard extends StatelessWidget {
                   item.description,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11.5),
+                  style: TextStyle(
+                    color: scheme.onSurfaceVariant,
+                    fontSize: 11.5,
+                  ),
                 ),
               ],
               const SizedBox(height: 12),
@@ -288,10 +308,17 @@ class _SbcCard extends StatelessWidget {
                     Text(
                       'ITEM SCORE ${item.itemScore}',
                       textDirection: TextDirection.ltr,
-                      style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 10),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 10,
+                      ),
                     ),
                     const Spacer(),
-                    Icon(Icons.arrow_back_rounded, color: scheme.onSurfaceVariant, size: 18),
+                    Icon(
+                      Icons.arrow_back_rounded,
+                      color: scheme.onSurfaceVariant,
+                      size: 18,
+                    ),
                   ],
                 ),
               ],
@@ -365,15 +392,25 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                   Text(
                     sbc.category.toUpperCase(),
                     textDirection: TextDirection.ltr,
-                    style: TextStyle(color: scheme.primary, fontSize: 9, fontWeight: FontWeight.w900),
+                    style: TextStyle(
+                      color: scheme.primary,
+                      fontSize: 9,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ],
                 if (sbc.description.isNotEmpty) ...[
                   const SizedBox(height: 8),
-                  Text(sbc.description, style: TextStyle(color: scheme.onSurfaceVariant)),
+                  Text(
+                    sbc.description,
+                    style: TextStyle(color: scheme.onSurfaceVariant),
+                  ),
                 ],
                 const SizedBox(height: 12),
-                _MiniStat(label: 'REWARD', value: sbc.reward.isEmpty ? '—' : sbc.reward),
+                _MiniStat(
+                  label: 'REWARD',
+                  value: sbc.reward.isEmpty ? '—' : sbc.reward,
+                ),
                 if (sbc.itemScore != null) ...[
                   const SizedBox(height: 8),
                   _MiniStat(label: 'ITEM SCORE', value: '${sbc.itemScore}'),
@@ -382,7 +419,10 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          const _SectionTitle(title: 'REQUIREMENTS', subtitle: 'شرایط واقعی ثبت‌شده برای این چالش'),
+          const _SectionTitle(
+            title: 'REQUIREMENTS',
+            subtitle: 'شرایط واقعی ثبت‌شده برای این چالش',
+          ),
           const SizedBox(height: 8),
           if (sbc.requirements.isEmpty)
             const _StateCard(
@@ -394,11 +434,16 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
             for (final req in sbc.requirements) ...[
               Container(
                 margin: const EdgeInsets.only(bottom: 7),
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 11,
+                ),
                 decoration: BoxDecoration(
                   color: scheme.surface,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: scheme.outline.withValues(alpha: .7)),
+                  border: Border.all(
+                    color: scheme.outline.withValues(alpha: .7),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -411,7 +456,10 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
             ],
           if (sbc.guideFa.isNotEmpty) ...[
             const SizedBox(height: 14),
-            const _SectionTitle(title: 'GUIDE', subtitle: 'راهنمای فارسی موجود در داده واقعی'),
+            const _SectionTitle(
+              title: 'GUIDE',
+              subtitle: 'راهنمای فارسی موجود در داده واقعی',
+            ),
             const SizedBox(height: 8),
             Card(
               child: Padding(
@@ -443,7 +491,8 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                           Expanded(child: Text(sbc.guideFa[i])),
                         ],
                       ),
-                      if (i != sbc.guideFa.length - 1) const SizedBox(height: 10),
+                      if (i != sbc.guideFa.length - 1)
+                        const SizedBox(height: 10),
                     ],
                   ],
                 ),
@@ -455,7 +504,8 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
             const _StateCard(
               icon: Icons.stars_rounded,
               title: 'SBC مبتنی بر Item Score',
-              subtitle: 'برای این نوع چالش، راهنما بر اساس Item Score و Requirementهای واقعی منبع عمومی ساخته می‌شود.',
+              subtitle:
+                  'برای این نوع چالش، راهنما بر اساس Item Score و Requirementهای واقعی منبع عمومی ساخته می‌شود.',
             ),
             const SizedBox(height: 10),
           ],
@@ -500,19 +550,40 @@ class _SolutionCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(solution.players.isEmpty ? 'PUBLIC GUIDE' : 'SOLUTION', textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16)),
+            Text(
+              solution.players.isEmpty ? 'PUBLIC GUIDE' : 'SOLUTION',
+              textDirection: TextDirection.ltr,
+              style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 16),
+            ),
             const SizedBox(height: 10),
             Row(
               children: [
-                Expanded(child: _MiniStat(label: 'TOTAL COST', value: solution.totalCost > 0 ? '${solution.totalCost} C' : '—')),
+                Expanded(
+                  child: _MiniStat(
+                    label: 'TOTAL COST',
+                    value: solution.totalCost > 0
+                        ? '${solution.totalCost} C'
+                        : '—',
+                  ),
+                ),
                 const SizedBox(width: 7),
-                Expanded(child: _MiniStat(label: 'REMAINING', value: solution.remainingCost > 0 ? '${solution.remainingCost} C' : '—')),
+                Expanded(
+                  child: _MiniStat(
+                    label: 'REMAINING',
+                    value: solution.remainingCost > 0
+                        ? '${solution.remainingCost} C'
+                        : '—',
+                  ),
+                ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
               'از باشگاه من: ${solution.ownedPlayerIds.length} کارت',
-              style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w900),
+              style: TextStyle(
+                color: scheme.primary,
+                fontWeight: FontWeight.w900,
+              ),
             ),
             if (solution.itemScore != null) ...[
               const SizedBox(height: 6),
@@ -532,7 +603,9 @@ class _SolutionCard extends StatelessWidget {
                         ? scheme.primary
                         : null,
                   ),
-                  title: Text(player.name.isEmpty ? player.playerId : player.name),
+                  title: Text(
+                    player.name.isEmpty ? player.playerId : player.name,
+                  ),
                   subtitle: Text('${player.rating} • ${player.price} C'),
                   trailing: solution.ownedPlayerIds.contains(player.playerId)
                       ? const Chip(label: Text('OWNED'))
@@ -578,7 +651,11 @@ class _MiniStat extends StatelessWidget {
           Text(
             label,
             textDirection: TextDirection.ltr,
-            style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 8, fontWeight: FontWeight.w900),
+            style: TextStyle(
+              color: scheme.onSurfaceVariant,
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
+            ),
           ),
         ],
       ),
@@ -596,9 +673,19 @@ class _SectionTitle extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15)),
+        Text(
+          title,
+          textDirection: TextDirection.ltr,
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15),
+        ),
         const SizedBox(height: 2),
-        Text(subtitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 10.5)),
+        Text(
+          subtitle,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 10.5,
+          ),
+        ),
       ],
     );
   }
@@ -626,12 +713,19 @@ class _StateCard extends StatelessWidget {
           children: [
             Icon(icon, size: 38, color: Theme.of(context).colorScheme.primary),
             const SizedBox(height: 9),
-            Text(title, textAlign: TextAlign.center, style: const TextStyle(fontWeight: FontWeight.w900)),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.w900),
+            ),
             const SizedBox(height: 5),
             Text(subtitle, textAlign: TextAlign.center),
             if (action != null) ...[
               const SizedBox(height: 12),
-              OutlinedButton(onPressed: action, child: const Text('تلاش دوباره')),
+              OutlinedButton(
+                onPressed: action,
+                child: const Text('تلاش دوباره'),
+              ),
             ],
           ],
         ),

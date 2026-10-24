@@ -4,7 +4,9 @@ import '../data/news_repository.dart';
 import '../domain/news_article.dart';
 
 class NewsScreen extends StatefulWidget {
-  const NewsScreen({super.key});
+  const NewsScreen({this.embedded = false, super.key});
+
+  final bool embedded;
 
   @override
   State<NewsScreen> createState() => _NewsScreenState();
@@ -14,6 +16,7 @@ class _NewsScreenState extends State<NewsScreen> {
   final repository = NewsRepository();
   List<NewsArticle> allArticles = const [];
   bool loading = true;
+  String? error;
   String selectedCategory = 'all';
   String searchQuery = '';
   final TextEditingController searchController = TextEditingController();
@@ -30,14 +33,29 @@ class _NewsScreenState extends State<NewsScreen> {
     super.dispose();
   }
 
-  Future<void> _loadNews() async {
-    setState(() => loading = true);
-    final items = await repository.getArticles();
-    if (!mounted) return;
+  Future<void> _loadNews({bool forceRefresh = false}) async {
     setState(() {
-      allArticles = items;
-      loading = false;
+      loading = true;
+      error = null;
     });
+    try {
+      final items = await repository.getArticles(forceRefresh: forceRefresh);
+      if (!mounted) return;
+      final tags = {for (final item in items) item.tagFa};
+      setState(() {
+        allArticles = items;
+        if (selectedCategory != 'all' && !tags.contains(selectedCategory)) {
+          selectedCategory = 'all';
+        }
+        loading = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        error = e.toString();
+        loading = false;
+      });
+    }
   }
 
   void _openDetails(NewsArticle article) {
@@ -49,6 +67,17 @@ class _NewsScreenState extends State<NewsScreen> {
     );
   }
 
+  List<(String, String)> _categories() {
+    final seen = <String>{};
+    final items = <(String, String)>[('all', 'همه')];
+    for (final article in allArticles) {
+      final tag = article.tagFa.trim();
+      if (tag.isEmpty || !seen.add(tag)) continue;
+      items.add((tag, tag));
+    }
+    return items;
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -58,6 +87,174 @@ class _NewsScreenState extends State<NewsScreen> {
       query: searchQuery,
     );
 
+    final content = RefreshIndicator(
+      onRefresh: () => _loadNews(forceRefresh: true),
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
+        children: [
+          if (widget.embedded) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    'اخبار و رویدادهای FC 27',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                ),
+                IconButton(
+                  tooltip: 'بروزرسانی اخبار',
+                  onPressed: () => _loadNews(forceRefresh: true),
+                  icon: const Icon(Icons.refresh_rounded),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+          ],
+          Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: const Color(0xFF0A100B),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: scheme.primary.withValues(alpha: .22)),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: scheme.primary.withValues(alpha: .15),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: const Icon(
+                    Icons.newspaper_rounded,
+                    color: Color(0xFFCAFF38),
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const Text(
+                        'پایگاه رسمی اخبار EA SPORTS FC 27',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13.5,
+                        ),
+                      ),
+                      const SizedBox(height: 3),
+                      Text(
+                        'پچ‌نوت‌ها، ایونت‌های FUT، تغییرات گیم‌پلی و راهنماهای کاربردی.',
+                        style: TextStyle(
+                          color: scheme.onSurfaceVariant,
+                          fontSize: 11,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: searchController,
+            onChanged: (val) => setState(() => searchQuery = val),
+            decoration: InputDecoration(
+              hintText: 'جستجو در اخبار، پچ‌نوت‌ها و رویدادها...',
+              prefixIcon: const Icon(Icons.search_rounded),
+              suffixIcon: searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear_rounded),
+                      onPressed: () {
+                        searchController.clear();
+                        setState(() => searchQuery = '');
+                      },
+                    )
+                  : null,
+              filled: true,
+              fillColor: scheme.surface,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 14,
+                vertical: 12,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          _NewsCategoryTabs(
+            categories: _categories(),
+            selectedCategory: selectedCategory,
+            onSelected: (cat) => setState(() => selectedCategory = cat),
+          ),
+          const SizedBox(height: 14),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Text(
+                  'آخرین اطلاعیه‌ها',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${filtered.length} گزارش',
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          if (loading)
+            const Center(
+              child: Padding(
+                padding: EdgeInsets.all(32),
+                child: CircularProgressIndicator(),
+              ),
+            )
+          else if (error != null)
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.cloud_off_rounded),
+                title: const Text('اخبار در دسترس نیست'),
+                subtitle: Text(error!),
+                trailing: IconButton(
+                  tooltip: 'تلاش دوباره',
+                  onPressed: () => _loadNews(forceRefresh: true),
+                  icon: const Icon(Icons.refresh_rounded),
+                ),
+              ),
+            )
+          else if (filtered.isEmpty)
+            _EmptyNews(
+              onReset: () {
+                searchController.clear();
+                setState(() {
+                  searchQuery = '';
+                  selectedCategory = 'all';
+                });
+              },
+              onRetry: () => _loadNews(forceRefresh: true),
+            )
+          else
+            for (final article in filtered) ...[
+              _NewsCard(article: article, onTap: () => _openDetails(article)),
+              const SizedBox(height: 10),
+            ],
+        ],
+      ),
+    );
+
+    if (widget.embedded) return content;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('اخبار و رویدادهای FC 27'),
@@ -65,143 +262,28 @@ class _NewsScreenState extends State<NewsScreen> {
           IconButton(
             tooltip: 'بروزرسانی',
             icon: const Icon(Icons.refresh_rounded),
-            onPressed: () => _loadNews(),
+            onPressed: () => _loadNews(forceRefresh: true),
           ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: () => _loadNews(),
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
-          children: [
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: const Color(0xFF0A100B),
-                borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: scheme.primary.withValues(alpha: .22)),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: scheme.primary.withValues(alpha: .15),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Icon(Icons.newspaper_rounded, color: Color(0xFFCAFF38), size: 24),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          'پایگاه رسمی اخبار EA SPORTS FC 27',
-                          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
-                        ),
-                        const SizedBox(height: 3),
-                        Text(
-                          'پچ‌نوت‌ها، ایونت‌های FUT، تغییرات گیم‌پلی و راهنماهای کاربردی.',
-                          style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: searchController,
-              onChanged: (val) => setState(() => searchQuery = val),
-              decoration: InputDecoration(
-                hintText: 'جستجو در اخبار، پچ‌نوت‌ها و رویدادها...',
-                prefixIcon: const Icon(Icons.search_rounded),
-                suffixIcon: searchController.text.isNotEmpty
-                    ? IconButton(
-                        icon: const Icon(Icons.clear_rounded),
-                        onPressed: () {
-                          searchController.clear();
-                          setState(() => searchQuery = '');
-                        },
-                      )
-                    : null,
-                filled: true,
-                fillColor: scheme.surface,
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide.none,
-                ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            _NewsCategoryTabs(
-              selectedCategory: selectedCategory,
-              onSelected: (cat) => setState(() => selectedCategory = cat),
-            ),
-            const SizedBox(height: 14),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'آخرین اطلاعیه‌ها',
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
-                ),
-                Text(
-                  '${filtered.length} گزارش',
-                  style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            if (loading)
-              const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(32),
-                  child: CircularProgressIndicator(),
-                ),
-              )
-            else if (filtered.isEmpty)
-              _EmptyNews(onReset: () {
-                searchController.clear();
-                setState(() {
-                  searchQuery = '';
-                  selectedCategory = 'all';
-                });
-              })
-            else
-              for (final article in filtered) ...[
-                _NewsCard(article: article, onTap: () => _openDetails(article)),
-                const SizedBox(height: 10),
-              ],
-          ],
-        ),
-      ),
+      body: content,
     );
   }
 }
 
 class _NewsCategoryTabs extends StatelessWidget {
   const _NewsCategoryTabs({
+    required this.categories,
     required this.selectedCategory,
     required this.onSelected,
   });
 
+  final List<(String, String)> categories;
   final String selectedCategory;
   final ValueChanged<String> onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final categories = const [
-      ('all', 'همه'),
-      ('🎮 گیم‌پلی و توسعه', '🎮 گیم‌پلی'),
-      ('🌟 رویداد FUT', '🌟 رویداد FUT'),
-      ('⚙️ پچ و آپدیت', '⚙️ پچ و آپدیت'),
-      ('🏆 مسابقات و جوایز', '🏆 مسابقات'),
-    ];
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: Row(
@@ -244,23 +326,31 @@ class _NewsCard extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: scheme.primary.withValues(alpha: .16),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      article.tagFa,
-                      style: const TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFFCAFF38),
+                  Flexible(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: scheme.primary.withValues(alpha: .16),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        article.tagFa,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w800,
+                          color: Color(0xFFCAFF38),
+                        ),
                       ),
                     ),
                   ),
-                  const Spacer(),
+                  const SizedBox(width: 8),
                   Text(
                     article.published,
                     textDirection: TextDirection.ltr,
@@ -275,9 +365,14 @@ class _NewsCard extends StatelessWidget {
               const SizedBox(height: 10),
               Text(
                 article.displayTitle,
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15, height: 1.4),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                  height: 1.4,
+                ),
               ),
-              if (article.titleFa.isNotEmpty && article.title != article.titleFa) ...[
+              if (article.titleFa.isNotEmpty &&
+                  article.title != article.titleFa) ...[
                 const SizedBox(height: 3),
                 Text(
                   article.title,
@@ -312,7 +407,11 @@ class _NewsCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 4),
-                  Icon(Icons.arrow_back_rounded, size: 14, color: scheme.primary),
+                  Icon(
+                    Icons.arrow_back_rounded,
+                    size: 14,
+                    color: scheme.primary,
+                  ),
                 ],
               ),
             ],
@@ -358,23 +457,31 @@ class _NewsDetailsSheet extends StatelessWidget {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
                   children: [
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                          decoration: BoxDecoration(
-                            color: scheme.primary.withValues(alpha: .18),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          child: Text(
-                            article.tagFa,
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w800,
-                              color: Color(0xFFCAFF38),
+                        Flexible(
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            decoration: BoxDecoration(
+                              color: scheme.primary.withValues(alpha: .18),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Text(
+                              article.tagFa,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w800,
+                                color: Color(0xFFCAFF38),
+                              ),
                             ),
                           ),
                         ),
-                        const Spacer(),
+                        const SizedBox(width: 8),
                         Text(
                           article.published,
                           textDirection: TextDirection.ltr,
@@ -395,7 +502,8 @@ class _NewsDetailsSheet extends StatelessWidget {
                         height: 1.4,
                       ),
                     ),
-                    if (article.titleFa.isNotEmpty && article.title != article.titleFa) ...[
+                    if (article.titleFa.isNotEmpty &&
+                        article.title != article.titleFa) ...[
                       const SizedBox(height: 4),
                       Text(
                         article.title,
@@ -426,9 +534,9 @@ class _NewsDetailsSheet extends StatelessWidget {
                       Text(
                         'نکات کلیدی و تغییرات مهم',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w800,
-                              color: const Color(0xFFCAFF38),
-                            ),
+                          fontWeight: FontWeight.w800,
+                          color: const Color(0xFFCAFF38),
+                        ),
                       ),
                       const SizedBox(height: 8),
                       for (final point in article.keyPoints) ...[
@@ -439,13 +547,20 @@ class _NewsDetailsSheet extends StatelessWidget {
                             children: [
                               const Padding(
                                 padding: EdgeInsets.only(top: 4),
-                                child: Icon(Icons.check_circle_outline_rounded, size: 16, color: Color(0xFFCAFF38)),
+                                child: Icon(
+                                  Icons.check_circle_outline_rounded,
+                                  size: 16,
+                                  color: Color(0xFFCAFF38),
+                                ),
                               ),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   point,
-                                  style: const TextStyle(fontSize: 12.5, height: 1.5),
+                                  style: const TextStyle(
+                                    fontSize: 12.5,
+                                    height: 1.5,
+                                  ),
                                 ),
                               ),
                             ],
@@ -460,20 +575,38 @@ class _NewsDetailsSheet extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.blue.withValues(alpha: .1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.blue.withValues(alpha: .2)),
+                          border: Border.all(
+                            color: Colors.blue.withValues(alpha: .2),
+                          ),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.insights_rounded, size: 18, color: Colors.blueAccent),
+                            const Icon(
+                              Icons.insights_rounded,
+                              size: 18,
+                              color: Colors.blueAccent,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('تأثیر بر بازی و بازار:', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+                                  const Text(
+                                    'تأثیر بر بازی و بازار:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 12,
+                                    ),
+                                  ),
                                   const SizedBox(height: 4),
-                                  Text(article.impact, style: const TextStyle(fontSize: 12, height: 1.5)),
+                                  Text(
+                                    article.impact,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      height: 1.5,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -488,20 +621,38 @@ class _NewsDetailsSheet extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: Colors.amber.withValues(alpha: .1),
                           borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.amber.withValues(alpha: .25)),
+                          border: Border.all(
+                            color: Colors.amber.withValues(alpha: .25),
+                          ),
                         ),
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.lightbulb_outline_rounded, size: 18, color: Colors.amber),
+                            const Icon(
+                              Icons.lightbulb_outline_rounded,
+                              size: 18,
+                              color: Colors.amber,
+                            ),
                             const SizedBox(width: 8),
                             Expanded(
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  const Text('توصیه کارشناسی برای تیم شما:', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12)),
+                                  const Text(
+                                    'توصیه کارشناسی برای تیم شما:',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w800,
+                                      fontSize: 12,
+                                    ),
+                                  ),
                                   const SizedBox(height: 4),
-                                  Text(article.tips, style: const TextStyle(fontSize: 12, height: 1.5)),
+                                  Text(
+                                    article.tips,
+                                    style: const TextStyle(
+                                      fontSize: 12,
+                                      height: 1.5,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -514,7 +665,10 @@ class _NewsDetailsSheet extends StatelessWidget {
                       Center(
                         child: Text(
                           'منبع رسمی: Electronic Arts FC 27',
-                          style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11),
+                          style: TextStyle(
+                            color: scheme.onSurfaceVariant,
+                            fontSize: 11,
+                          ),
                         ),
                       ),
                   ],
@@ -529,8 +683,9 @@ class _NewsDetailsSheet extends StatelessWidget {
 }
 
 class _EmptyNews extends StatelessWidget {
-  const _EmptyNews({required this.onReset});
+  const _EmptyNews({required this.onReset, required this.onRetry});
   final VoidCallback onReset;
+  final VoidCallback onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -540,13 +695,21 @@ class _EmptyNews extends StatelessWidget {
         children: [
           const Icon(Icons.article_outlined, size: 48, color: Colors.white38),
           const SizedBox(height: 12),
-          const Text('مطلبی در این دسته‌بندی یافت نشد', style: TextStyle(fontWeight: FontWeight.w700)),
+          const Text(
+            'مطلبی در این دسته‌بندی یافت نشد',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 6),
           const Text('فیلتر یا عبارت جستجو را تغییر دهید.'),
           const SizedBox(height: 12),
           FilledButton.tonal(
             onPressed: onReset,
             child: const Text('مشاهده همه اخبار'),
+          ),
+          const SizedBox(height: 6),
+          TextButton(
+            onPressed: onRetry,
+            child: const Text('همگام‌سازی دوباره'),
           ),
         ],
       ),

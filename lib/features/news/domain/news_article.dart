@@ -53,27 +53,35 @@ class NewsArticle {
       summary: (json['summary'] ?? '').toString(),
       summaryFa: (json['summaryFA'] ?? json['summary_fa'] ?? '').toString(),
       tagFa: (json['tagFA'] ?? json['tag_fa'] ?? 'اخبار رسمی').toString(),
-      intro: (fullContent['intro'] ?? '').toString(),
-      keyPoints: asStrings(fullContent['keyPoints'] ?? fullContent['key_points']),
+      intro:
+          (fullContent['intro'] ??
+                  json['summaryFA'] ??
+                  json['summary_fa'] ??
+                  json['summary'] ??
+                  '')
+              .toString(),
+      keyPoints: asStrings(
+        fullContent['keyPoints'] ?? fullContent['key_points'],
+      ),
       impact: (fullContent['impact'] ?? '').toString(),
       tips: (fullContent['tips'] ?? '').toString(),
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'titleFA': titleFa,
-        'url': url,
-        'published': published,
-        'summary': summary,
-        'summaryFA': summaryFa,
-        'tagFA': tagFa,
-        'fullContentFA': {
-          'intro': intro,
-          'keyPoints': keyPoints,
-          'impact': impact,
-          'tips': tips,
-        },
-      };
+    'id': id,
+    'title': title,
+    'titleFA': titleFa,
+    'url': url,
+    'published': published,
+    'summary': summary,
+    'summaryFA': summaryFa,
+    'tagFA': tagFa,
+    'fullContentFA': {
+      'intro': intro,
+      'keyPoints': keyPoints,
+      'impact': impact,
+      'tips': tips,
+    },
+  };
 }
