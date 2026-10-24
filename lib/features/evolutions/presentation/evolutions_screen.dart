@@ -25,13 +25,13 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
     _load();
   }
 
-  Future<void> _load() async {
+  Future<void> _load({bool forceRefresh = false}) async {
     setState(() {
       loading = true;
       error = null;
     });
     try {
-      final data = await repository.getActive();
+      final data = await repository.getActive(forceRefresh: forceRefresh);
       if (!mounted) return;
       setState(() => items = data);
     } catch (e) {
@@ -48,7 +48,7 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('EVOLUTIONS')),
       body: RefreshIndicator(
-        onRefresh: _load,
+        onRefresh: () => _load(forceRefresh: true),
         child: ListView(
           padding: const EdgeInsets.fromLTRB(14, 8, 14, 28),
           children: [
@@ -57,7 +57,9 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
               decoration: BoxDecoration(
                 color: scheme.surface,
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: scheme.secondary.withValues(alpha: .28)),
+                border: Border.all(
+                  color: scheme.secondary.withValues(alpha: .28),
+                ),
                 gradient: LinearGradient(
                   begin: Alignment.topRight,
                   end: Alignment.bottomLeft,
@@ -74,7 +76,10 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
                   Row(
                     children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 5,
+                        ),
                         decoration: BoxDecoration(
                           color: scheme.secondary,
                           borderRadius: BorderRadius.circular(7),
@@ -106,10 +111,10 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
                     'EVOLUTION\nLAB',
                     textDirection: TextDirection.ltr,
                     style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                          height: .94,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: -1.1,
-                        ),
+                      height: .94,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: -1.1,
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Text(
@@ -134,13 +139,15 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
                 icon: Icons.cloud_off_rounded,
                 title: 'Evolutionها در دسترس نیستند',
                 subtitle: error!,
-                onTap: _load,
+                onTap: () => _load(forceRefresh: true),
               )
             else if (items.isEmpty)
-              const _StateCard(
+              _StateCard(
                 icon: Icons.auto_awesome_rounded,
                 title: 'Evolution فعالی پیدا نشد',
-                subtitle: 'داده نمونه نمایش داده نمی‌شود؛ فقط دیتای واقعی FC27.',
+                subtitle:
+                    'داده نمونه نمایش داده نمی‌شود؛ فقط دیتای واقعی FC27.',
+                onTap: () => _load(forceRefresh: true),
               )
             else
               for (final item in items) ...[
@@ -246,9 +253,15 @@ class _EvolutionCardState extends State<_EvolutionCard> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(player.playerName, style: Theme.of(context).textTheme.titleLarge),
+              Text(
+                player.playerName,
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
               const SizedBox(height: 4),
-              Text(widget.item.title, style: TextStyle(color: Theme.of(context).colorScheme.primary)),
+              Text(
+                widget.item.title,
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              ),
               const SizedBox(height: 16),
               for (final key in projection.before.keys)
                 if ((projection.changes[key] ?? 0) != 0)
@@ -256,7 +269,9 @@ class _EvolutionCardState extends State<_EvolutionCard> {
                     contentPadding: EdgeInsets.zero,
                     dense: true,
                     title: Text(labels[key] ?? key),
-                    subtitle: Text('${projection.before[key]}  ←  ${projection.after[key]}'),
+                    subtitle: Text(
+                      '${projection.before[key]}  ←  ${projection.after[key]}',
+                    ),
                     trailing: Chip(label: Text('+${projection.changes[key]}')),
                   ),
               const SizedBox(height: 8),
@@ -300,10 +315,11 @@ class _EvolutionCardState extends State<_EvolutionCard> {
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
-          child: Row(
+          child: Wrap(
+            spacing: 6,
+            runSpacing: 6,
             children: [
               _Tag(label: 'COST', value: _cost(item.cost)),
-              const SizedBox(width: 6),
               _Tag(label: 'EXPIRES', value: _expiry(item)),
             ],
           ),
@@ -312,13 +328,17 @@ class _EvolutionCardState extends State<_EvolutionCard> {
           if (item.description.isNotEmpty)
             Align(
               alignment: Alignment.centerRight,
-              child: Text(item.description, style: TextStyle(color: scheme.onSurfaceVariant)),
+              child: Text(
+                item.description,
+                style: TextStyle(color: scheme.onSurfaceVariant),
+              ),
             ),
           if (item.requirements.isNotEmpty) ...[
             const SizedBox(height: 12),
             const _SectionLabel('REQUIREMENTS'),
             const SizedBox(height: 7),
-            for (final req in item.requirements) _Line(icon: Icons.check_rounded, text: req),
+            for (final req in item.requirements)
+              _Line(icon: Icons.check_rounded, text: req),
           ],
           if (item.steps.isNotEmpty) ...[
             const SizedBox(height: 12),
@@ -331,7 +351,9 @@ class _EvolutionCardState extends State<_EvolutionCard> {
                 decoration: BoxDecoration(
                   color: scheme.surfaceContainerHighest.withValues(alpha: .66),
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: scheme.outline.withValues(alpha: .55)),
+                  border: Border.all(
+                    color: scheme.outline.withValues(alpha: .55),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,7 +364,8 @@ class _EvolutionCardState extends State<_EvolutionCard> {
                     ),
                     if (item.steps[i].requirements.isNotEmpty) ...[
                       const SizedBox(height: 6),
-                      for (final req in item.steps[i].requirements) Text('• $req'),
+                      for (final req in item.steps[i].requirements)
+                        Text('• $req'),
                     ],
                     if (item.steps[i].upgrades.isNotEmpty) ...[
                       const SizedBox(height: 6),
@@ -361,7 +384,9 @@ class _EvolutionCardState extends State<_EvolutionCard> {
             Wrap(
               spacing: 6,
               runSpacing: 6,
-              children: [for (final upgrade in item.upgrades) Chip(label: Text(upgrade))],
+              children: [
+                for (final upgrade in item.upgrades) Chip(label: Text(upgrade)),
+              ],
             ),
           ],
           const SizedBox(height: 13),
@@ -370,7 +395,10 @@ class _EvolutionCardState extends State<_EvolutionCard> {
             child: OutlinedButton.icon(
               onPressed: loadingEligible ? null : _loadEligible,
               icon: loadingEligible
-                  ? const SizedBox.square(dimension: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                  ? const SizedBox.square(
+                      dimension: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   : const Icon(Icons.inventory_2_outlined),
               label: const Text('CHECK MY CLUB'),
             ),
@@ -379,33 +407,59 @@ class _EvolutionCardState extends State<_EvolutionCard> {
             const SizedBox(height: 11),
             Row(
               children: [
-                Expanded(child: _Count(label: 'ELIGIBLE', value: eligible.length, color: scheme.primary)),
+                Expanded(
+                  child: _Count(
+                    label: 'ELIGIBLE',
+                    value: eligible.length,
+                    color: scheme.primary,
+                  ),
+                ),
                 const SizedBox(width: 6),
-                Expanded(child: _Count(label: 'REVIEW', value: needsReview.length, color: scheme.secondary)),
+                Expanded(
+                  child: _Count(
+                    label: 'REVIEW',
+                    value: needsReview.length,
+                    color: scheme.secondary,
+                  ),
+                ),
                 const SizedBox(width: 6),
-                Expanded(child: _Count(label: 'NO', value: ineligible.length, color: scheme.onSurfaceVariant)),
+                Expanded(
+                  child: _Count(
+                    label: 'NO',
+                    value: ineligible.length,
+                    color: scheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ],
           if (eligible.isNotEmpty) ...[
             const SizedBox(height: 10),
             for (final player in eligible.take(10))
-              Builder(builder: (context) {
-                final projection = projectionEngine.project(player, item);
-                return ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                  leading: Icon(Icons.check_circle_rounded, color: scheme.primary),
-                  title: Text(player.playerName, style: const TextStyle(fontWeight: FontWeight.w800)),
-                  subtitle: Text('${player.rating} • ${player.position}'),
-                  trailing: projection == null
-                      ? null
-                      : TextButton(
-                          onPressed: () => _showProjection(player),
-                          child: const Text('BEFORE / AFTER'),
-                        ),
-                );
-              }),
+              Builder(
+                builder: (context) {
+                  final projection = projectionEngine.project(player, item);
+                  return ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                    leading: Icon(
+                      Icons.check_circle_rounded,
+                      color: scheme.primary,
+                    ),
+                    title: Text(
+                      player.playerName,
+                      style: const TextStyle(fontWeight: FontWeight.w800),
+                    ),
+                    subtitle: Text('${player.rating} • ${player.position}'),
+                    trailing: projection == null
+                        ? null
+                        : TextButton(
+                            onPressed: () => _showProjection(player),
+                            child: const Text('BEFORE / AFTER'),
+                          ),
+                  );
+                },
+              ),
           ],
           if (needsReview.isNotEmpty) ...[
             const SizedBox(height: 8),
@@ -415,7 +469,9 @@ class _EvolutionCardState extends State<_EvolutionCard> {
                 dense: true,
                 leading: const Icon(Icons.help_outline_rounded),
                 title: Text(player.playerName),
-                subtitle: const Text('حداقل یک شرط ساختاریافته قابل تشخیص نیست.'),
+                subtitle: const Text(
+                  'حداقل یک شرط ساختاریافته قابل تشخیص نیست.',
+                ),
               ),
           ],
           if (checkedClub && eligible.isEmpty && needsReview.isEmpty) ...[
@@ -437,17 +493,19 @@ class _Tag extends StatelessWidget {
   final String value;
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: .68),
-          borderRadius: BorderRadius.circular(6),
-        ),
-        child: Text(
-          '$label  $value',
-          textDirection: TextDirection.ltr,
-          style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w900),
-        ),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+    decoration: BoxDecoration(
+      color: Theme.of(
+        context,
+      ).colorScheme.surfaceContainerHighest.withValues(alpha: .68),
+      borderRadius: BorderRadius.circular(6),
+    ),
+    child: Text(
+      '$label  $value',
+      textDirection: TextDirection.ltr,
+      style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w900),
+    ),
+  );
 }
 
 class _SectionLabel extends StatelessWidget {
@@ -455,18 +513,18 @@ class _SectionLabel extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) => Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          text,
-          textDirection: TextDirection.ltr,
-          style: TextStyle(
-            color: Theme.of(context).colorScheme.primary,
-            fontSize: 9,
-            fontWeight: FontWeight.w900,
-            letterSpacing: .6,
-          ),
-        ),
-      );
+    alignment: Alignment.centerLeft,
+    child: Text(
+      text,
+      textDirection: TextDirection.ltr,
+      style: TextStyle(
+        color: Theme.of(context).colorScheme.primary,
+        fontSize: 9,
+        fontWeight: FontWeight.w900,
+        letterSpacing: .6,
+      ),
+    ),
+  );
 }
 
 class _Line extends StatelessWidget {
@@ -475,16 +533,16 @@ class _Line extends StatelessWidget {
   final String text;
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.only(bottom: 6),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
-            const SizedBox(width: 7),
-            Expanded(child: Text(text)),
-          ],
-        ),
-      );
+    padding: const EdgeInsets.only(bottom: 6),
+    child: Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: Theme.of(context).colorScheme.primary),
+        const SizedBox(width: 7),
+        Expanded(child: Text(text)),
+      ],
+    ),
+  );
 }
 
 class _Count extends StatelessWidget {
@@ -494,44 +552,60 @@ class _Count extends StatelessWidget {
   final Color color;
   @override
   Widget build(BuildContext context) => Container(
-        padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 7),
-        decoration: BoxDecoration(
-          color: color.withValues(alpha: .08),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: color.withValues(alpha: .18)),
+    padding: const EdgeInsets.symmetric(vertical: 9, horizontal: 7),
+    decoration: BoxDecoration(
+      color: color.withValues(alpha: .08),
+      borderRadius: BorderRadius.circular(8),
+      border: Border.all(color: color.withValues(alpha: .18)),
+    ),
+    child: Column(
+      children: [
+        Text(
+          '$value',
+          style: TextStyle(
+            color: color,
+            fontWeight: FontWeight.w900,
+            fontSize: 16,
+          ),
         ),
-        child: Column(
-          children: [
-            Text('$value', style: TextStyle(color: color, fontWeight: FontWeight.w900, fontSize: 16)),
-            Text(label, textDirection: TextDirection.ltr, style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w900)),
-          ],
+        Text(
+          label,
+          textDirection: TextDirection.ltr,
+          style: const TextStyle(fontSize: 8, fontWeight: FontWeight.w900),
         ),
-      );
+      ],
+    ),
+  );
 }
 
 class _StateCard extends StatelessWidget {
-  const _StateCard({required this.icon, required this.title, required this.subtitle, this.onTap});
+  const _StateCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    this.onTap,
+  });
   final IconData icon;
   final String title;
   final String subtitle;
   final VoidCallback? onTap;
   @override
   Widget build(BuildContext context) => Card(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              Icon(icon, size: 42, color: Theme.of(context).colorScheme.primary),
-              const SizedBox(height: 10),
-              Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
-              const SizedBox(height: 6),
-              Text(subtitle, textAlign: TextAlign.center),
-              if (onTap != null) ...[
-                const SizedBox(height: 12),
-                OutlinedButton(onPressed: onTap, child: const Text('تلاش دوباره')),
-              ],
-            ],
-          ),
-        ),
-      );
+    child: Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        children: [
+          Icon(icon, size: 42, color: Theme.of(context).colorScheme.primary),
+          const SizedBox(height: 10),
+          Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
+          const SizedBox(height: 6),
+          Text(subtitle, textAlign: TextAlign.center),
+          if (onTap != null) ...[
+            const SizedBox(height: 12),
+            OutlinedButton(onPressed: onTap, child: const Text('تلاش دوباره')),
+          ],
+        ],
+      ),
+    ),
+  );
 }

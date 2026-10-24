@@ -4,10 +4,7 @@ import '../domain/evolution.dart';
 enum EvoEligibilityStatus { eligible, ineligible, needsReview }
 
 class EvoEligibilityResult {
-  const EvoEligibilityResult({
-    required this.status,
-    required this.reasons,
-  });
+  const EvoEligibilityResult({required this.status, required this.reasons});
 
   final EvoEligibilityStatus status;
   final List<String> reasons;
@@ -59,10 +56,7 @@ class EvolutionEligibilityEngine {
     );
   }
 
-  (bool, String)? _checkRequirement(
-    MyClubItem item,
-    Map<String, dynamic> req,
-  ) {
+  (bool, String)? _checkRequirement(MyClubItem item, Map<String, dynamic> req) {
     String norm(dynamic v) => (v ?? '')
         .toString()
         .toLowerCase()
@@ -77,7 +71,8 @@ class EvolutionEligibilityEngine {
 
     final type = norm(req['type'] ?? req['name'] ?? req['key'] ?? req['stat']);
     final operator = (req['operator'] ?? req['op'] ?? '').toString();
-    final value = req['value'] ??
+    final value =
+        req['value'] ??
         req['max'] ??
         req['min'] ??
         req['limit'] ??
@@ -97,55 +92,147 @@ class EvolutionEligibilityEngine {
     if (type.contains('overall') || type == 'ovr' || type.contains('rating')) {
       if (n == null) return null;
       final ok = compare(item.rating, n);
-      return (ok, 'ریتینگ ' + item.rating.toString() + ' با شرط ' + n.toString() + ' سازگار نیست.');
+      return (
+        ok,
+        'ریتینگ ' +
+            item.rating.toString() +
+            ' با شرط ' +
+            n.toString() +
+            ' سازگار نیست.',
+      );
     }
 
     if (type.contains('pace') || type == 'pac') {
       if (n == null) return null;
       final ok = compare(item.pace, n);
-      return (ok, 'PAC ' + item.pace.toString() + ' با شرط ' + n.toString() + ' سازگار نیست.');
+      return (
+        ok,
+        'PAC ' +
+            item.pace.toString() +
+            ' با شرط ' +
+            n.toString() +
+            ' سازگار نیست.',
+      );
     }
 
     if (type.contains('shoot') || type == 'sho') {
       if (n == null) return null;
       final ok = compare(item.shooting, n);
-      return (ok, 'SHO ' + item.shooting.toString() + ' با شرط ' + n.toString() + ' سازگار نیست.');
+      return (
+        ok,
+        'SHO ' +
+            item.shooting.toString() +
+            ' با شرط ' +
+            n.toString() +
+            ' سازگار نیست.',
+      );
     }
 
     if (type.contains('pass') || type == 'pas') {
       if (n == null) return null;
       final ok = compare(item.passing, n);
-      return (ok, 'PAS ' + item.passing.toString() + ' با شرط ' + n.toString() + ' سازگار نیست.');
+      return (
+        ok,
+        'PAS ' +
+            item.passing.toString() +
+            ' با شرط ' +
+            n.toString() +
+            ' سازگار نیست.',
+      );
     }
 
     if (type.contains('drib') || type == 'dri') {
       if (n == null) return null;
       final ok = compare(item.dribbling, n);
-      return (ok, 'DRI ' + item.dribbling.toString() + ' با شرط ' + n.toString() + ' سازگار نیست.');
+      return (
+        ok,
+        'DRI ' +
+            item.dribbling.toString() +
+            ' با شرط ' +
+            n.toString() +
+            ' سازگار نیست.',
+      );
     }
 
     if (type.contains('defend') || type == 'def') {
       if (n == null) return null;
       final ok = compare(item.defending, n);
-      return (ok, 'DEF ' + item.defending.toString() + ' با شرط ' + n.toString() + ' سازگار نیست.');
+      return (
+        ok,
+        'DEF ' +
+            item.defending.toString() +
+            ' با شرط ' +
+            n.toString() +
+            ' سازگار نیست.',
+      );
     }
 
     if (type.contains('physical') || type == 'phy') {
       if (n == null) return null;
       final ok = compare(item.physical, n);
-      return (ok, 'PHY ' + item.physical.toString() + ' با شرط ' + n.toString() + ' سازگار نیست.');
+      return (
+        ok,
+        'PHY ' +
+            item.physical.toString() +
+            ' با شرط ' +
+            n.toString() +
+            ' سازگار نیست.',
+      );
     }
 
     if (type.contains('skillmove') || type == 'sm') {
       if (n == null) return null;
       final ok = compare(item.skillMoves, n);
-      return (ok, 'Skill Moves ' + item.skillMoves.toString() + '★ با شرط ' + n.toString() + '★ سازگار نیست.');
+      return (
+        ok,
+        'Skill Moves ' +
+            item.skillMoves.toString() +
+            '★ با شرط ' +
+            n.toString() +
+            '★ سازگار نیست.',
+      );
     }
 
     if (type.contains('weakfoot') || type == 'wf') {
       if (n == null) return null;
       final ok = compare(item.weakFoot, n);
-      return (ok, 'Weak Foot ' + item.weakFoot.toString() + '★ با شرط ' + n.toString() + '★ سازگار نیست.');
+      return (
+        ok,
+        'Weak Foot ' +
+            item.weakFoot.toString() +
+            '★ با شرط ' +
+            n.toString() +
+            '★ سازگار نیست.',
+      );
+    }
+
+    if (type.contains('excluded') && type.contains('position')) {
+      final raw = req['values'] ?? req['positions'] ?? req['value'];
+      final values = raw is List
+          ? raw.map((e) => e.toString().toUpperCase()).toSet()
+          : raw == null
+          ? <String>{}
+          : {raw.toString().toUpperCase()};
+      if (values.isEmpty) return null;
+      final ownedPositions = {
+        item.position.toUpperCase(),
+        ...item.positions.map((e) => e.toUpperCase()),
+      };
+      final blocked = ownedPositions.any(values.contains);
+      return (!blocked, 'پست کارت در فهرست پست‌های غیرمجاز این Evolution است.');
+    }
+
+    if (type.contains('maxpos') || type.contains('positioncount')) {
+      final n = number(value);
+      if (n == null) return null;
+      final ownedPositions = {
+        item.position.toUpperCase(),
+        ...item.positions.map((e) => e.toUpperCase()),
+      };
+      return (
+        ownedPositions.length <= n,
+        'تعداد پست‌های کارت با سقف ${n.toString()} سازگار نیست.',
+      );
     }
 
     if (type.contains('position')) {
@@ -153,8 +240,8 @@ class EvolutionEligibilityEngine {
       final values = raw is List
           ? raw.map((e) => e.toString().toUpperCase()).toSet()
           : raw == null
-              ? <String>{}
-              : {raw.toString().toUpperCase()};
+          ? <String>{}
+          : {raw.toString().toUpperCase()};
       if (values.isEmpty) return null;
 
       final ownedPositions = {
@@ -165,14 +252,29 @@ class EvolutionEligibilityEngine {
       return (ok, 'پست کارت با پست‌های مجاز Evolution سازگار نیست.');
     }
 
-    if (type.contains('club') || type.contains('league') || type.contains('nation')) {
+    if (type.contains('rarity') || type.contains('version')) {
+      final target = (req['value'] ?? '').toString().trim();
+      final actual = item.version.trim();
+      if (target.isEmpty || actual.isEmpty) return null;
+      final normalizedActual = norm(actual);
+      final normalizedTarget = norm(target);
+      final ok =
+          normalizedActual == normalizedTarget ||
+          normalizedActual.contains(normalizedTarget) ||
+          normalizedTarget.contains(normalizedActual);
+      return (ok, '$actual با نسخهٔ موردنیاز $target سازگار نیست.');
+    }
+
+    if (type.contains('club') ||
+        type.contains('league') ||
+        type.contains('nation')) {
       final target = (req['value'] ?? req['name'] ?? '').toString();
       if (target.isEmpty) return null;
       final actual = type.contains('club')
           ? item.clubName
           : type.contains('league')
-              ? item.leagueName
-              : item.nationName;
+          ? item.leagueName
+          : item.nationName;
       final ok = actual.toLowerCase() == target.toLowerCase();
       return (ok, actual + ' با شرط ' + target + ' سازگار نیست.');
     }

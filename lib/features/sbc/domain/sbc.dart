@@ -1,3 +1,21 @@
+String _sbcId(Map<String, dynamic> json) {
+  final explicit = (json['id'] ?? '').toString().trim();
+  if (explicit.isNotEmpty) return explicit;
+  final url = (json['url'] ?? '').toString().trim();
+  if (url.isNotEmpty) {
+    final segments = url.split('/').where((part) => part.isNotEmpty).toList();
+    if (segments.isNotEmpty) {
+      final last = segments.last.split('?').first.trim();
+      if (last.isNotEmpty) return last;
+    }
+  }
+  final title = (json['title'] ?? json['name'] ?? '').toString();
+  return title
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+      .replaceAll(RegExp(r'^-+|-+$'), '');
+}
+
 class SbcChallenge {
   const SbcChallenge({
     required this.id,
@@ -32,36 +50,90 @@ class SbcChallenge {
   String get primaryTitle => titleFa.isNotEmpty ? titleFa : titleEn;
   String get secondaryTitle =>
       titleFa.isNotEmpty && titleEn.isNotEmpty && titleFa != titleEn
-          ? titleEn
-          : '';
+      ? titleEn
+      : '';
 
   factory SbcChallenge.fromJson(Map<String, dynamic> json) {
-    int? asNullableInt(dynamic value) =>
-        value == null ? null : (value is int ? value : int.tryParse(value.toString()));
+    int? asNullableInt(dynamic value) => value == null
+        ? null
+        : (value is int ? value : int.tryParse(value.toString()));
 
-    List<String> asStrings(dynamic value) =>
-        value is List ? value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList() : const [];
+    List<String> asStrings(dynamic value) => value is List
+        ? value.map((e) => e.toString()).where((e) => e.isNotEmpty).toList()
+        : const [];
 
     final rawTitle = (json['title'] ?? json['name'] ?? '').toString();
-    final titleEn = (json['title_en'] ?? json['name_en'] ?? rawTitle).toString();
-    final titleFa = (json['titleFA'] ?? json['nameFA'] ?? json['title_fa'] ?? json['name_fa'] ?? '').toString();
-    final displayTitle = titleFa.isNotEmpty && titleEn.isNotEmpty && titleFa != titleEn
+    final titleEn = (json['title_en'] ?? json['name_en'] ?? rawTitle)
+        .toString();
+    final titleFa =
+        (json['titleFA'] ??
+                json['nameFA'] ??
+                json['title_fa'] ??
+                json['name_fa'] ??
+                '')
+            .toString();
+    final displayTitle =
+        titleFa.isNotEmpty && titleEn.isNotEmpty && titleFa != titleEn
         ? '$titleFa • $titleEn'
         : (titleFa.isNotEmpty ? titleFa : titleEn);
 
+    var description =
+        (json['descriptionFA'] ??
+                json['description_fa'] ??
+                json['description'] ??
+                '')
+            .toString();
+    var requirements = asStrings(
+      json['requirementsFA'] ?? json['requirements_fa'] ?? json['requirements'],
+    );
+
+    final rawSquads = json['squads'];
+    if (rawSquads is List) {
+      for (final rawSquad in rawSquads) {
+        if (rawSquad is! Map) continue;
+        final squad = Map<String, dynamic>.from(rawSquad);
+        if (requirements.isEmpty) {
+          requirements = asStrings(
+            squad['requirementsFA'] ??
+                squad['requirements_fa'] ??
+                squad['requirements'],
+          );
+        }
+        if (description.isEmpty) {
+          description =
+              (squad['descriptionFA'] ??
+                      squad['description_fa'] ??
+                      squad['description'] ??
+                      '')
+                  .toString();
+        }
+        break;
+      }
+    }
+
     return SbcChallenge(
-      id: (json['id'] ?? '').toString(),
+      id: _sbcId(json),
       title: displayTitle,
       titleEn: titleEn,
       titleFa: titleFa,
       category: (json['category'] ?? 'SBC').toString(),
-      description: (json['descriptionFA'] ?? json['description_fa'] ?? json['description'] ?? '').toString(),
-      reward: (json['rewardFA'] ?? json['reward_fa'] ?? json['reward'] ?? json['rewards'] ?? '').toString(),
-      requirements: asStrings(json['requirementsFA'] ?? json['requirements_fa'] ?? json['requirements']),
+      description: description,
+      reward:
+          (json['rewardFA'] ??
+                  json['reward_fa'] ??
+                  json['reward'] ??
+                  json['rewards'] ??
+                  '')
+              .toString(),
+      requirements: requirements,
       repeatable: json['repeatable'] == true,
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
-      estimatedCost: asNullableInt(json['estimated_cost'] ?? json['cost']),
-      itemScore: asNullableInt(json['item_score'] ?? json['required_item_score']),
+      estimatedCost: asNullableInt(
+        json['estimated_cost'] ?? json['cost'] ?? json['price'],
+      ),
+      itemScore: asNullableInt(
+        json['item_score'] ?? json['required_item_score'],
+      ),
       guideFa: asStrings(json['guide_fa'] ?? json['persian_guide']),
     );
   }
@@ -127,12 +199,16 @@ class SbcSolution {
       playerIds: ids is List ? ids.map((e) => e.toString()).toList() : const [],
       players: playersRaw is List
           ? playersRaw
-              .whereType<Map>()
-              .map((e) => SbcSolutionPlayer.fromJson(Map<String, dynamic>.from(e)))
-              .toList()
+                .whereType<Map>()
+                .map(
+                  (e) =>
+                      SbcSolutionPlayer.fromJson(Map<String, dynamic>.from(e)),
+                )
+                .toList()
           : const [],
-      ownedPlayerIds:
-          ownedRaw is List ? ownedRaw.map((e) => e.toString()).toList() : const [],
+      ownedPlayerIds: ownedRaw is List
+          ? ownedRaw.map((e) => e.toString()).toList()
+          : const [],
       notes: json['notes'] is List
           ? (json['notes'] as List).map((e) => e.toString()).toList()
           : const [],

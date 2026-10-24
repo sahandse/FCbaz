@@ -3,9 +3,9 @@ import 'package:flutter/services.dart';
 
 import '../club/presentation/my_club_screen.dart';
 import '../evolutions/presentation/evolutions_screen.dart';
-import '../home/home_dashboard_screen.dart';
 import '../home/objectives_screen.dart';
 import '../more/more_screen.dart';
+import '../news/presentation/news_screen.dart';
 import '../notifications/deadline_alert_service.dart';
 import '../notifications/notification_center_screen.dart';
 import '../notifications/notification_repository.dart';
@@ -35,7 +35,7 @@ class MainShell extends StatefulWidget {
 }
 
 class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
-  static const _titles = ['خانه', 'کارت‌ها', 'باشگاه', 'تیم', 'بیشتر'];
+  static const _titles = ['اخبار', 'کارت‌ها', 'باشگاه', 'تیم', 'بیشتر'];
 
   final notificationRepository = NotificationRepository();
   final priceAlertService = PriceAlertService();
@@ -173,10 +173,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     final palette = context.palette;
     final pages = [
-      HomeDashboardScreen(
-        onOpenPlayers: () => _selectTab(1),
-        onOpenClub: () => _selectTab(2),
-      ),
+      const NewsScreen(embedded: true),
       CardsScreen(focusRequests: searchRequests),
       const MyClubScreen(embedded: true),
       const SquadScreenPro(),

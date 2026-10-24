@@ -11,7 +11,7 @@ import '../../settings/app_settings_repository.dart';
 import '../data/player_repository.dart';
 import '../domain/player.dart';
 import 'advanced_player_filter_sheet.dart';
-import 'player_card.dart';
+import 'player_market_tile.dart';
 
 class CardsScreen extends StatefulWidget {
   const CardsScreen({this.focusRequests, super.key});
@@ -182,7 +182,8 @@ class _CardsScreenState extends State<CardsScreen> {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (_) => AdvancedPlayerFilterSheet(current: filter, facets: facets),
+      builder: (_) =>
+          AdvancedPlayerFilterSheet(current: filter, facets: facets),
     );
     if (result == null) return;
     setState(() {
@@ -257,9 +258,9 @@ class _CardsScreenState extends State<CardsScreen> {
     final savedData = await historyRepository.savedFilters();
     if (!mounted) return;
     setState(() => savedFilters = savedData);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('نما ذخیره شد.')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('نما ذخیره شد.')));
   }
 
   Future<void> _applySavedView(SavedPlayerFilter saved) async {
@@ -394,10 +395,8 @@ class _CardsScreenState extends State<CardsScreen> {
                         _RarityChip(
                           label: 'TOTW',
                           active: quickRarity == 'TOTW',
-                          onTap: () => _applyQuickRarity(
-                            'TOTW',
-                            'Team of the week',
-                          ),
+                          onTap: () =>
+                              _applyQuickRarity('TOTW', 'Team of the week'),
                         ),
                         _RarityChip(
                           label: 'Hall',
@@ -407,8 +406,7 @@ class _CardsScreenState extends State<CardsScreen> {
                         _RarityChip(
                           label: 'Holo',
                           active: quickRarity == 'Holo',
-                          onTap: () =>
-                              _applyQuickRarity('Holo', 'Holographic'),
+                          onTap: () => _applyQuickRarity('Holo', 'Holographic'),
                         ),
                         _RarityChip(
                           label: 'Silver',
@@ -425,10 +423,7 @@ class _CardsScreenState extends State<CardsScreen> {
                   ),
                   if (filter.activeCount > 0) ...[
                     const SizedBox(height: FcbazSpace.sm),
-                    _ActiveFilters(
-                      filter: filter,
-                      onClear: _clearAllFilters,
-                    ),
+                    _ActiveFilters(filter: filter, onClear: _clearAllFilters),
                   ],
                   const SizedBox(height: FcbazSpace.md),
                   if (!loading && error == null)
@@ -504,15 +499,14 @@ class _CardsScreenState extends State<CardsScreen> {
             SliverPadding(
               padding: const EdgeInsets.fromLTRB(16, 4, 16, 34),
               sliver: SliverGrid(
-                gridDelegate:
-                    const SliverGridDelegateWithFixedCrossAxisCount(
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount: 2,
                   mainAxisSpacing: 14,
                   crossAxisSpacing: 10,
-                  childAspectRatio: .72,
+                  childAspectRatio: .5,
                 ),
                 delegate: SliverChildBuilderDelegate(
-                  (context, index) => PlayerCard(
+                  (context, index) => PlayerMarketTile(
                     player: players[index],
                     pricePlatform: filter.platform,
                   ),
@@ -529,7 +523,8 @@ class _CardsScreenState extends State<CardsScreen> {
 
   List<Widget> _discoverySlivers() {
     if (loadingDiscovery) return const [];
-    final hasContent = trending.isNotEmpty ||
+    final hasContent =
+        trending.isNotEmpty ||
         recent.isNotEmpty ||
         savedFilters.isNotEmpty ||
         favorites.isNotEmpty;
@@ -591,21 +586,18 @@ class _CardsScreenState extends State<CardsScreen> {
                 const SizedBox(height: FcbazSpace.xl),
               ],
               if (trending.isNotEmpty) ...[
-                SectionHeader(
-                  kicker: 'TRENDING',
-                  title: 'کارت‌های داغ',
-                ),
+                SectionHeader(kicker: 'TRENDING', title: 'کارت‌های داغ'),
                 const SizedBox(height: FcbazSpace.sm),
                 SizedBox(
-                  height: 212,
+                  height: 310,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     cacheExtent: 600,
                     itemCount: math.min(8, trending.length),
                     separatorBuilder: (_, __) => const SizedBox(width: 8),
                     itemBuilder: (_, index) => SizedBox(
-                      width: 150,
-                      child: PlayerCard(
+                      width: 154,
+                      child: PlayerMarketTile(
                         player: trending[index],
                         pricePlatform: filter.platform,
                       ),
@@ -621,15 +613,15 @@ class _CardsScreenState extends State<CardsScreen> {
                 ),
                 const SizedBox(height: FcbazSpace.sm),
                 SizedBox(
-                  height: 212,
+                  height: 310,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     cacheExtent: 600,
                     itemCount: math.min(8, favorites.length),
                     separatorBuilder: (_, __) => const SizedBox(width: 8),
                     itemBuilder: (_, index) => SizedBox(
-                      width: 150,
-                      child: PlayerCard(
+                      width: 154,
+                      child: PlayerMarketTile(
                         player: favorites[index],
                         pricePlatform: filter.platform,
                       ),
@@ -638,10 +630,7 @@ class _CardsScreenState extends State<CardsScreen> {
                 ),
                 const SizedBox(height: FcbazSpace.xl),
               ],
-              const SectionHeader(
-                kicker: 'CATALOG',
-                title: 'همه کارت‌ها',
-              ),
+              const SectionHeader(kicker: 'CATALOG', title: 'همه کارت‌ها'),
               const SizedBox(height: FcbazSpace.xs),
             ],
           ),

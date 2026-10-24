@@ -26,7 +26,8 @@ void main() {
     expect(service, contains('WatchlistRepository'));
     expect(service, contains('ObjectiveProgressRepository'));
     expect(service, contains('MyClubRepository'));
-    expect(shell, contains('HomeDashboardScreen'));
+    expect(shell, contains('NewsScreen(embedded: true)'));
+    expect(shell, isNot(contains('HomeDashboardScreen')));
     expect(shell, isNot(contains('HomeScreen(')));
   });
 }

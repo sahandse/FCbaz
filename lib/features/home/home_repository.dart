@@ -5,6 +5,66 @@ import '../evolutions/domain/evolution.dart';
 import '../players/domain/player.dart';
 import '../sbc/domain/sbc.dart';
 
+const _persianDigits = '۰۱۲۳۴۵۶۷۸۹';
+
+String _asciiDigits(String value) {
+  final buffer = StringBuffer();
+  for (final rune in value.runes) {
+    final index = _persianDigits.indexOf(String.fromCharCode(rune));
+    buffer.write(index >= 0 ? '$index' : String.fromCharCode(rune));
+  }
+  return buffer.toString();
+}
+
+int? _countInTask(Map<String, dynamic> json) {
+  for (final key in const ['name', 'title', 'nameFA', 'titleFA']) {
+    final match = RegExp(
+      r'\d[\d,]*',
+    ).firstMatch(_asciiDigits((json[key] ?? '').toString()));
+    if (match == null) continue;
+    final value = int.tryParse(match.group(0)!.replaceAll(',', ''));
+    if (value != null && value > 0) return value;
+  }
+  final match = RegExp(r'\d[\d,]*').firstMatch(
+    _asciiDigits(
+      (json['description'] ?? json['descriptionFA'] ?? '').toString(),
+    ),
+  );
+  final value = match == null
+      ? null
+      : int.tryParse(match.group(0)!.replaceAll(',', ''));
+  return value != null && value > 0 ? value : null;
+}
+
+String _objectiveId(Map<String, dynamic> json) {
+  final explicit = (json['id'] ?? '').toString().trim();
+  if (explicit.isNotEmpty) return explicit;
+  final url = (json['url'] ?? '').toString().trim();
+  if (url.isNotEmpty) {
+    final segments = url.split('/').where((part) => part.isNotEmpty).toList();
+    if (segments.isNotEmpty) {
+      final last = segments.last.split('?').first.trim();
+      if (last.isNotEmpty) return last;
+    }
+  }
+  final title = (json['name'] ?? json['title'] ?? '').toString();
+  return title
+      .toLowerCase()
+      .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+      .replaceAll(RegExp(r'^-+|-+$'), '');
+}
+
+String _taskId(Map<String, dynamic> json) {
+  final explicit = (json['id'] ?? json['task_id'] ?? '').toString().trim();
+  if (explicit.isNotEmpty) return explicit;
+  final title = (json['nameFA'] ?? json['name'] ?? json['title'] ?? '')
+      .toString()
+      .trim();
+  if (title.isNotEmpty) return title;
+  final description = (json['description'] ?? '').toString().trim();
+  return description;
+}
+
 class HomeObjectiveTask {
   const HomeObjectiveTask({
     required this.id,
@@ -24,18 +84,28 @@ class HomeObjectiveTask {
     int asInt(dynamic value) =>
         value is int ? value : int.tryParse((value ?? '0').toString()) ?? 0;
 
-    final titleFa = (json['titleFA'] ?? json['nameFA'] ?? json['title_fa'] ?? json['name_fa'] ?? '').toString();
+    final titleFa =
+        (json['titleFA'] ??
+                json['nameFA'] ??
+                json['title_fa'] ??
+                json['name_fa'] ??
+                '')
+            .toString();
     final titleEn = (json['title'] ?? json['name'] ?? '').toString();
-    final descFa = (json['descriptionFA'] ?? json['description_fa'] ?? '').toString();
+    final descFa = (json['descriptionFA'] ?? json['description_fa'] ?? '')
+        .toString();
     final descEn = (json['description'] ?? '').toString();
     final rewardFa = (json['rewardFA'] ?? json['reward_fa'] ?? '').toString();
     final rewardEn = (json['reward'] ?? '').toString();
 
+    final explicitTarget = asInt(
+      json['target'] ?? json['required'] ?? json['count'],
+    );
     return HomeObjectiveTask(
-      id: (json['id'] ?? json['task_id'] ?? '').toString(),
+      id: _taskId(json),
       title: titleFa.isNotEmpty ? titleFa : titleEn,
       description: descFa.isNotEmpty ? descFa : descEn,
-      target: asInt(json['target'] ?? json['required'] ?? json['count']),
+      target: explicitTarget > 0 ? explicitTarget : (_countInTask(json) ?? 0),
       reward: rewardFa.isNotEmpty ? rewardFa : rewardEn,
     );
   }
@@ -69,27 +139,37 @@ class HomeObjective {
     final rawTasks = json['tasks'] ?? json['objectives'] ?? const [];
     final tasks = rawTasks is List
         ? rawTasks
-            .whereType<Map>()
-            .map((e) => HomeObjectiveTask.fromJson(Map<String, dynamic>.from(e)))
-            .where((e) => e.title.isNotEmpty)
-            .toList()
+              .whereType<Map>()
+              .map(
+                (e) => HomeObjectiveTask.fromJson(Map<String, dynamic>.from(e)),
+              )
+              .where((e) => e.title.isNotEmpty)
+              .toList()
         : const <HomeObjectiveTask>[];
 
-    final titleFa = (json['titleFA'] ?? json['nameFA'] ?? json['title_fa'] ?? json['name_fa'] ?? '').toString();
+    final titleFa =
+        (json['titleFA'] ??
+                json['nameFA'] ??
+                json['title_fa'] ??
+                json['name_fa'] ??
+                '')
+            .toString();
     final titleEn = (json['title'] ?? json['name'] ?? '').toString();
-    final descFa = (json['descriptionFA'] ?? json['description_fa'] ?? '').toString();
+    final descFa = (json['descriptionFA'] ?? json['description_fa'] ?? '')
+        .toString();
     final descEn = (json['description'] ?? '').toString();
     final rewardFa = (json['rewardFA'] ?? json['reward_fa'] ?? '').toString();
     final rewardEn = (json['reward'] ?? '').toString();
 
     return HomeObjective(
-      id: (json['id'] ?? '').toString(),
+      id: _objectiveId(json),
       title: titleFa.isNotEmpty ? titleFa : titleEn,
       description: descFa.isNotEmpty ? descFa : descEn,
       reward: rewardFa.isNotEmpty ? rewardFa : rewardEn,
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
       taskCount: asInt(json['task_count'] ?? tasks.length),
-      category: (json['category'] ?? json['group'] ?? json['type'] ?? '').toString(),
+      category: (json['category'] ?? json['group'] ?? json['type'] ?? '')
+          .toString(),
       tasks: tasks,
     );
   }
@@ -118,9 +198,9 @@ class HomeRepository {
     FCBazApi? api,
     PublicFcData? publicData,
     LiveFc27Catalog? liveCatalog,
-  })  : api = api ?? FCBazApi(),
-        publicData = publicData ?? PublicFcData(),
-        liveCatalog = liveCatalog ?? LiveFc27Catalog();
+  }) : api = api ?? FCBazApi(),
+       publicData = publicData ?? PublicFcData(),
+       liveCatalog = liveCatalog ?? LiveFc27Catalog();
 
   final FCBazApi api;
   final PublicFcData publicData;
@@ -151,9 +231,9 @@ class HomeRepository {
 
     List<Map<String, dynamic>> maps(dynamic value) => value is List
         ? value
-            .whereType<Map>()
-            .map((e) => Map<String, dynamic>.from(e))
-            .toList()
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList()
         : const [];
 
     final liveSbcs = maps(live?['sbcs'])
@@ -189,14 +269,17 @@ class HomeRepository {
       objectives: backendFeed?.objectives.isNotEmpty == true
           ? backendFeed!.objectives
           : liveObjectives,
-      liveGeneratedAt: DateTime.tryParse((live?['generated_at'] ?? '').toString()),
+      liveGeneratedAt: DateTime.tryParse(
+        (live?['generated_at'] ?? '').toString(),
+      ),
     );
   }
 
   bool _isVerifiedMarketMover(Map<String, dynamic> item) {
     final source = (item['source_url'] ?? item['source'] ?? '').toString();
     final hasPrice = item['price'] != null || item['current'] != null;
-    final hasMovement = item['change_percent'] != null ||
+    final hasMovement =
+        item['change_percent'] != null ||
         item['change_24h_percent'] != null ||
         item['change'] != null;
     return source.startsWith('https://') && hasPrice && hasMovement;
@@ -205,35 +288,31 @@ class HomeRepository {
   HomeFeed _fromMaps(Map<String, dynamic> data) {
     List<Map<String, dynamic>> maps(dynamic value) => value is List
         ? value
-            .whereType<Map>()
-            .map((e) => Map<String, dynamic>.from(e))
-            .toList()
+              .whereType<Map>()
+              .map((e) => Map<String, dynamic>.from(e))
+              .toList()
         : const [];
 
     return HomeFeed(
-      trendingPlayers: maps(data['trending_players'])
-          .map(Player.fromJson)
-          .where((e) => e.id.isNotEmpty)
-          .toList(),
-      marketMovers: maps(data['market_movers']).where(_isVerifiedMarketMover).toList(),
-      sbcs: maps(data['sbcs'])
-          .map(SbcChallenge.fromJson)
-          .where((e) => e.id.isNotEmpty)
-          .toList(),
-      evolutions: maps(data['evolutions'])
-          .map(Evolution.fromJson)
-          .where((e) => e.id.isNotEmpty)
-          .toList(),
-      objectives: maps(data['objectives'])
-          .map(HomeObjective.fromJson)
-          .where((e) => e.title.isNotEmpty)
-          .toList(),
+      trendingPlayers: maps(
+        data['trending_players'],
+      ).map(Player.fromJson).where((e) => e.id.isNotEmpty).toList(),
+      marketMovers: maps(
+        data['market_movers'],
+      ).where(_isVerifiedMarketMover).toList(),
+      sbcs: maps(
+        data['sbcs'],
+      ).map(SbcChallenge.fromJson).where((e) => e.id.isNotEmpty).toList(),
+      evolutions: maps(
+        data['evolutions'],
+      ).map(Evolution.fromJson).where((e) => e.id.isNotEmpty).toList(),
+      objectives: maps(
+        data['objectives'],
+      ).map(HomeObjective.fromJson).where((e) => e.title.isNotEmpty).toList(),
     );
   }
 
-  Future<List<HomeObjective>> getObjectives({
-    bool forceRefresh = false,
-  }) async {
+  Future<List<HomeObjective>> getObjectives({bool forceRefresh = false}) async {
     if (api.isConfigured) {
       try {
         final json = await api.getJson(

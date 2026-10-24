@@ -56,12 +56,13 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
   }
 
   List<String> get _categories {
-    final values = items
-        .map((e) => e.category.trim())
-        .where((e) => e.isNotEmpty)
-        .toSet()
-        .toList()
-      ..sort();
+    final values =
+        items
+            .map((e) => e.category.trim())
+            .where((e) => e.isNotEmpty)
+            .toSet()
+            .toList()
+          ..sort();
     return ['همه', ...values];
   }
 
@@ -70,7 +71,10 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
     return items.where((e) => e.category == category).toList();
   }
 
-  ObjectiveProgressEntry? _entry(HomeObjective objective, HomeObjectiveTask task) {
+  ObjectiveProgressEntry? _entry(
+    HomeObjective objective,
+    HomeObjectiveTask task,
+  ) {
     return progress['${objective.id}::${task.id}'];
   }
 
@@ -84,7 +88,10 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
     return done / objective.tasks.length;
   }
 
-  Future<void> _editTask(HomeObjective objective, HomeObjectiveTask task) async {
+  Future<void> _editTask(
+    HomeObjective objective,
+    HomeObjectiveTask task,
+  ) async {
     final current = _entry(objective, task)?.progress ?? 0;
     final controller = TextEditingController(text: current.toString());
     final value = await showDialog<int>(
@@ -105,10 +112,8 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
             child: const Text('انصراف'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(
-              context,
-              int.tryParse(controller.text.trim()),
-            ),
+            onPressed: () =>
+                Navigator.pop(context, int.tryParse(controller.text.trim())),
             child: const Text('ذخیره'),
           ),
         ],
@@ -138,11 +143,16 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text('هدف‌های زنده FC27', style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              'هدف‌های زنده FC27',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             const SizedBox(height: 4),
             Text(
               'هدف‌ها و پاداش‌ها از منبع واقعی؛ پیشرفت شما فقط روی همین دستگاه ذخیره می‌شود.',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 14),
             if (!loading && items.isNotEmpty)
@@ -174,16 +184,24 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
                   title: const Text('هدف‌ها در دسترس نیست'),
                   subtitle: Text(error!),
                   trailing: IconButton(
-                    onPressed: () => _load(),
+                    onPressed: () => _load(forceRefresh: true),
                     icon: const Icon(Icons.refresh_rounded),
                   ),
                 ),
               )
             else if (visible.isEmpty)
-              const Card(
+              Card(
                 child: ListTile(
-                  leading: Icon(Icons.flag_outlined),
-                  title: Text('هدف فعالی پیدا نشد'),
+                  leading: const Icon(Icons.flag_outlined),
+                  title: const Text('هدف فعالی پیدا نشد'),
+                  subtitle: const Text(
+                    'منبع فعلی هدفی برنگرداند؛ می‌توانید دوباره همگام‌سازی کنید.',
+                  ),
+                  trailing: IconButton(
+                    tooltip: 'همگام‌سازی دوباره',
+                    onPressed: () => _load(forceRefresh: true),
+                    icon: const Icon(Icons.refresh_rounded),
+                  ),
                 ),
               )
             else
@@ -216,7 +234,8 @@ class _ObjectiveCard extends StatelessWidget {
   final HomeObjective item;
   final String expiry;
   final double progress;
-  final ObjectiveProgressEntry? Function(HomeObjectiveTask task) progressForTask;
+  final ObjectiveProgressEntry? Function(HomeObjectiveTask task)
+  progressForTask;
   final void Function(HomeObjectiveTask task) onEditTask;
 
   @override
@@ -230,24 +249,34 @@ class _ObjectiveCard extends StatelessWidget {
         leading: CircleAvatar(
           child: Text(item.tasks.isEmpty ? '🎯' : '$percent%'),
         ),
-        title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w900)),
+        title: Text(
+          item.title,
+          style: const TextStyle(fontWeight: FontWeight.w900),
+        ),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (item.category.isNotEmpty) Text(item.category),
             const SizedBox(height: 5),
-            LinearProgressIndicator(value: item.tasks.isEmpty ? null : progress),
+            LinearProgressIndicator(
+              value: item.tasks.isEmpty ? null : progress,
+            ),
           ],
         ),
         children: [
           if (item.description.isNotEmpty)
-            Align(alignment: Alignment.centerRight, child: Text(item.description)),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(item.description),
+            ),
           const SizedBox(height: 12),
           Row(
             children: [
               const Icon(Icons.card_giftcard_rounded, size: 17),
               const SizedBox(width: 6),
-              Expanded(child: Text(item.reward.isEmpty ? 'پاداش نامشخص' : item.reward)),
+              Expanded(
+                child: Text(item.reward.isEmpty ? 'پاداش نامشخص' : item.reward),
+              ),
             ],
           ),
           const SizedBox(height: 6),
@@ -269,66 +298,81 @@ class _ObjectiveCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             for (final task in item.tasks) ...[
-              Builder(builder: (context) {
-                final entry = progressForTask(task);
-                final current = entry?.progress ?? 0;
-                final completed = entry?.completed == true;
-                final value = task.target > 0
-                    ? (current / task.target).clamp(0.0, 1.0)
-                    : null;
-                return Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.only(bottom: 8),
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.surfaceContainerHighest,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            completed ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-                            size: 20,
-                            color: completed ? Theme.of(context).colorScheme.primary : null,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(task.title, style: const TextStyle(fontWeight: FontWeight.w800)),
-                          ),
-                          IconButton(
-                            tooltip: 'ثبت پیشرفت',
-                            onPressed: () => onEditTask(task),
-                            icon: const Icon(Icons.edit_rounded),
-                          ),
+              Builder(
+                builder: (context) {
+                  final entry = progressForTask(task);
+                  final current = entry?.progress ?? 0;
+                  final completed = entry?.completed == true;
+                  final value = task.target > 0
+                      ? (current / task.target).clamp(0.0, 1.0)
+                      : null;
+                  return Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.only(bottom: 8),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(
+                              completed
+                                  ? Icons.check_circle_rounded
+                                  : Icons.radio_button_unchecked_rounded,
+                              size: 20,
+                              color: completed
+                                  ? Theme.of(context).colorScheme.primary
+                                  : null,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                task.title,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w800,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              tooltip: 'ثبت پیشرفت',
+                              onPressed: () => onEditTask(task),
+                              icon: const Icon(Icons.edit_rounded),
+                            ),
+                          ],
+                        ),
+                        if (task.description.isNotEmpty) Text(task.description),
+                        if (task.target > 0) ...[
+                          const SizedBox(height: 8),
+                          LinearProgressIndicator(value: value),
+                          const SizedBox(height: 4),
+                          Text('$current / ${task.target}'),
+                        ] else if (current > 0) ...[
+                          const SizedBox(height: 6),
+                          Text('پیشرفت ثبت‌شده: $current'),
                         ],
-                      ),
-                      if (task.description.isNotEmpty) Text(task.description),
-                      if (task.target > 0) ...[
-                        const SizedBox(height: 8),
-                        LinearProgressIndicator(value: value),
-                        const SizedBox(height: 4),
-                        Text('$current / ${task.target}'),
-                      ] else if (current > 0) ...[
-                        const SizedBox(height: 6),
-                        Text('پیشرفت ثبت‌شده: $current'),
+                        if (task.reward.isNotEmpty) ...[
+                          const SizedBox(height: 6),
+                          Text('پاداش: ${task.reward}'),
+                        ],
                       ],
-                      if (task.reward.isNotEmpty) ...[
-                        const SizedBox(height: 6),
-                        Text('پاداش: ${task.reward}'),
-                      ],
-                    ],
-                  ),
-                );
-              }),
+                    ),
+                  );
+                },
+              ),
             ],
           ] else if (item.taskCount > 0) ...[
             const SizedBox(height: 12),
             Text(
               '${item.taskCount} وظیفه در منبع اعلام شده، اما جزئیات Taskها دریافت نشده؛ FCBaz پیشرفت ساختگی ایجاد نمی‌کند.',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ],

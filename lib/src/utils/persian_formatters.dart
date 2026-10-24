@@ -105,6 +105,17 @@ String relativeDeadlineFa(DateTime expiresAt, {DateTime? now}) {
   return '${faDigits(days)} روز مانده';
 }
 
+String formatCoinsFa(int value) {
+  if (value <= 0) return '—';
+  final digits = value.toString();
+  final buffer = StringBuffer();
+  for (var i = 0; i < digits.length; i++) {
+    if (i > 0 && (digits.length - i) % 3 == 0) buffer.write(',');
+    buffer.write(digits[i]);
+  }
+  return faDigits(buffer.toString());
+}
+
 String compactCoinsFa(int value) {
   if (value <= 0) return '—';
   if (value >= 1000000) {

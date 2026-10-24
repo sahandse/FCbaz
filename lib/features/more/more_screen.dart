@@ -77,16 +77,24 @@ class MoreScreen extends StatelessWidget {
                         children: [
                           Row(
                             children: [
-                              Text(
-                                'بخش من و باشگاه',
-                                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                      fontWeight: FontWeight.w900,
-                                      fontSize: 18,
-                                    ),
+                              Flexible(
+                                child: Text(
+                                  'بخش من و باشگاه',
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: Theme.of(context).textTheme.titleLarge
+                                      ?.copyWith(
+                                        fontWeight: FontWeight.w900,
+                                        fontSize: 18,
+                                      ),
+                                ),
                               ),
                               const SizedBox(width: 8),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: scheme.primary.withValues(alpha: .2),
                                   borderRadius: BorderRadius.circular(6),
@@ -133,13 +141,15 @@ class MoreScreen extends StatelessWidget {
         const SizedBox(height: 18),
         Text('ابزارهای اصلی', style: Theme.of(context).textTheme.titleLarge),
         const SizedBox(height: 10),
-        GridView.count(
-          crossAxisCount: 2,
+        GridView(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          mainAxisSpacing: 10,
-          crossAxisSpacing: 10,
-          childAspectRatio: 1.42,
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            mainAxisSpacing: 10,
+            crossAxisSpacing: 10,
+            mainAxisExtent: 148,
+          ),
           children: [
             _ToolCard(
               title: 'بازار',
@@ -228,7 +238,10 @@ class MoreScreen extends StatelessWidget {
                 subtitle: 'تم، بازار، اعلان‌ها و بروزرسانی',
                 onTap: () => _open(
                   context,
-                  SettingsScreen(settings: settings, onChanged: onSettingsChanged),
+                  SettingsScreen(
+                    settings: settings,
+                    onChanged: onSettingsChanged,
+                  ),
                 ),
               ),
             ],
