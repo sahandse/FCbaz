@@ -24,7 +24,9 @@ class _NewsScreenState extends State<NewsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadNews();
+    // Fetch the current feed on first screen open; the repository retains its
+    // bundled Persian snapshot if the network is unavailable.
+    _loadNews(forceRefresh: true);
   }
 
   @override
