@@ -417,6 +417,36 @@ const NEWS_FA = {
     summaryFA: 'مرور تغییرات و اصلاحات اعلام‌شده در به‌روزرسانی رسمی شماره ۱.۰.۴.',
     tagFA: '🛠️ به‌روزرسانی بازی',
   },
+  'fc-27-the-grounds-developer-launch-update': {
+    titleFA: 'گزارش آغاز به کار The Grounds و بخش Clubs',
+    summaryFA: 'تیم سازنده درباره بازخوردهای اولیه و برنامه‌های بهبود The Grounds و Clubs توضیح می‌دهد.',
+    tagFA: '🏟️ The Grounds و Clubs',
+  },
+  'title-update-v1-0-3': {
+    titleFA: 'یادداشت‌های به‌روزرسانی نسخه ۱.۰.۳ بازی FC 27',
+    summaryFA: 'مرور اصلاحات و تغییرات اعلام‌شده در به‌روزرسانی رسمی شماره ۱.۰.۳.',
+    tagFA: '🛠️ به‌روزرسانی بازی',
+  },
+  'fc-27-fut-developer-launch-update': {
+    titleFA: 'گزارش تیم سازنده آلتیمیت تیم پس از عرضه FC 27',
+    summaryFA: 'تیم FUT بازخوردهای بازیکنان و تغییرات مورد بررسی پس از عرضه بازی را شرح می‌دهد.',
+    tagFA: '🏆 آلتیمیت تیم',
+  },
+  'fc-27-gameplay-developer-launch-update': {
+    titleFA: 'گزارش تیم سازنده درباره گیم‌پلی FC 27',
+    summaryFA: 'مرور بازخوردهای اولیه درباره گیم‌پلی و زمینه‌های مورد بررسی تیم سازنده.',
+    tagFA: '🎮 گیم‌پلی و توسعه',
+  },
+  'fc-27-career-mode-developer-launch-update': {
+    titleFA: 'گزارش تیم سازنده درباره کریر مود FC 27',
+    summaryFA: 'تغییرات و بازخوردهای اولیه مربوط به حالت کریر مود بازی را دنبال کنید.',
+    tagFA: '👔 کریر مود',
+  },
+  'fc-27-destined-for-glory': {
+    titleFA: 'رویداد Destined for Glory در آلتیمیت تیم FC 27',
+    summaryFA: 'بازیکنان منتخب جامعه FC معرفی می‌شوند تا در فصل جاری آلتیمیت تیم بدرخشند.',
+    tagFA: '🌟 رویداد FUT',
+  },
   'fc-27-the-grounds-developer-archetypes-update': {
     titleFA: 'به‌روزرسانی آرکه‌تایپ‌های توسعه‌دهنده در The Grounds — EA SPORTS FC 27',
     summaryFA:
