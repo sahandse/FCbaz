@@ -136,10 +136,30 @@ class LiveFc27Catalog {
       'items',
       'quotes',
     ]);
+    // The FC27 Hub price feed is a quote table (cardId/platform/coins),
+    // not a player-shaped object. Group PS and PC quotes by card ID rather
+    // than letting the last platform row overwrite the first one.
     final pricesById = <String, Map<String, dynamic>>{};
     for (final row in priceRows) {
-      final id = _recordId(row);
-      if (id.isNotEmpty) pricesById[id] = row;
+      final id = (row['cardId'] ??
+              row['card_id'] ??
+              row['versionId'] ??
+              row['version_id'] ??
+              _recordId(row))
+          .toString()
+          .trim();
+      if (id.isEmpty) continue;
+      final platform = (row['platform'] ?? '').toString().toLowerCase();
+      final coins = int.tryParse((row['coins'] ?? row['price'] ?? '').toString()) ?? 0;
+      if (coins <= 0 || (row['status'] != null && row['status'] != 'verified')) {
+        continue;
+      }
+      final merged = pricesById.putIfAbsent(id, () => <String, dynamic>{});
+      if (platform == 'ps' || platform == 'playstation' || platform == 'ps5') {
+        merged['price_ps'] = coins;
+      } else if (platform == 'pc') {
+        merged['price_pc'] = coins;
+      }
     }
 
     final mergedPlayers = players.map((raw) {
@@ -147,15 +167,12 @@ class LiveFc27Catalog {
       final id = _recordId(player);
       final price = pricesById[id];
       if (price != null) {
-        // Preserve source fields; only fill absent market fields.
+        // Keep explicit player values; otherwise attach verified PS/PC quotes.
         _copyIfMissing(player, price, const [
           'price_ps',
           'price_pc',
           'pricePs',
           'pricePc',
-          'prices',
-          'market_prices',
-          'platforms',
         ]);
       }
       return player;
