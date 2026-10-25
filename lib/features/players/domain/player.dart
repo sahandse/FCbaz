@@ -65,6 +65,20 @@ class Player {
   final int pricePs;
   final int pricePc;
 
+  static const _eaPortraitBase =
+      'https://ratings-images-prod.pulse.ea.com/FC25/full/player-portraits/';
+
+  /// EA serves a 512px official ratings portrait, while the FC27 hub snapshot
+  /// is 160px. Use the sharp one on large cards and keep [imageUrl] as fallback.
+  String get highResImageUrl {
+    if (imageUrl.contains('ratings-images-prod.pulse.ea.com')) return imageUrl;
+    final trimmed = id.trim();
+    if (RegExp(r'^\d{4,}$').hasMatch(trimmed)) {
+      return '${_eaPortraitBase}p$trimmed.png?padding=0.7';
+    }
+    return imageUrl;
+  }
+
   Map<String, dynamic> toJson() => {
         'id': id,
         'name': name,

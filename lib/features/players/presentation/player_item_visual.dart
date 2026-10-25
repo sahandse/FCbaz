@@ -224,7 +224,8 @@ class _CardBody extends StatelessWidget {
         final w = constraints.maxWidth;
         final h = constraints.maxHeight;
         Widget portrait = _PlayerImage(
-          url: player.imageUrl,
+          url: compact ? player.imageUrl : player.highResImageUrl,
+          fallbackUrl: compact ? player.highResImageUrl : player.imageUrl,
           color: theme.ink.withValues(alpha: .22),
           compact: compact,
         );
@@ -523,17 +524,21 @@ class _PlayerImage extends StatelessWidget {
     required this.url,
     required this.color,
     required this.compact,
+    this.fallbackUrl = '',
   });
 
   final String url;
   final Color color;
   final bool compact;
+  final String fallbackUrl;
 
   @override
-  Widget build(BuildContext context) {
-    if (url.isEmpty) return _placeholder();
+  Widget build(BuildContext context) => _network(url);
+
+  Widget _network(String target, {int depth = 0}) {
+    if (target.isEmpty) return _placeholder();
     return Image.network(
-      url,
+      target,
       fit: BoxFit.contain,
       alignment: Alignment.bottomCenter,
       filterQuality: FilterQuality.medium,
@@ -546,7 +551,12 @@ class _PlayerImage extends StatelessWidget {
           child: child,
         );
       },
-      errorBuilder: (_, __, ___) => _placeholder(),
+      errorBuilder: (_, __, ___) {
+        if (depth == 0 && fallbackUrl.isNotEmpty && fallbackUrl != target) {
+          return _network(fallbackUrl, depth: 1);
+        }
+        return _placeholder();
+      },
     );
   }
 
