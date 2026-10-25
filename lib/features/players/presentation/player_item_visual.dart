@@ -117,14 +117,28 @@ class PlayerItemVisual extends StatelessWidget {
                   top: top,
                   width: shieldWidth,
                   height: shieldHeight,
-                  child: _CardBody(
-                    player: player,
-                    theme: theme,
-                    compact: compact,
-                    statLabels: statLabels,
-                    statValues: statValues,
-                    displayName: _titleCase(player.name),
-                  ),
+                  child: player.cardImageUrl.isNotEmpty
+                      ? Image.network(
+                          player.cardImageUrl,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _CardBody(
+                            player: player,
+                            theme: theme,
+                            compact: compact,
+                            statLabels: statLabels,
+                            statValues: statValues,
+                            displayName: _titleCase(player.name),
+                          ),
+                        )
+                      : _CardBody(
+                          player: player,
+                          theme: theme,
+                          compact: compact,
+                          statLabels: statLabels,
+                          statValues: statValues,
+                          displayName: _titleCase(player.name),
+                        ),
                 ),
                 if (alternate.isNotEmpty)
                   Positioned(
