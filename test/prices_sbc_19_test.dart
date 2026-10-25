@@ -60,6 +60,9 @@ void main() {
 
   test('2.3 version is production increment', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(RegExp(r'^version: 2\.3\.2\+\d+$', multiLine: true).hasMatch(pubspec), isTrue);
+    expect(RegExp(r'^version: 2\.3\.3\+\d+, multiLine: true).hasMatch(pubspec), isTrue);
+  });
+}
+, multiLine: true).hasMatch(pubspec), isTrue);
   });
 }
