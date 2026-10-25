@@ -10,7 +10,7 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 2.1.0
+        default: 2.3.1
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -21,12 +21,13 @@ on:
     branches:
       - main
     paths:
+      - '.release/fcbaz-v2.3.1'
       - '.release/fcbaz-v2.1.0'
       - '.release/fcbaz-v2.0.0'
       - '.release/fcbaz-v1.9.0'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.1.0' }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.3.1' }}
   RELEASE_BUILD_NUMBER: ${{ github.run_number }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
 
@@ -200,6 +201,7 @@ jobs:
           cat > RELEASE_NOTES.md <<EOF
           ## FCBaz v${RELEASE_VERSION}
 
+          - اسنپ‌شات FC27 داخل اپ به ۲۵ اکتبر ۲۰۲۶ به‌روزرسانی شد؛ هر ۲٬۵۷۶ آدرس تصویر بازیکن بررسی و بدون خطا تأیید شدند.
           - تب خانه مستقیم فید اخبار FC27 است، با فیلتر بر اساس تگ‌های واقعی، رفرش کشویی و حالت خطا/خالی صادقانه.
           - گرید کارت‌ها از کاشی بازار جدید استفاده می‌کند: کارت FC27، ستاره علاقه‌مندی، شش ستون آمار رنگی و قیمت سکه با ارقام فارسی؛ بدون عدد ساختگی.
           - صفحه‌های خالی SBC، Objectives و Evolutions با نرمال‌سازی id، Requirementهای تو در تو و target تسک‌ها از کاتالوگ زنده پر شدند؛ Retry حالا واقعاً force refresh می‌کند.
@@ -207,7 +209,7 @@ jobs:
           - کارت‌های بازیکن با طراحی جدید به سبک EA FC / FUT: بدنه FUT، گرادیان کمیابیت، تایپوگرافی فشرده، نشان ملیت/لیگ/باشگاه و قیمت PS/PC.
           - ریتینگ، پست و نشان PlayStyle+ روی کارت؛ تم اختصاصی برای Gold، Silver، Bronze، Icon، Hero، TOTW و Hall of FUT.
           - کاتالوگ FC27 از FC27 Hub پر شد: بیش از ۱۹٬۸۰۰ کارت بازیکن با آمار کامل، کلاب، لیگ و ملیت.
-          - قیمت واقعی PS برای بیش از ۱۸٬۴۰۰ کارت از نقل‌قول‌های تأییدشده FUT.GG؛ PC فقط در صورت منبع مستقل واقعی مقدار دارد.
+          - قیمت واقعی PS برای بیش از ۱۸٬۴۸۹ کارت از نقل‌قول‌های تأییدشده FUT.GG؛ PC فقط در صورت منبع مستقل واقعی مقدار دارد.
           - ۲۷ SBC، ۴۱ Objective و ۱۸ Evolution با Requirement، جایزه و راهنمای فارسی؛ داده ساختگی ساخته نمی‌شود.
           - ۱۳ خبر FC27 به فارسی، همراه با تصاویر کارت و پرتره بازیکنان.
           - آمار دروازه‌بان‌ها با DIV/HAN/KIC/REF/SPD/POS نمایش داده می‌شود.
