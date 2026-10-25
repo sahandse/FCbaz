@@ -386,6 +386,37 @@ function mapEvolution(item, checksAt) {
 }
 
 const NEWS_FA = {
+  'fc-27-season-2-fc-heritage': {
+    titleFA: 'فصل دوم آلتیمیت تیم: میراث FC',
+    summaryFA: 'فصل دوم با حال‌وهوای نوستالژیک FUT و بازگشت رویدادها و آیتم‌های محبوب گذشته همراه است.',
+    tagFA: '🏆 رویداد FUT',
+  },
+  'fc-27-ultimate-scream': {
+    titleFA: 'رویداد Ultimate Scream در آلتیمیت تیم FC 27',
+    summaryFA: 'جزئیات رویداد Ultimate Scream و محتوای ویژه آن در آلتیمیت تیم را دنبال کنید.',
+    tagFA: '🎃 رویداد FUT',
+  },
+  'fc-27-the-grounds-developer-archetypes-update': {
+    titleFA: 'به‌روزرسانی آرکه‌تایپ‌های توسعه‌دهنده در The Grounds — EA SPORTS FC 27',
+    summaryFA:
+      'آخرین تغییرات Archetype و Attribute Points را در The Grounds و Clubs بازی EA SPORTS FC 27 مرور کنید.',
+    tagFA: '🏟️ The Grounds و Clubs',
+  },
+  'fc-27-launch-feedback-update': {
+    titleFA: 'گزارش بازخوردهای اولیه و تغییرات EA SPORTS FC 27',
+    summaryFA: 'مروری بر بازخوردهای بازیکنان و تغییرات اعلام‌شده برای گیم‌پلی، آلتیمیت تیم، کریر مود و بخش Clubs.',
+    tagFA: '🎮 گیم‌پلی و توسعه',
+  },
+  'fc-27-future-stars': {
+    titleFA: 'ستارگان آینده در آلتیمیت تیم FC 27',
+    summaryFA: 'معرفی استعدادهای جوان، کارت‌های ویژه و محتوای Future Stars در آلتیمیت تیم.',
+    tagFA: '🌟 رویداد FUT',
+  },
+  'fc27-title-update-v1-0-4': {
+    titleFA: 'یادداشت‌های به‌روزرسانی نسخه ۱.۰.۴ بازی FC 27',
+    summaryFA: 'مرور تغییرات و اصلاحات اعلام‌شده در به‌روزرسانی رسمی شماره ۱.۰.۴.',
+    tagFA: '🛠️ به‌روزرسانی بازی',
+  },
   'fc-27-the-grounds-developer-archetypes-update': {
     titleFA: 'به‌روزرسانی آرکه‌تایپ‌های توسعه‌دهنده در The Grounds — EA SPORTS FC 27',
     summaryFA:
