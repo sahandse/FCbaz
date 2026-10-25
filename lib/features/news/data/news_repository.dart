@@ -82,7 +82,10 @@ class NewsRepository {
       return _cachedArticles!;
     }
 
-    if (forceRefresh) {
+    // On first open, fetch the current feed as well. Previously the app only
+    // attempted a live request after the user manually refreshed, so a fresh
+    // install could stay on the bundled snapshot indefinitely.
+    if (forceRefresh || _cachedArticles == null) {
       try {
         final live = await _fetchLiveArticles();
         if (live.isNotEmpty) {
