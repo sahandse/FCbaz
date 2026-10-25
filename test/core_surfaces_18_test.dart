@@ -22,7 +22,12 @@ void main() {
 
   test('2.3 version is production increment', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    final match = RegExp(r'^version: 2\.3\.2\+(\d+)$', multiLine: true).firstMatch(pubspec);
+    final match = RegExp(r'^version: 2\.3\.3\+(\d+), multiLine: true).firstMatch(pubspec);
+    expect(match, isNotNull);
+    expect(int.parse(match!.group(1)!), greaterThanOrEqualTo(40));
+  });
+}
+, multiLine: true).firstMatch(pubspec);
     expect(match, isNotNull);
     expect(int.parse(match!.group(1)!), greaterThanOrEqualTo(40));
   });
