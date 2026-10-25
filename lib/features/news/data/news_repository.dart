@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/services.dart';
 
 import '../domain/news_article.dart';
@@ -8,9 +10,88 @@ class NewsRepository {
 
   List<NewsArticle>? _cachedArticles;
 
+  static const _liveNewsUrl =
+      'https://sahandse.github.io/FC27/data/fc27-news.json';
+
+  static const Map<String, ({String title, String summary, String tag})>
+      _translations = {
+    'fc-27-season-2-fc-heritage': (
+      title: 'فصل دوم آلتیمیت تیم: میراث FC',
+      summary: 'فصل دوم با حال‌وهوای نوستالژیک FUT و بازگشت رویدادها و آیتم‌های محبوب گذشته همراه است.',
+      tag: '🏆 رویداد FUT',
+    ),
+    'fc-27-ultimate-scream': (
+      title: 'رویداد Ultimate Scream در آلتیمیت تیم FC 27',
+      summary: 'جزئیات رویداد Ultimate Scream و محتوای ویژه آن در آلتیمیت تیم را دنبال کنید.',
+      tag: '🎃 رویداد FUT',
+    ),
+    'fc-27-the-grounds-developer-archetypes-update': (
+      title: 'به‌روزرسانی آرکه‌تایپ‌های The Grounds',
+      summary: 'آخرین تغییرات Archetype و امتیازهای Attribute Points در The Grounds و Clubs.',
+      tag: '🏟️ The Grounds و Clubs',
+    ),
+    'fc-27-launch-feedback-update': (
+      title: 'گزارش بازخوردهای اولیه FC 27',
+      summary: 'مروری بر بازخوردهای بازیکنان و تغییرات گیم‌پلی، آلتیمیت تیم، کریر مود و Clubs.',
+      tag: '🎮 گیم‌پلی و توسعه',
+    ),
+    'fc-27-future-stars': (
+      title: 'ستارگان آینده در آلتیمیت تیم FC 27',
+      summary: 'معرفی استعدادهای جوان و محتوای Future Stars Academy در آلتیمیت تیم.',
+      tag: '🌟 رویداد FUT',
+    ),
+    'fc27-title-update-v1-0-4': (
+      title: 'یادداشت‌های به‌روزرسانی نسخه ۱.۰.۴',
+      summary: 'مرور تغییرات و اصلاحات اعلام‌شده در به‌روزرسانی رسمی شماره ۱.۰.۴.',
+      tag: '🛠️ به‌روزرسانی بازی',
+    ),
+    'fc-27-the-grounds-developer-launch-update': (
+      title: 'گزارش آغاز به کار The Grounds و Clubs',
+      summary: 'بازخوردهای اولیه و برنامه‌های بهبود The Grounds و Clubs از زبان تیم سازنده.',
+      tag: '🏟️ The Grounds و Clubs',
+    ),
+    'title-update-v1-0-3': (
+      title: 'یادداشت‌های به‌روزرسانی نسخه ۱.۰.۳',
+      summary: 'مرور اصلاحات و تغییرات اعلام‌شده در به‌روزرسانی رسمی شماره ۱.۰.۳.',
+      tag: '🛠️ به‌روزرسانی بازی',
+    ),
+    'fc-27-fut-developer-launch-update': (
+      title: 'گزارش تیم سازنده آلتیمیت تیم',
+      summary: 'بازخوردهای بازیکنان و تغییرات مورد بررسی پس از عرضه بازی.',
+      tag: '🏆 آلتیمیت تیم',
+    ),
+    'fc-27-gameplay-developer-launch-update': (
+      title: 'گزارش تیم سازنده درباره گیم‌پلی',
+      summary: 'مرور بازخوردهای اولیه درباره گیم‌پلی و زمینه‌های مورد بررسی تیم سازنده.',
+      tag: '🎮 گیم‌پلی و توسعه',
+    ),
+    'fc-27-career-mode-developer-launch-update': (
+      title: 'گزارش تیم سازنده درباره کریر مود',
+      summary: 'بازخوردهای اولیه و زمینه‌های بهبود حالت کریر مود بازی.',
+      tag: '👔 کریر مود',
+    ),
+    'fc-27-destined-for-glory': (
+      title: 'رویداد Destined for Glory در آلتیمیت تیم',
+      summary: 'بازیکنان منتخب جامعه FC که قرار است در فصل جاری آلتیمیت تیم بدرخشند.',
+      tag: '🌟 رویداد FUT',
+    ),
+  };
+
   Future<List<NewsArticle>> getArticles({bool forceRefresh = false}) async {
     if (!forceRefresh && _cachedArticles != null && _cachedArticles!.isNotEmpty) {
       return _cachedArticles!;
+    }
+
+    if (forceRefresh) {
+      try {
+        final live = await _fetchLiveArticles();
+        if (live.isNotEmpty) {
+          _cachedArticles = live;
+          return live;
+        }
+      } catch (_) {
+        // Keep the bundled snapshot available when the network is unavailable.
+      }
     }
 
     try {
@@ -19,7 +100,7 @@ class NewsRepository {
       final rawItems = data is Map ? (data['items'] as List? ?? []) : (data as List);
       final list = rawItems
           .whereType<Map>()
-          .map((m) => NewsArticle.fromJson(Map<String, dynamic>.from(m)))
+          .map((m) => NewsArticle.fromJson(_translate(Map<String, dynamic>.from(m))))
           .toList();
       if (list.isNotEmpty) {
         _cachedArticles = list;
@@ -31,6 +112,40 @@ class NewsRepository {
 
     _cachedArticles = _fallbackArticles;
     return _cachedArticles!;
+  }
+
+  Future<List<NewsArticle>> _fetchLiveArticles() async {
+    final client = HttpClient();
+    try {
+      final request = await client.getUrl(Uri.parse(_liveNewsUrl))
+          .timeout(const Duration(seconds: 8));
+      request.headers.set(HttpHeaders.acceptHeader, 'application/json');
+      final response = await request.close().timeout(const Duration(seconds: 12));
+      if (response.statusCode < 200 || response.statusCode >= 300) {
+        throw HttpException('FC27 news HTTP ${response.statusCode}');
+      }
+      final body = await utf8.decoder.bind(response).join();
+      final data = jsonDecode(body);
+      final rawItems = data is Map ? (data['items'] as List? ?? []) : (data as List);
+      return rawItems
+          .whereType<Map>()
+          .map((item) => NewsArticle.fromJson(_translate(Map<String, dynamic>.from(item))))
+          .toList();
+    } finally {
+      client.close(force: true);
+    }
+  }
+
+  Map<String, dynamic> _translate(Map<String, dynamic> json) {
+    final id = (json['url'] ?? '').toString().split('/').last;
+    final translated = _translations[id];
+    if (translated == null) return json;
+    return {
+      ...json,
+      'titleFA': json['titleFA'] ?? translated.title,
+      'summaryFA': json['summaryFA'] ?? translated.summary,
+      'tagFA': json['tagFA'] ?? translated.tag,
+    };
   }
 
   List<NewsArticle> filterArticles(
