@@ -224,7 +224,7 @@ class _HomeDashboardScreenState extends State<HomeDashboardScreen> {
     final snapshot = local;
     final live = feed;
     final clubCount = snapshot?.clubCount ?? 0;
-    final emptyClub = snapshot != null && clubCount == 0;
+    final emptyClub = snapshot == null || clubCount == 0;
     final deadlines = _buildDeadlines(now);
     final movers = _movers;
     final trending = live?.trendingPlayers.take(10).toList() ?? const [];
