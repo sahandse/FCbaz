@@ -118,17 +118,20 @@ class PlayerItemVisual extends StatelessWidget {
                   width: shieldWidth,
                   height: shieldHeight,
                   child: player.cardImageUrl.isNotEmpty
-                      ? Image.network(
-                          player.cardImageUrl,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) =>
-                              _CardBody(
-                            player: player,
-                            theme: theme,
-                            compact: compact,
-                            statLabels: statLabels,
-                            statValues: statValues,
-                            displayName: _titleCase(player.name),
+                      ? ClipPath(
+                          clipper: FutCardClipper(ornate: theme.ornate),
+                          child: Image.network(
+                            player.cardImageUrl,
+                            fit: BoxFit.fill,
+                            errorBuilder: (context, error, stackTrace) =>
+                                _CardBody(
+                              player: player,
+                              theme: theme,
+                              compact: compact,
+                              statLabels: statLabels,
+                              statValues: statValues,
+                              displayName: _titleCase(player.name),
+                            ),
                           ),
                         )
                       : _CardBody(
