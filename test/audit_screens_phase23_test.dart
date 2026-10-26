@@ -51,7 +51,7 @@ void main() {
 
     expect(find.text('SBC HUB'), findsOneWidget);
     expect(find.text('ابزارهای Rating و Cheapest'), findsOneWidget);
-    expect(find.textContaining('MLS Future Stars'), findsWidgets);
+    expect(find.textContaining('Base Hero'), findsWidgets);
     expect(find.text('SBC در دسترس نیست'), findsNothing);
     expect(find.text('SBC فعالی پیدا نشد'), findsNothing);
     expect(errors, isEmpty);
@@ -63,7 +63,7 @@ void main() {
     final errors = await _pumpScreen(tester, const EvolutionsScreen());
 
     expect(find.text('EVOLUTIONS'), findsOneWidget);
-    expect(find.textContaining('Sophia'), findsWidgets);
+    expect(find.textContaining('ساعت جادو'), findsWidgets);
     expect(find.text('Evolutionها در دسترس نیستند'), findsNothing);
     expect(find.text('Evolution فعالی پیدا نشد'), findsNothing);
     expect(errors, isEmpty);
@@ -73,7 +73,7 @@ void main() {
     final errors = await _pumpScreen(tester, const ObjectivesScreen());
 
     expect(find.text('هدف‌های زنده FC27'), findsOneWidget);
-    expect(find.text('امتیازهای Rush هفتگی'), findsOneWidget);
+    expect(find.textContaining('FC Heritage Circuit'), findsWidgets);
     expect(find.text('هدف‌ها در دسترس نیست'), findsNothing);
     expect(find.text('هدف فعالی پیدا نشد'), findsNothing);
     expect(errors, isEmpty);

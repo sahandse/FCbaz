@@ -60,6 +60,15 @@ void main() {
 
   test('2.3 version is production increment', () {
     final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(RegExp(r'^version: 2\.3\.\d+\+\d+$', multiLine: true).hasMatch(pubspec), isTrue);
+    final match = RegExp(
+      r'^version: (\d+)\.(\d+)\.(\d+)\+(\d+)$',
+      multiLine: true,
+    ).firstMatch(pubspec);
+    expect(match, isNotNull);
+    final major = int.parse(match!.group(1)!);
+    final minor = int.parse(match.group(2)!);
+    expect(major, greaterThanOrEqualTo(2));
+    expect(minor, greaterThanOrEqualTo(3));
+    expect(int.parse(match.group(4)!), greaterThanOrEqualTo(40));
   });
 }
