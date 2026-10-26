@@ -93,6 +93,9 @@ class PlayerItemVisual extends StatelessWidget {
     // the same complete item artwork for them, so both render as a full card.
     final fullCardArt = officialCard || player.cardArtUrl.isNotEmpty;
     final artworkUrl = officialCard ? player.cardImageUrl : player.cardArtUrl;
+    // EA items are 440x548; FUT.GG item cards are 300x419, which is the same
+    // ratio the drawn FCBaz shield uses.
+    final artworkHeightPerWidth = officialCard ? 548 / 440 : _shieldHeightPerWidth;
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -109,10 +112,10 @@ class PlayerItemVisual extends StatelessWidget {
                 ? (h * .014).clamp(2.0, 4.0).toDouble()
                 : 0;
             final bodyHeight = h - footerHeight - footerGap;
-            // EA's item card canvas is 440x548; the drawn fallback uses the
-            // FCBaz shield ratio instead.
+            // Full-card artwork keeps its own canvas ratio; the drawn fallback
+            // uses the FCBaz shield ratio.
             final double heightPerWidth =
-                fullCardArt ? 548 / 440 : _shieldHeightPerWidth;
+                fullCardArt ? artworkHeightPerWidth : _shieldHeightPerWidth;
             final double shieldWidth = math.min(
               w * (fullCardArt ? 1.0 : showPrices ? .96 : .98),
               bodyHeight / heightPerWidth,
