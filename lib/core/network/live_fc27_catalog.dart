@@ -294,7 +294,12 @@ class LiveFc27Catalog {
       'resource_id',
       'resourceId',
       'ea_resource_id',
+      'ea_id',
       'base_id',
+      'cardId',
+      'card_id',
+      'versionId',
+      'version_id',
     ]) {
       final value = record[key];
       if (value != null && value.toString().trim().isNotEmpty) {
@@ -311,8 +316,15 @@ class LiveFc27Catalog {
   ) {
     for (final key in keys) {
       final current = target[key];
-      if (current == null || current.toString().trim().isEmpty) {
-        if (source.containsKey(key)) target[key] = source[key];
+      final numericCurrent = current is num
+          ? current
+          : num.tryParse(current?.toString().trim() ?? '');
+      final isPrice = key.toLowerCase().contains('price');
+      final missing = current == null ||
+          current.toString().trim().isEmpty ||
+          (isPrice && numericCurrent != null && numericCurrent <= 0);
+      if (missing && source.containsKey(key)) {
+        target[key] = source[key];
       }
     }
   }
