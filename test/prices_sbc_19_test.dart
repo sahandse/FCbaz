@@ -10,14 +10,28 @@ void main() {
     final players = (catalog['players'] as List).cast<Map<String, dynamic>>();
     final priced = players.where((player) {
       final price = (player['price_ps'] ?? player['market_price'] ?? 0) as num;
-      return price > 0 &&
-          player['price_source'] == 'fcdata-public' &&
-          (player['price_source_url'] as String? ?? '').startsWith('https://fcdata.io/');
+      return price > 0;
     }).toList();
 
     expect(priced, isNotEmpty);
+    const providers = {'fut.gg-public', 'fcdata-public'};
     for (final player in priced) {
+      expect(
+        providers,
+        contains((player['price_source'] ?? '').toString()),
+        reason: '${player['name']} publishes a price without a verified source',
+      );
       expect((player['price_ps'] as num), greaterThan(0));
+    }
+
+    // Cards without a verified quote stay at zero instead of showing a guess.
+    final unavailable = players.where(
+      (player) => player['price_status'] == 'unavailable',
+    );
+    expect(unavailable, isNotEmpty);
+    for (final player in unavailable) {
+      expect((player['price_ps'] as num?) ?? 0, 0);
+      expect((player['price_pc'] as num?) ?? 0, 0);
     }
   });
 
