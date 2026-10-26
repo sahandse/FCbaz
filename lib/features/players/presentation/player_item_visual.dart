@@ -89,6 +89,10 @@ class PlayerItemVisual extends StatelessWidget {
     // so it is shown as-is instead of being clipped and re-annotated.
     final officialCard =
         player.cardImageUrl.contains('/FC27/components/items/');
+    // Hall of FUT items are outside EA's public ratings roster; FUT.GG publishes
+    // the same complete item artwork for them, so both render as a full card.
+    final fullCardArt = officialCard || player.cardArtUrl.isNotEmpty;
+    final artworkUrl = officialCard ? player.cardImageUrl : player.cardArtUrl;
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -108,15 +112,15 @@ class PlayerItemVisual extends StatelessWidget {
             // EA's item card canvas is 440x548; the drawn fallback uses the
             // FCBaz shield ratio instead.
             final double heightPerWidth =
-                officialCard ? 548 / 440 : _shieldHeightPerWidth;
+                fullCardArt ? 548 / 440 : _shieldHeightPerWidth;
             final double shieldWidth = math.min(
-              w * (officialCard ? 1.0 : showPrices ? .96 : .98),
+              w * (fullCardArt ? 1.0 : showPrices ? .96 : .98),
               bodyHeight / heightPerWidth,
             );
             final double shieldHeight = shieldWidth * heightPerWidth;
             final double left = (w - shieldWidth) / 2;
             final double top = showPrices
-                ? (officialCard ? (bodyHeight - shieldHeight) / 2 : 0.0)
+                ? (fullCardArt ? (bodyHeight - shieldHeight) / 2 : 0.0)
                 : (h - shieldHeight) / 2;
             final tagFont = shieldWidth * .05;
 
@@ -128,9 +132,9 @@ class PlayerItemVisual extends StatelessWidget {
                   top: top,
                   width: shieldWidth,
                   height: shieldHeight,
-                  child: officialCard
+                  child: fullCardArt
                       ? Image.network(
-                          player.cardImageUrl,
+                          artworkUrl,
                           fit: BoxFit.contain,
                           filterQuality: FilterQuality.high,
                           errorBuilder: (context, error, stackTrace) =>
@@ -169,7 +173,7 @@ class PlayerItemVisual extends StatelessWidget {
                               displayName: _titleCase(player.name),
                             ),
                 ),
-                if (!officialCard && alternate.isNotEmpty)
+                if (!fullCardArt && alternate.isNotEmpty)
                   Positioned(
                     left: left + shieldWidth * .78,
                     width: shieldWidth * .26,
@@ -183,7 +187,7 @@ class PlayerItemVisual extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (!officialCard && skills != null)
+                if (!fullCardArt && skills != null)
                   Positioned(
                     left: left + shieldWidth * .78,
                     width: shieldWidth * .26,
@@ -197,7 +201,7 @@ class PlayerItemVisual extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (!officialCard)
+                if (!fullCardArt)
                   Positioned(
                     left: left + shieldWidth * .075 - shieldWidth * .068,
                     top: top + shieldHeight * .525,

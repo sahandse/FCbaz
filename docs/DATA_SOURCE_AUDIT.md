@@ -9,6 +9,10 @@
 ## Players
 Primary base-card source: the public FC27 Hub snapshot (`sahandse.github.io/FC27/data/fc27-players.json`), scraped from the EA SPORTS FC 27 official public ratings page (`https://www.ea.com/games/ea-sports-fc/ratings`). Every player links back to that page via `source_url`.
 Card artwork: the Hub emits EA's official FC27 Ultimate Team item card for each rated player (`https://ratings-images-prod.pulse.ea.com/FC27/components/items/<playerId>_en-GB.webp`). The app renders that image as the whole card face, so rating, position, stats, name, nation, league and club come straight from EA. Promotional/special versions are not in EA's public item set and keep their own verified artwork.
+
+Hall of FUT: the 42 Hall of FUT entries sit outside EA's public ratings roster, so `tool/sync_hof_card_art.mjs` resolves each player's official FUT.GG item card once (`game-assets.fut.gg/2027/futgg-player-item-card/27-<versionId>.<hash>.webp`) into `assets/data/hof-card-art.json`, and `tool/sync_fc27_site_data.mjs` re-attaches it as `card_art_url` on every rebuild. The app renders that artwork as the whole card, exactly like the EA items.
+
+Price freshness: the bundled catalog records `price_updated_at`, and the collection header shows how old the verified price snapshot is ("قیمت‌ها · ۱۲ دقیقه پیش") so a cached catalogue never looks live.
 Special cards/discovery: verified public FUT.GG pages and previously verified catalog entries; entries the hub does not publish are preserved instead of dropped.
 The last valid catalog is persisted on-device for offline resilience.
 

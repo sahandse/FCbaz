@@ -594,6 +594,16 @@ async function main() {
     preservedSpecials.push(player);
   }
 
+  // Hall of FUT items sit outside EA's public ratings roster, so their verified
+  // FUT.GG item artwork is resolved once by tool/sync_hof_card_art.mjs and
+  // re-attached here so every rebuild keeps rendering the real card.
+  const hofArt = await readJsonIfExists(path.join(ROOT, 'assets/data/hof-card-art.json'));
+  const hofArtById = hofArt?.catalog_ids || {};
+  for (const player of preservedSpecials) {
+    const artwork = clean(hofArtById[player.id]);
+    if (artwork) player.card_art_url = artwork;
+  }
+
   const allPlayers = [...sitePlayers, ...preservedSpecials];
   const catalogPlayers = new Set(allPlayers.map((player) => player.id));
 
@@ -658,6 +668,8 @@ async function main() {
     'https://www.fut.gg/evolutions/',
     EA_PLAYER_SOURCE,
     `${EA_CARD_BASE}/`,
+    'https://game-assets.fut.gg/',
+    'https://www.fut.gg/rarities/base-hall-of-fut/',
     preservedSpecials.some((player) => clean(player.price_source) === 'fcdata-public')
       ? 'https://fcdata.io/players/'
       : '',

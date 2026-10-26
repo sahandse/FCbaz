@@ -19,6 +19,7 @@ class Player {
     required this.skillMoves,
     required this.weakFoot,
     this.cardImageUrl = '',
+    this.cardArtUrl = '',
     this.playStyles = const [],
     this.playStylesPlus = const [],
     this.roles = const [],
@@ -44,6 +45,11 @@ class Player {
   final String version;
   final String imageUrl;
   final String cardImageUrl;
+
+  /// Full-item artwork (rating, stats and frame baked in) published by FUT.GG
+  /// for cards EA does not expose in its public ratings roster, such as the
+  /// Hall of FUT items.
+  final String cardArtUrl;
   final int pace;
   final int shooting;
   final int passing;
@@ -91,6 +97,7 @@ class Player {
         'version': version,
         'image_url': imageUrl,
         'card_image_url': cardImageUrl,
+        'card_art_url': cardArtUrl,
         'pace': pace,
         'shooting': shooting,
         'passing': passing,
@@ -247,6 +254,9 @@ class Player {
             json['card_image'] ??
             json['item_image_url'] ??
             json['itemImageUrl'],
+      ),
+      cardArtUrl: asString(
+        json['card_art_url'] ?? json['cardArtUrl'] ?? json['futgg_card_url'],
       ),
       pace: asInt(json['pace'] ?? json['pac'] ?? (json['stats'] is Map ? (json['stats'] as Map)['PAC'] : null)),
       shooting: asInt(json['shooting'] ?? json['sho'] ?? (json['stats'] is Map ? (json['stats'] as Map)['SHO'] : null)),

@@ -410,6 +410,14 @@ class LiveFc27Catalog {
     return DateTime.tryParse((data['generated_at'] ?? '').toString());
   }
 
+  /// The moment the verified coin prices in this catalog were last refreshed.
+  /// Older catalogs do not carry the field, so it returns null instead of
+  /// pretending the prices are current.
+  Future<DateTime?> priceUpdatedAt() async {
+    final data = await load();
+    return DateTime.tryParse((data['price_updated_at'] ?? '').toString());
+  }
+
   Future<LiveCatalogHealth> health({bool forceRefresh = false}) async {
     final data = await load(forceRefresh: forceRefresh);
     int count(String key) => data[key] is List ? (data[key] as List).length : 0;

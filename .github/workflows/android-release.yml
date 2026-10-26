@@ -75,8 +75,15 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          if gh release view v2.3.5 >/dev/null 2>&1; then
-            gh release upload v2.3.5 build/app/outputs/flutter-apk/app-release.apk --clobber
+          # The release tag always follows pubspec.yaml so a version bump cannot
+          # be forgotten in this workflow.
+          version="$(sed -n 's/^version:[[:space:]]*//p' pubspec.yaml | tr -d '\r')"
+          tag="v${version%%+*}"
+          build="${version##*+}"
+          apk="build/app/outputs/flutter-apk/app-release.apk"
+          notes="FCBaz Android release ${tag} (build ${build}). Official EA FC27 item cards, FC27 Hub prices, Hall of FUT artwork and a price freshness indicator."
+          if gh release view "$tag" >/dev/null 2>&1; then
+            gh release upload "$tag" "$apk" --clobber
           else
-            gh release create v2.3.5 build/app/outputs/flutter-apk/app-release.apk --title "FCBaz v2.3.5" --notes "FCBaz Android release v2.3.5 (build 43). Restores the FCBaz launcher icon during CI builds and includes player catalog and price merge fixes."
+            gh release create "$tag" "$apk" --title "FCBaz ${tag}" --notes "$notes"
           fi

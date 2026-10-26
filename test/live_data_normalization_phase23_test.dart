@@ -28,7 +28,7 @@ void main() {
         .map((e) => SbcChallenge.fromJson(Map<String, dynamic>.from(e)))
         .toList();
 
-    expect(challenges, hasLength(27));
+    expect(challenges, hasLength(29));
     expect(challenges.map((c) => c.id).toSet(), hasLength(challenges.length));
     for (final challenge in challenges) {
       expect(challenge.id, isNotEmpty);
@@ -41,22 +41,28 @@ void main() {
     final items = _items('fc27-evolutions.json', 'evolutions');
     final evolutions = items.map(Evolution.fromJson).toList();
 
-    expect(evolutions, hasLength(19));
+    expect(evolutions, hasLength(24));
     expect(evolutions.map((e) => e.id).toSet(), hasLength(evolutions.length));
     for (final evolution in evolutions) {
       expect(evolution.id, isNotEmpty);
       expect(evolution.requirementData, isNotEmpty);
     }
 
-    final goalkeeper = evolutions.firstWhere((e) => e.id == '2603-poor-sophia');
+    // Requirements are published per evolution, so the fixtures assert the
+    // parser against whichever current evolutions carry each rule instead of
+    // pinning ids that rotate out with every content drop.
+    final positioned = evolutions.firstWhere(
+      (e) => e.requirementData.any((r) => r['type'] == 'position'),
+    );
     expect(
-      goalkeeper.requirementData,
+      positioned.requirementData,
       contains(containsPair('type', 'position')),
     );
-    expect(goalkeeper.requirementData, contains(containsPair('max', 81)));
 
     final excluded = evolutions.firstWhere(
-      (e) => e.id == '2562-middle-management',
+      (e) =>
+          e.requirementData.any((r) => r['type'] == 'excluded_position') &&
+          e.requirementData.any((r) => r['type'] == 'overall'),
     );
     final excludedTypes = excluded.requirementData
         .map((e) => e['type'])
@@ -65,7 +71,7 @@ void main() {
     expect(excludedTypes, contains('overall'));
 
     final rarity = evolutions.firstWhere(
-      (e) => e.id == '2561-future-stars-academy-iv',
+      (e) => e.requirementData.any((r) => r['type'] == 'rarity'),
     );
     expect(rarity.requirementData.map((e) => e['type']), contains('rarity'));
   });
@@ -77,7 +83,7 @@ void main() {
         .map((e) => HomeObjective.fromJson(Map<String, dynamic>.from(e)))
         .toList();
 
-    expect(objectives, hasLength(41));
+    expect(objectives, hasLength(35));
     expect(objectives.map((e) => e.id).toSet(), hasLength(objectives.length));
 
     var tasks = 0;
@@ -90,7 +96,7 @@ void main() {
       tasks += taskIds.length;
       withTarget += objective.tasks.where((e) => e.target > 0).length;
     }
-    expect(tasks, 162);
+    expect(tasks, 147);
     expect(withTarget, greaterThanOrEqualTo(100));
   });
 
@@ -98,7 +104,7 @@ void main() {
     final items = _items('fc27-news.json', 'items');
     final articles = items.map(NewsArticle.fromJson).toList();
 
-    expect(articles, hasLength(13));
+    expect(articles, hasLength(16));
     expect(articles.map((e) => e.id).toSet(), hasLength(articles.length));
     for (final article in articles) {
       expect(article.displayTitle, isNotEmpty);

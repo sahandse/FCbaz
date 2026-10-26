@@ -3,8 +3,10 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../core/network/live_fc27_catalog.dart';
 import '../../../src/theme/fcbaz_theme.dart';
 import '../../../src/ui/section_header.dart';
+import '../../../src/utils/persian_formatters.dart';
 import '../../../src/ui/state_views.dart';
 import '../../search/search_history_repository.dart';
 import '../../settings/app_settings_repository.dart';
@@ -42,6 +44,7 @@ class _CardsScreenState extends State<CardsScreen> {
   bool loadingDiscovery = true;
   String? error;
   String quickRarity = 'همه';
+  DateTime? priceUpdatedAt;
   int requestId = 0;
 
   bool get hasNarrowingFilters =>
@@ -91,7 +94,7 @@ class _CardsScreenState extends State<CardsScreen> {
     }
     if (!mounted) return;
     filter = filter.copyWith(platform: settings.defaultPlatform);
-    await Future.wait([_load(), _loadDiscovery()]);
+    await Future.wait([_load(), _loadDiscovery(), _loadPriceFreshness()]);
   }
 
   Future<void> _load() async {
@@ -118,6 +121,27 @@ class _CardsScreenState extends State<CardsScreen> {
         setState(() => loading = false);
       }
     }
+  }
+
+  Future<void> _loadPriceFreshness() async {
+    DateTime? updatedAt;
+    try {
+      updatedAt = await LiveFc27Catalog().priceUpdatedAt();
+    } catch (_) {
+      // Older cached catalogs may not carry a price stamp; keep the fallback.
+    }
+    if (!mounted || updatedAt == null) return;
+    setState(() => priceUpdatedAt = updatedAt);
+  }
+
+  /// Persian relative age for the verified price snapshot so the collection
+  /// never implies prices are live when the snapshot is hours old.
+  String _priceAgeLabel(DateTime at) {
+    final elapsed = DateTime.now().difference(at.toLocal());
+    if (elapsed.inMinutes < 1) return 'همین حالا';
+    if (elapsed.inMinutes < 60) return '${faDigits(elapsed.inMinutes)} دقیقه پیش';
+    if (elapsed.inHours < 24) return '${faDigits(elapsed.inHours)} ساعت پیش';
+    return '${faDigits(elapsed.inDays)} روز پیش';
   }
 
   Future<void> _loadDiscovery() async {
@@ -174,7 +198,7 @@ class _CardsScreenState extends State<CardsScreen> {
   }
 
   Future<void> _refresh() async {
-    await Future.wait([_load(), _loadDiscovery()]);
+    await Future.wait([_load(), _loadDiscovery(), _loadPriceFreshness()]);
   }
 
   Future<void> _openFilters() async {
@@ -447,7 +471,9 @@ class _CardsScreenState extends State<CardsScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'کاتالوگ FC27',
+                          priceUpdatedAt == null
+                              ? 'کاتالوگ FC27'
+                              : 'قیمت‌ها · ${_priceAgeLabel(priceUpdatedAt!)}',
                           style: TextStyle(
                             color: palette.textMuted,
                             fontSize: 11,
