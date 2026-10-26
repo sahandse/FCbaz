@@ -7,7 +7,8 @@
 - Personal data remains local.
 
 ## Players
-Primary base-card source: the public FC27 Hub snapshot (`sahandse.github.io/FC27/data/fc27-players.json`), built from the EA SPORTS FC 27 public ratings dataset and attributed to `drop-api.ea.com/rating/ea-sports-fc` per player.
+Primary base-card source: the public FC27 Hub snapshot (`sahandse.github.io/FC27/data/fc27-players.json`), scraped from the EA SPORTS FC 27 official public ratings page (`https://www.ea.com/games/ea-sports-fc/ratings`). Every player links back to that page via `source_url`.
+Card artwork: the Hub emits EA's official FC27 Ultimate Team item card for each rated player (`https://ratings-images-prod.pulse.ea.com/FC27/components/items/<playerId>_en-GB.webp`). The app renders that image as the whole card face, so rating, position, stats, name, nation, league and club come straight from EA. Promotional/special versions are not in EA's public item set and keep their own verified artwork.
 Special cards/discovery: verified public FUT.GG pages and previously verified catalog entries; entries the hub does not publish are preserved instead of dropped.
 The last valid catalog is persisted on-device for offline resilience.
 
@@ -25,7 +26,7 @@ A zero value is never treated as a real market price. 24h change and price histo
 `LiveFc27Catalog` now reads the published feeds directly from `https://sahandse.github.io/FC27/data/` and merges them into the app's validated in-memory catalog. It fetches the player, price, challenge/objective, evolution, news, card-art and portrait-index feeds independently, so an unavailable optional feed does not block player data. The live catalog is refreshed in-app, cached on-device, and falls back to the last valid cache/bundled catalog when offline. Player parsing accepts common portrait/card-image field variants; when no image URL is supplied, the existing player-image fallback remains in place.
 
 The Hub publishes these FC27-only snapshots used as the primary feed:
-`fc27-players.json` (EA ratings mirror), `fc27-prices.json` (verified FUT.GG quotes), `fc27-challenges.json` (SBC + objectives), `fc27-evolutions.json`, `fc27-news.json`, `fc27-card-art.json` (card art hashes) and `available-portraits.json`.
+`fc27-players.json` (official EA ratings page + official item-card artwork), `fc27-prices.json` (verified FUT.GG quotes), `fc27-challenges.json` (SBC + objectives), `fc27-evolutions.json`, `fc27-news.json`, `fc27-card-art.json` (fallback card-art hashes for versions EA does not publish) and `available-portraits.json`.
 Cards with an FC26 label in the hub evolution feed are rejected.
 
 ## FUT.GG

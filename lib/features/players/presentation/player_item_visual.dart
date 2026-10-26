@@ -84,6 +84,11 @@ class PlayerItemVisual extends StatelessWidget {
     final skills = player.skillMoves > 0 && player.weakFoot > 0
         ? '${player.skillMoves}★${player.weakFoot}'
         : null;
+    // EA publishes the complete FC27 item card (rating, position, stats, name,
+    // nation, league and club). When that artwork is available it *is* the card,
+    // so it is shown as-is instead of being clipped and re-annotated.
+    final officialCard =
+        player.cardImageUrl.contains('/FC27/components/items/');
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -100,13 +105,19 @@ class PlayerItemVisual extends StatelessWidget {
                 ? (h * .014).clamp(2.0, 4.0).toDouble()
                 : 0;
             final bodyHeight = h - footerHeight - footerGap;
-            final shieldWidth = math.min(
-              w * (showPrices ? .96 : .98),
-              bodyHeight / _shieldHeightPerWidth,
+            // EA's item card canvas is 440x548; the drawn fallback uses the
+            // FCBaz shield ratio instead.
+            final double heightPerWidth =
+                officialCard ? 548 / 440 : _shieldHeightPerWidth;
+            final double shieldWidth = math.min(
+              w * (officialCard ? 1.0 : showPrices ? .96 : .98),
+              bodyHeight / heightPerWidth,
             );
-            final shieldHeight = shieldWidth * _shieldHeightPerWidth;
-            final left = (w - shieldWidth) / 2;
-            final top = showPrices ? 0.0 : (h - shieldHeight) / 2;
+            final double shieldHeight = shieldWidth * heightPerWidth;
+            final double left = (w - shieldWidth) / 2;
+            final double top = showPrices
+                ? (officialCard ? (bodyHeight - shieldHeight) / 2 : 0.0)
+                : (h - shieldHeight) / 2;
             final tagFont = shieldWidth * .05;
 
             return Stack(
@@ -117,14 +128,39 @@ class PlayerItemVisual extends StatelessWidget {
                   top: top,
                   width: shieldWidth,
                   height: shieldHeight,
-                  child: player.cardImageUrl.isNotEmpty
-                      ? ClipPath(
-                          clipper: FutCardClipper(ornate: theme.ornate),
-                          child: Image.network(
-                            player.cardImageUrl,
-                            fit: BoxFit.fill,
-                            errorBuilder: (context, error, stackTrace) =>
-                                _CardBody(
+                  child: officialCard
+                      ? Image.network(
+                          player.cardImageUrl,
+                          fit: BoxFit.contain,
+                          filterQuality: FilterQuality.high,
+                          errorBuilder: (context, error, stackTrace) =>
+                              _CardBody(
+                            player: player,
+                            theme: theme,
+                            compact: compact,
+                            statLabels: statLabels,
+                            statValues: statValues,
+                            displayName: _titleCase(player.name),
+                          ),
+                        )
+                      : player.cardImageUrl.isNotEmpty
+                          ? ClipPath(
+                              clipper: FutCardClipper(ornate: theme.ornate),
+                              child: Image.network(
+                                player.cardImageUrl,
+                                fit: BoxFit.fill,
+                                errorBuilder: (context, error, stackTrace) =>
+                                    _CardBody(
+                                  player: player,
+                                  theme: theme,
+                                  compact: compact,
+                                  statLabels: statLabels,
+                                  statValues: statValues,
+                                  displayName: _titleCase(player.name),
+                                ),
+                              ),
+                            )
+                          : _CardBody(
                               player: player,
                               theme: theme,
                               compact: compact,
@@ -132,18 +168,8 @@ class PlayerItemVisual extends StatelessWidget {
                               statValues: statValues,
                               displayName: _titleCase(player.name),
                             ),
-                          ),
-                        )
-                      : _CardBody(
-                          player: player,
-                          theme: theme,
-                          compact: compact,
-                          statLabels: statLabels,
-                          statValues: statValues,
-                          displayName: _titleCase(player.name),
-                        ),
                 ),
-                if (alternate.isNotEmpty)
+                if (!officialCard && alternate.isNotEmpty)
                   Positioned(
                     left: left + shieldWidth * .78,
                     width: shieldWidth * .26,
@@ -157,7 +183,7 @@ class PlayerItemVisual extends StatelessWidget {
                       ),
                     ),
                   ),
-                if (skills != null)
+                if (!officialCard && skills != null)
                   Positioned(
                     left: left + shieldWidth * .78,
                     width: shieldWidth * .26,
@@ -171,17 +197,18 @@ class PlayerItemVisual extends StatelessWidget {
                       ),
                     ),
                   ),
-                Positioned(
-                  left: left + shieldWidth * .075 - shieldWidth * .068,
-                  top: top + shieldHeight * .525,
-                  width: shieldWidth * .136,
-                  height: shieldWidth * .136,
-                  child: RoleDiamond(
-                    position: player.position,
-                    size: shieldWidth * .136,
-                    theme: theme,
+                if (!officialCard)
+                  Positioned(
+                    left: left + shieldWidth * .075 - shieldWidth * .068,
+                    top: top + shieldHeight * .525,
+                    width: shieldWidth * .136,
+                    height: shieldWidth * .136,
+                    child: RoleDiamond(
+                      position: player.position,
+                      size: shieldWidth * .136,
+                      theme: theme,
+                    ),
                   ),
-                ),
                 if (showPrices)
                   Positioned(
                     left: left + shieldWidth * .015,

@@ -9,16 +9,23 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-const SITE = 'https://sahandse.github.io/FC27';
-const EA_PLAYER_SOURCE = 'https://drop-api.ea.com/rating/ea-sports-fc';
+const PUBLIC_SITE = 'https://sahandse.github.io/FC27';
+// FC27_SITE allows a local mirror for verification; published catalog URLs
+// always point at the public hub.
+const SITE = (process.env.FC27_SITE || PUBLIC_SITE).replace(/\/$/, '');
+const EA_PLAYER_SOURCE = 'https://www.ea.com/games/ea-sports-fc/ratings';
+// Exact FC27 Ultimate Team item cards published by EA for every rated player.
+const EA_CARD_BASE =
+  'https://ratings-images-prod.pulse.ea.com/FC27/components/items';
 const CARD_ART_BASE =
   'https://game-assets.fut.gg/cdn-cgi/image/quality=85,format=auto,width=320/2027/futgg-player-item-card/';
-const PORTRAIT_BASE = `${SITE}/img/players/`;
+const PORTRAIT_BASE = `${PUBLIC_SITE}/img/players/`;
 const liveOnly = process.argv.includes('--live-only');
 
+const localFeed = (name, value) => (process.env[name] || value).trim();
 const FEEDS = {
-  players: `${SITE}/data/fc27-players.json`,
-  prices: `${SITE}/data/fc27-prices.json`,
+  players: localFeed('FC27_PLAYERS_FEED', `${SITE}/data/fc27-players.json`),
+  prices: localFeed('FC27_PRICES_FEED', `${SITE}/data/fc27-prices.json`),
   challenges: `${SITE}/data/fc27-challenges.json`,
   evolutions: `${SITE}/data/fc27-evolutions.json`,
   news: `${SITE}/data/fc27-news.json`,
@@ -157,6 +164,12 @@ function mapPlayer(sourcePlayer, priceIndex, art, portraits) {
   const portrait =
     portraits.files[id] || (portraits.ids.has(id) ? `${id}.png` : '');
   const artHash = art[id];
+  const officialCard = clean(
+    sourcePlayer.cardImageUrl ??
+      sourcePlayer.card_image_url ??
+      sourcePlayer.cardImage ??
+      sourcePlayer.card_image,
+  );
 
   const player = {
     id,
@@ -192,7 +205,13 @@ function mapPlayer(sourcePlayer, priceIndex, art, portraits) {
     };
   }
   if (portrait) player.image_url = `${PORTRAIT_BASE}${portrait}`;
-  if (artHash && /^[a-f0-9]{64}$/i.test(artHash)) {
+  if (officialCard.startsWith('https://')) {
+    player.card_image_url = officialCard;
+  } else if (/^\d+$/.test(id)) {
+    // The hub publishes an official EA card URL per player; derive the same
+    // canonical URL for older snapshots that predate the field.
+    player.card_image_url = `${EA_CARD_BASE}/${id}_en-GB.webp`;
+  } else if (artHash && /^[a-f0-9]{64}$/i.test(artHash)) {
     player.card_image_url = `${CARD_ART_BASE}27-${id}.${artHash}.webp`;
   }
 
@@ -499,7 +518,7 @@ function buildNews(siteNews, previousNews, checkedAt) {
 
   return {
     source: 'FC27 Hub + EA SPORTS FC',
-    source_url: FEEDS.news,
+    source_url: FEEDS.news.replace(SITE, PUBLIC_SITE),
     checked_at: checkedAt,
     items,
   };
@@ -621,8 +640,16 @@ async function main() {
     .filter(Boolean);
 
   const sources = unique([
-    `${SITE}/`,
-    ...Object.values(FEEDS),
+    `${PUBLIC_SITE}/`,
+    ...[
+      'fc27-players.json',
+      'fc27-prices.json',
+      'fc27-challenges.json',
+      'fc27-evolutions.json',
+      'fc27-news.json',
+      'fc27-card-art.json',
+      'available-portraits.json',
+    ].map((name) => `${PUBLIC_SITE}/data/${name}`),
     clean(playersFeed.source_url),
     'https://www.fut.gg/',
     'https://www.fut.gg/players/',
@@ -630,6 +657,7 @@ async function main() {
     'https://www.fut.gg/objectives/',
     'https://www.fut.gg/evolutions/',
     EA_PLAYER_SOURCE,
+    `${EA_CARD_BASE}/`,
     preservedSpecials.some((player) => clean(player.price_source) === 'fcdata-public')
       ? 'https://fcdata.io/players/'
       : '',
