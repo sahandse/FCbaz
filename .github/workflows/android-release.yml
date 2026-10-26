@@ -35,8 +35,8 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate Android launcher icons
-        run: dart run flutter_launcher_icons
+      - name: Verify custom Android launcher icon
+        run: test -f android/app/src/main/res/drawable/fcbaz_launcher.xml
 
       - name: Analyze Dart code
         run: flutter analyze --no-fatal-infos
