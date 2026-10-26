@@ -71,12 +71,4 @@ jobs:
         if: github.ref == 'refs/heads/main'
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG_NAME: v2.3.4
-        run: |
-          if gh release view "$TAG_NAME" >/dev/null 2>&1; then
-            echo "Release $TAG_NAME already exists; skipping publication."
-          else
-            gh release create "$TAG_NAME" build/app/outputs/flutter-apk/app-release.apk \\
-              --title "FCBaz v2.3.4" \\
-              --notes "FCBaz Android release v2.3.4 (build 42). Includes player catalog mapping and price merge fixes."
-          fi
+        run: gh release create v2.3.4 build/app/outputs/flutter-apk/app-release.apk --title "FCBaz v2.3.4" --notes "FCBaz Android release v2.3.4 (build 42). Includes player catalog mapping and price merge fixes."
