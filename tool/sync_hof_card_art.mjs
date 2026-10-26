@@ -79,8 +79,16 @@ for (const link of links.values()) {
     console.warn('no artwork for', link.name, link.version);
     continue;
   }
+  // The detail page title carries the display name with its real diacritics.
+  const displayName = (
+    html.match(/^#\s+(.+?)\s+-\s+(?:Base\s+)?Hall of FUT/m)?.[1] ??
+    html.match(/^Title:\s+(.+?)\s+FC 27 Rating/m)?.[1] ??
+    link.name.replace(/-/g, ' ')
+  )
+    .replace(/\s+(EA FC 27|EA|FC 27)$/i, '')
+    .trim();
   art[link.id] = {
-    name: link.name.replace(/-/g, ' '),
+    name: displayName,
     versionId: link.version,
     hash: hash,
     card_art_url: `${ART_BASE}27-${link.version}.${hash}.webp`,

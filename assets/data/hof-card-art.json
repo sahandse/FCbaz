@@ -1,178 +1,157 @@
 {
   "source": "game-assets.fut.gg",
   "source_url": "https://www.fut.gg/rarities/base-hall-of-fut/",
-  "checked_at": "2026-10-26T17:47:04.789Z",
+  "checked_at": "2026-10-26T18:26:30.956Z",
   "note": "Official FUT.GG item card artwork for the Hall of FUT roster, resolved per EA player id.",
   "items": {
     "155885": {
-      "name": "aiden mcgeady",
+      "name": "Aiden McGeady",
       "versionId": "155885",
       "hash": "7185fddc7558027166edf1a5a40168f0140628249b52d2ba41a305f968a9072d",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-155885.7185fddc7558027166edf1a5a40168f0140628249b52d2ba41a305f968a9072d.webp"
     },
     "156321": {
-      "name": "adebayo akinfenwa",
+      "name": "Adebayo Akinfenwa",
       "versionId": "156321",
       "hash": "0f881743a2857f1da0f7d83a9c58edd1987965cec67c0e9ff373c4ae556ea635",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-156321.0f881743a2857f1da0f7d83a9c58edd1987965cec67c0e9ff373c4ae556ea635.webp"
     },
     "164859": {
-      "name": "theo walcott",
+      "name": "Theo Walcott",
       "versionId": "164859",
       "hash": "404a54416459fe5674aabc50c326bfb6f8e4ae0dda2d0f415856dd4140f49c3c",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-164859.404a54416459fe5674aabc50c326bfb6f8e4ae0dda2d0f415856dd4140f49c3c.webp"
     },
     "164994": {
-      "name": "jakub blaszczykowski",
+      "name": "Jakub Błaszczykowski",
       "versionId": "164994",
       "hash": "7034b7ce4ab286e9f9732de51c6e13e6bd42bf7252f386bfc13b0dc8d3fc129e",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-164994.7034b7ce4ab286e9f9732de51c6e13e6bd42bf7252f386bfc13b0dc8d3fc129e.webp"
     },
     "167905": {
-      "name": "luis antonio valencia",
+      "name": "Antonio Valencia",
       "versionId": "167905",
       "hash": "46afd6170ffd09a2c2b105eed4531cea23556cf7a1a66e0ed95d510495c9eaa2",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-167905.46afd6170ffd09a2c2b105eed4531cea23556cf7a1a66e0ed95d510495c9eaa2.webp"
     },
     "169051": {
-      "name": "freddy guarin",
+      "name": "Fredy Guarín",
       "versionId": "169051",
       "hash": "add1c42852da6f7cb14a077a4999f821d2f174a3882bad615a52d41af4200375",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-169051.add1c42852da6f7cb14a077a4999f821d2f174a3882bad615a52d41af4200375.webp"
     },
     "169721": {
-      "name": "micah richards",
+      "name": "Micah Richards",
       "versionId": "169721",
       "hash": "3f4e0ac569627616bb387442073a26aee4be669113de9b6cbba462809360a9a0",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-169721.3f4e0ac569627616bb387442073a26aee4be669113de9b6cbba462809360a9a0.webp"
     },
     "170369": {
-      "name": "giovani dos santos",
+      "name": "Giovani dos Santos",
       "versionId": "170369",
       "hash": "4e9b32d300b4ba210f445122f09c9fd66c93b4d91d2240d04296cd7422ae7538",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-170369.4e9b32d300b4ba210f445122f09c9fd66c93b4d91d2240d04296cd7422ae7538.webp"
     },
     "170733": {
-      "name": "gervinho",
+      "name": "Gervinho",
       "versionId": "170733",
       "hash": "2043bc3dbf0b72c06e9eaa9317723a18267e4a0253a2034eaf8739b4e9ebab1e",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-170733.2043bc3dbf0b72c06e9eaa9317723a18267e4a0253a2034eaf8739b4e9ebab1e.webp"
     },
     "172049": {
-      "name": "eljero elia",
+      "name": "Eljero Elia",
       "versionId": "172049",
       "hash": "2a0fbaffb52b50a2ab296b4bf510fed65f2517f3db36b7c109cc47319a2edae7",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-172049.2a0fbaffb52b50a2ab296b4bf510fed65f2517f3db36b7c109cc47319a2edae7.webp"
     },
     "176944": {
-      "name": "marouane fellaini",
+      "name": "Marouane Fellaini",
       "versionId": "176944",
       "hash": "171b51e0a7b20708555b80676c12dee3f7fb63f1991759c7bfda6597e9742c9c",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-176944.171b51e0a7b20708555b80676c12dee3f7fb63f1991759c7bfda6597e9742c9c.webp"
     },
     "178322": {
-      "name": "miguel layun",
+      "name": "Miguel Layún",
       "versionId": "178322",
       "hash": "c13707bdaaf49eb06d24a8dcbc4a699eb3adc1216e59ade89b3a39c7c485c303",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-178322.c13707bdaaf49eb06d24a8dcbc4a699eb3adc1216e59ade89b3a39c7c485c303.webp"
     },
     "179527": {
-      "name": "loic remy",
+      "name": "Loïc Rémy",
       "versionId": "179527",
       "hash": "f856a5a17190b868fa47a59bb9970e834326edfa4174c85d6b2bb5fac7733f97",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-179527.f856a5a17190b868fa47a59bb9970e834326edfa4174c85d6b2bb5fac7733f97.webp"
     },
     "179944": {
-      "name": "david luiz moreira marinho",
+      "name": "David Luiz",
       "versionId": "179944",
       "hash": "78ce6d56fcc9f1c891f079783f961665db6300ac010a275da1817743ec53e538",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-179944.78ce6d56fcc9f1c891f079783f961665db6300ac010a275da1817743ec53e538.webp"
     },
     "180175": {
-      "name": "alexandre pato",
+      "name": "Alexandre Pato",
       "versionId": "180175",
       "hash": "68f2d94846672d096d7d901f1823d3a79e82b4c7c5ed320730330782ce3656dd",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-180175.68f2d94846672d096d7d901f1823d3a79e82b4c7c5ed320730330782ce3656dd.webp"
     },
     "186627": {
-      "name": "mario balotelli",
+      "name": "Mario Balotelli",
       "versionId": "186627",
       "hash": "7a207731c722b61a6d9bf6b83d4c47f086528d4b7cf4c84f839c603a374c8257",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-186627.7a207731c722b61a6d9bf6b83d4c47f086528d4b7cf4c84f839c603a374c8257.webp"
     },
     "188428": {
-      "name": "seydou doumbia",
+      "name": "Seydou Doumbia",
       "versionId": "188428",
       "hash": "c157b3657a1f93d0a8e92336fb870b53e5d5e5797fb6f0607d5411add3d10228",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-188428.c157b3657a1f93d0a8e92336fb870b53e5d5e5797fb6f0607d5411add3d10228.webp"
     },
     "189362": {
-      "name": "givanildo vieira de souza",
+      "name": "Hulk",
       "versionId": "189362",
       "hash": "934455e5c074ef27699784813e942f7e533033c16a3afc9c1ced985b8fd13201",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-189362.934455e5c074ef27699784813e942f7e533033c16a3afc9c1ced985b8fd13201.webp"
     },
     "199835": {
-      "name": "emmanuel emenike",
+      "name": "Emmanuel Emenike",
       "versionId": "199835",
       "hash": "68cf4799f823faa649636c4bff4b6452076294176e6d17693b06c333de70dfd6",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-199835.68cf4799f823faa649636c4bff4b6452076294176e6d17693b06c333de70dfd6.webp"
     },
     "203551": {
-      "name": "alessandro florenzi",
+      "name": "Alessandro Florenzi",
       "versionId": "203551",
       "hash": "f1a19e383e36be092be55542a76cbe5747d9f273b8aee4d7a229bb22a936a3cd",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-203551.f1a19e383e36be092be55542a76cbe5747d9f273b8aee4d7a229bb22a936a3cd.webp"
     },
     "204550": {
-      "name": "victor ibarbo",
+      "name": "Víctor Ibarbo",
       "versionId": "204550",
       "hash": "9e8a9d79bdbf5a54f9483d7c1fc671439df7e2ca5b2adae1bdcf2653acfb8422",
       "card_art_url": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-204550.9e8a9d79bdbf5a54f9483d7c1fc671439df7e2ca5b2adae1bdcf2653acfb8422.webp"
     }
   },
   "catalog_ids": {
-    "futgg-blaszczykowski-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-164994.7034b7ce4ab286e9f9732de51c6e13e6bd42bf7252f386bfc13b0dc8d3fc129e.webp",
-    "futgg-david-luiz-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-179944.78ce6d56fcc9f1c891f079783f961665db6300ac010a275da1817743ec53e538.webp",
-    "futgg-pato-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-180175.68f2d94846672d096d7d901f1823d3a79e82b4c7c5ed320730330782ce3656dd.webp",
-    "futgg-balotelli-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-186627.7a207731c722b61a6d9bf6b83d4c47f086528d4b7cf4c84f839c603a374c8257.webp",
-    "futgg-hulk-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-189362.934455e5c074ef27699784813e942f7e533033c16a3afc9c1ced985b8fd13201.webp",
-    "futgg-walcott-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-164859.404a54416459fe5674aabc50c326bfb6f8e4ae0dda2d0f415856dd4140f49c3c.webp",
-    "futgg-valencia-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-167905.46afd6170ffd09a2c2b105eed4531cea23556cf7a1a66e0ed95d510495c9eaa2.webp",
-    "futgg-richards-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-169721.3f4e0ac569627616bb387442073a26aee4be669113de9b6cbba462809360a9a0.webp",
-    "futgg-fellaini-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-176944.171b51e0a7b20708555b80676c12dee3f7fb63f1991759c7bfda6597e9742c9c.webp",
-    "futgg-mcgeady-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-155885.7185fddc7558027166edf1a5a40168f0140628249b52d2ba41a305f968a9072d.webp",
-    "futgg-akinfenwa-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-156321.0f881743a2857f1da0f7d83a9c58edd1987965cec67c0e9ff373c4ae556ea635.webp",
-    "futgg-guarin-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-169051.add1c42852da6f7cb14a077a4999f821d2f174a3882bad615a52d41af4200375.webp",
-    "futgg-ibarbo-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-204550.9e8a9d79bdbf5a54f9483d7c1fc671439df7e2ca5b2adae1bdcf2653acfb8422.webp",
-    "futgg-dos-santos-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-170369.4e9b32d300b4ba210f445122f09c9fd66c93b4d91d2240d04296cd7422ae7538.webp",
-    "futgg-gervinho-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-170733.2043bc3dbf0b72c06e9eaa9317723a18267e4a0253a2034eaf8739b4e9ebab1e.webp",
-    "futgg-doumbia-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-188428.c157b3657a1f93d0a8e92336fb870b53e5d5e5797fb6f0607d5411add3d10228.webp",
-    "futgg-florenzi-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-203551.f1a19e383e36be092be55542a76cbe5747d9f273b8aee4d7a229bb22a936a3cd.webp",
-    "futgg-elia-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-172049.2a0fbaffb52b50a2ab296b4bf510fed65f2517f3db36b7c109cc47319a2edae7.webp",
-    "futgg-layun-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-178322.c13707bdaaf49eb06d24a8dcbc4a699eb3adc1216e59ade89b3a39c7c485c303.webp",
-    "futgg-remy-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-179527.f856a5a17190b868fa47a59bb9970e834326edfa4174c85d6b2bb5fac7733f97.webp",
-    "futgg-emenike-hof": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-199835.68cf4799f823faa649636c4bff4b6452076294176e6d17693b06c333de70dfd6.webp",
-    "futgg-adebayo-akinfenwa-84-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-156321.0f881743a2857f1da0f7d83a9c58edd1987965cec67c0e9ff373c4ae556ea635.webp",
-    "futgg-marouane-fellaini-85-cm-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-176944.171b51e0a7b20708555b80676c12dee3f7fb63f1991759c7bfda6597e9742c9c.webp",
-    "futgg-loi-c-re-my-84-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-179527.f856a5a17190b868fa47a59bb9970e834326edfa4174c85d6b2bb5fac7733f97.webp",
-    "futgg-eljero-elia-84-lw-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-172049.2a0fbaffb52b50a2ab296b4bf510fed65f2517f3db36b7c109cc47319a2edae7.webp",
-    "futgg-santos-84-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-170369.4e9b32d300b4ba210f445122f09c9fd66c93b4d91d2240d04296cd7422ae7538.webp",
-    "futgg-david-luiz-85-cb-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-179944.78ce6d56fcc9f1c891f079783f961665db6300ac010a275da1817743ec53e538.webp",
     "futgg-jakub-b-aszczykowski-85-rm-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-164994.7034b7ce4ab286e9f9732de51c6e13e6bd42bf7252f386bfc13b0dc8d3fc129e.webp",
+    "futgg-david-luiz-85-cb-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-179944.78ce6d56fcc9f1c891f079783f961665db6300ac010a275da1817743ec53e538.webp",
     "futgg-alexandre-pato-85-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-180175.68f2d94846672d096d7d901f1823d3a79e82b4c7c5ed320730330782ce3656dd.webp",
     "futgg-mario-balotelli-85-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-186627.7a207731c722b61a6d9bf6b83d4c47f086528d4b7cf4c84f839c603a374c8257.webp",
     "futgg-hulk-85-rw-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-189362.934455e5c074ef27699784813e942f7e533033c16a3afc9c1ced985b8fd13201.webp",
     "futgg-theo-walcott-85-rw-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-164859.404a54416459fe5674aabc50c326bfb6f8e4ae0dda2d0f415856dd4140f49c3c.webp",
     "futgg-antonio-valencia-85-rm-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-167905.46afd6170ffd09a2c2b105eed4531cea23556cf7a1a66e0ed95d510495c9eaa2.webp",
     "futgg-micah-richards-85-rb-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-169721.3f4e0ac569627616bb387442073a26aee4be669113de9b6cbba462809360a9a0.webp",
+    "futgg-marouane-fellaini-85-cm-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-176944.171b51e0a7b20708555b80676c12dee3f7fb63f1991759c7bfda6597e9742c9c.webp",
     "futgg-aiden-mcgeady-84-rm-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-155885.7185fddc7558027166edf1a5a40168f0140628249b52d2ba41a305f968a9072d.webp",
+    "futgg-adebayo-akinfenwa-84-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-156321.0f881743a2857f1da0f7d83a9c58edd1987965cec67c0e9ff373c4ae556ea635.webp",
     "futgg-fredy-guari-n-84-cm-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-169051.add1c42852da6f7cb14a077a4999f821d2f174a3882bad615a52d41af4200375.webp",
     "futgg-vi-ctor-ibarbo-84-rw-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-204550.9e8a9d79bdbf5a54f9483d7c1fc671439df7e2ca5b2adae1bdcf2653acfb8422.webp",
+    "futgg-santos-84-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-170369.4e9b32d300b4ba210f445122f09c9fd66c93b4d91d2240d04296cd7422ae7538.webp",
     "futgg-gervinho-84-lw-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-170733.2043bc3dbf0b72c06e9eaa9317723a18267e4a0253a2034eaf8739b4e9ebab1e.webp",
     "futgg-seydou-doumbia-84-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-188428.c157b3657a1f93d0a8e92336fb870b53e5d5e5797fb6f0607d5411add3d10228.webp",
     "futgg-alessandro-florenzi-84-rb-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-203551.f1a19e383e36be092be55542a76cbe5747d9f273b8aee4d7a229bb22a936a3cd.webp",
+    "futgg-eljero-elia-84-lw-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-172049.2a0fbaffb52b50a2ab296b4bf510fed65f2517f3db36b7c109cc47319a2edae7.webp",
     "futgg-miguel-layu-n-84-lb-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-178322.c13707bdaaf49eb06d24a8dcbc4a699eb3adc1216e59ade89b3a39c7c485c303.webp",
+    "futgg-loi-c-re-my-84-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-179527.f856a5a17190b868fa47a59bb9970e834326edfa4174c85d6b2bb5fac7733f97.webp",
     "futgg-emmanuel-emenike-84-st-base-hall-of-fut": "https://game-assets.fut.gg/2027/futgg-player-item-card/27-199835.68cf4799f823faa649636c4bff4b6452076294176e6d17693b06c333de70dfd6.webp"
   }
 }

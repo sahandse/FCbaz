@@ -20,6 +20,12 @@ void main() {
         .toList();
 
     expect(hof, isNotEmpty);
+    // FUT.GG lists one item per inductee; the catalogue used to publish each
+    // card twice (Gallery label and campaign label), so guard the dedupe.
+    final identities = hof
+        .map((p) => '${p['name']}|${p['rating']}|${p['position']}')
+        .toSet();
+    expect(identities, hasLength(hof.length));
     final artwork = RegExp(
       r'^https://game-assets\.fut\.gg/2027/futgg-player-item-card/'
       r'27-\d+\.[0-9a-f]{64}\.webp$',
@@ -30,6 +36,13 @@ void main() {
         player.cardArtUrl,
         matches(artwork),
         reason: '${player.name} has no resolved Hall of FUT artwork',
+      );
+      // Gallery items have no verified market quote, so a placeholder coin
+      // value must never be shown as if it were a real price.
+      expect(
+        player.pricePs,
+        0,
+        reason: '${player.name} must not publish an unverified price',
       );
     }
   });
