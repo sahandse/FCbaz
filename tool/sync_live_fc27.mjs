@@ -1,5 +1,7 @@
 import { readFile, writeFile } from 'node:fs/promises';
 
+import { artKeyIndex, dedupeHallOfFut } from './lib/hof.mjs';
+
 const catalogPath = 'data/live/catalog.json';
 const eaRatingsBase = 'https://drop-api.ea.com/rating/ea-sports-fc';
 
@@ -412,6 +414,24 @@ for (const [section, url] of Object.entries(pages)) {
 }
 
 if (successfulSections === 0) throw new Error('No live FC27 section could be refreshed; catalog left unchanged.');
+
+// Collapse the Hall of FUT cards that FUT.GG publishes under two labels so the
+// discovery snapshot never stores the roster twice with placeholder prices.
+let hofDisplayNames = {};
+let hofArtKeys = new Map();
+try {
+  const hofArt = JSON.parse(await readFile('assets/data/hof-card-art.json', 'utf8'));
+  hofDisplayNames = Object.fromEntries(
+    Object.entries(hofArt.items ?? {}).map(([eaId, item]) => [
+      'ea:' + eaId,
+      String(item?.name ?? '').trim(),
+    ]),
+  );
+  hofArtKeys = artKeyIndex(hofArt.items);
+} catch (error) {
+  console.warn(`[hall-of-fut] artwork index unavailable: ${error}`);
+}
+current.players = dedupeHallOfFut(current.players, hofDisplayNames, hofArtKeys);
 
 current.game_year = 27;
 current.generated_at = new Date().toISOString();

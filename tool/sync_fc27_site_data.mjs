@@ -8,6 +8,8 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import { artKeyIndex, dedupeHallOfFut } from './lib/hof.mjs';
+
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const PUBLIC_SITE = 'https://sahandse.github.io/FC27';
 // FC27_SITE allows a local mirror for verification; published catalog URLs
@@ -130,77 +132,6 @@ async function writeJson(file, value, pretty = false) {
 
 function assertFeed(condition, message) {
   if (!condition) throw new Error(`refusing to write incomplete catalog: ${message}`);
-}
-
-// Hall of FUT players were discovered twice (the Gallery "Base" item and a
-// campaign label) and landed in the catalog as two entries for the same card.
-// Keep one entry per EA item, carried by its resolved artwork version id, and
-// drop the placeholder coin value fcdata reports for Gallery items, which has
-// no verified market quote.
-const hallOfFutLabel = (player) =>
-  /hall of fut/i.test(clean(player.card_type || player.version || player.rarity));
-
-const hallOfFutKey = (player) => {
-  const artwork = clean(player.card_art_url).match(/futgg-player-item-card\/27-(\d+)\./);
-  if (artwork) return 'ea:' + artwork[1];
-  return [
-    'name',
-    clean(player.name).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]/g, ''),
-    num(player.rating),
-    clean(player.position).toUpperCase(),
-  ].join(':');
-};
-
-function mergeHallOfFutEntry(entries, displayNames) {
-  const preferred =
-    entries.find((entry) => /base-hall-of-fut/i.test(clean(entry.id))) || entries[0];
-  const merged = {...preferred};
-  for (const entry of entries) {
-    // The campaign copy carries the full display name ("Giovani dos Santos")
-    // while the Gallery row can be reduced to a surname ("Santos").
-    if (clean(entry.name).length > clean(merged.name).length) merged.name = entry.name;
-    if (!clean(merged.card_art_url) && clean(entry.card_art_url)) merged.card_art_url = entry.card_art_url;
-    if (!clean(merged.nation_name) && clean(entry.nation_name)) merged.nation_name = entry.nation_name;
-    if (!clean(merged.club_name) && clean(entry.club_name)) merged.club_name = entry.club_name;
-    if (!clean(merged.league_name) && clean(entry.league_name)) merged.league_name = entry.league_name;
-  }
-  // FUT.GG's item page title is authoritative for the display name.
-  const displayName = clean(displayNames[hallOfFutKey(merged)]);
-  if (displayName) merged.name = displayName;
-  merged.price_ps = 0;
-  merged.price_pc = 0;
-  merged.market_price = 0;
-  merged.price_status = 'unavailable';
-  merged.price_note = 'Hall of FUT items have no verified market quote.';
-  delete merged.price_source;
-  delete merged.price_source_url;
-  delete merged.price_updated_at;
-  return merged;
-}
-
-function dedupeHallOfFut(players, displayNames = {}) {
-  const groups = new Map();
-  for (const player of players) {
-    if (!hallOfFutLabel(player)) continue;
-    const key = hallOfFutKey(player);
-    if (!groups.has(key)) groups.set(key, []);
-    groups.get(key).push(player);
-  }
-  if (!groups.size) return players;
-
-  const emitted = new Set();
-  const output = [];
-  for (const player of players) {
-    if (!hallOfFutLabel(player)) {
-      output.push(player);
-      continue;
-    }
-    const key = hallOfFutKey(player);
-    if (emitted.has(key)) continue;
-    emitted.add(key);
-    output.push(mergeHallOfFutEntry(groups.get(key), displayNames));
-  }
-  return output;
 }
 
 function buildPriceIndex(prices) {
@@ -678,7 +609,11 @@ async function main() {
   const hofNames = Object.fromEntries(
     Object.entries(hofArt?.items || {}).map(([eaId, item]) => ['ea:' + eaId, clean(item?.name)]),
   );
-  const allPlayers = dedupeHallOfFut([...sitePlayers, ...preservedSpecials], hofNames);
+  const allPlayers = dedupeHallOfFut(
+    [...sitePlayers, ...preservedSpecials],
+    hofNames,
+    artKeyIndex(hofArt?.items),
+  );
   const catalogPlayers = new Set(allPlayers.map((player) => player.id));
 
   const mappedSbcs = sbcs.map((item) => mapSbc(item, clean(challengesFeed.checked_at), indexes));
