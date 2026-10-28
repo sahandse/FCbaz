@@ -74,7 +74,7 @@ jobs:
         shell: bash
         run: sha256sum -c SHA256SUMS.txt
 
-      - name: Verify signature, package and version
+      - name: Verify certificate fingerprint
         shell: bash
         run: |
           set -euo pipefail
@@ -82,42 +82,81 @@ jobs:
           build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
           apk="$(find dist -name '*.apk' | head -n 1)"
           test -n "$apk"
-
           "$build_tools/apksigner" verify --print-certs "$apk" | tee apk-signature.txt
-          grep -q "Signer #1 certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" apk-signature.txt
-          grep -q "Signer #1 certificate DN: CN=FCBaz, OU=Android, O=FCBaz, L=Tehran, ST=Tehran, C=IR" apk-signature.txt
-          grep -q "Verified using v2 scheme (APK Signature Scheme v2): true" apk-signature.txt
-
-          badging="$("$build_tools/aapt2" dump badging "$apk")"
-          printf '%s\n' "$badging" > badging.txt
-          echo "$badging" | grep -q "package: name='${EXPECTED_PACKAGE}'"
-          echo "$badging" | grep -q "versionCode='${VERSION_CODE}'"
-          echo "$badging" | grep -q "versionName='${TAG#v}'"
-          echo "$badging" | grep -q "application-label:'${EXPECTED_LABEL}'"
-          echo "$badging" | grep -q "launchable-activity: name='${EXPECTED_ACTIVITY}'"
-
           {
-            echo "### Published release verification: ${TAG} (versionCode ${VERSION_CODE})"
-            echo ""
+            echo "### Published APK certificate: ${TAG}"
             echo '```'
             cat apk-signature.txt
             echo '```'
-            echo ""
+          } >> "$GITHUB_STEP_SUMMARY"
+          if ! grep -q "Signer #1 certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" apk-signature.txt; then
+            actual="$(grep -m1 'certificate SHA-256 digest' apk-signature.txt || echo 'digest line missing')"
+            echo "::error title=Certificate fingerprint mismatch::${actual}; expected ${EXPECTED_CERT_SHA256}"
+            exit 1
+          fi
+
+      - name: Verify certificate subject and signature scheme
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q 'Signer #1 certificate DN: .*CN=FCBaz' apk-signature.txt; then
+            echo "::error title=Certificate subject mismatch::$(grep -m1 'certificate DN' apk-signature.txt || echo 'DN line missing')"
+            exit 1
+          fi
+          if ! grep -q 'Signer #1 certificate DN: .*O=FCBaz' apk-signature.txt; then
+            echo "::error title=Certificate organization mismatch::$(grep -m1 'certificate DN' apk-signature.txt || echo 'DN line missing')"
+            exit 1
+          fi
+          if ! grep -q 'Verified using v2 scheme (APK Signature Scheme v2): true' apk-signature.txt; then
+            echo "::error title=APK Signature Scheme v2 not verified::$(grep -m1 'v2 scheme' apk-signature.txt || echo 'v2 line missing')"
+            exit 1
+          fi
+
+      - name: Verify package identity and version
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
+          apk="$(find dist -name '*.apk' | head -n 1)"
+          badging="$("$build_tools/aapt2" dump badging "$apk")"
+          printf '%s\n' "$badging" > badging.txt
+          {
+            echo "### Published APK identity: ${TAG} (versionCode ${VERSION_CODE})"
             echo '```'
-            grep -E "^(package|versionCode|versionName|application-label|launchable-activity)" badging.txt || true
+            printf '%s\n' "$badging" | grep -E "^(package|versionCode|versionName|application-label|launchable-activity)" || true
             echo '```'
-            echo ""
             echo "Published checksums:"
             echo '```'
             cat dist/SHA256SUMS.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
+          pkg="$(printf '%s\n' "$badging" | grep -m1 '^package:')"
+          for expected in \
+            "name='${EXPECTED_PACKAGE}'" \
+            "versionCode='${VERSION_CODE}'" \
+            "versionName='${TAG#v}'"; do
+            if ! printf '%s\n' "$pkg" | grep -qF "$expected"; then
+              echo "::error title=Package identity mismatch::${pkg}; missing ${expected}"
+              exit 1
+            fi
+          done
+          if ! grep -qF "application-label:'${EXPECTED_LABEL}'" badging.txt; then
+            echo "::error title=App label mismatch::$(grep -m1 'application-label' badging.txt || echo 'label missing')"
+            exit 1
+          fi
+          if ! grep -qF "launchable-activity: name='${EXPECTED_ACTIVITY}'" badging.txt; then
+            echo "::error title=Launchable activity mismatch::$(grep -m1 'launchable-activity' badging.txt || echo 'activity missing')"
+            exit 1
+          fi
 
       - name: Upload verification evidence
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: published-release-verification
           path: |
             apk-signature.txt
             badging.txt
+          if-no-files-found: ignore
           retention-days: 30

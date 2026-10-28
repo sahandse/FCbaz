@@ -1,2 +1,3 @@
 tag=v2.6.0
 version_code=48
+# rerun: split signature checks into named steps

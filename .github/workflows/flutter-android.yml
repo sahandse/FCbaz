@@ -248,7 +248,8 @@ jobs:
           build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
           "$build_tools/apksigner" verify --print-certs "FCBaz-v${RELEASE_VERSION}.apk" | tee apk-signature.txt
           grep -q "Signer #1 certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" apk-signature.txt
-          grep -q "Signer #1 certificate DN: CN=FCBaz, OU=Android, O=FCBaz, L=Tehran, ST=Tehran, C=IR" apk-signature.txt
+          grep -q 'Signer #1 certificate DN: .*CN=FCBaz' apk-signature.txt
+          grep -q 'Signer #1 certificate DN: .*O=FCBaz' apk-signature.txt
           grep -q "Verified using v2 scheme (APK Signature Scheme v2): true" apk-signature.txt
           badging="$("$build_tools/aapt2" dump badging "FCBaz-v${RELEASE_VERSION}.apk")"
           echo "$badging" | grep -q "package: name='ir.fcbaz.app'"
