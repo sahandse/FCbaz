@@ -30,16 +30,31 @@ class AppEmptyState extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 72,
+            height: 72,
+            alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: palette.surfaceRaised,
-              borderRadius: BorderRadius.circular(FcbazRadius.lg),
-              border: Border.all(color: palette.line),
+              gradient: RadialGradient(
+                colors: [
+                  palette.primary.withValues(alpha: .18),
+                  palette.primary.withValues(alpha: 0),
+                ],
+              ),
             ),
-            child: Icon(icon, size: 26, color: palette.primary),
+            child: Container(
+              width: 54,
+              height: 54,
+              decoration: BoxDecoration(
+                color: palette.surfaceRaised,
+                borderRadius: BorderRadius.circular(FcbazRadius.lg),
+                border: Border.all(
+                  color: palette.primary.withValues(alpha: .28),
+                ),
+              ),
+              child: Icon(icon, size: 26, color: palette.primary),
+            ),
           ),
-          const SizedBox(height: FcbazSpace.lg),
+          const SizedBox(height: FcbazSpace.md),
           Text(
             title,
             textAlign: TextAlign.center,
@@ -93,30 +108,65 @@ class PlayerGridSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
-    return GridView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: count,
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        mainAxisSpacing: 14,
-        crossAxisSpacing: 10,
-        childAspectRatio: .72,
-      ),
-      itemBuilder: (_, __) => DecoratedBox(
-        decoration: BoxDecoration(
-          color: palette.surface,
-          borderRadius: BorderRadius.circular(FcbazRadius.md),
-          border: Border.all(color: palette.line),
+    return Semantics(
+      label: 'در حال بارگذاری کارت‌ها',
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: count,
+        // Matches the collection grid so the list never jumps when the real
+        // cards replace the placeholders.
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          mainAxisSpacing: 14,
+          crossAxisSpacing: 10,
+          childAspectRatio: .5,
         ),
-        child: Center(
-          child: Container(
-            width: 64,
-            height: 64,
-            decoration: BoxDecoration(
-              color: palette.surfaceRaised,
-              shape: BoxShape.circle,
-            ),
+        itemBuilder: (_, __) => Container(
+          decoration: BoxDecoration(
+            color: palette.surface,
+            borderRadius: BorderRadius.circular(FcbazRadius.lg),
+            border: Border.all(color: palette.line),
+          ),
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            children: [
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      stops: const [0, .52, 1],
+                      colors: [
+                        palette.surfaceRaised,
+                        palette.line.withValues(alpha: .45),
+                        palette.surfaceRaised,
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(FcbazRadius.md),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 10),
+              Container(
+                height: 8,
+                width: 90,
+                decoration: BoxDecoration(
+                  color: palette.surfaceRaised,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(
+                height: 8,
+                width: 54,
+                decoration: BoxDecoration(
+                  color: palette.surfaceRaised,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            ],
           ),
         ),
       ),

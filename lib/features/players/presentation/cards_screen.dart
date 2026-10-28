@@ -8,11 +8,13 @@ import '../../../src/theme/fcbaz_theme.dart';
 import '../../../src/ui/section_header.dart';
 import '../../../src/utils/persian_formatters.dart';
 import '../../../src/ui/state_views.dart';
+import '../../market/presentation/market_screen.dart';
 import '../../search/search_history_repository.dart';
 import '../../settings/app_settings_repository.dart';
 import '../data/player_repository.dart';
 import '../domain/player.dart';
 import 'advanced_player_filter_sheet.dart';
+import 'player_item_visual.dart';
 import 'player_market_tile.dart';
 
 class CardsScreen extends StatefulWidget {
@@ -142,6 +144,90 @@ class _CardsScreenState extends State<CardsScreen> {
     if (elapsed.inMinutes < 60) return '${faDigits(elapsed.inMinutes)} دقیقه پیش';
     if (elapsed.inHours < 24) return '${faDigits(elapsed.inHours)} ساعت پیش';
     return '${faDigits(elapsed.inDays)} روز پیش';
+  }
+
+  Future<void> _showPriceFreshnessSheet() async {
+    final updatedAt = priceUpdatedAt;
+    await showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (sheetContext) {
+        final palette = sheetContext.palette;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'تازگی قیمت‌ها',
+                  style: Theme.of(sheetContext).textTheme.titleLarge,
+                ),
+                const SizedBox(height: FcbazSpace.sm),
+                Text(
+                  updatedAt == null
+                      ? 'این نسخه مهر زمانی قیمت ندارد؛ عددهای نمایش‌داده‌شده از کاتالوگ همراه برنامه می‌آیند.'
+                      : 'آخرین به‌روزرسانی: ${formatJalaliDateTime(updatedAt)}'
+                            ' · ${_priceAgeLabel(updatedAt)}',
+                  style: TextStyle(
+                    color: palette.textMuted,
+                    fontSize: 12,
+                    height: 1.7,
+                  ),
+                ),
+                const SizedBox(height: FcbazSpace.md),
+                _FreshnessRow(
+                  icon: Icons.verified_rounded,
+                  label: 'منبع',
+                  value: 'کاتالوگ FC27 (قیمت‌های تأییدشده)',
+                ),
+                _FreshnessRow(
+                  icon: Icons.schedule_rounded,
+                  label: 'بازه به‌روزرسانی',
+                  value: 'هر ۳۰ دقیقه از فید عمومی',
+                ),
+                _FreshnessRow(
+                  icon: Icons.info_outline_rounded,
+                  label: 'کارت‌های بدون قیمت',
+                  value: 'قیمت صفر نمایش داده نمی‌شود',
+                ),
+                const SizedBox(height: FcbazSpace.lg),
+                Row(
+                  children: [
+                    Expanded(
+                      child: FilledButton.icon(
+                        onPressed: () {
+                          Navigator.of(sheetContext).pop();
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => const MarketScreen(),
+                            ),
+                          );
+                        },
+                        icon: const Icon(Icons.show_chart_rounded, size: 18),
+                        label: const Text('بازار'),
+                      ),
+                    ),
+                    const SizedBox(width: FcbazSpace.sm),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.of(sheetContext).pop();
+                          _refresh();
+                        },
+                        icon: const Icon(Icons.refresh_rounded, size: 18),
+                        label: const Text('به‌روزرسانی'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   Future<void> _loadDiscovery() async {
@@ -464,21 +550,12 @@ class _CardsScreenState extends State<CardsScreen> {
                           ),
                         ),
                         const Spacer(),
-                        Icon(
-                          Icons.verified_rounded,
-                          size: 14,
-                          color: palette.primary,
-                        ),
-                        const SizedBox(width: 4),
-                        Text(
-                          priceUpdatedAt == null
-                              ? 'کاتالوگ FC27'
-                              : 'قیمت‌ها · ${_priceAgeLabel(priceUpdatedAt!)}',
-                          style: TextStyle(
-                            color: palette.textMuted,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        _PriceFreshnessChip(
+                          updatedAt: priceUpdatedAt,
+                          ageLabel: priceUpdatedAt == null
+                              ? null
+                              : _priceAgeLabel(priceUpdatedAt!),
+                          onTap: _showPriceFreshnessSheet,
                         ),
                       ],
                     ),
@@ -535,6 +612,7 @@ class _CardsScreenState extends State<CardsScreen> {
                   (context, index) => PlayerMarketTile(
                     player: players[index],
                     pricePlatform: filter.platform,
+                    heroTag: playerHeroTag(players[index].id),
                   ),
                   childCount: players.length,
                   addAutomaticKeepAlives: false,
@@ -663,6 +741,132 @@ class _CardsScreenState extends State<CardsScreen> {
         ),
       ),
     ];
+  }
+}
+
+class _PriceFreshnessChip extends StatelessWidget {
+  const _PriceFreshnessChip({
+    required this.updatedAt,
+    required this.ageLabel,
+    required this.onTap,
+  });
+
+  final DateTime? updatedAt;
+  final String? ageLabel;
+  final VoidCallback onTap;
+
+  /// Green under an hour, amber under six hours, red beyond that; the verified
+  /// snapshot age is visible without opening anything.
+  Color _dotColor(FcbazPalette palette) {
+    final at = updatedAt;
+    if (at == null) return palette.lineStrong;
+    final age = DateTime.now().difference(at.toLocal());
+    if (age.inMinutes < 60) return palette.success;
+    if (age.inHours < 6) return palette.warning;
+    return palette.danger;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    final label = ageLabel == null ? 'کاتالوگ FC27' : 'قیمت‌ها · $ageLabel';
+    return Semantics(
+      button: true,
+      label: 'تازگی قیمت‌ها: $label',
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(FcbazRadius.pill),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+            decoration: BoxDecoration(
+              color: palette.surfaceRaised.withValues(alpha: .72),
+              borderRadius: BorderRadius.circular(FcbazRadius.pill),
+              border: Border.all(color: palette.line),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 6,
+                  height: 6,
+                  decoration: BoxDecoration(
+                    color: _dotColor(palette),
+                    shape: BoxShape.circle,
+                  ),
+                ),
+                const SizedBox(width: 5),
+                Flexible(
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color: palette.textMuted,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 3),
+                Icon(
+                  Icons.info_outline_rounded,
+                  size: 12,
+                  color: palette.textMuted.withValues(alpha: .8),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _FreshnessRow extends StatelessWidget {
+  const _FreshnessRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
+
+  final IconData icon;
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        children: [
+          Icon(icon, size: 16, color: palette.primary),
+          const SizedBox(width: 8),
+          Text(
+            label,
+            style: TextStyle(
+              color: palette.textMuted,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const Spacer(),
+          Flexible(
+            child: Text(
+              value,
+              textAlign: TextAlign.left,
+              style: TextStyle(
+                color: palette.text,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

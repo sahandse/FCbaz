@@ -1,3 +1,5 @@
+import 'dart:ui' show FontFeature;
+
 import 'package:flutter/material.dart';
 
 import '../../players/domain/player.dart';
@@ -165,7 +167,7 @@ class _MarketScreenState extends State<MarketScreen> {
             const _Section(title: 'WATCHLIST', subtitle: 'قیمت‌های ذخیره‌شده روی دستگاه'),
             const SizedBox(height: 8),
             if (saved.isEmpty)
-              const _Empty(text: 'واچ‌لیست خالی است.')
+              const _Empty(text: 'واچ‌لیست خالی است.', icon: Icons.star_border_rounded)
             else
               SizedBox(
                 height: 92,
@@ -194,7 +196,7 @@ class _MarketScreenState extends State<MarketScreen> {
                             children: [
                               Icon(Icons.toll_rounded, size: 14, color: scheme.primary),
                               const SizedBox(width: 4),
-                              Text('${_coins(current)} C', textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.w900)),
+                              Text('${_coins(current)} C', textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.w900, fontFeatures: [FontFeature.tabularFigures()])),
                               const Spacer(),
                               if (item.targetReached) Icon(Icons.notifications_active_rounded, size: 16, color: scheme.primary),
                             ],
@@ -224,9 +226,12 @@ class _MarketScreenState extends State<MarketScreen> {
             ),
             const SizedBox(height: 9),
             if (loading)
-              const Padding(padding: EdgeInsets.all(30), child: Center(child: CircularProgressIndicator()))
+              const _CheapestSkeleton()
             else if (cheapest.isEmpty)
-              const _Empty(text: 'قیمت معتبر برای این فیلتر پیدا نشد.')
+              const _Empty(
+                text: 'قیمت معتبر برای این فیلتر پیدا نشد.',
+                icon: Icons.search_off_rounded,
+              )
             else
               SizedBox(
                 height: 255,
@@ -244,7 +249,10 @@ class _MarketScreenState extends State<MarketScreen> {
             const _Section(title: 'LIVE MARKET', subtitle: 'فقط ردیف‌هایی که منبع زنده قیمت برگرداند'),
             const SizedBox(height: 8),
             if (!loading && feed.isEmpty)
-              const _Empty(text: 'در حال حاضر Market Feed معتبر موجود نیست.')
+              const _Empty(
+                text: 'در حال حاضر Market Feed معتبر موجود نیست.',
+                icon: Icons.cloud_off_rounded,
+              )
             else
               for (final item in feed.take(12)) ...[
                 Container(
@@ -276,7 +284,11 @@ class _MarketScreenState extends State<MarketScreen> {
                       Text(
                         '${_coins(_int(item['current'] ?? item['price']))} C',
                         textDirection: TextDirection.ltr,
-                        style: TextStyle(color: scheme.primary, fontWeight: FontWeight.w900),
+                        style: TextStyle(
+                          color: scheme.primary,
+                          fontWeight: FontWeight.w900,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
                       ),
                     ],
                   ),
@@ -307,20 +319,87 @@ class _Section extends StatelessWidget {
 }
 
 class _Empty extends StatelessWidget {
-  const _Empty({required this.text});
+  const _Empty({required this.text, this.icon = Icons.inbox_rounded});
+
   final String text;
+  final IconData icon;
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: Theme.of(context).colorScheme.outline),
+        border: Border.all(color: scheme.outline),
       ),
-      child: Text(text, textAlign: TextAlign.center, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant)),
+      child: Row(
+        children: [
+          Container(
+            width: 36,
+            height: 36,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: scheme.primary.withValues(alpha: .12),
+              borderRadius: BorderRadius.circular(9),
+            ),
+            child: Icon(icon, size: 18, color: scheme.primary),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: scheme.onSurfaceVariant,
+                fontSize: 12,
+                height: 1.6,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Card-sized placeholders while the verified cheapest list loads, so the
+/// section keeps its height instead of collapsing to a spinner.
+class _CheapestSkeleton extends StatelessWidget {
+  const _CheapestSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Semantics(
+      label: 'در حال بارگذاری کارت‌ها',
+      child: SizedBox(
+        height: 255,
+        child: ListView.separated(
+          scrollDirection: Axis.horizontal,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: 4,
+          separatorBuilder: (_, __) => const SizedBox(width: 7),
+          itemBuilder: (_, __) => Container(
+            width: 168,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                stops: const [0, .55, 1],
+                colors: [
+                  scheme.surface,
+                  scheme.primary.withValues(alpha: .08),
+                  scheme.surface,
+                ],
+              ),
+              borderRadius: BorderRadius.circular(10),
+              border: Border.all(color: scheme.outline),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

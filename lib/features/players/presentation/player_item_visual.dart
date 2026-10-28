@@ -1,11 +1,17 @@
 import 'dart:math' as math;
 
+import 'dart:ui' show FontFeature;
+
 import 'package:flutter/material.dart';
 
+import '../../../src/theme/fcbaz_theme.dart';
 import '../domain/player.dart';
 import 'card/player_card_badges.dart';
 import 'card/player_card_painters.dart';
 import 'card/player_card_theme.dart';
+
+/// Shared-element tag linking a collection tile to the player page.
+String playerHeroTag(String playerId) => 'fc27-player-card-$playerId';
 
 class PlayerItemVisual extends StatelessWidget {
   const PlayerItemVisual({
@@ -136,12 +142,12 @@ class PlayerItemVisual extends StatelessWidget {
                   width: shieldWidth,
                   height: shieldHeight,
                   child: fullCardArt
-                      ? Image.network(
-                          artworkUrl,
+                      ? _ArtworkImage(
+                          url: artworkUrl,
                           fit: BoxFit.contain,
-                          filterQuality: FilterQuality.high,
-                          errorBuilder: (context, error, stackTrace) =>
-                              _CardBody(
+                          width: shieldWidth,
+                          radius: FcbazRadius.md,
+                          fallback: _CardBody(
                             player: player,
                             theme: theme,
                             compact: compact,
@@ -153,11 +159,12 @@ class PlayerItemVisual extends StatelessWidget {
                       : player.cardImageUrl.isNotEmpty
                           ? ClipPath(
                               clipper: FutCardClipper(ornate: theme.ornate),
-                              child: Image.network(
-                                player.cardImageUrl,
+                              child: _ArtworkImage(
+                                url: player.cardImageUrl,
                                 fit: BoxFit.fill,
-                                errorBuilder: (context, error, stackTrace) =>
-                                    _CardBody(
+                                width: shieldWidth,
+                                radius: 0,
+                                fallback: _CardBody(
                                   player: player,
                                   theme: theme,
                                   compact: compact,
@@ -245,6 +252,89 @@ class PlayerItemVisual extends StatelessWidget {
               ],
             );
           },
+        ),
+      ),
+    );
+  }
+}
+
+class _ArtworkImage extends StatelessWidget {
+  const _ArtworkImage({
+    required this.url,
+    required this.fit,
+    required this.width,
+    required this.radius,
+    required this.fallback,
+  });
+
+  final String url;
+  final BoxFit fit;
+  final double width;
+  final double radius;
+  final Widget fallback;
+
+  @override
+  Widget build(BuildContext context) {
+    // Decode at the size the tile actually paints so a 440px EA item card does
+    // not sit in memory at full resolution across a scrolling grid.
+    final cacheWidth = (width * MediaQuery.devicePixelRatioOf(context))
+        .round()
+        .clamp(120, 640)
+        .toInt();
+    return Image.network(
+      url,
+      fit: fit,
+      filterQuality: FilterQuality.high,
+      cacheWidth: cacheWidth,
+      loadingBuilder: (context, child, progress) {
+        if (progress == null) return child;
+        return _ArtworkSkeleton(radius: radius);
+      },
+      errorBuilder: (context, error, stackTrace) => fallback,
+    );
+  }
+}
+
+/// Neutral card-shaped placeholder shown while an item card downloads, so a
+/// scrolling grid never flashes an empty hole.
+class _ArtworkSkeleton extends StatelessWidget {
+  const _ArtworkSkeleton({required this.radius});
+
+  final double radius;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    return Semantics(
+      label: 'در حال بارگذاری تصویر کارت',
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              stops: const [0, .52, 1],
+              colors: [
+                palette.surfaceRaised,
+                palette.line.withValues(alpha: .5),
+                palette.surfaceRaised,
+              ],
+            ),
+          ),
+          child: Center(
+            child: Container(
+              width: 26,
+              height: 26,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: palette.textMuted.withValues(alpha: .35),
+                  width: 1.4,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -562,6 +652,7 @@ class _Price extends StatelessWidget {
                 .copyWith(
                   color: Colors.white.withValues(alpha: .94),
                   fontWeight: FontWeight.w700,
+                  fontFeatures: const [FontFeature.tabularFigures()],
                 ),
           ),
         ),

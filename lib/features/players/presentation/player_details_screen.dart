@@ -1,3 +1,5 @@
+import 'dart:ui' show FontFeature;
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -637,10 +639,13 @@ class _CardBackdrop extends StatelessWidget {
           start: 0,
           end: 0,
           child: Center(
-            child: SizedBox(
-              width: 140,
-              height: 200,
-              child: PlayerItemVisual(player: player, showPrices: false),
+            child: Hero(
+              tag: playerHeroTag(player.id),
+              child: SizedBox(
+                width: 140,
+                height: 200,
+                child: PlayerItemVisual(player: player, showPrices: false),
+              ),
             ),
           ),
         ),
@@ -829,6 +834,7 @@ class _PriceCell extends StatelessWidget {
               fontSize: 26,
               height: 1,
               color: palette.primary,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
           const SizedBox(height: 2),

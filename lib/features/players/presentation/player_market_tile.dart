@@ -1,3 +1,5 @@
+import 'dart:ui' show FontFeature;
+
 import 'package:flutter/material.dart';
 
 import '../../../src/theme/fcbaz_theme.dart';
@@ -11,11 +13,16 @@ class PlayerMarketTile extends StatefulWidget {
   const PlayerMarketTile({
     required this.player,
     this.pricePlatform = 'console',
+    this.heroTag,
     super.key,
   });
 
   final Player player;
   final String pricePlatform;
+
+  /// Optional shared-element tag. Only the primary collection grid sets it so
+  /// a player that also appears in a discovery row never registers two heroes.
+  final String? heroTag;
 
   @override
   State<PlayerMarketTile> createState() => _PlayerMarketTileState();
@@ -61,6 +68,17 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
     Navigator.of(context).push(
       MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
     );
+  }
+
+  Widget _tileVisual() {
+    final visual = PlayerItemVisual(
+      player: player,
+      showPrices: false,
+      compact: true,
+    );
+    final tag = widget.heroTag;
+    if (tag == null) return visual;
+    return Hero(tag: tag, child: visual);
   }
 
   @override
@@ -130,11 +148,7 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
                         clipBehavior: Clip.none,
                         children: [
                           Positioned.fill(
-                            child: PlayerItemVisual(
-                              player: player,
-                              showPrices: false,
-                              compact: true,
-                            ),
+                            child: _tileVisual(),
                           ),
                           Positioned(
                             top: 0,
@@ -251,6 +265,9 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
                                     fontWeight: FontWeight.w800,
                                     height: 1.15,
                                     letterSpacing: .3,
+                                    fontFeatures: const [
+                                      FontFeature.tabularFigures(),
+                                    ],
                                   ),
                                 ),
                                 const SizedBox(width: 4),
@@ -330,6 +347,7 @@ class _Stat extends StatelessWidget {
               fontWeight: FontWeight.w800,
               height: 1.1,
               letterSpacing: .2,
+              fontFeatures: const [FontFeature.tabularFigures()],
             ),
           ),
         ),

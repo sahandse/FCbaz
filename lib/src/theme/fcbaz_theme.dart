@@ -51,9 +51,9 @@ class FcbazPalette extends ThemeExtension<FcbazPalette> {
   static const light = FcbazPalette(
     canvas: Color(0xFFF2F5EE),
     surface: Color(0xFFFFFFFF),
-    surfaceRaised: Color(0xFFE8EEE2),
-    line: Color(0xFFD3DBC9),
-    lineStrong: Color(0xFFB9C6B0),
+    surfaceRaised: Color(0xFFE9EFE3),
+    line: Color(0xFFC7D2BC),
+    lineStrong: Color(0xFFA9B79E),
     text: Color(0xFF121711),
     textMuted: Color(0xFF5C6B5A),
     primary: Color(0xFF486900),
@@ -278,7 +278,12 @@ class FCBazTheme {
             ),
           ),
       cardTheme: CardThemeData(
-        elevation: 0,
+        // A white card on the pale canvas needs a whisper of lift to read as a
+        // separate surface; dark mode keeps the flat, borderless look.
+        elevation: brightness == Brightness.light ? 1.5 : 0,
+        shadowColor: brightness == Brightness.light
+            ? const Color(0x1A1B241A)
+            : Colors.transparent,
         margin: EdgeInsets.zero,
         color: palette.surface,
         surfaceTintColor: Colors.transparent,
