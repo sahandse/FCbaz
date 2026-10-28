@@ -1,6 +1,4 @@
 import 'dart:io';
-import 'dart:ui' show FontFeature;
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -27,6 +25,8 @@ Player _player() => const Player(
   dribbling: 92,
   defending: 29,
   physical: 76,
+  skillMoves: 5,
+  weakFoot: 5,
   pricePs: 846000,
   pricePc: 904000,
 );
