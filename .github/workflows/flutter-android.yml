@@ -246,7 +246,7 @@ jobs:
 
           sdk="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
           build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
-          "$build_tools/apksigner" verify --print-certs "FCBaz-v${RELEASE_VERSION}.apk" | tee apk-signature.txt
+          "$build_tools/apksigner" verify --verbose --print-certs "FCBaz-v${RELEASE_VERSION}.apk" | tee apk-signature.txt
           grep -q "certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" apk-signature.txt
           grep -qE 'certificate (DN|subject DN): .*CN=FCBaz' apk-signature.txt
           grep -qE 'certificate (DN|subject DN): .*O=FCBaz' apk-signature.txt
@@ -295,6 +295,6 @@ jobs:
           sha256sum -c SHA256SUMS.txt
           sdk="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
           build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
-          "$build_tools/apksigner" verify --print-certs "FCBaz-v${RELEASE_VERSION}.apk" | tee published-apk-signature.txt
+          "$build_tools/apksigner" verify --verbose --print-certs "FCBaz-v${RELEASE_VERSION}.apk" | tee published-apk-signature.txt
           grep -q "certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" published-apk-signature.txt
           grep -q "Verified using v2 scheme (APK Signature Scheme v2): true" published-apk-signature.txt

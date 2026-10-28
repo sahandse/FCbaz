@@ -82,7 +82,7 @@ jobs:
           build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
           apk="$(find dist -name '*.apk' | head -n 1)"
           test -n "$apk"
-          "$build_tools/apksigner" verify --print-certs "$apk" | tee apk-signature.txt
+          "$build_tools/apksigner" verify --verbose --print-certs "$apk" | tee apk-signature.txt
           {
             echo "### Published APK certificate: ${TAG}"
             echo '```'
