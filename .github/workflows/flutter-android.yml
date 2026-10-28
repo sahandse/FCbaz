@@ -10,12 +10,12 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 2.6.1
+        default: 2.6.2
         type: string
       build_number:
-        description: Android versionCode (must be greater than the previous 48)
+        description: Android versionCode (must be greater than the previous 49)
         required: true
-        default: '49'
+        default: '50'
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -26,11 +26,11 @@ on:
     branches:
       - main
     paths:
-      - '.release/fcbaz-v2.6.1'
+      - '.release/fcbaz-v2.6.2'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.6.1' }}
-  RELEASE_BUILD_NUMBER: ${{ github.event_name == 'workflow_dispatch' && inputs.build_number || '49' }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.6.2' }}
+  RELEASE_BUILD_NUMBER: ${{ github.event_name == 'workflow_dispatch' && inputs.build_number || '50' }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
   EXPECTED_CERT_SHA256: 244aab755d0c8c45fe54d9b999aadd36f1e56bce099cd52232b64871d21a0b94
 
@@ -61,7 +61,7 @@ jobs:
           set -euo pipefail
           [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "release_version must be X.Y.Z"; exit 1; }
           [[ "$RELEASE_BUILD_NUMBER" =~ ^[0-9]+$ ]] || { echo "build_number must be numeric"; exit 1; }
-          [ "$RELEASE_BUILD_NUMBER" -ge 49 ] || { echo "build_number must be 49 or newer"; exit 1; }
+          [ "$RELEASE_BUILD_NUMBER" -ge 50 ] || { echo "build_number must be 50 or newer"; exit 1; }
           if git ls-remote --tags origin "refs/tags/v${RELEASE_VERSION}" | grep -q .; then
             echo "Tag v${RELEASE_VERSION} already exists; choose a new release_version instead of overwriting it"
             exit 1
@@ -161,33 +161,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
-      - name: Generate launcher icon with validated fallback
+      - name: Generate launcher icon from the tracked brand asset
         shell: bash
         run: |
           set -euo pipefail
-          if dart run flutter_launcher_icons; then exit 0; fi
-          python3 - <<'PY'
-          from pathlib import Path
-          import struct, zlib, binascii
-          w = h = 1024
-          bg = (8, 11, 15)
-          green = (200, 255, 66)
-          rows = []
-          cx = cy = 512
-          for y in range(h):
-              row = bytearray([0])
-              for x in range(w):
-                  dx = x-cx; dy = y-cy; r2 = dx*dx + dy*dy
-                  color = green if 300*300 <= r2 <= 350*350 else bg
-                  row.extend(color)
-              rows.append(bytes(row))
-          def chunk(kind,payload):
-              return struct.pack('>I',len(payload))+kind+payload+struct.pack('>I',binascii.crc32(kind+payload)&0xffffffff)
-          raw=b''.join(rows)
-          png=b'\x89PNG\r\n\x1a\n'+chunk(b'IHDR',struct.pack('>IIBBBBB',w,h,8,2,0,0,0))+chunk(b'IDAT',zlib.compress(raw,9))+chunk(b'IEND',b'')
-          Path('assets/icon/fcbaz_app_icon.png').write_bytes(png)
-          PY
           dart run flutter_launcher_icons
+          test -f android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test -f android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.png
 
       - name: Analyze
         run: flutter analyze --no-fatal-infos --no-fatal-warnings
@@ -235,6 +215,7 @@ jobs:
           - ${SBCS} SBC، ${OBJECTIVES} Objective و ${EVOLUTIONS} Evolution از منابع عمومی FUT.GG؛ ${NEWS} خبر FC27 به فارسی. داده ساختگی ساخته نمی‌شود و FC26 فیلتر می‌شود.
           - مسیر انتشار debug-signed حذف شد؛ فقط همین workflow با keystore پایدار مجوز انتشار GitHub Release دارد و قبل از انتشار، امضا، package، versionCode/versionName، نام FCBaz و آیکون سفارشی بررسی می‌شوند.
           - پلتفرم اندروید اکنون در مخزن نگهداری می‌شود و CI دیگر با flutter create تنظیمات پروژه را بازنویسی نمی‌کند؛ اثر انگشت گواهی پایدار و هویت بسته پیش و پس از انتشار به‌صورت خودکار بررسی می‌شوند.
+          - آیکون برنامه از لوگوی برداری FCBaz به یک PNG سالم ۱۰۲۴×۱۰۲۴ بازسازی شد و دیگر هیچ fallback جایگزینی برای آیکون وجود ندارد؛ اگر آیکون معتبر نباشد، ساخت نسخه متوقف می‌شود.
           - کارت‌های بازیکن با طراحی FC27، قیمت PS/PC جدا، نشان PlayStyle+ و کارت رسمی EA؛ هاب خانه، جستجو، فیلترها، SBC، Objectives، Evolutions و اخبار از کاتالوگ زنده تغذیه می‌شوند.
           - سازگاری نصب: Android 7.0 (API 24) و بالاتر. نسخه v2.5.0 با امضای debug منتشر شده بود؛ اگر آن را نصب کرده‌اید، برای نصب این نسخه امضاشده باید نسخه قبلی را حذف کنید. ارتقای مستقیم از v2.3.2 و نسخه‌های با امضای پایدار حفظ می‌شود.
           EOF
@@ -251,6 +232,7 @@ jobs:
           echo "$badging" | grep -q "versionCode='${RELEASE_BUILD_NUMBER}'"
           echo "$badging" | grep -q "versionName='${RELEASE_VERSION}'"
           echo "$badging" | grep -q "application-label:'FCBaz'"
+          echo "$badging" | grep -q "application-icon"
           echo "$badging" | grep -q "launchable-activity: name='ir.fcbaz.app.MainActivity'"
 
       - name: Upload release artifact

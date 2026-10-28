@@ -6,12 +6,12 @@ on:
       tag:
         description: Release tag to verify
         required: true
-        default: v2.6.1
+        default: v2.6.2
         type: string
       version_code:
         description: Expected Android versionCode
         required: true
-        default: '49'
+        default: '50'
         type: string
   push:
     branches:
@@ -124,7 +124,7 @@ jobs:
           {
             echo "### Published APK identity: ${TAG} (versionCode ${VERSION_CODE})"
             echo '```'
-            printf '%s\n' "$badging" | grep -E "^(package|versionCode|versionName|application-label|launchable-activity)" || true
+            printf '%s\n' "$badging" | grep -E "^(package|versionCode|versionName|application-label|application-icon|launchable-activity)" || true
             echo '```'
             echo "Published checksums:"
             echo '```'
@@ -147,6 +147,10 @@ jobs:
           fi
           if ! grep -qF "launchable-activity: name='${EXPECTED_ACTIVITY}'" badging.txt; then
             echo "::error title=Launchable activity mismatch::$(grep -m1 'launchable-activity' badging.txt || echo 'activity missing')"
+            exit 1
+          fi
+          if ! grep -q "application-icon" badging.txt; then
+            echo "::error title=Application icon missing::$(grep -m1 'application-icon' badging.txt || echo 'icon entry missing')"
             exit 1
           fi
 
