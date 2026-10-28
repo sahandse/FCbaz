@@ -1,3 +1,3 @@
-tag=v2.6.0
-version_code=48
-# rerun 4: request --verbose so apksigner prints scheme results
+tag=v2.6.1
+version_code=49
+# verify the release produced from the tracked Android platform
