@@ -32,6 +32,7 @@ env:
   RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.6.0' }}
   RELEASE_BUILD_NUMBER: ${{ github.event_name == 'workflow_dispatch' && inputs.build_number || '48' }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
+  EXPECTED_CERT_SHA256: 244aab755d0c8c45fe54d9b999aadd36f1e56bce099cd52232b64871d21a0b94
 
 jobs:
   release:
@@ -246,6 +247,9 @@ jobs:
           sdk="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
           build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
           "$build_tools/apksigner" verify --print-certs "FCBaz-v${RELEASE_VERSION}.apk" | tee apk-signature.txt
+          grep -q "Signer #1 certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" apk-signature.txt
+          grep -q "Signer #1 certificate DN: CN=FCBaz, OU=Android, O=FCBaz, L=Tehran, ST=Tehran, C=IR" apk-signature.txt
+          grep -q "Verified using v2 scheme (APK Signature Scheme v2): true" apk-signature.txt
           badging="$("$build_tools/aapt2" dump badging "FCBaz-v${RELEASE_VERSION}.apk")"
           echo "$badging" | grep -q "package: name='ir.fcbaz.app'"
           echo "$badging" | grep -q "versionCode='${RELEASE_BUILD_NUMBER}'"
@@ -262,6 +266,7 @@ jobs:
             FCBaz-v${{ env.RELEASE_VERSION }}.aab
             SHA256SUMS.txt
             RELEASE_NOTES.md
+            apk-signature.txt
           retention-days: 30
 
       - name: Publish GitHub Release
@@ -275,3 +280,20 @@ jobs:
             FCBaz-v${{ env.RELEASE_VERSION }}.apk
             FCBaz-v${{ env.RELEASE_VERSION }}.aab
             SHA256SUMS.txt
+            apk-signature.txt
+
+      - name: Verify the published release assets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          mkdir -p published
+          gh release download "v${RELEASE_VERSION}" --dir published --clobber
+          cd published
+          sha256sum -c SHA256SUMS.txt
+          sdk="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
+          "$build_tools/apksigner" verify --print-certs "FCBaz-v${RELEASE_VERSION}.apk" | tee published-apk-signature.txt
+          grep -q "Signer #1 certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" published-apk-signature.txt
+          grep -q "Verified using v2 scheme (APK Signature Scheme v2): true" published-apk-signature.txt

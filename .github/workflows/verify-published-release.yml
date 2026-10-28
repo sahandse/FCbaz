@@ -1,0 +1,123 @@
+name: Verify published release
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: Release tag to verify
+        required: true
+        default: v2.6.0
+        type: string
+      version_code:
+        description: Expected Android versionCode
+        required: true
+        default: '48'
+        type: string
+  push:
+    branches:
+      - main
+    paths:
+      - '.verify/published-release'
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    env:
+      GH_TOKEN: ${{ github.token }}
+      EXPECTED_CERT_SHA256: 244aab755d0c8c45fe54d9b999aadd36f1e56bce099cd52232b64871d21a0b94
+      EXPECTED_PACKAGE: ir.fcbaz.app
+      EXPECTED_LABEL: FCBaz
+      EXPECTED_ACTIVITY: ir.fcbaz.app.MainActivity
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve target release
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            tag="${{ inputs.tag }}"
+            code="${{ inputs.version_code }}"
+          else
+            tag="$(sed -n 's/^tag=//p' .verify/published-release | tr -d '\r')"
+            code="$(sed -n 's/^version_code=//p' .verify/published-release | tr -d '\r')"
+          fi
+          test -n "$tag"
+          [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid tag: $tag"; exit 1; }
+          [[ "$code" =~ ^[0-9]+$ ]] || { echo "Invalid version_code: $code"; exit 1; }
+          echo "TAG=$tag" >> "$GITHUB_ENV"
+          echo "VERSION_CODE=$code" >> "$GITHUB_ENV"
+
+      - name: Setup Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Download published assets
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          gh release download "$TAG" --dir dist --clobber
+          ls -la dist
+
+      - name: Verify published checksums
+        working-directory: dist
+        shell: bash
+        run: sha256sum -c SHA256SUMS.txt
+
+      - name: Verify signature, package and version
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
+          apk="$(find dist -name '*.apk' | head -n 1)"
+          test -n "$apk"
+
+          "$build_tools/apksigner" verify --print-certs "$apk" | tee apk-signature.txt
+          grep -q "Signer #1 certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" apk-signature.txt
+          grep -q "Signer #1 certificate DN: CN=FCBaz, OU=Android, O=FCBaz, L=Tehran, ST=Tehran, C=IR" apk-signature.txt
+          grep -q "Verified using v2 scheme (APK Signature Scheme v2): true" apk-signature.txt
+
+          badging="$("$build_tools/aapt2" dump badging "$apk")"
+          printf '%s\n' "$badging" > badging.txt
+          echo "$badging" | grep -q "package: name='${EXPECTED_PACKAGE}'"
+          echo "$badging" | grep -q "versionCode='${VERSION_CODE}'"
+          echo "$badging" | grep -q "versionName='${TAG#v}'"
+          echo "$badging" | grep -q "application-label:'${EXPECTED_LABEL}'"
+          echo "$badging" | grep -q "launchable-activity: name='${EXPECTED_ACTIVITY}'"
+
+          {
+            echo "### Published release verification: ${TAG} (versionCode ${VERSION_CODE})"
+            echo ""
+            echo '```'
+            cat apk-signature.txt
+            echo '```'
+            echo ""
+            echo '```'
+            grep -E "^(package|versionCode|versionName|application-label|launchable-activity)" badging.txt || true
+            echo '```'
+            echo ""
+            echo "Published checksums:"
+            echo '```'
+            cat dist/SHA256SUMS.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload verification evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: published-release-verification
+          path: |
+            apk-signature.txt
+            badging.txt
+          retention-days: 30
