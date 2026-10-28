@@ -6,12 +6,12 @@ on:
       tag:
         description: Release tag to verify
         required: true
-        default: v2.6.0
+        default: v2.6.1
         type: string
       version_code:
         description: Expected Android versionCode
         required: true
-        default: '48'
+        default: '49'
         type: string
   push:
     branches:
