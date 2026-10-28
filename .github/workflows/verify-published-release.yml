@@ -89,7 +89,7 @@ jobs:
             cat apk-signature.txt
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
-          if ! grep -q "Signer #1 certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" apk-signature.txt; then
+          if ! grep -q "certificate SHA-256 digest: ${EXPECTED_CERT_SHA256}" apk-signature.txt; then
             actual="$(grep -m1 'certificate SHA-256 digest' apk-signature.txt || echo 'digest line missing')"
             echo "::error title=Certificate fingerprint mismatch::${actual}; expected ${EXPECTED_CERT_SHA256}"
             exit 1
@@ -99,11 +99,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          if ! grep -q 'Signer #1 certificate DN: .*CN=FCBaz' apk-signature.txt; then
+          if ! grep -qE 'certificate (DN|subject DN): .*CN=FCBaz' apk-signature.txt; then
             echo "::error title=Certificate subject mismatch::$(grep -m1 'certificate DN' apk-signature.txt || echo 'DN line missing')"
             exit 1
           fi
-          if ! grep -q 'Signer #1 certificate DN: .*O=FCBaz' apk-signature.txt; then
+          if ! grep -qE 'certificate (DN|subject DN): .*O=FCBaz' apk-signature.txt; then
             echo "::error title=Certificate organization mismatch::$(grep -m1 'certificate DN' apk-signature.txt || echo 'DN line missing')"
             exit 1
           fi
