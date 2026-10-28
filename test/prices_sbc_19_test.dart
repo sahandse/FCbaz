@@ -5,8 +5,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('1.9 live catalog contains sourced positive FC27 prices', () {
-    final catalog = jsonDecode(File('data/live/catalog.json').readAsStringSync())
-        as Map<String, dynamic>;
+    final catalog =
+        jsonDecode(File('data/live/catalog.json').readAsStringSync())
+            as Map<String, dynamic>;
     final players = (catalog['players'] as List).cast<Map<String, dynamic>>();
     final priced = players.where((player) {
       final price = (player['price_ps'] ?? player['market_price'] ?? 0) as num;
@@ -36,8 +37,9 @@ void main() {
   });
 
   test('1.9 SBC catalog keeps real sourced requirements and public guides', () {
-    final catalog = jsonDecode(File('data/live/catalog.json').readAsStringSync())
-        as Map<String, dynamic>;
+    final catalog =
+        jsonDecode(File('data/live/catalog.json').readAsStringSync())
+            as Map<String, dynamic>;
     final sbcs = (catalog['sbcs'] as List).cast<Map<String, dynamic>>();
     final guided = sbcs.where((sbc) {
       final requirements = sbc['requirements'];
@@ -50,22 +52,34 @@ void main() {
 
     expect(guided, isNotEmpty);
     for (final sbc in guided) {
-      expect((sbc['source_url'] as String? ?? '').startsWith('https://www.fut.gg/'), isTrue);
+      expect(
+        (sbc['source_url'] as String? ?? '').startsWith('https://www.fut.gg/'),
+        isTrue,
+      );
     }
   });
 
   test('1.9 SBC UI offers public guide instead of backend-only solution', () {
-    final source = File('lib/features/sbc/presentation/sbc_screen.dart').readAsStringSync();
-    final repository = File('lib/features/sbc/data/sbc_repository.dart').readAsStringSync();
+    final source = File(
+      'lib/features/sbc/presentation/sbc_screen.dart',
+    ).readAsStringSync();
+    final repository = File(
+      'lib/features/sbc/data/sbc_repository.dart',
+    ).readAsStringSync();
 
     expect(source, contains('نمایش راه‌حل و راهنمای عمومی'));
-    expect(source, contains("solution.players.isEmpty ? 'PUBLIC GUIDE' : 'SOLUTION'"));
+    expect(
+      source,
+      contains("solution.players.isEmpty ? 'PUBLIC GUIDE' : 'SOLUTION'"),
+    );
     expect(repository, contains("item['public_solution']"));
     expect(repository, contains('داده ساختگی نمایش داده نمی‌شود'));
   });
 
   test('1.9 player item labels PlayStation source accurately', () {
-    final source = File('lib/features/players/presentation/player_item_visual.dart').readAsStringSync();
+    final source = File(
+      'lib/features/players/presentation/player_item_visual.dart',
+    ).readAsStringSync();
     expect(source, contains('_Price('));
     expect(source, contains("label: 'PS'"));
     expect(source, contains("label: 'PC'"));

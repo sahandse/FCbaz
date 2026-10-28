@@ -87,7 +87,8 @@ class ChemistryEngineFC27 {
         continue;
       }
 
-      final special = _isIcon(player) || _isHero(player) || _isHallOfFut(player);
+      final special =
+          _isIcon(player) || _isHero(player) || _isHallOfFut(player);
       final club = _weightedClubCount(player, contributingPlayers);
       final league = _weightedLeagueCount(player, contributingPlayers);
       final nation = _weightedNationCount(player, contributingPlayers);
@@ -154,7 +155,9 @@ class ChemistryEngineFC27 {
   }
 
   int _weightedLeagueCount(Player target, List<Player> players) {
-    var count = players.where((p) => _same(p.leagueName, target.leagueName)).length;
+    var count = players
+        .where((p) => _same(p.leagueName, target.leagueName))
+        .length;
 
     for (final player in players) {
       if (_isIcon(player)) {
@@ -169,7 +172,9 @@ class ChemistryEngineFC27 {
   }
 
   int _weightedNationCount(Player target, List<Player> players) {
-    var count = players.where((p) => _same(p.nationName, target.nationName)).length;
+    var count = players
+        .where((p) => _same(p.nationName, target.nationName))
+        .length;
 
     for (final player in players) {
       if ((_isIcon(player) || _isHero(player) || _isHallOfFut(player)) &&

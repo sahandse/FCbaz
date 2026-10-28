@@ -33,12 +33,15 @@ void main() {
     expect(preferences.deadlineHours, 48);
   });
 
-  test('copyWith changes one notification category without changing others', () {
-    const preferences = NotificationPreferences();
-    final changed = preferences.copyWith(objectiveDeadlines: false);
+  test(
+    'copyWith changes one notification category without changing others',
+    () {
+      const preferences = NotificationPreferences();
+      final changed = preferences.copyWith(objectiveDeadlines: false);
 
-    expect(changed.priceAlerts, isTrue);
-    expect(changed.objectiveDeadlines, isFalse);
-    expect(changed.evolutionDeadlines, isTrue);
-  });
+      expect(changed.priceAlerts, isTrue);
+      expect(changed.objectiveDeadlines, isFalse);
+      expect(changed.evolutionDeadlines, isTrue);
+    },
+  );
 }

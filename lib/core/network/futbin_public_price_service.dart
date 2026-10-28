@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 class FutbinPublicPriceService {
-  FutbinPublicPriceService({HttpClient? client}) : _client = client ?? HttpClient();
+  FutbinPublicPriceService({HttpClient? client})
+    : _client = client ?? HttpClient();
 
   final HttpClient _client;
   static const _base = 'https://www.futbin.org/futbin/api/';
@@ -15,15 +16,14 @@ class FutbinPublicPriceService {
     if (normalized.isEmpty || int.tryParse(normalized) == null) return null;
 
     final p = platform == 'pc' ? 'PC' : 'PS';
-    final uri = Uri.parse('${_base}fetchPriceInformation').replace(
-      queryParameters: {
-        'playerresource': normalized,
-        'platform': p,
-      },
-    );
+    final uri = Uri.parse(
+      '${_base}fetchPriceInformation',
+    ).replace(queryParameters: {'playerresource': normalized, 'platform': p});
 
     try {
-      final request = await _client.getUrl(uri).timeout(const Duration(seconds: 8));
+      final request = await _client
+          .getUrl(uri)
+          .timeout(const Duration(seconds: 8));
       request.headers.set(HttpHeaders.acceptHeader, 'application/json');
       request.headers.set(
         HttpHeaders.userAgentHeader,
@@ -31,9 +31,13 @@ class FutbinPublicPriceService {
       );
       request.headers.set('Referer', 'https://www.futbin.com/');
       request.headers.set('Origin', 'https://www.futbin.com');
-      final response = await request.close().timeout(const Duration(seconds: 12));
+      final response = await request.close().timeout(
+        const Duration(seconds: 12),
+      );
       final body = await utf8.decoder.bind(response).join();
-      if (response.statusCode < 200 || response.statusCode >= 300 || body.trim().isEmpty) {
+      if (response.statusCode < 200 ||
+          response.statusCode >= 300 ||
+          body.trim().isEmpty) {
         return null;
       }
       final json = jsonDecode(body);
@@ -41,7 +45,10 @@ class FutbinPublicPriceService {
 
       int coin(dynamic value) {
         if (value is num) return value.round();
-        final raw = (value ?? '').toString().trim().toUpperCase().replaceAll(',', '');
+        final raw = (value ?? '').toString().trim().toUpperCase().replaceAll(
+          ',',
+          '',
+        );
         if (raw.isEmpty) return 0;
         var multiplier = 1.0;
         var number = raw;

@@ -76,7 +76,8 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
     }
   }
 
-  int _price(Player player) => platform == 'pc' ? player.pricePc : player.pricePs;
+  int _price(Player player) =>
+      platform == 'pc' ? player.pricePc : player.pricePs;
 
   String _coins(int value) {
     if (value >= 1000000) {
@@ -175,14 +176,19 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
               ),
             ],
             const SizedBox(height: 18),
-            Text('ارزان‌ترین کارت واقعی هر ریتینگ', style: Theme.of(context).textTheme.titleLarge),
+            Text(
+              'ارزان‌ترین کارت واقعی هر ریتینگ',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
             const SizedBox(height: 9),
             if (!loading && cheapestByRating.isEmpty)
               const Card(
                 child: ListTile(
                   leading: Icon(Icons.price_check_rounded),
                   title: Text('قیمت واقعی پیدا نشد'),
-                  subtitle: Text('تا زمان دریافت داده بازار، قیمت یا هزینه تخمینی ساخته نمی‌شود.'),
+                  subtitle: Text(
+                    'تا زمان دریافت داده بازار، قیمت یا هزینه تخمینی ساخته نمی‌شود.',
+                  ),
                 ),
               )
             else
@@ -190,8 +196,9 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
-                  for (final entry in cheapestByRating.entries.toList()
-                    ..sort((a, b) => a.key.compareTo(b.key)))
+                  for (final entry
+                      in cheapestByRating.entries.toList()
+                        ..sort((a, b) => a.key.compareTo(b.key)))
                     _FodderCard(
                       rating: entry.key,
                       player: entry.value,
@@ -226,7 +233,9 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
                 child: ListTile(
                   leading: Icon(Icons.calculate_outlined),
                   title: Text('ترکیبی پیدا نشد'),
-                  subtitle: Text('ریتینگ هدف یا محدوده کارت‌ها را دوباره بررسی کن.'),
+                  subtitle: Text(
+                    'ریتینگ هدف یا محدوده کارت‌ها را دوباره بررسی کن.',
+                  ),
                 ),
               )
             else
@@ -256,7 +265,10 @@ class _Fc27Notice extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(Icons.info_outline_rounded, color: Theme.of(context).colorScheme.primary),
+            Icon(
+              Icons.info_outline_rounded,
+              color: Theme.of(context).colorScheme.primary,
+            ),
             const SizedBox(width: 10),
             const Expanded(
               child: Text(
@@ -297,7 +309,9 @@ class _FodderCard extends StatelessWidget {
                 children: [
                   Text(
                     rating.toString(),
-                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.w900),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                   const Spacer(),
                   Text(
@@ -317,7 +331,9 @@ class _FodderCard extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.w800),
               ),
               Text(
-                player.version.isEmpty ? player.position : '${player.position} • ${player.version}',
+                player.version.isEmpty
+                    ? player.position
+                    : '${player.position} • ${player.version}',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.labelSmall,

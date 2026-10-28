@@ -3,7 +3,10 @@ import 'chemistry_engine.dart';
 import 'squad_models.dart';
 
 class SquadOptimizationResult {
-  const SquadOptimizationResult({required this.playersBySlot, required this.chemistry});
+  const SquadOptimizationResult({
+    required this.playersBySlot,
+    required this.chemistry,
+  });
   final Map<String, Player> playersBySlot;
   final ChemistryResult chemistry;
 }
@@ -82,7 +85,8 @@ class SquadChemistryOptimizer {
     for (final slot in formation.slots) {
       final p = players[slot.id];
       if (p == null) continue;
-      final fit = p.position == slot.position || p.positions.contains(slot.position);
+      final fit =
+          p.position == slot.position || p.positions.contains(slot.position);
       if (fit) inPosition++;
       roleFit += _roleScore(p, slot.position);
     }
@@ -95,10 +99,16 @@ class SquadChemistryOptimizer {
     if (position == 'LB' || position == 'RB') {
       return p.pace * 3 + p.defending * 3 + p.passing * 2;
     }
-    if (position == 'CDM') return p.defending * 4 + p.physical * 2 + p.passing * 3;
-    if (position == 'CM') return p.passing * 4 + p.dribbling * 2 + p.physical + p.defending;
-    if (position == 'CAM') return p.passing * 4 + p.dribbling * 4 + p.shooting * 2;
-    if (position == 'LM' || position == 'RM' || position == 'LW' || position == 'RW') {
+    if (position == 'CDM')
+      return p.defending * 4 + p.physical * 2 + p.passing * 3;
+    if (position == 'CM')
+      return p.passing * 4 + p.dribbling * 2 + p.physical + p.defending;
+    if (position == 'CAM')
+      return p.passing * 4 + p.dribbling * 4 + p.shooting * 2;
+    if (position == 'LM' ||
+        position == 'RM' ||
+        position == 'LW' ||
+        position == 'RW') {
       return p.pace * 4 + p.dribbling * 3 + p.passing * 2 + p.shooting;
     }
     return p.shooting * 4 + p.pace * 3 + p.dribbling * 2 + p.physical;

@@ -13,7 +13,10 @@ void main() {
     final map = Map<String, dynamic>.from(json as Map);
 
     expect(map['game_year'], 27);
-    expect(DateTime.tryParse((map['generated_at'] ?? '').toString()), isNotNull);
+    expect(
+      DateTime.tryParse((map['generated_at'] ?? '').toString()),
+      isNotNull,
+    );
 
     final players = map['players'];
     expect(players, isA<List>());

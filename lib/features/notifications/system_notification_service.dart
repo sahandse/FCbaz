@@ -10,13 +10,15 @@ import 'package:timezone/timezone.dart' as tz;
 class SystemNotificationService {
   SystemNotificationService._();
 
-  static final SystemNotificationService instance = SystemNotificationService._();
+  static final SystemNotificationService instance =
+      SystemNotificationService._();
 
   static const _pendingPayloadKey = 'fcbaz_pending_system_notification_payload';
   static const _priceChannelId = 'fcbaz_price_alerts';
   static const _deadlineChannelId = 'fcbaz_deadlines';
 
-  final FlutterLocalNotificationsPlugin _plugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _plugin =
+      FlutterLocalNotificationsPlugin();
   bool _initialized = false;
 
   Future<void> initialize() async {
@@ -47,8 +49,10 @@ class SystemNotificationService {
       await _savePendingPayload(launchPayload);
     }
 
-    final android = _plugin.resolvePlatformSpecificImplementation<
-        AndroidFlutterLocalNotificationsPlugin>();
+    final android = _plugin
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
     await android?.createNotificationChannel(
       const AndroidNotificationChannel(
         _priceChannelId,
@@ -92,7 +96,8 @@ class SystemNotificationService {
     await initialize();
     return await _plugin
             .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin
+            >()
             ?.areNotificationsEnabled() ??
         false;
   }
@@ -102,7 +107,8 @@ class SystemNotificationService {
     await initialize();
     return await _plugin
             .resolvePlatformSpecificImplementation<
-                AndroidFlutterLocalNotificationsPlugin>()
+              AndroidFlutterLocalNotificationsPlugin
+            >()
             ?.requestNotificationsPermission() ??
         false;
   }

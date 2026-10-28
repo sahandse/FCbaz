@@ -23,11 +23,11 @@ class ClubInventoryFilter {
     ClubTradeFilter? trade,
     ClubSort? sort,
   }) => ClubInventoryFilter(
-        query: query ?? this.query,
-        position: position ?? this.position,
-        trade: trade ?? this.trade,
-        sort: sort ?? this.sort,
-      );
+    query: query ?? this.query,
+    position: position ?? this.position,
+    trade: trade ?? this.trade,
+    sort: sort ?? this.sort,
+  );
 }
 
 class ClubDuplicateGroup {
@@ -40,10 +40,7 @@ class ClubDuplicateGroup {
 class ClubInventoryAnalysis {
   const ClubInventoryAnalysis();
 
-  List<MyClubItem> filter(
-    List<MyClubItem> source,
-    ClubInventoryFilter filter,
-  ) {
+  List<MyClubItem> filter(List<MyClubItem> source, ClubInventoryFilter filter) {
     final q = filter.query.trim().toLowerCase();
     final position = filter.position.trim().toUpperCase();
 

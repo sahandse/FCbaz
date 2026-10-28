@@ -10,21 +10,25 @@ void main() {
         'id': 'obj-1',
         'name': 'Squad Battles: Champions Qualification Points',
         'nameFA': 'Squad Battles: امتیازهای راهیابی به Champions',
-        'description': 'Compete in Squad Battles to earn Champions Qualification Points!',
-        'descriptionFA': 'در Squad Battles به رقابت بپردازید و امتیازهای راهیابی به Champions را کسب کنید.',
+        'description':
+            'Compete in Squad Battles to earn Champions Qualification Points!',
+        'descriptionFA':
+            'در Squad Battles به رقابت بپردازید و امتیازهای راهیابی به Champions را کسب کنید.',
         'reward': 'Packs',
         'rewardFA': 'پک‌های طلایی',
         'tasks': [
           {
             'name': 'Win 15',
             'nameFA': '۱۵ برد',
-            'description': 'Win 15 matches in Squad Battles on min. World Class difficulty.',
-            'descriptionFA': '۱۵ مسابقه را ببرید، در Squad Battles، روی سختی کلاس جهانی.',
+            'description':
+                'Win 15 matches in Squad Battles on min. World Class difficulty.',
+            'descriptionFA':
+                '۱۵ مسابقه را ببرید، در Squad Battles، روی سختی کلاس جهانی.',
             'reward': '100 Points',
             'rewardFA': '۱۰۰ امتیاز',
             'target': 15,
-          }
-        ]
+          },
+        ],
       };
 
       final obj = HomeObjective.fromJson(json);
@@ -37,30 +41,35 @@ void main() {
       expect(obj.tasks.first.reward, '۱۰۰ امتیاز');
     });
 
-    test('SbcChallenge parses Persian titles, descriptions, and requirements', () {
-      final json = {
-        'id': 'sbc-potm-vinicius',
-        'name': 'Vinícius Jr. POTM',
-        'nameFA': 'وینیسیوس جونیور - بازیکن ماه لالیگا',
-        'description': 'Complete this challenge to earn LaLiga POTM Vinícius Jr.',
-        'descriptionFA': 'این چالش را برای دریافت کارت بازیکن ماه لالیگا وینیسیوس جونیور تکمیل کنید.',
-        'reward': 'POTM Vinicius Jr',
-        'rewardFA': 'کارت بازیکن ماه وینیسیوس جونیور',
-        'requirementsFA': [
-          'حداقل ۱ بازیکن از رئال مادرید',
-          'حداقل ریتینگ کلی تیم: ۸۸',
-          'حداقل شیمی تیمی: ۲۵'
-        ],
-      };
+    test(
+      'SbcChallenge parses Persian titles, descriptions, and requirements',
+      () {
+        final json = {
+          'id': 'sbc-potm-vinicius',
+          'name': 'Vinícius Jr. POTM',
+          'nameFA': 'وینیسیوس جونیور - بازیکن ماه لالیگا',
+          'description':
+              'Complete this challenge to earn LaLiga POTM Vinícius Jr.',
+          'descriptionFA':
+              'این چالش را برای دریافت کارت بازیکن ماه لالیگا وینیسیوس جونیور تکمیل کنید.',
+          'reward': 'POTM Vinicius Jr',
+          'rewardFA': 'کارت بازیکن ماه وینیسیوس جونیور',
+          'requirementsFA': [
+            'حداقل ۱ بازیکن از رئال مادرید',
+            'حداقل ریتینگ کلی تیم: ۸۸',
+            'حداقل شیمی تیمی: ۲۵',
+          ],
+        };
 
-      final sbc = SbcChallenge.fromJson(json);
-      expect(sbc.titleFa, 'وینیسیوس جونیور - بازیکن ماه لالیگا');
-      expect(sbc.primaryTitle, 'وینیسیوس جونیور - بازیکن ماه لالیگا');
-      expect(sbc.description, contains('وینیسیوس جونیور'));
-      expect(sbc.reward, contains('وینیسیوس'));
-      expect(sbc.requirements.length, 3);
-      expect(sbc.requirements.first, contains('رئال مادرید'));
-    });
+        final sbc = SbcChallenge.fromJson(json);
+        expect(sbc.titleFa, 'وینیسیوس جونیور - بازیکن ماه لالیگا');
+        expect(sbc.primaryTitle, 'وینیسیوس جونیور - بازیکن ماه لالیگا');
+        expect(sbc.description, contains('وینیسیوس جونیور'));
+        expect(sbc.reward, contains('وینیسیوس'));
+        expect(sbc.requirements.length, 3);
+        expect(sbc.requirements.first, contains('رئال مادرید'));
+      },
+    );
 
     test('Evolution parses levels, tasksFA, and upgradesFA from FC27', () {
       final json = {
@@ -74,14 +83,11 @@ void main() {
             'name': 'Level 1',
             'nameFA': 'سطح ۱',
             'tasksFA': [
-              '۲ مسابقه را بازی کنید، در Squad Battles، روی سختی نیمه‌حرفه‌ای، با بازیکن فعال تکامل.'
+              '۲ مسابقه را بازی کنید، در Squad Battles، روی سختی نیمه‌حرفه‌ای، با بازیکن فعال تکامل.',
             ],
-            'upgradesFA': [
-              '+۷ امتیاز کلی (به ۸۳)',
-              '+۱۰ دریبل (به ۸۳)'
-            ]
-          }
-        ]
+            'upgradesFA': ['+۷ امتیاز کلی (به ۸۳)', '+۱۰ دریبل (به ۸۳)'],
+          },
+        ],
       };
 
       final evo = Evolution.fromJson(json);

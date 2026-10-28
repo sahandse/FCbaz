@@ -15,7 +15,8 @@ class NotificationCenterScreen extends StatefulWidget {
   const NotificationCenterScreen({super.key});
 
   @override
-  State<NotificationCenterScreen> createState() => _NotificationCenterScreenState();
+  State<NotificationCenterScreen> createState() =>
+      _NotificationCenterScreenState();
 }
 
 class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
@@ -90,24 +91,28 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
         final player = await playerRepository.getPlayer(item.playerId!);
         if (!mounted) return;
         await Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
+          MaterialPageRoute(
+            builder: (_) => PlayerDetailsScreen(player: player),
+          ),
         );
       } catch (e) {
         if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
       return;
     }
     if (item.type == 'objective_deadline') {
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const ObjectivesScreen()),
-      );
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const ObjectivesScreen()));
       return;
     }
     if (item.type == 'evolution_deadline') {
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => const EvolutionsScreen()),
-      );
+      await Navigator.of(
+        context,
+      ).push(MaterialPageRoute(builder: (_) => const EvolutionsScreen()));
     }
   }
 
@@ -128,7 +133,9 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   Widget build(BuildContext context) {
     final data = visibleItems;
     final priceCount = items.where((e) => e.type == 'price_alert').length;
-    final deadlineCount = items.where((e) => e.type.endsWith('_deadline')).length;
+    final deadlineCount = items
+        .where((e) => e.type.endsWith('_deadline'))
+        .length;
 
     return Scaffold(
       appBar: AppBar(
@@ -171,11 +178,29 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                 padding: const EdgeInsets.all(14),
                 child: Row(
                   children: [
-                    Expanded(child: _Metric(label: 'همه', value: items.length, icon: Icons.notifications_rounded)),
+                    Expanded(
+                      child: _Metric(
+                        label: 'همه',
+                        value: items.length,
+                        icon: Icons.notifications_rounded,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Expanded(child: _Metric(label: 'قیمت', value: priceCount, icon: Icons.price_check_rounded)),
+                    Expanded(
+                      child: _Metric(
+                        label: 'قیمت',
+                        value: priceCount,
+                        icon: Icons.price_check_rounded,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Expanded(child: _Metric(label: 'مهلت', value: deadlineCount, icon: Icons.schedule_rounded)),
+                    Expanded(
+                      child: _Metric(
+                        label: 'مهلت',
+                        value: deadlineCount,
+                        icon: Icons.schedule_rounded,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -188,17 +213,20 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                 ChoiceChip(
                   label: const Text('همه'),
                   selected: filter == _NotificationFilter.all,
-                  onSelected: (_) => setState(() => filter = _NotificationFilter.all),
+                  onSelected: (_) =>
+                      setState(() => filter = _NotificationFilter.all),
                 ),
                 ChoiceChip(
                   label: const Text('قیمت'),
                   selected: filter == _NotificationFilter.price,
-                  onSelected: (_) => setState(() => filter = _NotificationFilter.price),
+                  onSelected: (_) =>
+                      setState(() => filter = _NotificationFilter.price),
                 ),
                 ChoiceChip(
                   label: const Text('مهلت‌ها'),
                   selected: filter == _NotificationFilter.deadline,
-                  onSelected: (_) => setState(() => filter = _NotificationFilter.deadline),
+                  onSelected: (_) =>
+                      setState(() => filter = _NotificationFilter.deadline),
                 ),
               ],
             ),
@@ -221,12 +249,17 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                     children: [
                       const Icon(Icons.notifications_none_rounded, size: 42),
                       const SizedBox(height: 10),
-                      const Text('اعلانی در این دسته نداری', style: TextStyle(fontWeight: FontWeight.w900)),
+                      const Text(
+                        'اعلانی در این دسته نداری',
+                        style: TextStyle(fontWeight: FontWeight.w900),
+                      ),
                       const SizedBox(height: 5),
                       Text(
                         'قیمت‌ها و مهلت‌ها فقط با داده واقعی بررسی می‌شوند.',
                         textAlign: TextAlign.center,
-                        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ],
                   ),
@@ -241,18 +274,29 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
                       width: 42,
                       height: 42,
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary.withValues(alpha: .11),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.primary.withValues(alpha: .11),
                         borderRadius: BorderRadius.circular(13),
                       ),
-                      child: Icon(_icon(item), color: Theme.of(context).colorScheme.primary),
+                      child: Icon(
+                        _icon(item),
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
                     ),
-                    title: Text(item.title, style: const TextStyle(fontWeight: FontWeight.w900)),
+                    title: Text(
+                      item.title,
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(item.body),
                         const SizedBox(height: 4),
-                        Text(_time(item.createdAt), style: Theme.of(context).textTheme.labelSmall),
+                        Text(
+                          _time(item.createdAt),
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
                       ],
                     ),
                     trailing: IconButton(
@@ -270,7 +314,10 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
             const SizedBox(height: 12),
             Text(
               'هشدارهای این صفحه داخل خود FCBaz هستند و هنگام بازشدن یا بررسی دستی اپ به‌روزرسانی می‌شوند.',
-              style: TextStyle(fontSize: 11, color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                fontSize: 11,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
           ],
@@ -292,7 +339,10 @@ class _Metric extends StatelessWidget {
       children: [
         Icon(icon, size: 20, color: Theme.of(context).colorScheme.primary),
         const SizedBox(height: 5),
-        Text(value.toString(), style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18)),
+        Text(
+          value.toString(),
+          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
+        ),
         Text(label, style: Theme.of(context).textTheme.labelSmall),
       ],
     );

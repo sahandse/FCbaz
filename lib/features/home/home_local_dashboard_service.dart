@@ -22,9 +22,8 @@ class HomeLocalDashboard {
   final int objectiveTasks;
   final int completedObjectiveTasks;
 
-  double get objectiveProgress => objectiveTasks == 0
-      ? 0
-      : completedObjectiveTasks / objectiveTasks;
+  double get objectiveProgress =>
+      objectiveTasks == 0 ? 0 : completedObjectiveTasks / objectiveTasks;
 }
 
 class HomeLocalDashboardService {
@@ -33,10 +32,11 @@ class HomeLocalDashboardService {
     WatchlistRepository? watchlistRepository,
     SquadRepository? squadRepository,
     ObjectiveProgressRepository? objectiveRepository,
-  })  : clubRepository = clubRepository ?? MyClubRepository(),
-        watchlistRepository = watchlistRepository ?? WatchlistRepository(),
-        squadRepository = squadRepository ?? SquadRepository(),
-        objectiveRepository = objectiveRepository ?? ObjectiveProgressRepository();
+  }) : clubRepository = clubRepository ?? MyClubRepository(),
+       watchlistRepository = watchlistRepository ?? WatchlistRepository(),
+       squadRepository = squadRepository ?? SquadRepository(),
+       objectiveRepository =
+           objectiveRepository ?? ObjectiveProgressRepository();
 
   final MyClubRepository clubRepository;
   final WatchlistRepository watchlistRepository;
@@ -61,8 +61,9 @@ class HomeLocalDashboardService {
       reachedTargets: watchlist.where((item) => item.targetReached).length,
       savedSquads: squads.length,
       objectiveTasks: objectives.length,
-      completedObjectiveTasks:
-          objectives.values.where((entry) => entry.completed).length,
+      completedObjectiveTasks: objectives.values
+          .where((entry) => entry.completed)
+          .length,
     );
   }
 }

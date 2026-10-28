@@ -145,9 +145,7 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
                       child: Stack(
                         clipBehavior: Clip.none,
                         children: [
-                          Positioned.fill(
-                            child: _tileVisual(),
-                          ),
+                          Positioned.fill(child: _tileVisual()),
                           Positioned(
                             top: 0,
                             right: 0,

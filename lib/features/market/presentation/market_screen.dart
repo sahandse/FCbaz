@@ -140,7 +140,9 @@ class _MarketScreenState extends State<MarketScreen> {
               decoration: BoxDecoration(
                 color: const Color(0xFF090E0A),
                 borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: scheme.primary.withValues(alpha: .26)),
+                border: Border.all(
+                  color: scheme.primary.withValues(alpha: .26),
+                ),
               ),
               child: Row(
                 children: [
@@ -150,10 +152,20 @@ class _MarketScreenState extends State<MarketScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text('VERIFIED PRICE MODE', textDirection: TextDirection.ltr, style: TextStyle(fontWeight: FontWeight.w900, fontSize: 12)),
+                        const Text(
+                          'VERIFIED PRICE MODE',
+                          textDirection: TextDirection.ltr,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 12,
+                          ),
+                        ),
                         Text(
                           'فقط قیمت واقعی؛ مقدار صفر و History ساختگی نمایش داده نمی‌شود.',
-                          style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 10.5),
+                          style: TextStyle(
+                            color: scheme.onSurfaceVariant,
+                            fontSize: 10.5,
+                          ),
                         ),
                       ],
                     ),
@@ -162,10 +174,16 @@ class _MarketScreenState extends State<MarketScreen> {
               ),
             ),
             const SizedBox(height: 18),
-            const _Section(title: 'WATCHLIST', subtitle: 'قیمت‌های ذخیره‌شده روی دستگاه'),
+            const _Section(
+              title: 'WATCHLIST',
+              subtitle: 'قیمت‌های ذخیره‌شده روی دستگاه',
+            ),
             const SizedBox(height: 8),
             if (saved.isEmpty)
-              const _Empty(text: 'واچ‌لیست خالی است.', icon: Icons.star_border_rounded)
+              const _Empty(
+                text: 'واچ‌لیست خالی است.',
+                icon: Icons.star_border_rounded,
+              )
             else
               SizedBox(
                 height: 92,
@@ -183,20 +201,45 @@ class _MarketScreenState extends State<MarketScreen> {
                       decoration: BoxDecoration(
                         color: scheme.surface,
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: item.targetReached ? scheme.primary : scheme.outline),
+                        border: Border.all(
+                          color: item.targetReached
+                              ? scheme.primary
+                              : scheme.outline,
+                        ),
                       ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.playerName, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w900)),
+                          Text(
+                            item.playerName,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontWeight: FontWeight.w900),
+                          ),
                           const Spacer(),
                           Row(
                             children: [
-                              Icon(Icons.toll_rounded, size: 14, color: scheme.primary),
+                              Icon(
+                                Icons.toll_rounded,
+                                size: 14,
+                                color: scheme.primary,
+                              ),
                               const SizedBox(width: 4),
-                              Text('${_coins(current)} C', textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.w900, fontFeatures: [FontFeature.tabularFigures()])),
+                              Text(
+                                '${_coins(current)} C',
+                                textDirection: TextDirection.ltr,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                  fontFeatures: [FontFeature.tabularFigures()],
+                                ),
+                              ),
                               const Spacer(),
-                              if (item.targetReached) Icon(Icons.notifications_active_rounded, size: 16, color: scheme.primary),
+                              if (item.targetReached)
+                                Icon(
+                                  Icons.notifications_active_rounded,
+                                  size: 16,
+                                  color: scheme.primary,
+                                ),
                             ],
                           ),
                         ],
@@ -208,11 +251,18 @@ class _MarketScreenState extends State<MarketScreen> {
             const SizedBox(height: 20),
             Row(
               children: [
-                const Expanded(child: _Section(title: 'CHEAPEST', subtitle: 'فقط کارت دارای قیمت مثبت واقعی')),
+                const Expanded(
+                  child: _Section(
+                    title: 'CHEAPEST',
+                    subtitle: 'فقط کارت دارای قیمت مثبت واقعی',
+                  ),
+                ),
                 DropdownButton<int>(
                   value: minRating,
                   items: [80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90]
-                      .map((v) => DropdownMenuItem(value: v, child: Text('$v+')))
+                      .map(
+                        (v) => DropdownMenuItem(value: v, child: Text('$v+')),
+                      )
                       .toList(),
                   onChanged: (value) {
                     if (value == null) return;
@@ -239,12 +289,18 @@ class _MarketScreenState extends State<MarketScreen> {
                   separatorBuilder: (_, __) => const SizedBox(width: 7),
                   itemBuilder: (_, index) => SizedBox(
                     width: 168,
-                    child: PlayerCard(player: cheapest[index], pricePlatform: platform),
+                    child: PlayerCard(
+                      player: cheapest[index],
+                      pricePlatform: platform,
+                    ),
                   ),
                 ),
               ),
             const SizedBox(height: 20),
-            const _Section(title: 'LIVE MARKET', subtitle: 'فقط ردیف‌هایی که منبع زنده قیمت برگرداند'),
+            const _Section(
+              title: 'LIVE MARKET',
+              subtitle: 'فقط ردیف‌هایی که منبع زنده قیمت برگرداند',
+            ),
             const SizedBox(height: 8),
             if (!loading && feed.isEmpty)
               const _Empty(
@@ -266,14 +322,22 @@ class _MarketScreenState extends State<MarketScreen> {
                       Container(
                         width: 38,
                         height: 38,
-                        decoration: BoxDecoration(color: scheme.primary.withValues(alpha: .12), borderRadius: BorderRadius.circular(8)),
+                        decoration: BoxDecoration(
+                          color: scheme.primary.withValues(alpha: .12),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                         alignment: Alignment.center,
-                        child: Icon(Icons.trending_up_rounded, color: scheme.primary, size: 19),
+                        child: Icon(
+                          Icons.trending_up_rounded,
+                          color: scheme.primary,
+                          size: 19,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Expanded(
                         child: Text(
-                          (item['name'] ?? item['player_name'] ?? '—').toString(),
+                          (item['name'] ?? item['player_name'] ?? '—')
+                              .toString(),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(fontWeight: FontWeight.w900),
@@ -309,8 +373,22 @@ class _Section extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, textDirection: TextDirection.ltr, style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 15, letterSpacing: -.3)),
-        Text(subtitle, style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 10)),
+        Text(
+          title,
+          textDirection: TextDirection.ltr,
+          style: const TextStyle(
+            fontWeight: FontWeight.w900,
+            fontSize: 15,
+            letterSpacing: -.3,
+          ),
+        ),
+        Text(
+          subtitle,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+            fontSize: 10,
+          ),
+        ),
       ],
     );
   }

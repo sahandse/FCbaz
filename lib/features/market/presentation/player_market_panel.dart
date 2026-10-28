@@ -47,7 +47,10 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
       final isSaved = await watchlist.contains(widget.playerId);
       List<PricePoint> realHistory = const [];
       try {
-        realHistory = await market.getPriceHistory(widget.playerId, range: range);
+        realHistory = await market.getPriceHistory(
+          widget.playerId,
+          range: range,
+        );
       } catch (_) {
         // Current price remains useful even when the provider has no real history.
       }
@@ -86,10 +89,7 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
 
   Future<void> _toggleWatchlist() async {
     await watchlist.toggle(
-      WatchlistItem(
-        playerId: widget.playerId,
-        playerName: widget.playerName,
-      ),
+      WatchlistItem(playerId: widget.playerId, playerName: widget.playerName),
     );
 
     if (!mounted) return;
@@ -117,10 +117,8 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
             child: const Text('انصراف'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(
-              context,
-              int.tryParse(controller.text.trim()),
-            ),
+            onPressed: () =>
+                Navigator.pop(context, int.tryParse(controller.text.trim())),
             child: const Text('ذخیره'),
           ),
         ],
@@ -200,10 +198,7 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
                 const Expanded(
                   child: Text(
                     'بازار',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      fontSize: 18,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w900, fontSize: 18),
                   ),
                 ),
                 SegmentedButton<String>(
@@ -232,10 +227,9 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
             const SizedBox(height: 10),
             Text(
               '${_coins(current.current)} Coins',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineSmall
-                  ?.copyWith(fontWeight: FontWeight.w900),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
             ),
             const SizedBox(height: 6),
             Row(
@@ -257,7 +251,9 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 18),
                 child: Center(
-                  child: Text('تاریخچه قیمت واقعی برای این کارت در دسترس نیست.'),
+                  child: Text(
+                    'تاریخچه قیمت واقعی برای این کارت در دسترس نیست.',
+                  ),
                 ),
               )
             else
@@ -282,10 +278,7 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
 }
 
 class _Metric extends StatelessWidget {
-  const _Metric({
-    required this.label,
-    required this.value,
-  });
+  const _Metric({required this.label, required this.value});
 
   final String label;
   final String value;
@@ -294,25 +287,16 @@ class _Metric extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 10,
-          vertical: 12,
-        ),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
         ),
         child: Column(
           children: [
-            Text(
-              value,
-              style: const TextStyle(fontWeight: FontWeight.w900),
-            ),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
             const SizedBox(height: 2),
-            Text(
-              label,
-              style: Theme.of(context).textTheme.labelSmall,
-            ),
+            Text(label, style: Theme.of(context).textTheme.labelSmall),
           ],
         ),
       ),

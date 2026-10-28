@@ -36,10 +36,10 @@ class _SquadScreenProState extends State<SquadScreenPro> {
   FormationDefinition get formation => Formations.byId(squad.formationId);
 
   ChemistryResult get chemistry => chemistryEngine.calculate(
-        formation: formation,
-        playersBySlot: squad.playersBySlot,
-        manager: squad.manager,
-      );
+    formation: formation,
+    playersBySlot: squad.playersBySlot,
+    manager: squad.manager,
+  );
 
   @override
   void initState() {
@@ -55,11 +55,11 @@ class _SquadScreenProState extends State<SquadScreenPro> {
   }
 
   SquadStateModel _newSquad() => SquadStateModel(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        name: 'ترکیب من',
-        formationId: '433',
-        playersBySlot: const {},
-      );
+    id: DateTime.now().microsecondsSinceEpoch.toString(),
+    name: 'ترکیب من',
+    formationId: '433',
+    playersBySlot: const {},
+  );
 
   Future<void> _load() async {
     final data = await squadRepository.getAll();
@@ -76,9 +76,9 @@ class _SquadScreenProState extends State<SquadScreenPro> {
     final data = await squadRepository.getAll();
     if (!mounted) return;
     setState(() => savedSquads = data);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('ترکیب ذخیره شد')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('ترکیب ذخیره شد')));
   }
 
   Future<void> _new() async {
@@ -180,7 +180,9 @@ class _SquadScreenProState extends State<SquadScreenPro> {
       if (analysis.matchedCount == 0) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('بازیکنی از تصویر شناسایی نشد؛ تصویر واضح‌تر و کامل‌تری انتخاب کن.'),
+            content: Text(
+              'بازیکنی از تصویر شناسایی نشد؛ تصویر واضح‌تر و کامل‌تری انتخاب کن.',
+            ),
           ),
         );
         return;
@@ -214,10 +216,14 @@ class _SquadScreenProState extends State<SquadScreenPro> {
                             width: 48,
                             child: Text(
                               slot.position,
-                              style: const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          Expanded(child: Text(analysis.playersBySlot[slot.id]!.name)),
+                          Expanded(
+                            child: Text(analysis.playersBySlot[slot.id]!.name),
+                          ),
                         ],
                       ),
                     ),
@@ -301,9 +307,9 @@ class _SquadScreenProState extends State<SquadScreenPro> {
       players = await playerRepository.getPlayers();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
       return;
     }
     if (!mounted) return;
@@ -334,10 +340,12 @@ class _SquadScreenProState extends State<SquadScreenPro> {
       ..remove(slotId);
     final configs = Map<String, SquadPlayerConfig>.from(squad.playerConfigs)
       ..remove(slotId);
-    setState(() => squad = squad.copyWith(
-          playersBySlot: players,
-          playerConfigs: configs,
-        ));
+    setState(
+      () => squad = squad.copyWith(
+        playersBySlot: players,
+        playerConfigs: configs,
+      ),
+    );
   }
 
   void _replace(String slotId, Player replacement) {
@@ -345,10 +353,12 @@ class _SquadScreenProState extends State<SquadScreenPro> {
       ..[slotId] = replacement;
     final configs = Map<String, SquadPlayerConfig>.from(squad.playerConfigs)
       ..remove(slotId);
-    setState(() => squad = squad.copyWith(
-          playersBySlot: players,
-          playerConfigs: configs,
-        ));
+    setState(
+      () => squad = squad.copyWith(
+        playersBySlot: players,
+        playerConfigs: configs,
+      ),
+    );
   }
 
   @override
@@ -478,7 +488,8 @@ class _SquadScreenProState extends State<SquadScreenPro> {
                 scrollDirection: Axis.horizontal,
                 itemCount: squad.bench.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 8),
-                itemBuilder: (_, index) => _BenchCard(player: squad.bench[index]),
+                itemBuilder: (_, index) =>
+                    _BenchCard(player: squad.bench[index]),
               ),
             ),
           ],
@@ -595,7 +606,10 @@ class _SlotCard extends StatelessWidget {
                   player?.name ?? slot.position,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w900),
+                  style: const TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w900,
+                  ),
                 ),
                 if (player != null)
                   Text(
@@ -661,17 +675,21 @@ class _PlayerPickerState extends State<_PlayerPicker> {
   @override
   Widget build(BuildContext context) {
     final normalized = widget.slotPosition.toUpperCase();
-    final filtered = widget.players.where((player) {
-      if (widget.selectedIds.contains(player.id)) return false;
-      final positions = <String>{
-        player.position.toUpperCase(),
-        ...player.positions.map((p) => p.toUpperCase()),
-      };
-      final matchesPosition = positions.contains(normalized);
-      final matchesQuery = query.isEmpty ||
-          player.name.toLowerCase().contains(query.toLowerCase());
-      return matchesPosition && matchesQuery;
-    }).take(80).toList();
+    final filtered = widget.players
+        .where((player) {
+          if (widget.selectedIds.contains(player.id)) return false;
+          final positions = <String>{
+            player.position.toUpperCase(),
+            ...player.positions.map((p) => p.toUpperCase()),
+          };
+          final matchesPosition = positions.contains(normalized);
+          final matchesQuery =
+              query.isEmpty ||
+              player.name.toLowerCase().contains(query.toLowerCase());
+          return matchesPosition && matchesQuery;
+        })
+        .take(80)
+        .toList();
 
     return SafeArea(
       child: SizedBox(

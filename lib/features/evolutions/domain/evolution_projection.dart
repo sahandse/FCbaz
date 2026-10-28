@@ -36,14 +36,19 @@ class EvolutionProjectionEngine {
     var recognized = false;
 
     for (final raw in evolution.upgradeData) {
-      final key = _statKey(raw['stat'] ?? raw['key'] ?? raw['type'] ?? raw['name']);
+      final key = _statKey(
+        raw['stat'] ?? raw['key'] ?? raw['type'] ?? raw['name'],
+      );
       if (key == null || !after.containsKey(key)) continue;
 
-      final operation = (raw['operation'] ?? raw['operator'] ?? raw['mode'] ?? '')
-          .toString()
-          .toLowerCase();
+      final operation =
+          (raw['operation'] ?? raw['operator'] ?? raw['mode'] ?? '')
+              .toString()
+              .toLowerCase();
       final delta = _asInt(raw['delta'] ?? raw['boost'] ?? raw['increase']);
-      final target = _asInt(raw['final'] ?? raw['target'] ?? raw['value'] ?? raw['set']);
+      final target = _asInt(
+        raw['final'] ?? raw['target'] ?? raw['value'] ?? raw['set'],
+      );
       final max = _asInt(raw['max'] ?? raw['cap']);
 
       if (operation.contains('add') || operation == '+' || delta != null) {
@@ -53,7 +58,9 @@ class EvolutionProjectionEngine {
         continue;
       }
 
-      if (operation.contains('set') || operation.contains('final') || target != null) {
+      if (operation.contains('set') ||
+          operation.contains('final') ||
+          target != null) {
         if (target == null) continue;
         after[key] = target.clamp(0, 99).toInt();
         recognized = true;
@@ -88,7 +95,8 @@ class EvolutionProjectionEngine {
         .toLowerCase()
         .replaceAll('_', '')
         .replaceAll(' ', '');
-    if (value.contains('overall') || value == 'ovr' || value == 'rating') return 'rating';
+    if (value.contains('overall') || value == 'ovr' || value == 'rating')
+      return 'rating';
     if (value.contains('pace') || value == 'pac') return 'pace';
     if (value.contains('shoot') || value == 'sho') return 'shooting';
     if (value.contains('pass') || value == 'pas') return 'passing';

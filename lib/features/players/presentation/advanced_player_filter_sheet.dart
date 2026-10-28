@@ -17,17 +17,18 @@ class AdvancedPlayerFilterSheet extends StatefulWidget {
       _AdvancedPlayerFilterSheetState();
 }
 
-class _AdvancedPlayerFilterSheetState
-    extends State<AdvancedPlayerFilterSheet> {
+class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
   late RangeValues rating = RangeValues(
     widget.current.minRating.toDouble(),
     widget.current.maxRating.toDouble(),
   );
 
-  late final TextEditingController minPriceController =
-      TextEditingController(text: widget.current.minPrice?.toString() ?? '');
-  late final TextEditingController maxPriceController =
-      TextEditingController(text: widget.current.maxPrice?.toString() ?? '');
+  late final TextEditingController minPriceController = TextEditingController(
+    text: widget.current.minPrice?.toString() ?? '',
+  );
+  late final TextEditingController maxPriceController = TextEditingController(
+    text: widget.current.maxPrice?.toString() ?? '',
+  );
 
   late String? position = widget.current.position;
   late String? version = widget.current.version;
@@ -45,18 +46,42 @@ class _AdvancedPlayerFilterSheetState
   late PlayerSort sort = widget.current.sort;
 
   late final Map<String, TextEditingController> statControllers = {
-    'minPace': TextEditingController(text: widget.current.minPace?.toString() ?? ''),
-    'maxPace': TextEditingController(text: widget.current.maxPace?.toString() ?? ''),
-    'minShooting': TextEditingController(text: widget.current.minShooting?.toString() ?? ''),
-    'maxShooting': TextEditingController(text: widget.current.maxShooting?.toString() ?? ''),
-    'minPassing': TextEditingController(text: widget.current.minPassing?.toString() ?? ''),
-    'maxPassing': TextEditingController(text: widget.current.maxPassing?.toString() ?? ''),
-    'minDribbling': TextEditingController(text: widget.current.minDribbling?.toString() ?? ''),
-    'maxDribbling': TextEditingController(text: widget.current.maxDribbling?.toString() ?? ''),
-    'minDefending': TextEditingController(text: widget.current.minDefending?.toString() ?? ''),
-    'maxDefending': TextEditingController(text: widget.current.maxDefending?.toString() ?? ''),
-    'minPhysical': TextEditingController(text: widget.current.minPhysical?.toString() ?? ''),
-    'maxPhysical': TextEditingController(text: widget.current.maxPhysical?.toString() ?? ''),
+    'minPace': TextEditingController(
+      text: widget.current.minPace?.toString() ?? '',
+    ),
+    'maxPace': TextEditingController(
+      text: widget.current.maxPace?.toString() ?? '',
+    ),
+    'minShooting': TextEditingController(
+      text: widget.current.minShooting?.toString() ?? '',
+    ),
+    'maxShooting': TextEditingController(
+      text: widget.current.maxShooting?.toString() ?? '',
+    ),
+    'minPassing': TextEditingController(
+      text: widget.current.minPassing?.toString() ?? '',
+    ),
+    'maxPassing': TextEditingController(
+      text: widget.current.maxPassing?.toString() ?? '',
+    ),
+    'minDribbling': TextEditingController(
+      text: widget.current.minDribbling?.toString() ?? '',
+    ),
+    'maxDribbling': TextEditingController(
+      text: widget.current.maxDribbling?.toString() ?? '',
+    ),
+    'minDefending': TextEditingController(
+      text: widget.current.minDefending?.toString() ?? '',
+    ),
+    'maxDefending': TextEditingController(
+      text: widget.current.maxDefending?.toString() ?? '',
+    ),
+    'minPhysical': TextEditingController(
+      text: widget.current.minPhysical?.toString() ?? '',
+    ),
+    'maxPhysical': TextEditingController(
+      text: widget.current.maxPhysical?.toString() ?? '',
+    ),
   };
 
   static const positions = [
@@ -443,10 +468,7 @@ class _SectionTitle extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Text(
-      title,
-      style: const TextStyle(fontWeight: FontWeight.w900),
-    );
+    return Text(title, style: const TextStyle(fontWeight: FontWeight.w900));
   }
 }
 
@@ -512,17 +534,10 @@ class _SuggestField extends StatelessWidget {
       optionsBuilder: (value) {
         final q = value.text.trim().toLowerCase();
         if (q.isEmpty) return options.take(12);
-        return options
-            .where((item) => item.toLowerCase().contains(q))
-            .take(12);
+        return options.where((item) => item.toLowerCase().contains(q)).take(12);
       },
       onSelected: onChanged,
-      fieldViewBuilder: (
-        context,
-        controller,
-        focusNode,
-        onSubmitted,
-      ) {
+      fieldViewBuilder: (context, controller, focusNode, onSubmitted) {
         return TextField(
           controller: controller,
           focusNode: focusNode,

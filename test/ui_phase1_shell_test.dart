@@ -36,8 +36,9 @@ void main() {
   });
 
   test('shell exposes exactly the five approved tabs', () {
-    final source =
-        File('lib/features/navigation/main_shell.dart').readAsStringSync();
+    final source = File(
+      'lib/features/navigation/main_shell.dart',
+    ).readAsStringSync();
     for (final label in ['خانه', 'کارت‌ها', 'باشگاه', 'تیم', 'بیشتر']) {
       expect(source, contains("label: '$label'"));
     }

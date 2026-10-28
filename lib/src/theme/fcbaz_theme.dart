@@ -151,50 +151,51 @@ class FCBazTheme {
   static const outline = Color(0xFF26352A);
 
   static ThemeData dark([Color? accent]) => _build(
-        brightness: Brightness.dark,
-        palette: accent == null
-            ? FcbazPalette.dark
-            : FcbazPalette.dark.copyWith(
-                primary: accent,
-                onPrimary: _onColor(accent),
-              ),
-      );
+    brightness: Brightness.dark,
+    palette: accent == null
+        ? FcbazPalette.dark
+        : FcbazPalette.dark.copyWith(
+            primary: accent,
+            onPrimary: _onColor(accent),
+          ),
+  );
 
   static ThemeData light([Color? accent]) => _build(
-        brightness: Brightness.light,
-        palette: accent == null
-            ? FcbazPalette.light
-            : FcbazPalette.light.copyWith(
-                primary: accent,
-                onPrimary: _onColor(accent),
-              ),
-      );
+    brightness: Brightness.light,
+    palette: accent == null
+        ? FcbazPalette.light
+        : FcbazPalette.light.copyWith(
+            primary: accent,
+            onPrimary: _onColor(accent),
+          ),
+  );
 
   static Color _onColor(Color color) =>
       ThemeData.estimateBrightnessForColor(color) == Brightness.dark
-          ? Colors.white
-          : const Color(0xFF10140C);
+      ? Colors.white
+      : const Color(0xFF10140C);
 
   static ThemeData _build({
     required Brightness brightness,
     required FcbazPalette palette,
   }) {
-    final scheme = ColorScheme.fromSeed(
-      seedColor: palette.primary,
-      brightness: brightness,
-      surface: palette.surface,
-    ).copyWith(
-      primary: palette.primary,
-      onPrimary: palette.onPrimary,
-      secondary: palette.secondary,
-      surface: palette.surface,
-      surfaceContainerHighest: palette.surfaceRaised,
-      onSurface: palette.text,
-      onSurfaceVariant: palette.textMuted,
-      outline: palette.line,
-      outlineVariant: palette.lineStrong,
-      error: palette.danger,
-    );
+    final scheme =
+        ColorScheme.fromSeed(
+          seedColor: palette.primary,
+          brightness: brightness,
+          surface: palette.surface,
+        ).copyWith(
+          primary: palette.primary,
+          onPrimary: palette.onPrimary,
+          secondary: palette.secondary,
+          surface: palette.surface,
+          surfaceContainerHighest: palette.surfaceRaised,
+          onSurface: palette.text,
+          onSurfaceVariant: palette.textMuted,
+          outline: palette.line,
+          outlineVariant: palette.lineStrong,
+          error: palette.danger,
+        );
 
     final base = ThemeData(
       useMaterial3: true,
@@ -347,7 +348,10 @@ class FCBazTheme {
           color: palette.textMuted,
           fontSize: 13,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(FcbazRadius.md),
           borderSide: BorderSide(color: palette.line),
@@ -574,9 +578,7 @@ class FCBazTheme {
         ),
         checkColor: WidgetStatePropertyAll(palette.onPrimary),
         side: BorderSide(color: palette.line),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: palette.primary,

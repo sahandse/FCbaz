@@ -28,30 +28,30 @@ class FCBazNotification {
   final bool isRead;
 
   FCBazNotification copyWith({bool? isRead}) => FCBazNotification(
-        id: id,
-        type: type,
-        title: title,
-        body: body,
-        createdAt: createdAt,
-        playerId: playerId,
-        destinationId: destinationId,
-        price: price,
-        targetPrice: targetPrice,
-        isRead: isRead ?? this.isRead,
-      );
+    id: id,
+    type: type,
+    title: title,
+    body: body,
+    createdAt: createdAt,
+    playerId: playerId,
+    destinationId: destinationId,
+    price: price,
+    targetPrice: targetPrice,
+    isRead: isRead ?? this.isRead,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type,
-        'title': title,
-        'body': body,
-        'created_at': createdAt.toIso8601String(),
-        'player_id': playerId,
-        'destination_id': destinationId,
-        'price': price,
-        'target_price': targetPrice,
-        'is_read': isRead,
-      };
+    'id': id,
+    'type': type,
+    'title': title,
+    'body': body,
+    'created_at': createdAt.toIso8601String(),
+    'player_id': playerId,
+    'destination_id': destinationId,
+    'price': price,
+    'target_price': targetPrice,
+    'is_read': isRead,
+  };
 
   factory FCBazNotification.fromJson(Map<String, dynamic> json) {
     int? asInt(dynamic value) =>
@@ -62,7 +62,8 @@ class FCBazNotification {
       type: (json['type'] ?? 'info').toString(),
       title: (json['title'] ?? '').toString(),
       body: (json['body'] ?? '').toString(),
-      createdAt: DateTime.tryParse((json['created_at'] ?? '').toString()) ??
+      createdAt:
+          DateTime.tryParse((json['created_at'] ?? '').toString()) ??
           DateTime.fromMillisecondsSinceEpoch(0),
       playerId: json['player_id']?.toString(),
       destinationId: json['destination_id']?.toString(),
@@ -88,9 +89,7 @@ class NotificationRepository {
 
       final items = decoded
           .whereType<Map>()
-          .map((e) => FCBazNotification.fromJson(
-                Map<String, dynamic>.from(e),
-              ))
+          .map((e) => FCBazNotification.fromJson(Map<String, dynamic>.from(e)))
           .where((e) => e.id.isNotEmpty)
           .toList();
 
@@ -106,7 +105,8 @@ class NotificationRepository {
 
   Future<void> add(FCBazNotification notification) async {
     final prefs = await SharedPreferences.getInstance();
-    final items = [...await getAll()]..removeWhere((e) => e.id == notification.id);
+    final items = [...await getAll()]
+      ..removeWhere((e) => e.id == notification.id);
     items.insert(0, notification);
 
     await prefs.setString(
@@ -117,7 +117,9 @@ class NotificationRepository {
 
   Future<void> markAllRead() async {
     final prefs = await SharedPreferences.getInstance();
-    final items = (await getAll()).map((e) => e.copyWith(isRead: true)).toList();
+    final items = (await getAll())
+        .map((e) => e.copyWith(isRead: true))
+        .toList();
     await prefs.setString(
       _key,
       jsonEncode(items.map((e) => e.toJson()).toList()),

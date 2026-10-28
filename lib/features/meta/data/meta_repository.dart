@@ -3,11 +3,9 @@ import '../../../core/network/public_fc_data.dart';
 import '../domain/meta_player_entry.dart';
 
 class MetaRepository {
-  MetaRepository({
-    FCBazApi? api,
-    PublicFcData? publicData,
-  })  : api = api ?? FCBazApi(),
-        publicData = publicData ?? PublicFcData();
+  MetaRepository({FCBazApi? api, PublicFcData? publicData})
+    : api = api ?? FCBazApi(),
+      publicData = publicData ?? PublicFcData();
 
   final FCBazApi api;
   final PublicFcData publicData;
@@ -25,15 +23,26 @@ class MetaRepository {
 
       final suffix = query.isEmpty
           ? ''
-          : '?' + query.entries.map((e) =>
-              Uri.encodeQueryComponent(e.key) + '=' + Uri.encodeQueryComponent(e.value)).join('&');
+          : '?' +
+                query.entries
+                    .map(
+                      (e) =>
+                          Uri.encodeQueryComponent(e.key) +
+                          '=' +
+                          Uri.encodeQueryComponent(e.value),
+                    )
+                    .join('&');
 
       final json = await api.getJson('/api/v1/meta/players' + suffix);
-      final raw = json is Map ? (json['data'] ?? json['items'] ?? const []) : json;
+      final raw = json is Map
+          ? (json['data'] ?? json['items'] ?? const [])
+          : json;
       if (raw is List) {
         final items = raw
             .whereType<Map>()
-            .map((e) => MetaPlayerEntry.fromBackend(Map<String, dynamic>.from(e)))
+            .map(
+              (e) => MetaPlayerEntry.fromBackend(Map<String, dynamic>.from(e)),
+            )
             .where((e) => e.player.id.isNotEmpty)
             .toList();
         if (items.isNotEmpty) return items;
@@ -54,7 +63,12 @@ class MetaRepository {
     final players = await publicData.getFiltered(params: params);
     final filtered = role == null || role.isEmpty
         ? players
-        : players.where((p) => p.roles.any((r) => r.toLowerCase() == role.toLowerCase())).toList();
+        : players
+              .where(
+                (p) =>
+                    p.roles.any((r) => r.toLowerCase() == role.toLowerCase()),
+              )
+              .toList();
 
     return filtered.take(30).map(MetaPlayerEntry.fromPublic).toList();
   }

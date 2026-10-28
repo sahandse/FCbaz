@@ -6,22 +6,25 @@ void main() {
     test('exposes expanded FC27 formation catalog', () {
       final ids = Formations.all.map((e) => e.id).toSet();
 
-      expect(ids, containsAll(<String>{
-        '4411',
-        '4213',
-        '4231',
-        '442',
-        '433a',
-        '41212',
-        '433h',
-        '4312',
-        '433',
-        '4321',
-        '4222',
-        '4141',
-        '352',
-        '5212',
-      }));
+      expect(
+        ids,
+        containsAll(<String>{
+          '4411',
+          '4213',
+          '4231',
+          '442',
+          '433a',
+          '41212',
+          '433h',
+          '4312',
+          '433',
+          '4321',
+          '4222',
+          '4141',
+          '352',
+          '5212',
+        }),
+      );
 
       for (final formation in Formations.all) {
         expect(formation.slots.length, 11);

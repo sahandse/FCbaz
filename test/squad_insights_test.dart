@@ -44,37 +44,40 @@ Player player({
 }
 
 void main() {
-  test('FCBaz squad meta score increases with chemistry and playstyle plus', () {
-    final formation = Formations.byId('433');
-    final p = player(
-      id: '1',
-      name: 'Meta ST',
-      position: 'ST',
-      playStylesPlus: const ['Quick Step+'],
-      roles: const ['Advanced Forward++'],
-    );
+  test(
+    'FCBaz squad meta score increases with chemistry and playstyle plus',
+    () {
+      final formation = Formations.byId('433');
+      final p = player(
+        id: '1',
+        name: 'Meta ST',
+        position: 'ST',
+        playStylesPlus: const ['Quick Step+'],
+        roles: const ['Advanced Forward++'],
+      );
 
-    final squad = SquadStateModel(
-      id: 's1',
-      name: 'Meta',
-      formationId: '433',
-      playersBySlot: {'st': p},
-      playerConfigs: const {
-        'st': SquadPlayerConfig(role: 'Advanced Forward++'),
-      },
-    );
+      final squad = SquadStateModel(
+        id: 's1',
+        name: 'Meta',
+        formationId: '433',
+        playersBySlot: {'st': p},
+        playerConfigs: const {
+          'st': SquadPlayerConfig(role: 'Advanced Forward++'),
+        },
+      );
 
-    const chemistry = ChemistryResult(total: 3, bySlot: {'st': 3});
-    final insights = SquadInsightsService().analyze(
-      squad: squad,
-      formation: formation,
-      chemistry: chemistry,
-    );
+      const chemistry = ChemistryResult(total: 3, bySlot: {'st': 3});
+      final insights = SquadInsightsService().analyze(
+        squad: squad,
+        formation: formation,
+        chemistry: chemistry,
+      );
 
-    expect(insights.metaScore, greaterThan(0));
-    expect(insights.playStylesPlusCount, 1);
-    expect(insights.roleConfiguredCount, 1);
-  });
+      expect(insights.metaScore, greaterThan(0));
+      expect(insights.playStylesPlusCount, 1);
+      expect(insights.roleConfiguredCount, 1);
+    },
+  );
 
   test('insights flags out of position cards', () {
     final formation = Formations.byId('433');
@@ -82,13 +85,7 @@ void main() {
       id: 's1',
       name: 'Weak',
       formationId: '433',
-      playersBySlot: {
-        'st': player(
-          id: '1',
-          name: 'Wrong',
-          position: 'CB',
-        ),
-      },
+      playersBySlot: {'st': player(id: '1', name: 'Wrong', position: 'CB')},
     );
 
     const chemistry = ChemistryResult(total: 0, bySlot: {'st': 0});

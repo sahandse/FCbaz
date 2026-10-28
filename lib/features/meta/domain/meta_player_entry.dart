@@ -51,7 +51,7 @@ class MetaPlayerEntry {
   }
 
   factory MetaPlayerEntry.fromPublic(Player player) => MetaPlayerEntry(
-        player: player,
-        source: MetaDataSource.publicHighestRated,
-      );
+    player: player,
+    source: MetaDataSource.publicHighestRated,
+  );
 }

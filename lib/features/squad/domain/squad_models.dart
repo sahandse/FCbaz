@@ -43,16 +43,16 @@ class ManagerProfile {
       leagueName.trim().isEmpty;
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'nation_name': nationName,
-        'league_name': leagueName,
-      };
+    'name': name,
+    'nation_name': nationName,
+    'league_name': leagueName,
+  };
 
   factory ManagerProfile.fromJson(Map<String, dynamic> json) => ManagerProfile(
-        name: (json['name'] ?? '').toString(),
-        nationName: (json['nation_name'] ?? '').toString(),
-        leagueName: (json['league_name'] ?? '').toString(),
-      );
+    name: (json['name'] ?? '').toString(),
+    nationName: (json['nation_name'] ?? '').toString(),
+    leagueName: (json['league_name'] ?? '').toString(),
+  );
 }
 
 class SquadPlayerConfig {
@@ -67,10 +67,10 @@ class SquadPlayerConfig {
   final String focus;
 
   Map<String, dynamic> toJson() => {
-        'chemistry_style': chemistryStyle,
-        'role': role,
-        'focus': focus,
-      };
+    'chemistry_style': chemistryStyle,
+    'role': role,
+    'focus': focus,
+  };
 
   factory SquadPlayerConfig.fromJson(Map<String, dynamic> json) =>
       SquadPlayerConfig(
@@ -93,11 +93,7 @@ class TacticProfile {
     this.notes = '',
   });
 
-  static const buildUpStyles = <String>[
-    'Balanced',
-    'Counter',
-    'Short Passing',
-  ];
+  static const buildUpStyles = <String>['Balanced', 'Counter', 'Short Passing'];
 
   static const defensiveApproaches = <String>[
     'Deep',
@@ -127,7 +123,9 @@ class TacticProfile {
       notes.trim().isEmpty;
 
   bool get hasStructuredTactics =>
-      buildUpStyle.isNotEmpty || defensiveApproach.isNotEmpty || lineHeight != null;
+      buildUpStyle.isNotEmpty ||
+      defensiveApproach.isNotEmpty ||
+      lineHeight != null;
 
   TacticProfile copyWith({
     String? name,
@@ -155,16 +153,16 @@ class TacticProfile {
   }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'code': code,
-        'build_up_style': buildUpStyle,
-        'defensive_approach': defensiveApproach,
-        'line_height': lineHeight,
-        'defensive_plan': defensivePlan,
-        'build_up_plan': buildUpPlan,
-        'attacking_plan': attackingPlan,
-        'notes': notes,
-      };
+    'name': name,
+    'code': code,
+    'build_up_style': buildUpStyle,
+    'defensive_approach': defensiveApproach,
+    'line_height': lineHeight,
+    'defensive_plan': defensivePlan,
+    'build_up_plan': buildUpPlan,
+    'attacking_plan': attackingPlan,
+    'notes': notes,
+  };
 
   factory TacticProfile.fromJson(Map<String, dynamic> json) {
     final rawLineHeight = json['line_height'];
@@ -230,20 +228,20 @@ class SquadStateModel {
   }
 
   Map<String, dynamic> toJson() => {
-        'schema_version': 3,
-        'id': id,
-        'name': name,
-        'formation_id': formationId,
-        'players': playersBySlot.map(
-          (slot, player) => MapEntry(slot, player.toJson()),
-        ),
-        'player_configs': playerConfigs.map(
-          (slot, config) => MapEntry(slot, config.toJson()),
-        ),
-        'bench': bench.map((p) => p.toJson()).toList(),
-        'manager': manager?.toJson(),
-        'tactics': tactics.toJson(),
-      };
+    'schema_version': 3,
+    'id': id,
+    'name': name,
+    'formation_id': formationId,
+    'players': playersBySlot.map(
+      (slot, player) => MapEntry(slot, player.toJson()),
+    ),
+    'player_configs': playerConfigs.map(
+      (slot, config) => MapEntry(slot, config.toJson()),
+    ),
+    'bench': bench.map((p) => p.toJson()).toList(),
+    'manager': manager?.toJson(),
+    'tactics': tactics.toJson(),
+  };
 
   factory SquadStateModel.fromJson(Map<String, dynamic> map) {
     final players = <String, Player>{};
@@ -273,11 +271,11 @@ class SquadStateModel {
     final rawBench = map['bench'];
     final bench = rawBench is List
         ? rawBench
-            .whereType<Map>()
-            .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-            .where((e) => e.id.isNotEmpty)
-            .take(7)
-            .toList()
+              .whereType<Map>()
+              .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
+              .where((e) => e.id.isNotEmpty)
+              .take(7)
+              .toList()
         : const <Player>[];
 
     ManagerProfile? manager;

@@ -64,9 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           controller: controller,
           autofocus: true,
           maxLength: 32,
-          decoration: const InputDecoration(
-            hintText: 'مثلاً سهند',
-          ),
+          decoration: const InputDecoration(hintText: 'مثلاً سهند'),
         ),
         actions: [
           TextButton(
@@ -74,10 +72,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             child: const Text('انصراف'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(
-              context,
-              controller.text.trim(),
-            ),
+            onPressed: () => Navigator.pop(context, controller.text.trim()),
             child: const Text('ذخیره'),
           ),
         ],
@@ -94,9 +89,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final name = displayName.isEmpty ? 'کاربر FCBaz' : displayName;
@@ -147,9 +140,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.w900,
-                              ),
+                          style: Theme.of(context).textTheme.titleLarge
+                              ?.copyWith(fontWeight: FontWeight.w900),
                         ),
                         const SizedBox(height: 4),
                         Text(

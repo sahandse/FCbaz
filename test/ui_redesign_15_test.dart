@@ -4,15 +4,30 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   test('1.5 player collection keeps FC27 item families', () {
-    final source = File('lib/features/players/presentation/cards_screen.dart').readAsStringSync();
-    for (final token in ['Gold', 'ICON', 'Hero', 'TOTW', 'Hall', 'Holo', 'Silver', 'Bronze']) {
+    final source = File(
+      'lib/features/players/presentation/cards_screen.dart',
+    ).readAsStringSync();
+    for (final token in [
+      'Gold',
+      'ICON',
+      'Hero',
+      'TOTW',
+      'Hall',
+      'Holo',
+      'Silver',
+      'Bronze',
+    ]) {
       expect(source, contains(token));
     }
   });
 
   test('player item displays separate PS and PC prices', () {
-    final card = File('lib/features/players/presentation/player_card.dart').readAsStringSync();
-    final visual = File('lib/features/players/presentation/player_item_visual.dart').readAsStringSync();
+    final card = File(
+      'lib/features/players/presentation/player_card.dart',
+    ).readAsStringSync();
+    final visual = File(
+      'lib/features/players/presentation/player_item_visual.dart',
+    ).readAsStringSync();
     expect(card, contains('PlayerItemVisual'));
     expect(visual, contains("label: 'PS'"));
     expect(visual, contains("label: 'PC'"));
@@ -21,7 +36,9 @@ void main() {
   });
 
   test('EA resource id price lookup uses public FUTBIN resource endpoint', () {
-    final source = File('lib/core/network/futbin_public_price_service.dart').readAsStringSync();
+    final source = File(
+      'lib/core/network/futbin_public_price_service.dart',
+    ).readAsStringSync();
     expect(source, contains('fetchPriceInformation'));
     expect(source, contains('playerresource'));
     expect(source, contains("if (current <= 0) return null"));

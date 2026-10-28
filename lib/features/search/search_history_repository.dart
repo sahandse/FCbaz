@@ -19,17 +19,18 @@ class SavedPlayerFilter {
   final DateTime createdAt;
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'created_at': createdAt.toIso8601String(),
-        'filter': filter.toJson(),
-      };
+    'id': id,
+    'name': name,
+    'created_at': createdAt.toIso8601String(),
+    'filter': filter.toJson(),
+  };
 
   factory SavedPlayerFilter.fromJson(Map<String, dynamic> json) =>
       SavedPlayerFilter(
         id: (json['id'] ?? '').toString(),
         name: (json['name'] ?? '').toString(),
-        createdAt: DateTime.tryParse((json['created_at'] ?? '').toString()) ??
+        createdAt:
+            DateTime.tryParse((json['created_at'] ?? '').toString()) ??
             DateTime.fromMillisecondsSinceEpoch(0),
         filter: PlayerFilter.fromJson(
           json['filter'] is Map

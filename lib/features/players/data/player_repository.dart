@@ -225,9 +225,13 @@ class PlayerFilter {
       maxPrice: clearMaxPrice ? null : (maxPrice ?? this.maxPrice),
       platform: platform ?? this.platform,
       playStyle: clearPlayStyle ? null : (playStyle ?? this.playStyle),
-      playStylePlus: clearPlayStylePlus ? null : (playStylePlus ?? this.playStylePlus),
+      playStylePlus: clearPlayStylePlus
+          ? null
+          : (playStylePlus ?? this.playStylePlus),
       role: clearRole ? null : (role ?? this.role),
-      minSkillMoves: clearMinSkillMoves ? null : (minSkillMoves ?? this.minSkillMoves),
+      minSkillMoves: clearMinSkillMoves
+          ? null
+          : (minSkillMoves ?? this.minSkillMoves),
       minWeakFoot: clearMinWeakFoot ? null : (minWeakFoot ?? this.minWeakFoot),
       minPace: clearMinPace ? null : (minPace ?? this.minPace),
       maxPace: clearMaxPace ? null : (maxPace ?? this.maxPace),
@@ -235,10 +239,18 @@ class PlayerFilter {
       maxShooting: clearMaxShooting ? null : (maxShooting ?? this.maxShooting),
       minPassing: clearMinPassing ? null : (minPassing ?? this.minPassing),
       maxPassing: clearMaxPassing ? null : (maxPassing ?? this.maxPassing),
-      minDribbling: clearMinDribbling ? null : (minDribbling ?? this.minDribbling),
-      maxDribbling: clearMaxDribbling ? null : (maxDribbling ?? this.maxDribbling),
-      minDefending: clearMinDefending ? null : (minDefending ?? this.minDefending),
-      maxDefending: clearMaxDefending ? null : (maxDefending ?? this.maxDefending),
+      minDribbling: clearMinDribbling
+          ? null
+          : (minDribbling ?? this.minDribbling),
+      maxDribbling: clearMaxDribbling
+          ? null
+          : (maxDribbling ?? this.maxDribbling),
+      minDefending: clearMinDefending
+          ? null
+          : (minDefending ?? this.minDefending),
+      maxDefending: clearMaxDefending
+          ? null
+          : (maxDefending ?? this.maxDefending),
       minPhysical: clearMinPhysical ? null : (minPhysical ?? this.minPhysical),
       maxPhysical: clearMaxPhysical ? null : (maxPhysical ?? this.maxPhysical),
       sort: sort ?? this.sort,
@@ -246,46 +258,46 @@ class PlayerFilter {
   }
 
   Map<String, dynamic> toJson() => {
-        'query': query,
-        'position': position,
-        'version': version,
-        'rarity': rarity,
-        'card_type': cardType,
-        'league': league,
-        'club': club,
-        'nation': nation,
-        'min_rating': minRating,
-        'max_rating': maxRating,
-        'min_price': minPrice,
-        'max_price': maxPrice,
-        'platform': platform,
-        'play_style': playStyle,
-        'play_style_plus': playStylePlus,
-        'role': role,
-        'min_skill_moves': minSkillMoves,
-        'min_weak_foot': minWeakFoot,
-        'min_pace': minPace,
-        'max_pace': maxPace,
-        'min_shooting': minShooting,
-        'max_shooting': maxShooting,
-        'min_passing': minPassing,
-        'max_passing': maxPassing,
-        'min_dribbling': minDribbling,
-        'max_dribbling': maxDribbling,
-        'min_defending': minDefending,
-        'max_defending': maxDefending,
-        'min_physical': minPhysical,
-        'max_physical': maxPhysical,
-        'sort': sort.name,
-      };
+    'query': query,
+    'position': position,
+    'version': version,
+    'rarity': rarity,
+    'card_type': cardType,
+    'league': league,
+    'club': club,
+    'nation': nation,
+    'min_rating': minRating,
+    'max_rating': maxRating,
+    'min_price': minPrice,
+    'max_price': maxPrice,
+    'platform': platform,
+    'play_style': playStyle,
+    'play_style_plus': playStylePlus,
+    'role': role,
+    'min_skill_moves': minSkillMoves,
+    'min_weak_foot': minWeakFoot,
+    'min_pace': minPace,
+    'max_pace': maxPace,
+    'min_shooting': minShooting,
+    'max_shooting': maxShooting,
+    'min_passing': minPassing,
+    'max_passing': maxPassing,
+    'min_dribbling': minDribbling,
+    'max_dribbling': maxDribbling,
+    'min_defending': minDefending,
+    'max_defending': maxDefending,
+    'min_physical': minPhysical,
+    'max_physical': maxPhysical,
+    'sort': sort.name,
+  };
 
   factory PlayerFilter.fromJson(Map<String, dynamic> json) {
     int? asNullableInt(dynamic value) =>
         value == null ? null : int.tryParse(value.toString());
     PlayerSort parseSort(dynamic value) => PlayerSort.values.firstWhere(
-          (e) => e.name == value,
-          orElse: () => PlayerSort.ratingDesc,
-        );
+      (e) => e.name == value,
+      orElse: () => PlayerSort.ratingDesc,
+    );
 
     return PlayerFilter(
       query: (json['query'] ?? '').toString(),
@@ -324,21 +336,16 @@ class PlayerFilter {
 }
 
 class PlayerSearchResult {
-  const PlayerSearchResult({
-    required this.players,
-    required this.facets,
-  });
+  const PlayerSearchResult({required this.players, required this.facets});
 
   final List<Player> players;
   final PlayerFacets facets;
 }
 
 class PlayerRepository {
-  PlayerRepository({
-    FCBazApi? api,
-    PublicFcData? publicData,
-  })  : api = api ?? FCBazApi(),
-        publicData = publicData ?? PublicFcData();
+  PlayerRepository({FCBazApi? api, PublicFcData? publicData})
+    : api = api ?? FCBazApi(),
+      publicData = publicData ?? PublicFcData();
 
   final FCBazApi api;
   final PublicFcData publicData;

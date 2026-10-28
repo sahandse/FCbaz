@@ -37,20 +37,21 @@ void main() {
   const engine = ChemistryEngineFC27();
   final formation = Formations.byId('433');
 
-  test('reports out-of-position players instead of silently treating them as valid', () {
-    final result = engine.calculate(
-      formation: formation,
-      playersBySlot: {
-        'gk': makePlayer(id: '1', position: 'ST'),
-      },
-    );
+  test(
+    'reports out-of-position players instead of silently treating them as valid',
+    () {
+      final result = engine.calculate(
+        formation: formation,
+        playersBySlot: {'gk': makePlayer(id: '1', position: 'ST')},
+      );
 
-    expect(result.total, 0);
-    expect(result.filledSlots, 1);
-    expect(result.inPositionSlots, 0);
-    expect(result.hasOutOfPositionPlayers, isTrue);
-    expect(result.details['gk']?.inPosition, isFalse);
-  });
+      expect(result.total, 0);
+      expect(result.filledSlots, 1);
+      expect(result.inPositionSlots, 0);
+      expect(result.hasOutOfPositionPlayers, isTrue);
+      expect(result.details['gk']?.inPosition, isFalse);
+    },
+  );
 
   test('keeps per-slot chemistry diagnostics', () {
     final result = engine.calculate(

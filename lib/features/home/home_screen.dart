@@ -188,7 +188,9 @@ class _HomeScreenState extends State<HomeScreen> {
                                     player.version,
                                     maxLines: 1,
                                     overflow: TextOverflow.ellipsis,
-                                    style: Theme.of(context).textTheme.labelSmall,
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.labelSmall,
                                   ),
                               ],
                             ),
@@ -259,9 +261,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 title: 'چالش‌های جدید',
                 subtitle: 'SBCهای فعال FC27',
                 trailing: TextButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SbcScreen()),
-                  ),
+                  onPressed: () => Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (_) => const SbcScreen())),
                   child: const Text('همه'),
                 ),
               ),
@@ -297,9 +299,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 subtitle: 'Evoهای فعال و جدید',
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const EvolutionsScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const EvolutionsScreen()),
                   ),
                   child: const Text('همه'),
                 ),
@@ -337,12 +337,12 @@ class _HomeScreenState extends State<HomeScreen> {
                                   evo.title,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(fontWeight: FontWeight.w900),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                                 Text(
-                                  evo.cost == 0
-                                      ? 'رایگان'
-                                      : '${evo.cost} سکه',
+                                  evo.cost == 0 ? 'رایگان' : '${evo.cost} سکه',
                                   style: Theme.of(context).textTheme.labelSmall,
                                 ),
                               ],
@@ -362,9 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 subtitle: 'ماموریت‌ها و پاداش‌های زنده',
                 trailing: TextButton(
                   onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => const ObjectivesScreen(),
-                    ),
+                    MaterialPageRoute(builder: (_) => const ObjectivesScreen()),
                   ),
                   child: const Text('همه'),
                 ),
@@ -403,10 +401,7 @@ class _HomeScreenState extends State<HomeScreen> {
 }
 
 class _HeroCard extends StatelessWidget {
-  const _HeroCard({
-    required this.onPlayers,
-    required this.onSearch,
-  });
+  const _HeroCard({required this.onPlayers, required this.onSearch});
 
   final VoidCallback onPlayers;
   final VoidCallback onSearch;
@@ -452,17 +447,14 @@ class _HeroCard extends StatelessWidget {
           Text(
             'FCBaz',
             style: Theme.of(context).textTheme.displaySmall?.copyWith(
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -1,
-                ),
+              fontWeight: FontWeight.w900,
+              letterSpacing: -1,
+            ),
           ),
           const SizedBox(height: 6),
           Text(
             'بازیکنان، بازار، چالش‌های ساخت ترکیب، تکامل‌ها، اهداف و تیم‌ساز؛ همه در یک داشبورد فارسی.',
-            style: TextStyle(
-              color: scheme.onSurfaceVariant,
-              height: 1.6,
-            ),
+            style: TextStyle(color: scheme.onSurfaceVariant, height: 1.6),
           ),
           const SizedBox(height: 18),
           Row(
@@ -598,19 +590,13 @@ class _QuickAction extends StatelessWidget {
             children: [
               Icon(icon, color: scheme.primary),
               const SizedBox(height: 9),
-              Text(
-                title,
-                style: const TextStyle(fontWeight: FontWeight.w900),
-              ),
+              Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
               const SizedBox(height: 2),
               Text(
                 subtitle,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                  color: scheme.onSurfaceVariant,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 11),
               ),
             ],
           ),

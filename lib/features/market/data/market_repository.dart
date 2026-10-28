@@ -9,9 +9,9 @@ class MarketRepository {
     FCBazApi? api,
     PublicFcData? publicData,
     FutbinPublicPriceService? futbinPrice,
-  })  : api = api ?? FCBazApi(),
-        publicData = publicData ?? PublicFcData(),
-        futbinPrice = futbinPrice ?? FutbinPublicPriceService();
+  }) : api = api ?? FCBazApi(),
+       publicData = publicData ?? PublicFcData(),
+       futbinPrice = futbinPrice ?? FutbinPublicPriceService();
 
   final FCBazApi api;
   final PublicFcData publicData;
@@ -24,7 +24,8 @@ class MarketRepository {
   }) async {
     if (api.isConfigured) {
       try {
-        final path = '/api/v1/players/' +
+        final path =
+            '/api/v1/players/' +
             Uri.encodeComponent(playerId) +
             '/price?platform=' +
             Uri.encodeQueryComponent(platform);
@@ -33,7 +34,9 @@ class MarketRepository {
           forceRefresh: forceRefresh,
           cacheTtl: const Duration(seconds: 30),
         );
-        final raw = json is Map ? (json['data'] ?? json['price'] ?? json) : json;
+        final raw = json is Map
+            ? (json['data'] ?? json['price'] ?? json)
+            : json;
         if (raw is Map) {
           final parsed = PlayerPrice.fromJson(Map<String, dynamic>.from(raw));
           if (parsed.current > 0) return parsed;
@@ -52,10 +55,7 @@ class MarketRepository {
       }
     }
 
-    final direct = await publicData.getPrice(
-      playerId,
-      platform: platform,
-    );
+    final direct = await publicData.getPrice(playerId, platform: platform);
     if (direct != null) {
       final parsed = PlayerPrice.fromJson(direct);
       if (parsed.current > 0) return parsed;
@@ -76,7 +76,8 @@ class MarketRepository {
       );
     }
 
-    final path = '/api/v1/players/' +
+    final path =
+        '/api/v1/players/' +
         Uri.encodeComponent(playerId) +
         '/price-history?platform=' +
         Uri.encodeQueryComponent(platform) +
@@ -175,8 +176,10 @@ class MarketRepository {
     if (api.isConfigured) {
       try {
         final query = params.entries
-            .map((e) =>
-                '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}')
+            .map(
+              (e) =>
+                  '${Uri.encodeQueryComponent(e.key)}=${Uri.encodeQueryComponent(e.value)}',
+            )
             .join('&');
 
         final json = await api.getJson(
@@ -184,16 +187,20 @@ class MarketRepository {
           forceRefresh: forceRefresh,
           cacheTtl: const Duration(seconds: 45),
         );
-        final raw = json is Map ? (json['data'] ?? json['players'] ?? []) : json;
+        final raw = json is Map
+            ? (json['data'] ?? json['players'] ?? [])
+            : json;
 
         if (raw is List) {
           final players = raw
               .whereType<Map>()
               .map((e) => Player.fromJson(Map<String, dynamic>.from(e)))
-              .where((p) =>
-                  p.id.isNotEmpty &&
-                  p.name.isNotEmpty &&
-                  (platform == 'pc' ? p.pricePc : p.pricePs) > 0)
+              .where(
+                (p) =>
+                    p.id.isNotEmpty &&
+                    p.name.isNotEmpty &&
+                    (platform == 'pc' ? p.pricePc : p.pricePs) > 0,
+              )
               .toList();
           if (players.isNotEmpty) return players;
         }

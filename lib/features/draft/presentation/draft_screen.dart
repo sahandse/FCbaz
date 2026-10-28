@@ -68,8 +68,8 @@ class _DraftScreenState extends State<DraftScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : (_draftState == null
-              ? const Center(child: Text('خطا در شروع درافت'))
-              : _buildDraftContent(scheme)),
+                ? const Center(child: Text('خطا در شروع درافت'))
+                : _buildDraftContent(scheme)),
     );
   }
 
@@ -91,10 +91,7 @@ class _DraftScreenState extends State<DraftScreen> {
         const SizedBox(height: 16),
 
         if (state.isCompleted) ...[
-          _DraftCompletedSummary(
-            state: state,
-            onRestart: _restartDraft,
-          ),
+          _DraftCompletedSummary(state: state, onRestart: _restartDraft),
         ] else ...[
           // Current Selection Prompt
           _SlotPromptHeader(slot: state.slots[state.currentSlotIndex]),
@@ -125,7 +122,9 @@ class _DraftScreenState extends State<DraftScreen> {
         // Selected Squad Grid preview
         Text(
           'ترکیب انتخاب شده تا الان:',
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
         ),
         const SizedBox(height: 10),
         _PicksList(state: state),
@@ -158,7 +157,9 @@ class _DraftScoreboard extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF101A12),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFCAFF38).withValues(alpha: .28)),
+        border: Border.all(
+          color: const Color(0xFFCAFF38).withValues(alpha: .28),
+        ),
       ),
       child: Column(
         children: [
@@ -167,20 +168,30 @@ class _DraftScoreboard extends StatelessWidget {
             children: [
               Text(
                 'سیستم: $formation',
-                style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13, color: Colors.white70),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13,
+                  color: Colors.white70,
+                ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: isCompleted ? Colors.green.withValues(alpha: .2) : const Color(0xFFCAFF38).withValues(alpha: .15),
+                  color: isCompleted
+                      ? Colors.green.withValues(alpha: .2)
+                      : const Color(0xFFCAFF38).withValues(alpha: .15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  isCompleted ? 'تکمیل شد ✓' : 'موقعیت ${currentSlot + 1} از $totalSlots',
+                  isCompleted
+                      ? 'تکمیل شد ✓'
+                      : 'موقعیت ${currentSlot + 1} از $totalSlots',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: isCompleted ? Colors.greenAccent : const Color(0xFFCAFF38),
+                    color: isCompleted
+                        ? Colors.greenAccent
+                        : const Color(0xFFCAFF38),
                   ),
                 ),
               ),
@@ -234,7 +245,11 @@ class _MetricItem extends StatelessWidget {
             const SizedBox(width: 4),
             Text(
               value,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w900, color: color),
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: color,
+              ),
             ),
           ],
         ),
@@ -271,14 +286,21 @@ class _SlotPromptHeader extends StatelessWidget {
             ),
             child: Text(
               slot.position,
-              style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.black, fontSize: 13),
+              style: const TextStyle(
+                fontWeight: FontWeight.w900,
+                color: Colors.black,
+                fontSize: 13,
+              ),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               'انتخاب ${slot.titleFa} (${slot.position})',
-              style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5),
+              style: const TextStyle(
+                fontWeight: FontWeight.w800,
+                fontSize: 13.5,
+              ),
             ),
           ),
         ],
@@ -303,7 +325,11 @@ class _DraftCompletedSummary extends StatelessWidget {
       ),
       child: Column(
         children: [
-          const Icon(Icons.emoji_events_rounded, size: 52, color: Color(0xFFCAFF38)),
+          const Icon(
+            Icons.emoji_events_rounded,
+            size: 52,
+            color: Color(0xFFCAFF38),
+          ),
           const SizedBox(height: 10),
           const Text(
             '🎉 درافت با موفقیت بسته شد!',
@@ -359,7 +385,11 @@ class _PickRow extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF0F1511),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: player != null ? const Color(0xFFCAFF38).withValues(alpha: .2) : Colors.white10),
+        border: Border.all(
+          color: player != null
+              ? const Color(0xFFCAFF38).withValues(alpha: .2)
+              : Colors.white10,
+        ),
       ),
       child: Row(
         children: [
@@ -368,7 +398,9 @@ class _PickRow extends StatelessWidget {
             alignment: Alignment.center,
             padding: const EdgeInsets.symmetric(vertical: 4),
             decoration: BoxDecoration(
-              color: player != null ? const Color(0xFFCAFF38).withValues(alpha: .15) : Colors.white10,
+              color: player != null
+                  ? const Color(0xFFCAFF38).withValues(alpha: .15)
+                  : Colors.white10,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
@@ -376,7 +408,9 @@ class _PickRow extends StatelessWidget {
               style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 11,
-                color: player != null ? const Color(0xFFCAFF38) : Colors.white60,
+                color: player != null
+                    ? const Color(0xFFCAFF38)
+                    : Colors.white60,
               ),
             ),
           ),
@@ -385,7 +419,10 @@ class _PickRow extends StatelessWidget {
             child: player != null
                 ? Text(
                     player!.name,
-                    style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 13,
+                    ),
                   )
                 : Text(
                     'انتخاب نشده (${slot.titleFa})',
@@ -401,7 +438,11 @@ class _PickRow extends StatelessWidget {
               ),
               child: Text(
                 '${player!.rating}',
-                style: const TextStyle(fontWeight: FontWeight.w900, color: Colors.black, fontSize: 11),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  color: Colors.black,
+                  fontSize: 11,
+                ),
               ),
             ),
           ],

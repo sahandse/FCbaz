@@ -42,17 +42,19 @@ void main() {
       targetRating: 84,
       minCardRating: 83,
       maxCardRating: 85,
-      cheapestPriceByRating: const {
-        83: 900,
-        84: 1800,
-      },
+      cheapestPriceByRating: const {83: 900, 84: 1800},
       limit: 30,
     );
 
     expect(combinations, isNotEmpty);
-    final usesMissingPrice = combinations.where((item) => item.counts.containsKey(85));
+    final usesMissingPrice = combinations.where(
+      (item) => item.counts.containsKey(85),
+    );
     expect(usesMissingPrice, isNotEmpty);
-    expect(usesMissingPrice.every((item) => item.estimatedCost == null), isTrue);
+    expect(
+      usesMissingPrice.every((item) => item.estimatedCost == null),
+      isTrue,
+    );
   });
 
   test('cost is calculated only from supplied real price map', () {
@@ -60,11 +62,7 @@ void main() {
       targetRating: 83,
       minCardRating: 82,
       maxCardRating: 84,
-      cheapestPriceByRating: const {
-        82: 700,
-        83: 900,
-        84: 1400,
-      },
+      cheapestPriceByRating: const {82: 700, 83: 900, 84: 1400},
       limit: 10,
     );
 

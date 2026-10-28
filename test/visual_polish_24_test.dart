@@ -46,10 +46,7 @@ Future<void> _pumpTile(
             child: SizedBox(
               width: 160,
               height: 320,
-              child: PlayerMarketTile(
-                player: _player(),
-                heroTag: heroTag,
-              ),
+              child: PlayerMarketTile(player: _player(), heroTag: heroTag),
             ),
           ),
         ),
@@ -85,16 +82,15 @@ void main() {
     expect(source, contains('FontFeature.tabularFigures()'));
   });
 
-  testWidgets('tile renders a Hero only when a tag is provided', (tester) async {
+  testWidgets('tile renders a Hero only when a tag is provided', (
+    tester,
+  ) async {
     await _pumpTile(tester);
     expect(find.byType(Hero), findsNothing);
 
     await _pumpTile(tester, heroTag: 'fc27-player-card-1');
     expect(find.byType(Hero), findsOneWidget);
-    expect(
-      tester.widget<Hero>(find.byType(Hero)).tag,
-      'fc27-player-card-1',
-    );
+    expect(tester.widget<Hero>(find.byType(Hero)).tag, 'fc27-player-card-1');
   });
 
   testWidgets('price and stats use tabular figures', (tester) async {
@@ -113,7 +109,9 @@ void main() {
     );
   });
 
-  testWidgets('grid skeleton matches the collection grid ratio', (tester) async {
+  testWidgets('grid skeleton matches the collection grid ratio', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         theme: FCBazTheme.dark(),

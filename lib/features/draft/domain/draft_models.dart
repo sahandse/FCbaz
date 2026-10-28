@@ -68,12 +68,37 @@ class DraftSimulatorService {
   static const List<DraftSlot> defaultSlots = [
     DraftSlot(index: 0, position: 'GK', category: 'GK', titleFa: 'دروازه‌بان'),
     DraftSlot(index: 1, position: 'RB', category: 'DEF', titleFa: 'مدافع راست'),
-    DraftSlot(index: 2, position: 'CB', category: 'DEF', titleFa: 'مدافع میانی ۱'),
-    DraftSlot(index: 3, position: 'CB', category: 'DEF', titleFa: 'مدافع میانی ۲'),
+    DraftSlot(
+      index: 2,
+      position: 'CB',
+      category: 'DEF',
+      titleFa: 'مدافع میانی ۱',
+    ),
+    DraftSlot(
+      index: 3,
+      position: 'CB',
+      category: 'DEF',
+      titleFa: 'مدافع میانی ۲',
+    ),
     DraftSlot(index: 4, position: 'LB', category: 'DEF', titleFa: 'مدافع چپ'),
-    DraftSlot(index: 5, position: 'CDM', category: 'MID', titleFa: 'هافبک دفاعی'),
-    DraftSlot(index: 6, position: 'CM', category: 'MID', titleFa: 'هافبک میانی'),
-    DraftSlot(index: 7, position: 'CAM', category: 'MID', titleFa: 'هافبک هجومی'),
+    DraftSlot(
+      index: 5,
+      position: 'CDM',
+      category: 'MID',
+      titleFa: 'هافبک دفاعی',
+    ),
+    DraftSlot(
+      index: 6,
+      position: 'CM',
+      category: 'MID',
+      titleFa: 'هافبک میانی',
+    ),
+    DraftSlot(
+      index: 7,
+      position: 'CAM',
+      category: 'MID',
+      titleFa: 'هافبک هجومی',
+    ),
     DraftSlot(index: 8, position: 'RW', category: 'ATT', titleFa: 'وینگر راست'),
     DraftSlot(index: 9, position: 'ST', category: 'ATT', titleFa: 'مهاجم نوک'),
     DraftSlot(index: 10, position: 'LW', category: 'ATT', titleFa: 'وینگر چپ'),
@@ -126,7 +151,9 @@ class DraftSimulatorService {
       case 'MID':
         return allPos.any((x) => ['CDM', 'CM', 'CAM', 'RM', 'LM'].contains(x));
       case 'ATT':
-        return allPos.any((x) => ['ST', 'CF', 'RW', 'LW', 'RF', 'LF'].contains(x));
+        return allPos.any(
+          (x) => ['ST', 'CF', 'RW', 'LW', 'RF', 'LF'].contains(x),
+        );
       default:
         return true;
     }

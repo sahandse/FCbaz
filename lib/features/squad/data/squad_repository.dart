@@ -18,9 +18,10 @@ class SquadRepository {
 
       return decoded
           .whereType<Map>()
-          .map((entry) => SquadStateModel.fromJson(
-                Map<String, dynamic>.from(entry),
-              ))
+          .map(
+            (entry) =>
+                SquadStateModel.fromJson(Map<String, dynamic>.from(entry)),
+          )
           .where((s) => s.id.isNotEmpty)
           .toList();
     } catch (_) {
@@ -62,9 +63,7 @@ class SquadRepository {
       throw const FormatException('فایل ترکیب معتبر نیست.');
     }
 
-    final squad = SquadStateModel.fromJson(
-      Map<String, dynamic>.from(decoded),
-    );
+    final squad = SquadStateModel.fromJson(Map<String, dynamic>.from(decoded));
 
     if (squad.id.isEmpty || squad.playersBySlot.length > 11) {
       throw const FormatException('ساختار ترکیب معتبر نیست.');

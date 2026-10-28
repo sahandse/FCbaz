@@ -94,10 +94,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(
-            'ظاهر و زبان',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('ظاهر و زبان', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 10),
           Card(
             child: Column(
@@ -140,7 +137,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     children: [
                       const Text(
                         'رنگ تم اختصاصی باشگاه (Club Accent)',
-                        style: TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       Wrap(
@@ -151,31 +151,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
                             label: 'سبز EA Sports',
                             color: const Color(0xFFC8FF42),
                             isSelected: settings.accentColorValue == 0xFFC8FF42,
-                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFFC8FF42)),
+                            onTap: () => _apply(
+                              settings.copyWith(accentColorValue: 0xFFC8FF42),
+                            ),
                           ),
                           _AccentColorChip(
                             label: 'فیروزه‌ای City',
                             color: const Color(0xFF7DEBFF),
                             isSelected: settings.accentColorValue == 0xFF7DEBFF,
-                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFF7DEBFF)),
+                            onTap: () => _apply(
+                              settings.copyWith(accentColorValue: 0xFF7DEBFF),
+                            ),
                           ),
                           _AccentColorChip(
                             label: 'طلایی آیکان',
                             color: const Color(0xFFFFD700),
                             isSelected: settings.accentColorValue == 0xFFFFD700,
-                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFFFFD700)),
+                            onTap: () => _apply(
+                              settings.copyWith(accentColorValue: 0xFFFFD700),
+                            ),
                           ),
                           _AccentColorChip(
                             label: 'قرمز بارسا/آرسنال',
                             color: const Color(0xFFFF3366),
                             isSelected: settings.accentColorValue == 0xFFFF3366,
-                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFFFF3366)),
+                            onTap: () => _apply(
+                              settings.copyWith(accentColorValue: 0xFFFF3366),
+                            ),
                           ),
                           _AccentColorChip(
                             label: 'بنفش هولوگرافیک',
                             color: const Color(0xFFB388FF),
                             isSelected: settings.accentColorValue == 0xFFB388FF,
-                            onTap: () => _apply(settings.copyWith(accentColorValue: 0xFFB388FF)),
+                            onTap: () => _apply(
+                              settings.copyWith(accentColorValue: 0xFFB388FF),
+                            ),
                           ),
                         ],
                       ),
@@ -223,7 +233,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                               health?.isFresh == true
                                   ? 'Catalog زنده و معتبر'
                                   : 'وضعیت Catalog',
-                              style: const TextStyle(fontWeight: FontWeight.w900),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                              ),
                             ),
                             Text(
                               health?.fromPersistentCache == true
@@ -282,10 +294,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          Text(
-            'بازار و اعلان',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('بازار و اعلان', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 10),
           DropdownButtonFormField<String>(
             initialValue: settings.defaultPlatform,
@@ -320,10 +329,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 20),
-          Text(
-            'نسخه برنامه',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
+          Text('نسخه برنامه', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 10),
           Card(
             child: Padding(
@@ -358,8 +364,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       updateResult!.release == null
                           ? 'هنوز Release عمومی منتشر نشده است.'
                           : updateResult!.updateAvailable
-                              ? 'نسخه جدید ${updateResult!.release!.normalizedVersion} منتشر شده است.'
-                              : 'نسخه نصب‌شده به‌روز است.',
+                          ? 'نسخه جدید ${updateResult!.release!.normalizedVersion} منتشر شده است.'
+                          : 'نسخه نصب‌شده به‌روز است.',
                       style: TextStyle(
                         color: updateResult!.updateAvailable
                             ? Theme.of(context).colorScheme.primary
@@ -431,7 +437,10 @@ class _AccentColorChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isSelected ? color.withValues(alpha: .2) : Colors.white10,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: isSelected ? color : Colors.transparent, width: 1.5),
+          border: Border.all(
+            color: isSelected ? color : Colors.transparent,
+            width: 1.5,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -442,7 +451,13 @@ class _AccentColorChip extends StatelessWidget {
               decoration: BoxDecoration(color: color, shape: BoxShape.circle),
             ),
             const SizedBox(width: 6),
-            Text(label, style: TextStyle(fontSize: 11, fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
+              ),
+            ),
           ],
         ),
       ),

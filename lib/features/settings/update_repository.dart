@@ -21,13 +21,13 @@ class AppReleaseInfo {
       tagName.toLowerCase().startsWith('v') ? tagName.substring(1) : tagName;
 
   factory AppReleaseInfo.fromJson(Map<String, dynamic> json) => AppReleaseInfo(
-        tagName: (json['tag_name'] ?? '').toString(),
-        name: (json['name'] ?? '').toString(),
-        htmlUrl: (json['html_url'] ?? '').toString(),
-        publishedAt: DateTime.tryParse((json['published_at'] ?? '').toString()),
-        prerelease: json['prerelease'] == true,
-        draft: json['draft'] == true,
-      );
+    tagName: (json['tag_name'] ?? '').toString(),
+    name: (json['name'] ?? '').toString(),
+    htmlUrl: (json['html_url'] ?? '').toString(),
+    publishedAt: DateTime.tryParse((json['published_at'] ?? '').toString()),
+    prerelease: json['prerelease'] == true,
+    draft: json['draft'] == true,
+  );
 }
 
 class UpdateCheckResult {
@@ -46,8 +46,10 @@ class UpdateRepository {
   UpdateRepository({FCBazApi? api}) : api = api ?? FCBazApi();
   final FCBazApi api;
 
-  static const currentVersion =
-      String.fromEnvironment('FCBAZ_APP_VERSION', defaultValue: '2.3.2');
+  static const currentVersion = String.fromEnvironment(
+    'FCBAZ_APP_VERSION',
+    defaultValue: '2.3.2',
+  );
 
   Future<UpdateCheckResult> check() async {
     final json = await api.getJson('/api/v1/app/latest-release');
@@ -62,7 +64,8 @@ class UpdateRepository {
     }
 
     final release = AppReleaseInfo.fromJson(Map<String, dynamic>.from(raw));
-    final available = !release.draft &&
+    final available =
+        !release.draft &&
         !release.prerelease &&
         _compareVersions(release.normalizedVersion, currentVersion) > 0;
 

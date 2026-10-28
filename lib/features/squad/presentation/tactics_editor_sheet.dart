@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import '../domain/squad_models.dart';
 
 class TacticsEditorSheet extends StatefulWidget {
-  const TacticsEditorSheet({
-    required this.current,
-    super.key,
-  });
+  const TacticsEditorSheet({required this.current, super.key});
 
   final TacticProfile current;
 
@@ -28,10 +25,14 @@ class _TacticsEditorSheetState extends State<TacticsEditorSheet> {
     name = TextEditingController(text: widget.current.name);
     code = TextEditingController(text: widget.current.code);
     notes = TextEditingController(text: widget.current.notes);
-    buildUpStyle = TacticProfile.buildUpStyles.contains(widget.current.buildUpStyle)
+    buildUpStyle =
+        TacticProfile.buildUpStyles.contains(widget.current.buildUpStyle)
         ? widget.current.buildUpStyle
         : 'Balanced';
-    defensiveApproach = TacticProfile.defensiveApproaches.contains(widget.current.defensiveApproach)
+    defensiveApproach =
+        TacticProfile.defensiveApproaches.contains(
+          widget.current.defensiveApproach,
+        )
         ? widget.current.defensiveApproach
         : 'Balanced';
     lineHeight = (widget.current.lineHeight ?? 50).toDouble();
@@ -146,7 +147,9 @@ class _TacticsEditorSheetState extends State<TacticsEditorSheet> {
               onPressed: () => Navigator.pop(
                 context,
                 TacticProfile(
-                  name: name.text.trim().isEmpty ? 'پلن اصلی' : name.text.trim(),
+                  name: name.text.trim().isEmpty
+                      ? 'پلن اصلی'
+                      : name.text.trim(),
                   code: code.text.trim(),
                   buildUpStyle: buildUpStyle,
                   defensiveApproach: defensiveApproach,

@@ -24,10 +24,12 @@ class DeadlineAlertService {
     EvolutionRepository? evolutionRepository,
     NotificationRepository? notificationRepository,
     NotificationPreferencesRepository? preferencesRepository,
-  })  : homeRepository = homeRepository ?? HomeRepository(),
-        evolutionRepository = evolutionRepository ?? EvolutionRepository(),
-        notificationRepository = notificationRepository ?? NotificationRepository(),
-        preferencesRepository = preferencesRepository ?? NotificationPreferencesRepository();
+  }) : homeRepository = homeRepository ?? HomeRepository(),
+       evolutionRepository = evolutionRepository ?? EvolutionRepository(),
+       notificationRepository =
+           notificationRepository ?? NotificationRepository(),
+       preferencesRepository =
+           preferencesRepository ?? NotificationPreferencesRepository();
 
   final HomeRepository homeRepository;
   final EvolutionRepository evolutionRepository;
@@ -45,7 +47,9 @@ class DeadlineAlertService {
 
     if (preferences.objectiveDeadlines) {
       try {
-        final objectives = await homeRepository.getObjectives(forceRefresh: true);
+        final objectives = await homeRepository.getObjectives(
+          forceRefresh: true,
+        );
         checkedObjectives = objectives.length;
         for (final objective in objectives) {
           final expiresAt = objective.expiresAt;
@@ -65,7 +69,8 @@ class DeadlineAlertService {
           }
 
           final remaining = expiresAt.difference(now);
-          final key = 'objective_deadline:${objective.id}:${expiresAt.toIso8601String()}';
+          final key =
+              'objective_deadline:${objective.id}:${expiresAt.toIso8601String()}';
           final states = await notificationRepository.alertStates();
           if (states[key] == 'sent') continue;
           await notificationRepository.add(
@@ -73,7 +78,8 @@ class DeadlineAlertService {
               id: key,
               type: 'objective_deadline',
               title: 'مهلت Objective رو به پایان است',
-              body: '${objective.title} تا ${_remainingLabel(remaining)} دیگر فعال است.',
+              body:
+                  '${objective.title} تا ${_remainingLabel(remaining)} دیگر فعال است.',
               createdAt: now,
               destinationId: objective.id,
             ),
@@ -114,7 +120,8 @@ class DeadlineAlertService {
           }
 
           final remaining = expiresAt.difference(now);
-          final key = 'evolution_deadline:${evolution.id}:${expiresAt.toIso8601String()}';
+          final key =
+              'evolution_deadline:${evolution.id}:${expiresAt.toIso8601String()}';
           final states = await notificationRepository.alertStates();
           if (states[key] == 'sent') continue;
           await notificationRepository.add(
@@ -122,7 +129,8 @@ class DeadlineAlertService {
               id: key,
               type: 'evolution_deadline',
               title: 'مهلت Evolution رو به پایان است',
-              body: '${evolution.title} تا ${_remainingLabel(remaining)} دیگر فعال است.',
+              body:
+                  '${evolution.title} تا ${_remainingLabel(remaining)} دیگر فعال است.',
               createdAt: now,
               destinationId: evolution.id,
             ),

@@ -79,48 +79,48 @@ class MyClubItem {
   }
 
   Player toPlayer() => Player(
-        id: playerId,
-        name: playerName,
-        rating: rating,
-        position: position,
-        positions: positions,
-        clubName: clubName,
-        leagueName: leagueName,
-        nationName: nationName,
-        version: version,
-        imageUrl: imageUrl,
-        pace: pace,
-        shooting: shooting,
-        passing: passing,
-        dribbling: dribbling,
-        defending: defending,
-        physical: physical,
-        skillMoves: skillMoves,
-        weakFoot: weakFoot,
-      );
+    id: playerId,
+    name: playerName,
+    rating: rating,
+    position: position,
+    positions: positions,
+    clubName: clubName,
+    leagueName: leagueName,
+    nationName: nationName,
+    version: version,
+    imageUrl: imageUrl,
+    pace: pace,
+    shooting: shooting,
+    passing: passing,
+    dribbling: dribbling,
+    defending: defending,
+    physical: physical,
+    skillMoves: skillMoves,
+    weakFoot: weakFoot,
+  );
 
   Map<String, dynamic> toJson() => {
-        'player_id': playerId,
-        'player_name': playerName,
-        'rating': rating,
-        'position': position,
-        'positions': positions,
-        'club_name': clubName,
-        'league_name': leagueName,
-        'nation_name': nationName,
-        'version': version,
-        'image_url': imageUrl,
-        'pace': pace,
-        'shooting': shooting,
-        'passing': passing,
-        'dribbling': dribbling,
-        'defending': defending,
-        'physical': physical,
-        'skill_moves': skillMoves,
-        'weak_foot': weakFoot,
-        'acquisition_price': acquisitionPrice,
-        'untradeable': untradeable,
-      };
+    'player_id': playerId,
+    'player_name': playerName,
+    'rating': rating,
+    'position': position,
+    'positions': positions,
+    'club_name': clubName,
+    'league_name': leagueName,
+    'nation_name': nationName,
+    'version': version,
+    'image_url': imageUrl,
+    'pace': pace,
+    'shooting': shooting,
+    'passing': passing,
+    'dribbling': dribbling,
+    'defending': defending,
+    'physical': physical,
+    'skill_moves': skillMoves,
+    'weak_foot': weakFoot,
+    'acquisition_price': acquisitionPrice,
+    'untradeable': untradeable,
+  };
 
   factory MyClubItem.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic value) =>
@@ -196,7 +196,8 @@ class MyClubRepository {
 
   Future<void> remove(String playerId) async {
     final prefs = await SharedPreferences.getInstance();
-    final items = [...await getAll()]..removeWhere((e) => e.playerId == playerId);
+    final items = [...await getAll()]
+      ..removeWhere((e) => e.playerId == playerId);
     await prefs.setString(
       _key,
       jsonEncode(items.map((e) => e.toJson()).toList()),

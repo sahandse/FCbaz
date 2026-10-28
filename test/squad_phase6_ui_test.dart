@@ -5,7 +5,9 @@ import 'package:fcbaz/features/squad/domain/squad_models.dart';
 import 'package:fcbaz/features/squad/presentation/squad_insights_panel.dart';
 
 void main() {
-  testWidgets('Squad insights renders Persian dashboard and real-data notice', (tester) async {
+  testWidgets('Squad insights renders Persian dashboard and real-data notice', (
+    tester,
+  ) async {
     const squad = SquadStateModel(
       id: 'test',
       name: 'ترکیب تست',

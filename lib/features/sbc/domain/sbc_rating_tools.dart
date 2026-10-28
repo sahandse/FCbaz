@@ -13,7 +13,8 @@ class SbcRatingCombination {
 
   List<int> get ratings {
     final out = <int>[];
-    final entries = counts.entries.toList()..sort((a, b) => b.key.compareTo(a.key));
+    final entries = counts.entries.toList()
+      ..sort((a, b) => b.key.compareTo(a.key));
     for (final entry in entries) {
       out.addAll(List<int>.filled(entry.value, entry.key));
     }
@@ -121,7 +122,9 @@ class SbcRatingCalculator {
 
     int? cost;
     if (cheapestPriceByRating.isNotEmpty &&
-        counts.keys.every((rating) => (cheapestPriceByRating[rating] ?? 0) > 0)) {
+        counts.keys.every(
+          (rating) => (cheapestPriceByRating[rating] ?? 0) > 0,
+        )) {
       var totalCost = 0;
       for (final entry in counts.entries) {
         totalCost += cheapestPriceByRating[entry.key]! * entry.value;
@@ -160,7 +163,8 @@ class SbcRatingCalculator {
       ..sort((a, b) {
         final untradeableA = isUntradeable(a) ? 1 : 0;
         final untradeableB = isUntradeable(b) ? 1 : 0;
-        if (untradeableA != untradeableB) return untradeableB.compareTo(untradeableA);
+        if (untradeableA != untradeableB)
+          return untradeableB.compareTo(untradeableA);
         return getRating(a).compareTo(getRating(b));
       });
 
@@ -181,11 +185,11 @@ class SbcRatingCalculator {
     final highest = List<T>.from(clubItems)
       ..sort((a, b) => getRating(b).compareTo(getRating(a)));
     final topSquad = highest.take(squadSize).toList();
-    if (calculateSquadRating(topSquad.map(getRating).toList()) >= targetRating) {
+    if (calculateSquadRating(topSquad.map(getRating).toList()) >=
+        targetRating) {
       return topSquad;
     }
 
     return [];
   }
-
 }

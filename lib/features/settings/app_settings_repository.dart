@@ -27,16 +27,14 @@ class AppSettings {
     bool? priceAlertsEnabled,
     bool? marketRefreshOnResume,
     int? accentColorValue,
-  }) =>
-      AppSettings(
-        themeMode: themeMode ?? this.themeMode,
-        localeCode: localeCode ?? this.localeCode,
-        defaultPlatform: defaultPlatform ?? this.defaultPlatform,
-        priceAlertsEnabled: priceAlertsEnabled ?? this.priceAlertsEnabled,
-        marketRefreshOnResume:
-            marketRefreshOnResume ?? this.marketRefreshOnResume,
-        accentColorValue: accentColorValue ?? this.accentColorValue,
-      );
+  }) => AppSettings(
+    themeMode: themeMode ?? this.themeMode,
+    localeCode: localeCode ?? this.localeCode,
+    defaultPlatform: defaultPlatform ?? this.defaultPlatform,
+    priceAlertsEnabled: priceAlertsEnabled ?? this.priceAlertsEnabled,
+    marketRefreshOnResume: marketRefreshOnResume ?? this.marketRefreshOnResume,
+    accentColorValue: accentColorValue ?? this.accentColorValue,
+  );
 }
 
 class AppSettingsRepository {

@@ -65,15 +65,15 @@ class DnsServer {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'nameEN': nameEn,
-        'cat': category,
-        'badge': badge,
-        'primary': primary,
-        'secondary': secondary,
-        'ping': ping,
-        'desc': desc,
-        'suitable': suitable,
-      };
+    'id': id,
+    'name': name,
+    'nameEN': nameEn,
+    'cat': category,
+    'badge': badge,
+    'primary': primary,
+    'secondary': secondary,
+    'ping': ping,
+    'desc': desc,
+    'suitable': suitable,
+  };
 }

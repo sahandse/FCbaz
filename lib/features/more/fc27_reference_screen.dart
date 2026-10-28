@@ -58,9 +58,27 @@ class Fc27ReferenceScreen extends StatelessWidget {
     'مهاجم': ['مهاجم هدف', 'شکارچی گل', 'مهاجم پیشرو', '۹ کاذب'],
     'وینگر': ['وینگر', 'مهاجم داخلی', 'بازی‌ساز کناری'],
     'هافبک هجومی': ['بازی‌ساز', 'مهاجم سایه', 'شماره ۱۰ کلاسیک', 'هاف‌وینگر'],
-    'هافبک مرکزی': ['باکس‌تو‌باکس', 'بازی‌ساز', 'بازی‌ساز عقب', 'نگهدارنده', 'هاف‌وینگر'],
-    'هافبک دفاعی': ['نگهدارنده', 'بازی‌ساز عقب', 'نفوذ از عقب', 'مدافع میانی', 'هافبک کناری'],
-    'مدافع کناری': ['فول‌بک', 'وینگ‌بک', 'فول‌بک کاذب', 'وینگ‌بک معکوس', 'وینگ‌بک هجومی'],
+    'هافبک مرکزی': [
+      'باکس‌تو‌باکس',
+      'بازی‌ساز',
+      'بازی‌ساز عقب',
+      'نگهدارنده',
+      'هاف‌وینگر',
+    ],
+    'هافبک دفاعی': [
+      'نگهدارنده',
+      'بازی‌ساز عقب',
+      'نفوذ از عقب',
+      'مدافع میانی',
+      'هافبک کناری',
+    ],
+    'مدافع کناری': [
+      'فول‌بک',
+      'وینگ‌بک',
+      'فول‌بک کاذب',
+      'وینگ‌بک معکوس',
+      'وینگ‌بک هجومی',
+    ],
     'مدافع میانی': ['مدافع', 'استاپر', 'مدافع کناری', 'مدافع بازی‌ساز'],
     'دروازه‌بان': ['دروازه‌بان', 'بازی با پا', 'سوئیپر کیپر'],
   };
@@ -86,14 +104,20 @@ class Fc27ReferenceScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 20),
-          Text('سبک‌های بازی', style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            'سبک‌های بازی',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 10),
           for (final entry in _playStyles.entries) ...[
             _GroupCard(title: entry.key, items: entry.value),
             const SizedBox(height: 10),
           ],
           const SizedBox(height: 10),
-          Text('نقش‌های بازیکن', style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            'نقش‌های بازیکن',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 10),
           for (final entry in _roles.entries) ...[
             _GroupCard(title: entry.key, items: entry.value),

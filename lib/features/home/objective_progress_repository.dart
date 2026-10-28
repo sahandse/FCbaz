@@ -20,12 +20,12 @@ class ObjectiveProgressEntry {
   String get key => '$objectiveId::$taskId';
 
   Map<String, dynamic> toJson() => {
-        'objective_id': objectiveId,
-        'task_id': taskId,
-        'progress': progress,
-        'completed': completed,
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'objective_id': objectiveId,
+    'task_id': taskId,
+    'progress': progress,
+    'completed': completed,
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   factory ObjectiveProgressEntry.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic value) =>
@@ -36,7 +36,8 @@ class ObjectiveProgressEntry {
       taskId: (json['task_id'] ?? '').toString(),
       progress: asInt(json['progress']),
       completed: json['completed'] == true,
-      updatedAt: DateTime.tryParse((json['updated_at'] ?? '').toString()) ??
+      updatedAt:
+          DateTime.tryParse((json['updated_at'] ?? '').toString()) ??
           DateTime.fromMillisecondsSinceEpoch(0),
     );
   }

@@ -31,9 +31,7 @@ class PriceHistoryChart extends StatelessWidget {
     if (points.length < 2) {
       return const SizedBox(
         height: 150,
-        child: Center(
-          child: Text('داده کافی برای نمودار قیمت وجود ندارد'),
-        ),
+        child: Center(child: Text('داده کافی برای نمودار قیمت وجود ندارد')),
       );
     }
 
@@ -138,8 +136,7 @@ class _PriceChartPainter extends CustomPainter {
 
     Offset pointAt(int index) {
       final x = size.width * index / (points.length - 1);
-      final normalized =
-          (values[index] - minValue) / (maxValue - minValue);
+      final normalized = (values[index] - minValue) / (maxValue - minValue);
       final y = size.height - normalized * size.height;
       return Offset(x, y);
     }

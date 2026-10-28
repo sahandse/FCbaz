@@ -91,15 +91,18 @@ class PlayerItemVisual extends StatelessWidget {
     // EA publishes the complete FC27 item card (rating, position, stats, name,
     // nation, league and club). When that artwork is available it *is* the card,
     // so it is shown as-is instead of being clipped and re-annotated.
-    final officialCard =
-        player.cardImageUrl.contains('/FC27/components/items/');
+    final officialCard = player.cardImageUrl.contains(
+      '/FC27/components/items/',
+    );
     // Hall of FUT items are outside EA's public ratings roster; FUT.GG publishes
     // the same complete item artwork for them, so both render as a full card.
     final fullCardArt = officialCard || player.cardArtUrl.isNotEmpty;
     final artworkUrl = officialCard ? player.cardImageUrl : player.cardArtUrl;
     // EA items are 440x548; FUT.GG item cards are 300x419, which is the same
     // ratio the drawn FCBaz shield uses.
-    final artworkHeightPerWidth = officialCard ? 548 / 440 : _shieldHeightPerWidth;
+    final artworkHeightPerWidth = officialCard
+        ? 548 / 440
+        : _shieldHeightPerWidth;
 
     return Directionality(
       textDirection: TextDirection.ltr,
@@ -118,10 +121,16 @@ class PlayerItemVisual extends StatelessWidget {
             final bodyHeight = h - footerHeight - footerGap;
             // Full-card artwork keeps its own canvas ratio; the drawn fallback
             // uses the FCBaz shield ratio.
-            final double heightPerWidth =
-                fullCardArt ? artworkHeightPerWidth : _shieldHeightPerWidth;
+            final double heightPerWidth = fullCardArt
+                ? artworkHeightPerWidth
+                : _shieldHeightPerWidth;
             final double shieldWidth = math.min(
-              w * (fullCardArt ? 1.0 : showPrices ? .96 : .98),
+              w *
+                  (fullCardArt
+                      ? 1.0
+                      : showPrices
+                      ? .96
+                      : .98),
               bodyHeight / heightPerWidth,
             );
             final double shieldHeight = shieldWidth * heightPerWidth;
@@ -155,24 +164,14 @@ class PlayerItemVisual extends StatelessWidget {
                           ),
                         )
                       : player.cardImageUrl.isNotEmpty
-                          ? ClipPath(
-                              clipper: FutCardClipper(ornate: theme.ornate),
-                              child: _ArtworkImage(
-                                url: player.cardImageUrl,
-                                fit: BoxFit.fill,
-                                width: shieldWidth,
-                                radius: 0,
-                                fallback: _CardBody(
-                                  player: player,
-                                  theme: theme,
-                                  compact: compact,
-                                  statLabels: statLabels,
-                                  statValues: statValues,
-                                  displayName: _titleCase(player.name),
-                                ),
-                              ),
-                            )
-                          : _CardBody(
+                      ? ClipPath(
+                          clipper: FutCardClipper(ornate: theme.ornate),
+                          child: _ArtworkImage(
+                            url: player.cardImageUrl,
+                            fit: BoxFit.fill,
+                            width: shieldWidth,
+                            radius: 0,
+                            fallback: _CardBody(
                               player: player,
                               theme: theme,
                               compact: compact,
@@ -180,6 +179,16 @@ class PlayerItemVisual extends StatelessWidget {
                               statValues: statValues,
                               displayName: _titleCase(player.name),
                             ),
+                          ),
+                        )
+                      : _CardBody(
+                          player: player,
+                          theme: theme,
+                          compact: compact,
+                          statLabels: statLabels,
+                          statValues: statValues,
+                          displayName: _titleCase(player.name),
+                        ),
                 ),
                 if (!fullCardArt && alternate.isNotEmpty)
                   Positioned(

@@ -4,16 +4,15 @@ import '../squad/domain/squad_models.dart';
 import 'data/my_club_repository.dart';
 
 class ClubPlayerValue {
-  const ClubPlayerValue({
-    required this.item,
-    required this.currentPrice,
-  });
+  const ClubPlayerValue({required this.item, required this.currentPrice});
 
   final MyClubItem item;
   final int? currentPrice;
 
   int? get profitLoss {
-    if (item.untradeable || currentPrice == null || item.acquisitionPrice <= 0) {
+    if (item.untradeable ||
+        currentPrice == null ||
+        item.acquisitionPrice <= 0) {
       return null;
     }
     return currentPrice! - item.acquisitionPrice;
@@ -51,11 +50,9 @@ class BestClubSquad {
 }
 
 class MyClubService {
-  MyClubService({
-    FCBazApi? api,
-    ChemistryEngineFC27? chemistryEngine,
-  })  : api = api ?? FCBazApi(),
-        chemistryEngine = chemistryEngine ?? const ChemistryEngineFC27();
+  MyClubService({FCBazApi? api, ChemistryEngineFC27? chemistryEngine})
+    : api = api ?? FCBazApi(),
+      chemistryEngine = chemistryEngine ?? const ChemistryEngineFC27();
 
   final FCBazApi api;
   final ChemistryEngineFC27 chemistryEngine;
@@ -101,10 +98,10 @@ class MyClubService {
     }
 
     final valued = items
-        .map((item) => ClubPlayerValue(
-              item: item,
-              currentPrice: prices[item.playerId],
-            ))
+        .map(
+          (item) =>
+              ClubPlayerValue(item: item, currentPrice: prices[item.playerId]),
+        )
         .toList();
 
     var total = 0;
@@ -165,8 +162,7 @@ class MyClubService {
       if (selected.length != 11) continue;
 
       final typedPlayers = {
-        for (final entry in selected.entries)
-          entry.key: entry.value.toPlayer(),
+        for (final entry in selected.entries) entry.key: entry.value.toPlayer(),
       };
 
       final chemistry = chemistryEngine.calculate(
@@ -174,29 +170,25 @@ class MyClubService {
         playersBySlot: typedPlayers,
       );
 
-      final avg = selected.values
+      final avg =
+          selected.values
               .map((e) => e.rating)
               .fold<int>(0, (sum, value) => sum + value) /
           11.0;
 
-      final positionalFit = selected.entries.fold<double>(
-        0,
-        (sum, entry) {
-          final slot = formation.slots.firstWhere((s) => s.id == entry.key);
-          return sum + (_isInPosition(entry.value, slot.position) ? 1 : 0);
-        },
-      );
+      final positionalFit = selected.entries.fold<double>(0, (sum, entry) {
+        final slot = formation.slots.firstWhere((s) => s.id == entry.key);
+        return sum + (_isInPosition(entry.value, slot.position) ? 1 : 0);
+      });
 
-      final score = chemistry.total * 100000 +
+      final score =
+          chemistry.total * 100000 +
           positionalFit * 10000 +
           avg * 100 +
-          selected.entries.fold<double>(
-            0,
-            (sum, entry) {
-              final slot = formation.slots.firstWhere((s) => s.id == entry.key);
-              return sum + _roleScore(entry.value, slot.position);
-            },
-          );
+          selected.entries.fold<double>(0, (sum, entry) {
+            final slot = formation.slots.firstWhere((s) => s.id == entry.key);
+            return sum + _roleScore(entry.value, slot.position);
+          });
 
       if (score > bestScore) {
         bestScore = score;
@@ -223,42 +215,49 @@ class MyClubService {
   double _roleScore(MyClubItem item, String slot) {
     if (slot == 'GK') return (item.rating * 10).toDouble();
     if (slot == 'CB') {
-      return (item.defending * 6 + item.physical * 4 + item.pace * 2).toDouble();
+      return (item.defending * 6 + item.physical * 4 + item.pace * 2)
+          .toDouble();
     }
     if (slot == 'LB' || slot == 'RB') {
       return (item.pace * 4 +
-          item.defending * 4 +
-          item.passing * 2 +
-          item.physical * 2).toDouble();
+              item.defending * 4 +
+              item.passing * 2 +
+              item.physical * 2)
+          .toDouble();
     }
     if (slot == 'CDM') {
       return (item.defending * 4 +
-          item.physical * 3 +
-          item.passing * 3 +
-          item.dribbling).toDouble();
+              item.physical * 3 +
+              item.passing * 3 +
+              item.dribbling)
+          .toDouble();
     }
     if (slot == 'CM') {
       return (item.passing * 4 +
-          item.dribbling * 3 +
-          item.physical * 2 +
-          item.defending * 2 +
-          item.shooting).toDouble();
+              item.dribbling * 3 +
+              item.physical * 2 +
+              item.defending * 2 +
+              item.shooting)
+          .toDouble();
     }
     if (slot == 'CAM') {
       return (item.passing * 4 +
-          item.dribbling * 4 +
-          item.shooting * 3 +
-          item.pace).toDouble();
+              item.dribbling * 4 +
+              item.shooting * 3 +
+              item.pace)
+          .toDouble();
     }
     if (slot == 'LW' || slot == 'RW' || slot == 'LM' || slot == 'RM') {
       return (item.pace * 4 +
-          item.dribbling * 4 +
-          item.passing * 2 +
-          item.shooting * 2).toDouble();
+              item.dribbling * 4 +
+              item.passing * 2 +
+              item.shooting * 2)
+          .toDouble();
     }
     return (item.shooting * 4 +
-        item.pace * 3 +
-        item.dribbling * 2 +
-        item.physical * 2).toDouble();
+            item.pace * 3 +
+            item.dribbling * 2 +
+            item.physical * 2)
+        .toDouble();
   }
 }

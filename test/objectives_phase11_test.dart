@@ -15,7 +15,7 @@ void main() {
             'title': 'Win matches',
             'target': 5,
             'reward': 'Pack',
-          }
+          },
         ],
       });
 

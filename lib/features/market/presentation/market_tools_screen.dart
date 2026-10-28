@@ -82,12 +82,14 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
     }
   }
 
-  int _price(Player player) => platform == 'pc' ? player.pricePc : player.pricePs;
+  int _price(Player player) =>
+      platform == 'pc' ? player.pricePc : player.pricePs;
 
   String _coins(int value) {
     if (value <= 0) return 'قیمت ناموجود';
     if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}M';
-    if (value >= 1000) return '${(value / 1000).toStringAsFixed(value >= 100000 ? 0 : 1)}K';
+    if (value >= 1000)
+      return '${(value / 1000).toStringAsFixed(value >= 100000 ? 0 : 1)}K';
     return value.toString();
   }
 
@@ -106,10 +108,7 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
       ),
       body: TabBarView(
         controller: tabController,
-        children: [
-          _buildCheapest(),
-          _buildPopular(),
-        ],
+        children: [_buildCheapest(), _buildPopular()],
       ),
     );
   }
@@ -120,11 +119,16 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
         children: [
-          Text('Cheapest by Rating', style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            'Cheapest by Rating',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 4),
           Text(
             'ارزان‌ترین کارت‌های واقعی بازار برای ساخت SBC؛ بدون قیمت یا بازیکن ساختگی.',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 16),
           Wrap(
@@ -169,7 +173,8 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
           else if (cheapest.isEmpty)
             const _StateCard(
               title: 'قیمت معتبری پیدا نشد',
-              subtitle: 'برای این ریتینگ و پلتفرم، منبع واقعی فعلاً نتیجه‌ای برنگرداند.',
+              subtitle:
+                  'برای این ریتینگ و پلتفرم، منبع واقعی فعلاً نتیجه‌ای برنگرداند.',
             )
           else
             for (var i = 0; i < cheapest.length; i++) ...[
@@ -191,11 +196,16 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
         children: [
-          Text('بازیکنان محبوب', style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            'بازیکنان محبوب',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 4),
           Text(
             'لیست محبوب‌ترین بازیکنان از منبع زنده؛ ترتیب توسط منبع داده تعیین می‌شود.',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 18),
           if (loadingPopular)
@@ -212,14 +222,17 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
           else if (popular.isEmpty)
             const _StateCard(
               title: 'داده‌ای دریافت نشد',
-              subtitle: 'به‌جای نمایش داده نمایشی، این بخش خالی نگه داشته شده است.',
+              subtitle:
+                  'به‌جای نمایش داده نمایشی، این بخش خالی نگه داشته شده است.',
             )
           else
             for (var i = 0; i < popular.length; i++) ...[
               _PlayerRow(
                 player: popular[i],
                 rank: i + 1,
-                trailing: popular[i].version.isEmpty ? popular[i].position : popular[i].version,
+                trailing: popular[i].version.isEmpty
+                    ? popular[i].position
+                    : popular[i].version,
               ),
               const SizedBox(height: 8),
             ],
@@ -246,7 +259,9 @@ class _PlayerRow extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
+          MaterialPageRoute(
+            builder: (_) => PlayerDetailsScreen(player: player),
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(12),
@@ -264,8 +279,12 @@ class _PlayerRow extends StatelessWidget {
               ),
               CircleAvatar(
                 radius: 25,
-                backgroundImage: player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
-                child: player.imageUrl.isEmpty ? Text(player.rating.toString()) : null,
+                backgroundImage: player.imageUrl.isEmpty
+                    ? null
+                    : NetworkImage(player.imageUrl),
+                child: player.imageUrl.isEmpty
+                    ? Text(player.rating.toString())
+                    : null,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -318,14 +337,21 @@ class _StateCard extends StatelessWidget {
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            Icon(Icons.cloud_off_rounded, color: Theme.of(context).colorScheme.primary, size: 38),
+            Icon(
+              Icons.cloud_off_rounded,
+              color: Theme.of(context).colorScheme.primary,
+              size: 38,
+            ),
             const SizedBox(height: 10),
             Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
             const SizedBox(height: 6),
             Text(subtitle, textAlign: TextAlign.center),
             if (action != null) ...[
               const SizedBox(height: 12),
-              OutlinedButton(onPressed: action, child: const Text('تلاش دوباره')),
+              OutlinedButton(
+                onPressed: action,
+                child: const Text('تلاش دوباره'),
+              ),
             ],
           ],
         ),

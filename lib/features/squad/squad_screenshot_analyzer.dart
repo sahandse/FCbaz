@@ -46,9 +46,10 @@ class SquadScreenshotAnalyzer {
   SquadScreenshotAnalyzer({
     ImagePicker? imagePicker,
     TextRecognizer? textRecognizer,
-  })  : _imagePicker = imagePicker ?? ImagePicker(),
-        _textRecognizer = textRecognizer ??
-            TextRecognizer(script: TextRecognitionScript.latin);
+  }) : _imagePicker = imagePicker ?? ImagePicker(),
+       _textRecognizer =
+           textRecognizer ??
+           TextRecognizer(script: TextRecognitionScript.latin);
 
   final ImagePicker _imagePicker;
   final TextRecognizer _textRecognizer;
@@ -64,7 +65,9 @@ class SquadScreenshotAnalyzer {
     );
     if (image == null) return null;
 
-    final codec = await ui.instantiateImageCodec(await File(image.path).readAsBytes());
+    final codec = await ui.instantiateImageCodec(
+      await File(image.path).readAsBytes(),
+    );
     final frame = await codec.getNextFrame();
     final width = frame.image.width.toDouble();
     final height = frame.image.height.toDouble();
@@ -98,12 +101,14 @@ class SquadScreenshotAnalyzer {
         if (_looksLikeName(line.text)) unmatched.add(line.text);
         continue;
       }
-      detected.add(_DetectedPlayer(
-        player: match.$1,
-        x: line.x,
-        y: line.y,
-        confidence: match.$2,
-      ));
+      detected.add(
+        _DetectedPlayer(
+          player: match.$1,
+          x: line.x,
+          y: line.y,
+          confidence: match.$2,
+        ),
+      );
       usedIds.add(match.$1.id);
     }
 
@@ -139,9 +144,13 @@ class SquadScreenshotAnalyzer {
       if (query == name) {
         score = 1;
       } else if (query.contains(name)) {
-        score = math.min(query.length, name.length) / math.max(query.length, name.length);
+        score =
+            math.min(query.length, name.length) /
+            math.max(query.length, name.length);
       } else if (name.contains(query) && query.contains(' ')) {
-        score = math.min(query.length, name.length) / math.max(query.length, name.length);
+        score =
+            math.min(query.length, name.length) /
+            math.max(query.length, name.length);
       } else {
         final qTokens = query.split(' ').where((e) => e.length > 1).toSet();
         final nTokens = name.split(' ').where((e) => e.length > 1).toSet();
@@ -152,8 +161,9 @@ class SquadScreenshotAnalyzer {
             nTokens.any((n) => n == query && n.length >= 4)) {
           score = .84;
         }
-        if (qTokens.any((q) =>
-            nTokens.any((n) => n.startsWith(q) && q.length >= 3))) {
+        if (qTokens.any(
+          (q) => nTokens.any((n) => n.startsWith(q) && q.length >= 3),
+        )) {
           score = math.max(score, .72).toDouble();
         }
       }
@@ -205,8 +215,12 @@ class SquadScreenshotAnalyzer {
       // nearest to actual pitch slots before assigning any remaining players.
       final sorted = [...detected]
         ..sort((a, b) {
-          final distance = distanceToNearestSlot(a).compareTo(distanceToNearestSlot(b));
-          return distance != 0 ? distance : b.confidence.compareTo(a.confidence);
+          final distance = distanceToNearestSlot(
+            a,
+          ).compareTo(distanceToNearestSlot(b));
+          return distance != 0
+              ? distance
+              : b.confidence.compareTo(a.confidence);
         });
       for (final item in sorted) {
         if (remainingSlots.isEmpty) break;

@@ -15,27 +15,27 @@ MyClubItem item({
   int price = 0,
   bool untradeable = false,
 }) => MyClubItem(
-      playerId: id,
-      playerName: name,
-      rating: rating,
-      position: position,
-      positions: [position],
-      clubName: club,
-      leagueName: league,
-      nationName: nation,
-      version: version,
-      imageUrl: '',
-      pace: 80,
-      shooting: 80,
-      passing: 80,
-      dribbling: 80,
-      defending: 80,
-      physical: 80,
-      skillMoves: 4,
-      weakFoot: 4,
-      acquisitionPrice: price,
-      untradeable: untradeable,
-    );
+  playerId: id,
+  playerName: name,
+  rating: rating,
+  position: position,
+  positions: [position],
+  clubName: club,
+  leagueName: league,
+  nationName: nation,
+  version: version,
+  imageUrl: '',
+  pace: 80,
+  shooting: 80,
+  passing: 80,
+  dribbling: 80,
+  defending: 80,
+  physical: 80,
+  skillMoves: 4,
+  weakFoot: 4,
+  acquisitionPrice: price,
+  untradeable: untradeable,
+);
 
 void main() {
   const analysis = ClubInventoryAnalysis();
@@ -43,31 +43,64 @@ void main() {
   test('filters locally by query position and trade status', () {
     final source = [
       item(id: '1', name: 'Alpha', rating: 90, position: 'ST', club: 'Madrid'),
-      item(id: '2', name: 'Beta', rating: 88, position: 'CM', untradeable: true),
+      item(
+        id: '2',
+        name: 'Beta',
+        rating: 88,
+        position: 'CM',
+        untradeable: true,
+      ),
     ];
 
     expect(
-      analysis.filter(source, const ClubInventoryFilter(query: 'madrid')).single.playerId,
+      analysis
+          .filter(source, const ClubInventoryFilter(query: 'madrid'))
+          .single
+          .playerId,
       '1',
     );
     expect(
-      analysis.filter(source, const ClubInventoryFilter(position: 'CM')).single.playerId,
+      analysis
+          .filter(source, const ClubInventoryFilter(position: 'CM'))
+          .single
+          .playerId,
       '2',
     );
     expect(
-      analysis.filter(
-        source,
-        const ClubInventoryFilter(trade: ClubTradeFilter.untradeable),
-      ).single.playerId,
+      analysis
+          .filter(
+            source,
+            const ClubInventoryFilter(trade: ClubTradeFilter.untradeable),
+          )
+          .single
+          .playerId,
       '2',
     );
   });
 
   test('detects same card metadata without relying on player id', () {
     final source = [
-      item(id: '1', name: 'Alpha', rating: 90, position: 'ST', version: 'Special'),
-      item(id: 'different-id', name: 'Alpha', rating: 90, position: 'ST', version: 'Special'),
-      item(id: '3', name: 'Alpha', rating: 91, position: 'ST', version: 'Special'),
+      item(
+        id: '1',
+        name: 'Alpha',
+        rating: 90,
+        position: 'ST',
+        version: 'Special',
+      ),
+      item(
+        id: 'different-id',
+        name: 'Alpha',
+        rating: 90,
+        position: 'ST',
+        version: 'Special',
+      ),
+      item(
+        id: '3',
+        name: 'Alpha',
+        rating: 91,
+        position: 'ST',
+        version: 'Special',
+      ),
     ];
 
     final groups = analysis.duplicateGroups(source);

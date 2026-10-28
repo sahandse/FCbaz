@@ -31,19 +31,14 @@ class BackupRepository {
   Future<String> exportJson() async =>
       const JsonEncoder.withIndent('  ').convert(await exportData());
 
-  Future<int> restoreJson(
-    String raw, {
-    bool replaceExisting = true,
-  }) async {
+  Future<int> restoreJson(String raw, {bool replaceExisting = true}) async {
     final decoded = jsonDecode(raw);
     if (decoded is! Map) {
       throw const FormatException('فایل بکاپ معتبر نیست.');
     }
 
-    final version = int.tryParse(
-          (decoded['format_version'] ?? '').toString(),
-        ) ??
-        0;
+    final version =
+        int.tryParse((decoded['format_version'] ?? '').toString()) ?? 0;
     if (version != formatVersion) {
       throw const FormatException('نسخه بکاپ پشتیبانی نمی‌شود.');
     }

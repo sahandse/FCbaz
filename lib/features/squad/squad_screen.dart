@@ -32,10 +32,10 @@ class _SquadScreenState extends State<SquadScreen> {
   FormationDefinition get formation => Formations.byId(squad.formationId);
 
   ChemistryResult get chemistry => chemistryEngine.calculate(
-        formation: formation,
-        playersBySlot: squad.playersBySlot,
-        manager: squad.manager,
-      );
+    formation: formation,
+    playersBySlot: squad.playersBySlot,
+    manager: squad.manager,
+  );
 
   @override
   void initState() {
@@ -45,11 +45,11 @@ class _SquadScreenState extends State<SquadScreen> {
   }
 
   SquadStateModel _newSquad() => SquadStateModel(
-        id: DateTime.now().microsecondsSinceEpoch.toString(),
-        name: 'ترکیب من',
-        formationId: '433',
-        playersBySlot: const {},
-      );
+    id: DateTime.now().microsecondsSinceEpoch.toString(),
+    name: 'ترکیب من',
+    formationId: '433',
+    playersBySlot: const {},
+  );
 
   Future<void> _loadSaved() async {
     final data = await squadRepository.getAll();
@@ -66,9 +66,9 @@ class _SquadScreenState extends State<SquadScreen> {
     final data = await squadRepository.getAll();
     if (!mounted) return;
     setState(() => savedSquads = data);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('ترکیب ذخیره شد')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('ترکیب ذخیره شد')));
   }
 
   Future<void> _createNew() async {
@@ -153,9 +153,9 @@ class _SquadScreenState extends State<SquadScreen> {
       players = await playerRepository.getPlayers();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
       return;
     }
 
@@ -182,13 +182,16 @@ class _SquadScreenState extends State<SquadScreen> {
   }
 
   Future<void> _removePlayer(String slotId) async {
-    final players = Map<String, Player>.from(squad.playersBySlot)..remove(slotId);
+    final players = Map<String, Player>.from(squad.playersBySlot)
+      ..remove(slotId);
     final configs = Map<String, SquadPlayerConfig>.from(squad.playerConfigs)
       ..remove(slotId);
-    setState(() => squad = squad.copyWith(
-          playersBySlot: players,
-          playerConfigs: configs,
-        ));
+    setState(
+      () => squad = squad.copyWith(
+        playersBySlot: players,
+        playerConfigs: configs,
+      ),
+    );
     await _refreshPrice();
   }
 
@@ -216,10 +219,7 @@ class _SquadScreenState extends State<SquadScreen> {
           child: ListView(
             shrinkWrap: true,
             children: [
-              Text(
-                'Tactics',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text('Tactics', style: Theme.of(context).textTheme.titleLarge),
               const SizedBox(height: 4),
               Text(
                 'مقادیر دقیق Tactics را مطابق تنظیم واقعی خودت وارد کن؛ FCBaz چیزی را حدس نمی‌زند.',
@@ -269,9 +269,7 @@ class _SquadScreenState extends State<SquadScreen> {
               TextField(
                 controller: notes,
                 maxLines: 3,
-                decoration: const InputDecoration(
-                  labelText: 'یادداشت',
-                ),
+                decoration: const InputDecoration(labelText: 'یادداشت'),
               ),
               const SizedBox(height: 16),
               FilledButton(
@@ -314,17 +312,19 @@ class _SquadScreenState extends State<SquadScreen> {
     final configs = Map<String, SquadPlayerConfig>.from(squad.playerConfigs)
       ..remove(slotId);
 
-    setState(() => squad = squad.copyWith(
-          playersBySlot: players,
-          playerConfigs: configs,
-        ));
+    setState(
+      () => squad = squad.copyWith(
+        playersBySlot: players,
+        playerConfigs: configs,
+      ),
+    );
 
     await _refreshPrice();
 
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(replacement.name + ' جایگزین شد')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(replacement.name + ' جایگزین شد')));
   }
 
   Future<void> _editManager() async {
@@ -352,18 +352,19 @@ class _SquadScreenState extends State<SquadScreen> {
             const SizedBox(height: 10),
             TextField(
               controller: league,
-              decoration: const InputDecoration(labelText: 'League فعال Manager'),
+              decoration: const InputDecoration(
+                labelText: 'League فعال Manager',
+              ),
             ),
           ],
         ),
         actions: [
           if (current != null)
             TextButton(
-              onPressed: () => Navigator.pop(context, const ManagerProfile(
-                name: '',
-                nationName: '',
-                leagueName: '',
-              )),
+              onPressed: () => Navigator.pop(
+                context,
+                const ManagerProfile(name: '', nationName: '', leagueName: ''),
+              ),
               child: const Text('حذف'),
             ),
           TextButton(
@@ -404,11 +405,30 @@ class _SquadScreenState extends State<SquadScreen> {
     var role = current.role;
 
     const styles = [
-      'Basic', 'Sniper', 'Finisher', 'Deadeye', 'Marksman', 'Hawk',
-      'Artist', 'Architect', 'Powerhouse', 'Maestro', 'Engine',
-      'Sentinel', 'Guardian', 'Gladiator', 'Backbone', 'Anchor',
-      'Hunter', 'Catalyst', 'Shadow', 'GK Basic', 'Wall', 'Shield',
-      'Cat', 'Glove',
+      'Basic',
+      'Sniper',
+      'Finisher',
+      'Deadeye',
+      'Marksman',
+      'Hawk',
+      'Artist',
+      'Architect',
+      'Powerhouse',
+      'Maestro',
+      'Engine',
+      'Sentinel',
+      'Guardian',
+      'Gladiator',
+      'Backbone',
+      'Anchor',
+      'Hunter',
+      'Catalyst',
+      'Shadow',
+      'GK Basic',
+      'Wall',
+      'Shield',
+      'Cat',
+      'Glove',
     ];
 
     final result = await showModalBottomSheet<SquadPlayerConfig>(
@@ -419,7 +439,10 @@ class _SquadScreenState extends State<SquadScreen> {
         builder: (context, setSheetState) => SafeArea(
           child: Padding(
             padding: EdgeInsets.fromLTRB(
-              16, 4, 16, 16 + MediaQuery.viewInsetsOf(context).bottom,
+              16,
+              4,
+              16,
+              16 + MediaQuery.viewInsetsOf(context).bottom,
             ),
             child: ListView(
               shrinkWrap: true,
@@ -515,9 +538,9 @@ class _SquadScreenState extends State<SquadScreen> {
       players = await playerRepository.getPlayers();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
       return;
     }
 
@@ -532,23 +555,24 @@ class _SquadScreenState extends State<SquadScreen> {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
-      builder: (context) => _PlayerPicker(
-        players: players,
-        slotPosition: '',
-        selectedIds: used,
-      ),
+      builder: (context) =>
+          _PlayerPicker(players: players, slotPosition: '', selectedIds: used),
     );
 
     if (selected == null) return;
-    setState(() => squad = squad.copyWith(
-          bench: [...squad.bench, selected].take(7).toList(),
-        ));
+    setState(
+      () => squad = squad.copyWith(
+        bench: [...squad.bench, selected].take(7).toList(),
+      ),
+    );
   }
 
   void _removeBenchPlayer(String id) {
-    setState(() => squad = squad.copyWith(
-          bench: squad.bench.where((e) => e.id != id).toList(),
-        ));
+    setState(
+      () => squad = squad.copyWith(
+        bench: squad.bench.where((e) => e.id != id).toList(),
+      ),
+    );
   }
 
   Future<void> _exportSquad() async {
@@ -565,9 +589,9 @@ class _SquadScreenState extends State<SquadScreen> {
     final raw = data?.text?.trim() ?? '';
     if (raw.isEmpty) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Clipboard خالی است')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Clipboard خالی است')));
       return;
     }
 
@@ -583,16 +607,18 @@ class _SquadScreenState extends State<SquadScreen> {
       await _refreshPrice();
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Import ناموفق: ' + e.toString())),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Import ناموفق: ' + e.toString())));
     }
   }
 
   void _optimizeChemistry() {
     if (squad.playersBySlot.length != 11) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('برای Optimize باید Starting XI کامل باشد')),
+        const SnackBar(
+          content: Text('برای Optimize باید Starting XI کامل باشد'),
+        ),
       );
       return;
     }
@@ -617,15 +643,20 @@ class _SquadScreenState extends State<SquadScreen> {
       if (config != null) remappedConfigs[entry.key] = config;
     }
 
-    setState(() => squad = squad.copyWith(
-          playersBySlot: result.playersBySlot,
-          playerConfigs: remappedConfigs,
-        ));
+    setState(
+      () => squad = squad.copyWith(
+        playersBySlot: result.playersBySlot,
+        playerConfigs: remappedConfigs,
+      ),
+    );
 
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-          'Chemistry: ' + before.toString() + ' → ' + result.chemistry.total.toString(),
+          'Chemistry: ' +
+              before.toString() +
+              ' → ' +
+              result.chemistry.total.toString(),
         ),
       ),
     );
@@ -678,11 +709,16 @@ class _SquadScreenState extends State<SquadScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('تیم‌ساز', style: Theme.of(context).textTheme.headlineSmall),
+                  Text(
+                    'تیم‌ساز',
+                    style: Theme.of(context).textTheme.headlineSmall,
+                  ),
                   const SizedBox(height: 3),
                   Text(
                     squad.name,
-                    style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                 ],
               ),
@@ -710,9 +746,15 @@ class _SquadScreenState extends State<SquadScreen> {
                 PopupMenuItem(value: 'rename', child: Text('تغییر نام')),
                 PopupMenuItem(value: 'manager', child: Text('Manager')),
                 PopupMenuItem(value: 'tactics', child: Text('Tactics')),
-                PopupMenuItem(value: 'optimize', child: Text('Optimize Chemistry')),
+                PopupMenuItem(
+                  value: 'optimize',
+                  child: Text('Optimize Chemistry'),
+                ),
                 PopupMenuItem(value: 'export', child: Text('Export / Share')),
-                PopupMenuItem(value: 'import', child: Text('Import از Clipboard')),
+                PopupMenuItem(
+                  value: 'import',
+                  child: Text('Import از Clipboard'),
+                ),
                 PopupMenuItem(value: 'delete', child: Text('حذف ترکیب')),
               ],
             ),
@@ -728,10 +770,7 @@ class _SquadScreenState extends State<SquadScreen> {
             ),
             items: [
               for (final item in savedSquads)
-                DropdownMenuItem(
-                  value: item.id,
-                  child: Text(item.name),
-                ),
+                DropdownMenuItem(value: item.id, child: Text(item.name)),
             ],
             onChanged: (id) {
               if (id == null) return;
@@ -839,8 +878,8 @@ class _SquadScreenState extends State<SquadScreen> {
                 value: loadingPrice
                     ? '...'
                     : squadPrice == null
-                        ? 'نامشخص'
-                        : _coins(squadPrice!) + ' C',
+                    ? 'نامشخص'
+                    : _coins(squadPrice!) + ' C',
                 icon: Icons.monetization_on_outlined,
               ),
             ),
@@ -1022,7 +1061,10 @@ class _MetricCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(value, style: const TextStyle(fontWeight: FontWeight.w900)),
+                Text(
+                  value,
+                  style: const TextStyle(fontWeight: FontWeight.w900),
+                ),
                 Text(
                   label,
                   style: TextStyle(
@@ -1075,7 +1117,11 @@ class _Pitch extends StatelessWidget {
               gradient: const LinearGradient(
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
-                colors: [Color(0xFF102A18), Color(0xFF07150D), Color(0xFF030806)],
+                colors: [
+                  Color(0xFF102A18),
+                  Color(0xFF07150D),
+                  Color(0xFF030806),
+                ],
               ),
             ),
             child: Stack(
@@ -1085,7 +1131,10 @@ class _Pitch extends StatelessWidget {
                   top: 10,
                   left: 12,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: Colors.black.withValues(alpha: .28),
                       borderRadius: BorderRadius.circular(7),
@@ -1093,14 +1142,20 @@ class _Pitch extends StatelessWidget {
                     child: Text(
                       'FC27 • ${formation.name}',
                       textDirection: TextDirection.ltr,
-                      style: TextStyle(color: primary, fontSize: 9, fontWeight: FontWeight.w900),
+                      style: TextStyle(
+                        color: primary,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w900,
+                      ),
                     ),
                   ),
                 ),
                 for (final slot in formation.slots)
                   Positioned(
-                    left: (constraints.maxWidth * slot.x - slotWidth / 2)
-                        .clamp(5.0, constraints.maxWidth - slotWidth - 5),
+                    left: (constraints.maxWidth * slot.x - slotWidth / 2).clamp(
+                      5.0,
+                      constraints.maxWidth - slotWidth - 5,
+                    ),
                     top: (constraints.maxHeight * slot.y - slotHeight / 2)
                         .clamp(24.0, constraints.maxHeight - slotHeight - 7),
                     width: slotWidth,
@@ -1142,21 +1197,49 @@ class _PitchPainter extends CustomPainter {
     final stripe = Paint()..color = Colors.white.withValues(alpha: .018);
     final stripeHeight = size.height / 10;
     for (var i = 0; i < 10; i += 2) {
-      canvas.drawRect(Rect.fromLTWH(0, i * stripeHeight, size.width, stripeHeight), stripe);
+      canvas.drawRect(
+        Rect.fromLTWH(0, i * stripeHeight, size.width, stripeHeight),
+        stripe,
+      );
     }
     final paint = Paint()
       ..color = Colors.white.withValues(alpha: .18)
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.25;
     final rect = Rect.fromLTWH(13, 13, size.width - 26, size.height - 26);
-    canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(18)), paint);
-    canvas.drawLine(Offset(13, size.height / 2), Offset(size.width - 13, size.height / 2), paint);
-    canvas.drawCircle(Offset(size.width / 2, size.height / 2), size.width * .12, paint);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(rect, const Radius.circular(18)),
+      paint,
+    );
+    canvas.drawLine(
+      Offset(13, size.height / 2),
+      Offset(size.width - 13, size.height / 2),
+      paint,
+    );
+    canvas.drawCircle(
+      Offset(size.width / 2, size.height / 2),
+      size.width * .12,
+      paint,
+    );
     canvas.drawCircle(Offset(size.width / 2, size.height / 2), 2.2, paint);
     final boxW = size.width * .55;
     final boxH = size.height * .16;
-    canvas.drawRect(Rect.fromCenter(center: Offset(size.width / 2, 13), width: boxW, height: boxH), paint);
-    canvas.drawRect(Rect.fromCenter(center: Offset(size.width / 2, size.height - 13), width: boxW, height: boxH), paint);
+    canvas.drawRect(
+      Rect.fromCenter(
+        center: Offset(size.width / 2, 13),
+        width: boxW,
+        height: boxH,
+      ),
+      paint,
+    );
+    canvas.drawRect(
+      Rect.fromCenter(
+        center: Offset(size.width / 2, size.height - 13),
+        width: boxW,
+        height: boxH,
+      ),
+      paint,
+    );
   }
 
   @override
@@ -1196,10 +1279,16 @@ class _SlotCard extends StatelessWidget {
             color: filled ? const Color(0xED0A100C) : const Color(0xB30B100D),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: filled ? primary.withValues(alpha: .62) : Colors.white.withValues(alpha: .20),
+              color: filled
+                  ? primary.withValues(alpha: .62)
+                  : Colors.white.withValues(alpha: .20),
             ),
             boxShadow: const [
-              BoxShadow(blurRadius: 10, color: Color(0x44000000), offset: Offset(0, 5)),
+              BoxShadow(
+                blurRadius: 10,
+                color: Color(0x44000000),
+                offset: Offset(0, 5),
+              ),
             ],
           ),
           child: filled ? _filled(primary) : _empty(),
@@ -1209,63 +1298,114 @@ class _SlotCard extends StatelessWidget {
   }
 
   Widget _empty() => Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Icon(Icons.add_rounded, color: Colors.white70, size: 20),
-          const SizedBox(height: 3),
-          Text(slot.position, maxLines: 1, style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.w900)),
-        ],
-      );
+    mainAxisAlignment: MainAxisAlignment.center,
+    children: [
+      const Icon(Icons.add_rounded, color: Colors.white70, size: 20),
+      const SizedBox(height: 3),
+      Text(
+        slot.position,
+        maxLines: 1,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 9,
+          fontWeight: FontWeight.w900,
+        ),
+      ),
+    ],
+  );
 
   Widget _filled(Color primary) => Column(
+    children: [
+      Row(
         children: [
-          Row(
-            children: [
-              Text(player!.rating > 0 ? '${player!.rating}' : '—', style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w900)),
-              const Spacer(),
-              Text(player!.position, textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white70, fontSize: 7, fontWeight: FontWeight.w900)),
-            ],
-          ),
-          Expanded(
-            child: player!.imageUrl.isEmpty
-                ? const Center(child: Icon(Icons.person_rounded, color: Colors.white54, size: 28))
-                : Image.network(
-                    player!.imageUrl,
-                    fit: BoxFit.contain,
-                    alignment: Alignment.bottomCenter,
-                    errorBuilder: (_, __, ___) => const Center(child: Icon(Icons.person_rounded, color: Colors.white54, size: 28)),
-                  ),
-          ),
-          SizedBox(
-            height: 12,
-            child: FittedBox(
-              fit: BoxFit.scaleDown,
-              child: Text(player!.name, maxLines: 1, textDirection: TextDirection.ltr, style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.w900)),
+          Text(
+            player!.rating > 0 ? '${player!.rating}' : '—',
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 11,
+              fontWeight: FontWeight.w900,
             ),
           ),
-          if (config != null && (config!.role.isNotEmpty || config!.chemistryStyle != 'Basic'))
-            Text(
-              [if (config!.role.isNotEmpty) config!.role, if (config!.chemistryStyle != 'Basic') config!.chemistryStyle].join(' • '),
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              textDirection: TextDirection.ltr,
-              style: const TextStyle(color: Colors.white54, fontSize: 5.5),
-            ),
-          const SizedBox(height: 2),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              3,
-              (i) => Container(
-                width: 5,
-                height: 5,
-                margin: const EdgeInsets.symmetric(horizontal: 1),
-                decoration: BoxDecoration(shape: BoxShape.circle, color: i < chemistry ? primary : Colors.white24),
-              ),
+          const Spacer(),
+          Text(
+            player!.position,
+            textDirection: TextDirection.ltr,
+            style: const TextStyle(
+              color: Colors.white70,
+              fontSize: 7,
+              fontWeight: FontWeight.w900,
             ),
           ),
         ],
-      );
+      ),
+      Expanded(
+        child: player!.imageUrl.isEmpty
+            ? const Center(
+                child: Icon(
+                  Icons.person_rounded,
+                  color: Colors.white54,
+                  size: 28,
+                ),
+              )
+            : Image.network(
+                player!.imageUrl,
+                fit: BoxFit.contain,
+                alignment: Alignment.bottomCenter,
+                errorBuilder: (_, __, ___) => const Center(
+                  child: Icon(
+                    Icons.person_rounded,
+                    color: Colors.white54,
+                    size: 28,
+                  ),
+                ),
+              ),
+      ),
+      SizedBox(
+        height: 12,
+        child: FittedBox(
+          fit: BoxFit.scaleDown,
+          child: Text(
+            player!.name,
+            maxLines: 1,
+            textDirection: TextDirection.ltr,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 8,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
+      ),
+      if (config != null &&
+          (config!.role.isNotEmpty || config!.chemistryStyle != 'Basic'))
+        Text(
+          [
+            if (config!.role.isNotEmpty) config!.role,
+            if (config!.chemistryStyle != 'Basic') config!.chemistryStyle,
+          ].join(' • '),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          textDirection: TextDirection.ltr,
+          style: const TextStyle(color: Colors.white54, fontSize: 5.5),
+        ),
+      const SizedBox(height: 2),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: List.generate(
+          3,
+          (i) => Container(
+            width: 5,
+            height: 5,
+            margin: const EdgeInsets.symmetric(horizontal: 1),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: i < chemistry ? primary : Colors.white24,
+            ),
+          ),
+        ),
+      ),
+    ],
+  );
 }
 
 class _PlayerPicker extends StatefulWidget {
@@ -1307,8 +1447,12 @@ class _PlayerPickerState extends State<_PlayerPicker> {
     }).toList();
 
     result.sort((a, b) {
-      final aFit = a.position == widget.slotPosition || a.positions.contains(widget.slotPosition);
-      final bFit = b.position == widget.slotPosition || b.positions.contains(widget.slotPosition);
+      final aFit =
+          a.position == widget.slotPosition ||
+          a.positions.contains(widget.slotPosition);
+      final bFit =
+          b.position == widget.slotPosition ||
+          b.positions.contains(widget.slotPosition);
 
       if (aFit != bFit) return aFit ? -1 : 1;
       return b.rating.compareTo(a.rating);
@@ -1362,7 +1506,8 @@ class _PlayerPickerState extends State<_PlayerPicker> {
                   separatorBuilder: (_, __) => const SizedBox(height: 8),
                   itemBuilder: (context, index) {
                     final player = players[index];
-                    final fit = widget.slotPosition.isEmpty ||
+                    final fit =
+                        widget.slotPosition.isEmpty ||
                         player.position == widget.slotPosition ||
                         player.positions.contains(widget.slotPosition);
 
@@ -1371,9 +1516,12 @@ class _PlayerPickerState extends State<_PlayerPicker> {
                       child: ListTile(
                         onTap: () => Navigator.pop(context, player),
                         leading: CircleAvatar(
-                          backgroundColor: Theme.of(context).colorScheme.primary.withValues(alpha: .12),
-                          backgroundImage:
-                              player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: .12),
+                          backgroundImage: player.imageUrl.isEmpty
+                              ? null
+                              : NetworkImage(player.imageUrl),
                           child: player.imageUrl.isEmpty
                               ? const Icon(Icons.person_rounded)
                               : null,
@@ -1392,11 +1540,11 @@ class _PlayerPickerState extends State<_PlayerPicker> {
                         trailing: widget.slotPosition.isEmpty
                             ? const Icon(Icons.add_rounded)
                             : fit
-                                ? Icon(
-                                    Icons.check_circle_rounded,
-                                    color: Theme.of(context).colorScheme.primary,
-                                  )
-                                : const Icon(Icons.warning_amber_rounded),
+                            ? Icon(
+                                Icons.check_circle_rounded,
+                                color: Theme.of(context).colorScheme.primary,
+                              )
+                            : const Icon(Icons.warning_amber_rounded),
                       ),
                     );
                   },

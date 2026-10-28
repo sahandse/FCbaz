@@ -30,10 +30,7 @@ void main() {
       'playstyles': ['Finesse Shot'],
       'playstyles_plus': ['Quick Step+'],
       'roles': ['Advanced Forward++'],
-      'in_game_stats': {
-        'acceleration': 92,
-        'sprint_speed': 89,
-      },
+      'in_game_stats': {'acceleration': 92, 'sprint_speed': 89},
     });
 
     expect(player.rating, 88);

@@ -9,10 +9,12 @@ class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
 
   @override
-  State<NotificationSettingsScreen> createState() => _NotificationSettingsScreenState();
+  State<NotificationSettingsScreen> createState() =>
+      _NotificationSettingsScreenState();
 }
 
-class _NotificationSettingsScreenState extends State<NotificationSettingsScreen> {
+class _NotificationSettingsScreenState
+    extends State<NotificationSettingsScreen> {
   final preferencesRepository = NotificationPreferencesRepository();
   final appSettingsRepository = AppSettingsRepository();
   final syncStatusRepository = BackgroundSyncStatusRepository();
@@ -119,7 +121,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                                   systemEnabled
                                       ? 'اعلان سیستمی فعال است'
                                       : 'مجوز اعلان سیستمی غیرفعال است',
-                                  style: const TextStyle(fontWeight: FontWeight.w900),
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                                 Text(
                                   systemEnabled
@@ -164,11 +168,15 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                           const SizedBox(height: 10),
                           Text('آخرین اجرا: ${_date(syncStatus.lastRunAt)}'),
                           const SizedBox(height: 4),
-                          Text('آخرین موفقیت: ${_date(syncStatus.lastSuccessAt)}'),
+                          Text(
+                            'آخرین موفقیت: ${_date(syncStatus.lastSuccessAt)}',
+                          ),
                           const SizedBox(height: 4),
                           Text('قیمت‌های بررسی‌شده: ${syncStatus.lastChecked}'),
                           const SizedBox(height: 4),
-                          Text('هشدارهای فعال‌شده: ${syncStatus.lastTriggered}'),
+                          Text(
+                            'هشدارهای فعال‌شده: ${syncStatus.lastTriggered}',
+                          ),
                           if (syncStatus.lastError != null) ...[
                             const SizedBox(height: 8),
                             Text(
@@ -192,11 +200,15 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                     child: Column(
                       children: [
                         SwitchListTile(
-                          value: preferences.priceAlerts && appSettings.priceAlertsEnabled,
+                          value:
+                              preferences.priceAlerts &&
+                              appSettings.priceAlertsEnabled,
                           onChanged: _setPriceAlerts,
                           secondary: const Icon(Icons.price_check_rounded),
                           title: const Text('هشدار قیمت'),
-                          subtitle: const Text('وقتی قیمت واقعی فهرست پیگیری به هدف برسد'),
+                          subtitle: const Text(
+                            'وقتی قیمت واقعی فهرست پیگیری به هدف برسد',
+                          ),
                         ),
                         const Divider(height: 1),
                         SwitchListTile(
@@ -206,7 +218,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                           ),
                           secondary: const Icon(Icons.flag_rounded),
                           title: const Text('مهلت Objectiveها'),
-                          subtitle: const Text('فقط برای Objective دارای زمان پایان واقعی'),
+                          subtitle: const Text(
+                            'فقط برای Objective دارای زمان پایان واقعی',
+                          ),
                         ),
                         const Divider(height: 1),
                         SwitchListTile(
@@ -216,7 +230,9 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                           ),
                           secondary: const Icon(Icons.auto_awesome_rounded),
                           title: const Text('مهلت Evolutionها'),
-                          subtitle: const Text('فقط برای Evolution دارای زمان پایان واقعی'),
+                          subtitle: const Text(
+                            'فقط برای Evolution دارای زمان پایان واقعی',
+                          ),
                         ),
                       ],
                     ),
@@ -228,27 +244,44 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text('زمان هشدار مهلت', style: Theme.of(context).textTheme.titleMedium),
+                          Text(
+                            'زمان هشدار مهلت',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
                           const SizedBox(height: 6),
                           Text(
                             'اعلان Android و Notification Center در فاصله انتخاب‌شده قبل از پایان همگام می‌شوند.',
-                            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                            ),
                           ),
                           const SizedBox(height: 12),
                           DropdownButtonFormField<int>(
                             initialValue: preferences.deadlineHours,
-                            decoration: const InputDecoration(labelText: 'فاصله تا پایان'),
+                            decoration: const InputDecoration(
+                              labelText: 'فاصله تا پایان',
+                            ),
                             items: const [
                               DropdownMenuItem(value: 6, child: Text('۶ ساعت')),
-                              DropdownMenuItem(value: 12, child: Text('۱۲ ساعت')),
+                              DropdownMenuItem(
+                                value: 12,
+                                child: Text('۱۲ ساعت'),
+                              ),
                               DropdownMenuItem(value: 24, child: Text('۱ روز')),
                               DropdownMenuItem(value: 48, child: Text('۲ روز')),
                               DropdownMenuItem(value: 72, child: Text('۳ روز')),
-                              DropdownMenuItem(value: 168, child: Text('۷ روز')),
+                              DropdownMenuItem(
+                                value: 168,
+                                child: Text('۷ روز'),
+                              ),
                             ],
                             onChanged: (value) {
                               if (value == null) return;
-                              _savePreferences(preferences.copyWith(deadlineHours: value));
+                              _savePreferences(
+                                preferences.copyWith(deadlineHours: value),
+                              );
                             },
                           ),
                         ],
@@ -262,7 +295,10 @@ class _NotificationSettingsScreenState extends State<NotificationSettingsScreen>
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Icon(Icons.info_outline_rounded, color: Theme.of(context).colorScheme.primary),
+                          Icon(
+                            Icons.info_outline_rounded,
+                            color: Theme.of(context).colorScheme.primary,
+                          ),
                           const SizedBox(width: 10),
                           const Expanded(
                             child: Text(

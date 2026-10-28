@@ -18,20 +18,23 @@ class PlayerPrice {
   final DateTime? updatedAt;
 
   factory PlayerPrice.fromJson(Map<String, dynamic> json) {
-    int asInt(dynamic value) => value is int ? value : int.tryParse(value?.toString() ?? '') ?? 0;
+    int asInt(dynamic value) =>
+        value is int ? value : int.tryParse(value?.toString() ?? '') ?? 0;
     double? asNullableDouble(dynamic value) {
       if (value == null) return null;
       if (value is num) return value.toDouble();
       return double.tryParse(value.toString());
     }
-    DateTime? asDate(dynamic value) => value == null ? null : DateTime.tryParse(value.toString());
+
+    DateTime? asDate(dynamic value) =>
+        value == null ? null : DateTime.tryParse(value.toString());
 
     final source = (json['source'] ?? '').toString();
     final rawChange = source == 'futbin-public'
         ? null
         : (json.containsKey('change_24h_percent')
-            ? json['change_24h_percent']
-            : json['change24h']);
+              ? json['change_24h_percent']
+              : json['change24h']);
 
     return PlayerPrice(
       playerId: (json['player_id'] ?? json['playerId'] ?? '').toString(),
@@ -54,8 +57,14 @@ class PricePoint {
   factory PricePoint.fromJson(Map<String, dynamic> json) {
     final rawPrice = json['price'];
     return PricePoint(
-      time: DateTime.tryParse((json['time'] ?? json['timestamp'] ?? '').toString()) ?? DateTime.fromMillisecondsSinceEpoch(0),
-      price: rawPrice is int ? rawPrice : int.tryParse(rawPrice?.toString() ?? '') ?? 0,
+      time:
+          DateTime.tryParse(
+            (json['time'] ?? json['timestamp'] ?? '').toString(),
+          ) ??
+          DateTime.fromMillisecondsSinceEpoch(0),
+      price: rawPrice is int
+          ? rawPrice
+          : int.tryParse(rawPrice?.toString() ?? '') ?? 0,
     );
   }
 }

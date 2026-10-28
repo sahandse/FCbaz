@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 import '../domain/squad_models.dart';
 
 class FormationPickerSheet extends StatelessWidget {
-  const FormationPickerSheet({
-    required this.currentId,
-    super.key,
-  });
+  const FormationPickerSheet({required this.currentId, super.key});
 
   final String currentId;
 

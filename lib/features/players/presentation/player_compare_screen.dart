@@ -5,10 +5,7 @@ import '../domain/player.dart';
 import '../domain/player_value_analysis.dart';
 
 class PlayerCompareScreen extends StatefulWidget {
-  const PlayerCompareScreen({
-    this.initialPlayers = const [],
-    super.key,
-  });
+  const PlayerCompareScreen({this.initialPlayers = const [], super.key});
 
   final List<Player> initialPlayers;
 
@@ -20,7 +17,9 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
   final repository = PlayerRepository();
   final analyzer = const PlayerValueAnalyzer();
 
-  late List<Player> selected = widget.initialPlayers.take(4).toList(growable: true);
+  late List<Player> selected = widget.initialPlayers
+      .take(4)
+      .toList(growable: true);
   List<Player> allPlayers = const [];
   bool loading = false;
   bool loadingVersions = false;
@@ -72,7 +71,9 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
       isScrollControlled: true,
       showDragHandle: true,
       builder: (_) => _ComparePicker(
-        players: allPlayers.where((p) => !selected.any((s) => s.id == p.id)).toList(),
+        players: allPlayers
+            .where((p) => !selected.any((s) => s.id == p.id))
+            .toList(),
       ),
     );
     if (player == null) return;
@@ -101,7 +102,9 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
       setState(() => selected = values.take(4).toList(growable: true));
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => loadingVersions = false);
     }
@@ -145,11 +148,16 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
         children: [
-          Text('مقایسه حرفه‌ای کارت‌ها', style: Theme.of(context).textTheme.headlineSmall),
+          Text(
+            'مقایسه حرفه‌ای کارت‌ها',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
           const SizedBox(height: 4),
           Text(
             'آمار، PlayStyles، Roles و قیمت فقط از داده واقعی کارت‌ها خوانده می‌شود. شاخص ارزش، معیار محلی FCBaz برای مقایسه است.',
-            style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: 12),
           Wrap(
@@ -158,16 +166,29 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
             children: [
               SegmentedButton<PlayerMarketPlatform>(
                 segments: const [
-                  ButtonSegment(value: PlayerMarketPlatform.console, label: Text('کنسول')),
-                  ButtonSegment(value: PlayerMarketPlatform.pc, label: Text('رایانه (PC)')),
+                  ButtonSegment(
+                    value: PlayerMarketPlatform.console,
+                    label: Text('کنسول'),
+                  ),
+                  ButtonSegment(
+                    value: PlayerMarketPlatform.pc,
+                    label: Text('رایانه (PC)'),
+                  ),
                 ],
                 selected: {platform},
-                onSelectionChanged: (value) => setState(() => platform = value.first),
+                onSelectionChanged: (value) =>
+                    setState(() => platform = value.first),
               ),
               OutlinedButton.icon(
-                onPressed: selected.isEmpty || loadingVersions ? null : _compareVersions,
+                onPressed: selected.isEmpty || loadingVersions
+                    ? null
+                    : _compareVersions,
                 icon: loadingVersions
-                    ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2))
+                    ? const SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
                     : const Icon(Icons.layers_rounded),
                 label: const Text('نسخه‌های همین بازیکن'),
               ),
@@ -192,7 +213,10 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
                   children: [
                     const Icon(Icons.compare_arrows_rounded, size: 44),
                     const SizedBox(height: 10),
-                    const Text('بازیکنی برای مقایسه انتخاب نشده', style: TextStyle(fontWeight: FontWeight.w900)),
+                    const Text(
+                      'بازیکنی برای مقایسه انتخاب نشده',
+                      style: TextStyle(fontWeight: FontWeight.w900),
+                    ),
                     const SizedBox(height: 12),
                     FilledButton.icon(
                       onPressed: loading ? null : _addPlayer,
@@ -232,7 +256,9 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
                   }
                   final p = selected[index];
                   final analysis = analyses[index];
-                  final image = p.cardImageUrl.isNotEmpty ? p.cardImageUrl : p.imageUrl;
+                  final image = p.cardImageUrl.isNotEmpty
+                      ? p.cardImageUrl
+                      : p.imageUrl;
                   return SizedBox(
                     width: 142,
                     child: Card(
@@ -243,22 +269,51 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
                             SizedBox(
                               height: 74,
                               child: image.isEmpty
-                                  ? CircleAvatar(radius: 34, child: Text(p.rating.toString()))
-                                  : Image.network(image, fit: BoxFit.contain, errorBuilder: (_, __, ___) => CircleAvatar(radius: 34, child: Text(p.rating.toString()))),
+                                  ? CircleAvatar(
+                                      radius: 34,
+                                      child: Text(p.rating.toString()),
+                                    )
+                                  : Image.network(
+                                      image,
+                                      fit: BoxFit.contain,
+                                      errorBuilder: (_, __, ___) =>
+                                          CircleAvatar(
+                                            radius: 34,
+                                            child: Text(p.rating.toString()),
+                                          ),
+                                    ),
                             ),
                             const SizedBox(height: 6),
                             Directionality(
                               textDirection: TextDirection.ltr,
-                              child: Text(p.name, maxLines: 1, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w900)),
+                              child: Text(
+                                p.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
                             ),
                             Text('${p.rating} • ${p.position}'),
-                            Text(p.version.isEmpty ? '—' : p.version, maxLines: 1, overflow: TextOverflow.ellipsis, style: Theme.of(context).textTheme.labelSmall),
+                            Text(
+                              p.version.isEmpty ? '—' : p.version,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: Theme.of(context).textTheme.labelSmall,
+                            ),
                             const SizedBox(height: 5),
-                            Text('${_coins(analysis.price)} سکه', style: const TextStyle(fontWeight: FontWeight.w800)),
+                            Text(
+                              '${_coins(analysis.price)} سکه',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
                             const Spacer(),
                             IconButton(
                               visualDensity: VisualDensity.compact,
-                              onPressed: () => setState(() => selected.removeAt(index)),
+                              onPressed: () =>
+                                  setState(() => selected.removeAt(index)),
                               icon: const Icon(Icons.close_rounded, size: 18),
                             ),
                           ],
@@ -272,22 +327,81 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
             const SizedBox(height: 14),
             _ValueSection(analyses: analyses, coins: _coins),
             const SizedBox(height: 14),
-            _CompareRow(label: 'ریتینگ', players: selected, getter: (p) => p.rating, best: _bestValue((p) => p.rating)),
-            _CompareRow(label: 'سرعت', players: selected, getter: (p) => p.pace, best: _bestValue((p) => p.pace)),
-            _CompareRow(label: 'شوت', players: selected, getter: (p) => p.shooting, best: _bestValue((p) => p.shooting)),
-            _CompareRow(label: 'پاس', players: selected, getter: (p) => p.passing, best: _bestValue((p) => p.passing)),
-            _CompareRow(label: 'دریبل', players: selected, getter: (p) => p.dribbling, best: _bestValue((p) => p.dribbling)),
-            _CompareRow(label: 'دفاع', players: selected, getter: (p) => p.defending, best: _bestValue((p) => p.defending)),
-            _CompareRow(label: 'فیزیک', players: selected, getter: (p) => p.physical, best: _bestValue((p) => p.physical)),
-            _CompareRow(label: 'مهارت', players: selected, getter: (p) => p.skillMoves, best: _bestValue((p) => p.skillMoves), suffix: '★'),
-            _CompareRow(label: 'پای ضعیف', players: selected, getter: (p) => p.weakFoot, best: _bestValue((p) => p.weakFoot), suffix: '★'),
+            _CompareRow(
+              label: 'ریتینگ',
+              players: selected,
+              getter: (p) => p.rating,
+              best: _bestValue((p) => p.rating),
+            ),
+            _CompareRow(
+              label: 'سرعت',
+              players: selected,
+              getter: (p) => p.pace,
+              best: _bestValue((p) => p.pace),
+            ),
+            _CompareRow(
+              label: 'شوت',
+              players: selected,
+              getter: (p) => p.shooting,
+              best: _bestValue((p) => p.shooting),
+            ),
+            _CompareRow(
+              label: 'پاس',
+              players: selected,
+              getter: (p) => p.passing,
+              best: _bestValue((p) => p.passing),
+            ),
+            _CompareRow(
+              label: 'دریبل',
+              players: selected,
+              getter: (p) => p.dribbling,
+              best: _bestValue((p) => p.dribbling),
+            ),
+            _CompareRow(
+              label: 'دفاع',
+              players: selected,
+              getter: (p) => p.defending,
+              best: _bestValue((p) => p.defending),
+            ),
+            _CompareRow(
+              label: 'فیزیک',
+              players: selected,
+              getter: (p) => p.physical,
+              best: _bestValue((p) => p.physical),
+            ),
+            _CompareRow(
+              label: 'مهارت',
+              players: selected,
+              getter: (p) => p.skillMoves,
+              best: _bestValue((p) => p.skillMoves),
+              suffix: '★',
+            ),
+            _CompareRow(
+              label: 'پای ضعیف',
+              players: selected,
+              getter: (p) => p.weakFoot,
+              best: _bestValue((p) => p.weakFoot),
+              suffix: '★',
+            ),
             const SizedBox(height: 14),
             if (selected.any((p) => p.playStylesPlus.isNotEmpty))
-              _TextCompareSection(title: 'PlayStyles+', players: selected, getter: (p) => p.playStylesPlus),
+              _TextCompareSection(
+                title: 'PlayStyles+',
+                players: selected,
+                getter: (p) => p.playStylesPlus,
+              ),
             if (selected.any((p) => p.playStyles.isNotEmpty))
-              _TextCompareSection(title: 'PlayStyles', players: selected, getter: (p) => p.playStyles),
+              _TextCompareSection(
+                title: 'PlayStyles',
+                players: selected,
+                getter: (p) => p.playStyles,
+              ),
             if (selected.any((p) => p.roles.isNotEmpty))
-              _TextCompareSection(title: 'نقش‌ها (Roles)', players: selected, getter: (p) => p.roles),
+              _TextCompareSection(
+                title: 'نقش‌ها (Roles)',
+                players: selected,
+                getter: (p) => p.roles,
+              ),
           ],
         ],
       ),
@@ -308,11 +422,17 @@ class _ValueSection extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text('تحلیل قیمت و ارزش', style: TextStyle(fontWeight: FontWeight.w900)),
+            const Text(
+              'تحلیل قیمت و ارزش',
+              style: TextStyle(fontWeight: FontWeight.w900),
+            ),
             const SizedBox(height: 4),
             Text(
               'شاخص ارزش FCBaz فقط وقتی قیمت واقعی کارت موجود باشد محاسبه می‌شود و پیش‌بینی بازار نیست.',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant, fontSize: 11),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 11,
+              ),
             ),
             const SizedBox(height: 10),
             for (final item in analyses) ...[
@@ -321,14 +441,25 @@ class _ValueSection extends StatelessWidget {
                   Expanded(
                     child: Directionality(
                       textDirection: TextDirection.ltr,
-                      child: Text(item.player.name, overflow: TextOverflow.ellipsis, style: const TextStyle(fontWeight: FontWeight.w800)),
+                      child: Text(
+                        item.player.name,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(fontWeight: FontWeight.w800),
+                      ),
                     ),
                   ),
                   Text(coins(item.price)),
                   const SizedBox(width: 12),
                   Text(
-                    item.valueIndex == null ? 'شاخص: —' : 'شاخص: ${item.valueIndex!.toStringAsFixed(1)}',
-                    style: TextStyle(color: item.valueIndex == null ? null : Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w900),
+                    item.valueIndex == null
+                        ? 'شاخص: —'
+                        : 'شاخص: ${item.valueIndex!.toStringAsFixed(1)}',
+                    style: TextStyle(
+                      color: item.valueIndex == null
+                          ? null
+                          : Theme.of(context).colorScheme.primary,
+                      fontWeight: FontWeight.w900,
+                    ),
                   ),
                 ],
               ),
@@ -342,7 +473,13 @@ class _ValueSection extends StatelessWidget {
 }
 
 class _CompareRow extends StatelessWidget {
-  const _CompareRow({required this.label, required this.players, required this.getter, required this.best, this.suffix = ''});
+  const _CompareRow({
+    required this.label,
+    required this.players,
+    required this.getter,
+    required this.best,
+    this.suffix = '',
+  });
   final String label;
   final List<Player> players;
   final int Function(Player p) getter;
@@ -356,20 +493,35 @@ class _CompareRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
         child: Row(
           children: [
-            SizedBox(width: 70, child: Text(label, style: const TextStyle(fontWeight: FontWeight.w900))),
+            SizedBox(
+              width: 70,
+              child: Text(
+                label,
+                style: const TextStyle(fontWeight: FontWeight.w900),
+              ),
+            ),
             for (final p in players)
               Expanded(
                 child: Container(
                   margin: const EdgeInsets.symmetric(horizontal: 3),
                   padding: const EdgeInsets.symmetric(vertical: 8),
                   decoration: BoxDecoration(
-                    color: getter(p) == best ? Theme.of(context).colorScheme.primary.withValues(alpha: .12) : Colors.transparent,
+                    color: getter(p) == best
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: .12)
+                        : Colors.transparent,
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
                     '${getter(p)}$suffix',
                     textAlign: TextAlign.center,
-                    style: TextStyle(fontWeight: FontWeight.w900, color: getter(p) == best ? Theme.of(context).colorScheme.primary : null),
+                    style: TextStyle(
+                      fontWeight: FontWeight.w900,
+                      color: getter(p) == best
+                          ? Theme.of(context).colorScheme.primary
+                          : null,
+                    ),
                   ),
                 ),
               ),
@@ -381,7 +533,11 @@ class _CompareRow extends StatelessWidget {
 }
 
 class _TextCompareSection extends StatelessWidget {
-  const _TextCompareSection({required this.title, required this.players, required this.getter});
+  const _TextCompareSection({
+    required this.title,
+    required this.players,
+    required this.getter,
+  });
   final String title;
   final List<Player> players;
   final List<String> Function(Player p) getter;
@@ -399,7 +555,13 @@ class _TextCompareSection extends StatelessWidget {
             for (final player in players) ...[
               Directionality(
                 textDirection: TextDirection.ltr,
-                child: Text(player.name, style: TextStyle(color: Theme.of(context).colorScheme.primary, fontWeight: FontWeight.w800)),
+                child: Text(
+                  player.name,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
               ),
               const SizedBox(height: 4),
               Text(getter(player).isEmpty ? '—' : getter(player).join(' • ')),
@@ -428,9 +590,10 @@ class _ComparePickerState extends State<_ComparePicker> {
     final q = query.trim().toLowerCase();
     final data = widget.players.where((p) {
       if (q.isEmpty) return true;
-      return p.name.toLowerCase().contains(q) || p.clubName.toLowerCase().contains(q) || p.position.toLowerCase().contains(q);
-    }).toList()
-      ..sort((a, b) => b.rating.compareTo(a.rating));
+      return p.name.toLowerCase().contains(q) ||
+          p.clubName.toLowerCase().contains(q) ||
+          p.position.toLowerCase().contains(q);
+    }).toList()..sort((a, b) => b.rating.compareTo(a.rating));
 
     return SafeArea(
       child: SizedBox(
@@ -441,7 +604,10 @@ class _ComparePickerState extends State<_ComparePicker> {
             children: [
               TextField(
                 onChanged: (value) => setState(() => query = value),
-                decoration: const InputDecoration(hintText: 'جستجوی کارت...', prefixIcon: Icon(Icons.search_rounded)),
+                decoration: const InputDecoration(
+                  hintText: 'جستجوی کارت...',
+                  prefixIcon: Icon(Icons.search_rounded),
+                ),
               ),
               const SizedBox(height: 10),
               Expanded(
@@ -454,11 +620,20 @@ class _ComparePickerState extends State<_ComparePicker> {
                       child: ListTile(
                         onTap: () => Navigator.pop(context, p),
                         leading: CircleAvatar(
-                          backgroundImage: p.imageUrl.isEmpty ? null : NetworkImage(p.imageUrl),
-                          child: p.imageUrl.isEmpty ? Text(p.rating.toString()) : null,
+                          backgroundImage: p.imageUrl.isEmpty
+                              ? null
+                              : NetworkImage(p.imageUrl),
+                          child: p.imageUrl.isEmpty
+                              ? Text(p.rating.toString())
+                              : null,
                         ),
-                        title: Directionality(textDirection: TextDirection.ltr, child: Text(p.name)),
-                        subtitle: Text('${p.rating} • ${p.position} • ${p.version}'),
+                        title: Directionality(
+                          textDirection: TextDirection.ltr,
+                          child: Text(p.name),
+                        ),
+                        subtitle: Text(
+                          '${p.rating} • ${p.position} • ${p.version}',
+                        ),
                       ),
                     );
                   },

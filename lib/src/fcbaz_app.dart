@@ -69,7 +69,9 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) return;
     if (!settings.marketRefreshOnResume || !settings.priceAlertsEnabled) return;
-    priceAlertService.checkNow().catchError((_) => const PriceAlertCheckResult(checked: 0, triggered: 0));
+    priceAlertService.checkNow().catchError(
+      (_) => const PriceAlertCheckResult(checked: 0, triggered: 0),
+    );
   }
 
   @override
@@ -80,9 +82,7 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
         theme: FCBazTheme.light(),
         darkTheme: FCBazTheme.dark(),
         themeMode: ThemeMode.dark,
-        home: const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        ),
+        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
       );
     }
 
@@ -99,10 +99,7 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
       themeMode: settings.themeMode,
       theme: FCBazTheme.light(settings.accentColor),
       darkTheme: FCBazTheme.dark(settings.accentColor),
-      home: MainShell(
-        settings: settings,
-        onSettingsChanged: _updateSettings,
-      ),
+      home: MainShell(settings: settings, onSettingsChanged: _updateSettings),
     );
   }
 }

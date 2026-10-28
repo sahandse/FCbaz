@@ -95,7 +95,9 @@ class _MetaScreenState extends State<MetaScreen> {
           padding: const EdgeInsets.all(16),
           children: [
             Text(
-              hasVerifiedMeta ? 'بازیکنان متای FC27' : 'بالاترین ریتینگ‌های FC27',
+              hasVerifiedMeta
+                  ? 'بازیکنان متای FC27'
+                  : 'بالاترین ریتینگ‌های FC27',
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 5),
@@ -103,7 +105,9 @@ class _MetaScreenState extends State<MetaScreen> {
               hasVerifiedMeta
                   ? 'رتبه، Tier و دلیل فقط وقتی نمایش داده می‌شوند که Backend متا آن‌ها را برگرداند.'
                   : 'منبع متا در دسترس نیست؛ این لیست صرفاً از داده واقعی بازیکنان و مرتب‌سازی ریتینگ ساخته شده و رتبه متا محسوب نمی‌شود.',
-              style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
             const SizedBox(height: 14),
             SegmentedButton<String>(
@@ -246,8 +250,9 @@ class _MetaPlayerCard extends StatelessWidget {
             children: [
               CircleAvatar(
                 radius: 27,
-                backgroundImage:
-                    player.imageUrl.isEmpty ? null : NetworkImage(player.imageUrl),
+                backgroundImage: player.imageUrl.isEmpty
+                    ? null
+                    : NetworkImage(player.imageUrl),
                 child: player.imageUrl.isEmpty
                     ? Text(player.rating.toString())
                     : null,
@@ -285,7 +290,11 @@ class _MetaPlayerCard extends StatelessWidget {
                           if (entry.role.isNotEmpty)
                             Chip(label: Text(entry.role)),
                           if (entry.score != null)
-                            Chip(label: Text('امتیاز ${entry.score!.toStringAsFixed(1)}')),
+                            Chip(
+                              label: Text(
+                                'امتیاز ${entry.score!.toStringAsFixed(1)}',
+                              ),
+                            ),
                         ],
                       ),
                     ],
@@ -393,7 +402,9 @@ class _NewsScreenState extends State<NewsScreen> {
                 child: ListTile(
                   leading: Icon(Icons.newspaper_rounded),
                   title: Text('خبر جدیدی نیست'),
-                  subtitle: Text('Promo، SBC، Evolution و تغییرات FC27 اینجا نمایش داده می‌شوند.'),
+                  subtitle: Text(
+                    'Promo، SBC، Evolution و تغییرات FC27 اینجا نمایش داده می‌شوند.',
+                  ),
                 ),
               )
             else
@@ -406,7 +417,10 @@ class _NewsScreenState extends State<NewsScreen> {
                       children: [
                         Text(
                           _value(item, 'title'),
-                          style: const TextStyle(fontWeight: FontWeight.w900, fontSize: 17),
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w900,
+                            fontSize: 17,
+                          ),
                         ),
                         const SizedBox(height: 6),
                         Text(

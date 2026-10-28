@@ -19,7 +19,9 @@ void main() {
   });
 
   test('SBC center uses live FC27 hub language and verified states', () {
-    final source = File('lib/features/sbc/presentation/sbc_screen.dart').readAsStringSync();
+    final source = File(
+      'lib/features/sbc/presentation/sbc_screen.dart',
+    ).readAsStringSync();
     expect(source, contains('SBC HUB'));
     expect(source, contains('FC27 • LIVE'));
     expect(source, contains('SQUAD BUILDING'));

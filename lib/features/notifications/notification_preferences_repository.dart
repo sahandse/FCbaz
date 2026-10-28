@@ -19,11 +19,11 @@ class NotificationPreferences {
     bool? evolutionDeadlines,
     int? deadlineHours,
   }) => NotificationPreferences(
-        priceAlerts: priceAlerts ?? this.priceAlerts,
-        objectiveDeadlines: objectiveDeadlines ?? this.objectiveDeadlines,
-        evolutionDeadlines: evolutionDeadlines ?? this.evolutionDeadlines,
-        deadlineHours: deadlineHours ?? this.deadlineHours,
-      );
+    priceAlerts: priceAlerts ?? this.priceAlerts,
+    objectiveDeadlines: objectiveDeadlines ?? this.objectiveDeadlines,
+    evolutionDeadlines: evolutionDeadlines ?? this.evolutionDeadlines,
+    deadlineHours: deadlineHours ?? this.deadlineHours,
+  );
 }
 
 class NotificationPreferencesRepository {

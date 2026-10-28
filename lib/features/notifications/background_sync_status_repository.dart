@@ -18,21 +18,24 @@ class BackgroundSyncStatus {
   final String? lastError;
 
   bool get hasRun => lastRunAt != null;
-  bool get lastRunSucceeded => lastSuccessAt != null && lastSuccessAt == lastRunAt;
+  bool get lastRunSucceeded =>
+      lastSuccessAt != null && lastSuccessAt == lastRunAt;
 
   Map<String, dynamic> toJson() => {
-        'last_run_at': lastRunAt?.toIso8601String(),
-        'last_success_at': lastSuccessAt?.toIso8601String(),
-        'last_checked': lastChecked,
-        'last_triggered': lastTriggered,
-        'last_error': lastError,
-      };
+    'last_run_at': lastRunAt?.toIso8601String(),
+    'last_success_at': lastSuccessAt?.toIso8601String(),
+    'last_checked': lastChecked,
+    'last_triggered': lastTriggered,
+    'last_error': lastError,
+  };
 
   factory BackgroundSyncStatus.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic value) => int.tryParse(value?.toString() ?? '') ?? 0;
     return BackgroundSyncStatus(
       lastRunAt: DateTime.tryParse((json['last_run_at'] ?? '').toString()),
-      lastSuccessAt: DateTime.tryParse((json['last_success_at'] ?? '').toString()),
+      lastSuccessAt: DateTime.tryParse(
+        (json['last_success_at'] ?? '').toString(),
+      ),
       lastChecked: asInt(json['last_checked']),
       lastTriggered: asInt(json['last_triggered']),
       lastError: (json['last_error'] ?? '').toString().trim().isEmpty

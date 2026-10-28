@@ -5,10 +5,7 @@ import 'notification_repository.dart';
 import 'system_notification_service.dart';
 
 class PriceAlertCheckResult {
-  const PriceAlertCheckResult({
-    required this.checked,
-    required this.triggered,
-  });
+  const PriceAlertCheckResult({required this.checked, required this.triggered});
 
   final int checked;
   final int triggered;
@@ -20,11 +17,11 @@ class PriceAlertService {
     WatchlistRepository? watchlistRepository,
     NotificationRepository? notificationRepository,
     AppSettingsRepository? settingsRepository,
-  })  : marketRepository = marketRepository ?? MarketRepository(),
-        watchlistRepository = watchlistRepository ?? WatchlistRepository(),
-        notificationRepository =
-            notificationRepository ?? NotificationRepository(),
-        settingsRepository = settingsRepository ?? AppSettingsRepository();
+  }) : marketRepository = marketRepository ?? MarketRepository(),
+       watchlistRepository = watchlistRepository ?? WatchlistRepository(),
+       notificationRepository =
+           notificationRepository ?? NotificationRepository(),
+       settingsRepository = settingsRepository ?? AppSettingsRepository();
 
   final MarketRepository marketRepository;
   final WatchlistRepository watchlistRepository;
@@ -98,9 +95,6 @@ class PriceAlertService {
       }
     }
 
-    return PriceAlertCheckResult(
-      checked: checked,
-      triggered: triggered,
-    );
+    return PriceAlertCheckResult(checked: checked, triggered: triggered);
   }
 }

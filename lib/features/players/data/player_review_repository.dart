@@ -16,21 +16,22 @@ class PlayerReview {
   final DateTime updatedAt;
 
   Map<String, dynamic> toJson() => {
-        'player_id': playerId,
-        'rating': rating,
-        'text': text,
-        'updated_at': updatedAt.toIso8601String(),
-      };
+    'player_id': playerId,
+    'rating': rating,
+    'text': text,
+    'updated_at': updatedAt.toIso8601String(),
+  };
 
   factory PlayerReview.fromJson(Map<String, dynamic> json) => PlayerReview(
-        playerId: (json['player_id'] ?? '').toString(),
-        rating: json['rating'] is int
-            ? json['rating'] as int
-            : int.tryParse((json['rating'] ?? '0').toString()) ?? 0,
-        text: (json['text'] ?? '').toString(),
-        updatedAt: DateTime.tryParse((json['updated_at'] ?? '').toString()) ??
-            DateTime.fromMillisecondsSinceEpoch(0),
-      );
+    playerId: (json['player_id'] ?? '').toString(),
+    rating: json['rating'] is int
+        ? json['rating'] as int
+        : int.tryParse((json['rating'] ?? '0').toString()) ?? 0,
+    text: (json['text'] ?? '').toString(),
+    updatedAt:
+        DateTime.tryParse((json['updated_at'] ?? '').toString()) ??
+        DateTime.fromMillisecondsSinceEpoch(0),
+  );
 }
 
 class PlayerReviewRepository {
@@ -59,8 +60,7 @@ class PlayerReviewRepository {
     }
   }
 
-  Future<PlayerReview?> get(String playerId) async =>
-      (await _all())[playerId];
+  Future<PlayerReview?> get(String playerId) async => (await _all())[playerId];
 
   Future<void> save({
     required String playerId,

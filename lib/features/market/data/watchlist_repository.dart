@@ -60,14 +60,14 @@ class WatchlistItem {
   }
 
   Map<String, dynamic> toJson() => {
-        'player_id': playerId,
-        'player_name': playerName,
-        'target_price': targetPrice,
-        'last_price': lastPrice,
-        'previous_price': previousPrice,
-        'last_checked_at': lastCheckedAt?.toIso8601String(),
-        'platform': platform,
-      };
+    'player_id': playerId,
+    'player_name': playerName,
+    'target_price': targetPrice,
+    'last_price': lastPrice,
+    'previous_price': previousPrice,
+    'last_checked_at': lastCheckedAt?.toIso8601String(),
+    'platform': platform,
+  };
 
   factory WatchlistItem.fromJson(Map<String, dynamic> json) {
     int? asNullableInt(dynamic value) {

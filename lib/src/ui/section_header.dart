@@ -43,10 +43,7 @@ class SectionHeader extends StatelessWidget {
                     ),
                   ),
                 ),
-              Text(
-                title,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
+              Text(title, style: Theme.of(context).textTheme.titleLarge),
             ],
           ),
         ),

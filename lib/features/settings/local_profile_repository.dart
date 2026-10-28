@@ -10,9 +10,7 @@ class LocalProfileRepository {
 
   Future<LocalProfile> load() async {
     final prefs = await SharedPreferences.getInstance();
-    return LocalProfile(
-      displayName: prefs.getString(_nameKey) ?? '',
-    );
+    return LocalProfile(displayName: prefs.getString(_nameKey) ?? '');
   }
 
   Future<void> saveName(String name) async {

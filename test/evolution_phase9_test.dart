@@ -30,17 +30,17 @@ void main() {
   );
 
   Evolution evo({List<Map<String, dynamic>> upgrades = const []}) => Evolution(
-        id: 'evo',
-        title: 'Evo',
-        description: '',
-        cost: 0,
-        requirements: const [],
-        requirementData: const [],
-        upgrades: const [],
-        upgradeData: upgrades,
-        expiresAt: null,
-        steps: const [],
-      );
+    id: 'evo',
+    title: 'Evo',
+    description: '',
+    cost: 0,
+    requirements: const [],
+    requirementData: const [],
+    upgrades: const [],
+    upgradeData: upgrades,
+    expiresAt: null,
+    steps: const [],
+  );
 
   test('does not invent projection when structured upgrades are missing', () {
     expect(engine.project(player, evo()), isNull);
@@ -49,10 +49,12 @@ void main() {
   test('applies explicit numeric deltas only', () {
     final result = engine.project(
       player,
-      evo(upgrades: const [
-        {'stat': 'pace', 'delta': 5},
-        {'stat': 'passing', 'delta': 3},
-      ]),
+      evo(
+        upgrades: const [
+          {'stat': 'pace', 'delta': 5},
+          {'stat': 'passing', 'delta': 3},
+        ],
+      ),
     );
 
     expect(result, isNotNull);
@@ -65,9 +67,11 @@ void main() {
   test('uses explicit final value without guessing other stats', () {
     final result = engine.project(
       player,
-      evo(upgrades: const [
-        {'stat': 'rating', 'operation': 'set', 'value': 87},
-      ]),
+      evo(
+        upgrades: const [
+          {'stat': 'rating', 'operation': 'set', 'value': 87},
+        ],
+      ),
     );
 
     expect(result, isNotNull);

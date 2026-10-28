@@ -22,7 +22,9 @@ void main() {
     });
 
     test('production release never generates a new signing key', () {
-      final workflow = File('.github/workflows/flutter-android.yml').readAsStringSync();
+      final workflow = File(
+        '.github/workflows/flutter-android.yml',
+      ).readAsStringSync();
       expect(workflow.contains('keytool -genkeypair'), isFalse);
       expect(workflow, contains('FCBAZ_KEYSTORE_BASE64'));
       expect(workflow, contains('FCBAZ_STORE_PASSWORD'));

@@ -11,10 +11,7 @@ class FCBazApiException implements Exception {
 }
 
 class _CacheEntry {
-  const _CacheEntry({
-    required this.value,
-    required this.createdAt,
-  });
+  const _CacheEntry({required this.value, required this.createdAt});
 
   final dynamic value;
   final DateTime createdAt;
@@ -68,10 +65,7 @@ class FCBazApi {
         .toList();
   }
 
-  Future<Player> fetchPlayer(
-    String id, {
-    bool forceRefresh = false,
-  }) async {
+  Future<Player> fetchPlayer(String id, {bool forceRefresh = false}) async {
     final json = await getJson(
       '/api/v1/players/' + Uri.encodeComponent(id),
       forceRefresh: forceRefresh,
@@ -89,11 +83,7 @@ class FCBazApi {
     bool forceRefresh = false,
     Duration cacheTtl = const Duration(seconds: 60),
   }) =>
-      _requestJson(
-        path: path,
-        forceRefresh: forceRefresh,
-        cacheTtl: cacheTtl,
-      );
+      _requestJson(path: path, forceRefresh: forceRefresh, cacheTtl: cacheTtl);
 
   void clearPublicCache() => _cache.clear();
 
@@ -119,14 +109,14 @@ class FCBazApi {
     }
 
     final uri = Uri.parse(baseUrl).resolve(path);
-    final request =
-        await _client.getUrl(uri).timeout(const Duration(seconds: 8));
+    final request = await _client
+        .getUrl(uri)
+        .timeout(const Duration(seconds: 8));
 
     request.headers.set(HttpHeaders.acceptHeader, 'application/json');
     request.headers.set('X-FCBaz-Game-Year', '27');
 
-    final response =
-        await request.close().timeout(const Duration(seconds: 15));
+    final response = await request.close().timeout(const Duration(seconds: 15));
     final responseBody = await utf8.decoder.bind(response).join();
 
     dynamic decoded;
@@ -150,10 +140,7 @@ class FCBazApi {
     }
 
     if (cacheTtl > Duration.zero) {
-      _cache[path] = _CacheEntry(
-        value: decoded,
-        createdAt: DateTime.now(),
-      );
+      _cache[path] = _CacheEntry(value: decoded, createdAt: DateTime.now());
     }
 
     return decoded;

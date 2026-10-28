@@ -61,7 +61,7 @@ class SquadInsights {
 
 class SquadInsightsService {
   SquadInsightsService({PlayerRepository? playerRepository})
-      : playerRepository = playerRepository ?? PlayerRepository();
+    : playerRepository = playerRepository ?? PlayerRepository();
 
   final PlayerRepository playerRepository;
 
@@ -103,12 +103,14 @@ class SquadInsightsService {
     for (final slot in formation.slots) {
       final player = squad.playersBySlot[slot.id];
       if (player == null) {
-        weaknesses.add(SquadWeakness(
-          title: 'جای خالی در ' + slot.position,
-          detail: 'این پست هنوز بازیکن ندارد.',
-          severity: 3,
-          slotId: slot.id,
-        ));
+        weaknesses.add(
+          SquadWeakness(
+            title: 'جای خالی در ' + slot.position,
+            detail: 'این پست هنوز بازیکن ندارد.',
+            severity: 3,
+            slotId: slot.id,
+          ),
+        );
         continue;
       }
 
@@ -126,36 +128,48 @@ class SquadInsightsService {
       if (config != null && config.role.isNotEmpty) roleConfigured++;
 
       if (!_inPosition(player, slot.position)) {
-        weaknesses.add(SquadWeakness(
-          title: 'Out of Position',
-          detail: player.name + ' در ' + slot.position + ' Chemistry صفر می‌گیرد.',
-          severity: 4,
-          slotId: slot.id,
-        ));
+        weaknesses.add(
+          SquadWeakness(
+            title: 'Out of Position',
+            detail:
+                player.name +
+                ' در ' +
+                slot.position +
+                ' Chemistry صفر می‌گیرد.',
+            severity: 4,
+            slotId: slot.id,
+          ),
+        );
       } else if (chemistryValue == 0) {
-        weaknesses.add(SquadWeakness(
-          title: 'Chemistry پایین',
-          detail: player.name + ' در حال حاضر 0 Chemistry دارد.',
-          severity: 3,
-          slotId: slot.id,
-        ));
+        weaknesses.add(
+          SquadWeakness(
+            title: 'Chemistry پایین',
+            detail: player.name + ' در حال حاضر 0 Chemistry دارد.',
+            severity: 3,
+            slotId: slot.id,
+          ),
+        );
       } else if (chemistryValue == 1) {
-        weaknesses.add(SquadWeakness(
-          title: 'Chemistry قابل بهبود',
-          detail: player.name + ' فقط 1 Chemistry دارد.',
-          severity: 2,
-          slotId: slot.id,
-        ));
+        weaknesses.add(
+          SquadWeakness(
+            title: 'Chemistry قابل بهبود',
+            detail: player.name + ' فقط 1 Chemistry دارد.',
+            severity: 2,
+            slotId: slot.id,
+          ),
+        );
       }
 
-      if (player.roles.isNotEmpty &&
-          (config == null || config.role.isEmpty)) {
-        weaknesses.add(SquadWeakness(
-          title: 'Role انتخاب نشده',
-          detail: player.name + ' Role واقعی دارد ولی برای Squad تنظیم نشده است.',
-          severity: 1,
-          slotId: slot.id,
-        ));
+      if (player.roles.isNotEmpty && (config == null || config.role.isEmpty)) {
+        weaknesses.add(
+          SquadWeakness(
+            title: 'Role انتخاب نشده',
+            detail:
+                player.name + ' Role واقعی دارد ولی برای Squad تنظیم نشده است.',
+            severity: 1,
+            slotId: slot.id,
+          ),
+        );
       }
 
       if (_isAttack(slot.position)) {
@@ -168,19 +182,23 @@ class SquadInsightsService {
     }
 
     if (chemistry.total < 22 && squad.playersBySlot.length == 11) {
-      weaknesses.add(SquadWeakness(
-        title: 'Chemistry کلی پایین',
-        detail: 'Chemistry فعلی ' + chemistry.total.toString() + '/33 است.',
-        severity: 3,
-      ));
+      weaknesses.add(
+        SquadWeakness(
+          title: 'Chemistry کلی پایین',
+          detail: 'Chemistry فعلی ' + chemistry.total.toString() + '/33 است.',
+          severity: 3,
+        ),
+      );
     }
 
     if (plusCount == 0 && players.length >= 8) {
-      weaknesses.add(const SquadWeakness(
-        title: 'PlayStyles+ محدود',
-        detail: 'Starting XI هیچ PlayStyle+ ثبت‌شده‌ای در داده فعلی ندارد.',
-        severity: 1,
-      ));
+      weaknesses.add(
+        const SquadWeakness(
+          title: 'PlayStyles+ محدود',
+          detail: 'Starting XI هیچ PlayStyle+ ثبت‌شده‌ای در داده فعلی ندارد.',
+          severity: 1,
+        ),
+      );
     }
 
     weaknesses.sort((a, b) => b.severity.compareTo(a.severity));
@@ -192,11 +210,12 @@ class SquadInsightsService {
     final chemistryFactor = chemistry.total / 33.0;
     final averagePlayerMeta = totalMeta / players.length;
 
-    final squadMeta = (
-      averagePlayerMeta * .68 +
-      chemistryFactor * 100 * .22 +
-      completionFactor * 100 * .10
-    ).clamp(0, 100).toDouble();
+    final squadMeta =
+        (averagePlayerMeta * .68 +
+                chemistryFactor * 100 * .22 +
+                completionFactor * 100 * .10)
+            .clamp(0, 100)
+            .toDouble();
 
     return SquadInsights(
       metaScore: squadMeta,
@@ -262,8 +281,9 @@ class SquadInsightsService {
         for (final candidate in result.players.take(30)) {
           if (usedIds.contains(candidate.id)) continue;
 
-          final price =
-              platform == 'pc' ? candidate.pricePc : candidate.pricePs;
+          final price = platform == 'pc'
+              ? candidate.pricePc
+              : candidate.pricePs;
           if (price <= 0 || price > maxBudget) continue;
 
           final candidateScore = playerMetaScore(
@@ -315,21 +335,24 @@ class SquadInsightsService {
 
     double base;
     if (_isAttack(slotPosition)) {
-      base = p.shooting * .27 +
+      base =
+          p.shooting * .27 +
           p.pace * .22 +
           p.dribbling * .22 +
           p.passing * .12 +
           p.physical * .08 +
           p.rating * .09;
     } else if (_isDefense(slotPosition)) {
-      base = p.defending * .30 +
+      base =
+          p.defending * .30 +
           p.physical * .22 +
           p.pace * .18 +
           p.passing * .10 +
           p.dribbling * .06 +
           p.rating * .14;
     } else {
-      base = p.passing * .24 +
+      base =
+          p.passing * .24 +
           p.dribbling * .21 +
           p.pace * .12 +
           p.defending * .13 +
@@ -350,8 +373,7 @@ class SquadInsightsService {
   bool _inPosition(Player p, String position) =>
       p.position == position || p.positions.contains(position);
 
-  bool _isAttack(String p) =>
-      const {'ST', 'CF', 'LW', 'RW'}.contains(p);
+  bool _isAttack(String p) => const {'ST', 'CF', 'LW', 'RW'}.contains(p);
 
   bool _isDefense(String p) =>
       const {'GK', 'CB', 'LB', 'RB', 'LWB', 'RWB'}.contains(p);
@@ -360,8 +382,12 @@ class SquadInsightsService {
       (p.shooting * .32 + p.pace * .25 + p.dribbling * .25 + p.passing * .18);
 
   double _midfieldScore(Player p) =>
-      (p.passing * .30 + p.dribbling * .25 + p.pace * .12 +
-          p.defending * .12 + p.physical * .11 + p.shooting * .10);
+      (p.passing * .30 +
+      p.dribbling * .25 +
+      p.pace * .12 +
+      p.defending * .12 +
+      p.physical * .11 +
+      p.shooting * .10);
 
   double _defenseScore(Player p) =>
       (p.defending * .38 + p.physical * .26 + p.pace * .21 + p.passing * .15);

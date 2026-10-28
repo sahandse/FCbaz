@@ -16,7 +16,8 @@ class DnsRepository {
       primary: '78.157.42.101',
       secondary: '78.157.42.100',
       ping: 'عالی (داخلی)',
-      desc: 'محبوب‌ترین DNS گیمینگ در ایران برای حل خطای اتصال سرورهای EA، آلتیمیت تیم و رفع تحریم‌های فروشگاه سونی.',
+      desc:
+          'محبوب‌ترین DNS گیمینگ در ایران برای حل خطای اتصال سرورهای EA، آلتیمیت تیم و رفع تحریم‌های فروشگاه سونی.',
       suitable: 'ورود به Ultimate Team، مچ‌میکینگ بدون تحریم',
     ),
     DnsServer(
@@ -28,7 +29,8 @@ class DnsRepository {
       primary: '10.202.10.10',
       secondary: '10.202.10.11',
       ping: 'عالی (داخلی)',
-      desc: 'کاهش شدید پکت‌لاس در مسابقات آنلاین Division Rivals و Champions و بهبود روتینگ بسته‌ها به سرورهای EA.',
+      desc:
+          'کاهش شدید پکت‌لاس در مسابقات آنلاین Division Rivals و Champions و بهبود روتینگ بسته‌ها به سرورهای EA.',
       suitable: 'حذف پکت‌لاس و لگ در مسابقات آنلاین',
     ),
     DnsServer(
@@ -40,7 +42,8 @@ class DnsRepository {
       primary: '178.22.122.100',
       secondary: '185.51.200.2',
       ping: 'خیلی خوب',
-      desc: 'سرویس رفع تحریم برای دسترسی به استور پلی‌استیشن و خدمات تحریم‌شده گیمینگ بدون افت سرعت.',
+      desc:
+          'سرویس رفع تحریم برای دسترسی به استور پلی‌استیشن و خدمات تحریم‌شده گیمینگ بدون افت سرعت.',
       suitable: 'دانلود از PS Store و آپدیت‌های بازی',
     ),
     DnsServer(
@@ -52,7 +55,8 @@ class DnsRepository {
       primary: '10.202.10.202',
       secondary: '10.202.10.102',
       ping: 'عالی',
-      desc: 'پروژه اختصاصی عبور از تحریم‌های فناوری و اینترنت با پایداری بالا در تمامی ارائه‌دهندگان اینترنت.',
+      desc:
+          'پروژه اختصاصی عبور از تحریم‌های فناوری و اینترنت با پایداری بالا در تمامی ارائه‌دهندگان اینترنت.',
       suitable: 'حل ارورهای تحریم 403 در بازی‌ها',
     ),
     DnsServer(
@@ -64,7 +68,8 @@ class DnsRepository {
       primary: '185.55.226.26',
       secondary: '185.55.225.25',
       ping: 'خیلی خوب',
-      desc: 'دی‌ان‌اس اختصاصی گیمینگ برای باز شدن سریع‌تر منوهای آلتیمیت تیم و حل مشکل پیدا نکردن حریف.',
+      desc:
+          'دی‌ان‌اس اختصاصی گیمینگ برای باز شدن سریع‌تر منوهای آلتیمیت تیم و حل مشکل پیدا نکردن حریف.',
       suitable: 'مچ‌میکینگ سریع‌تر و ثبات در بازی',
     ),
     DnsServer(
@@ -76,7 +81,8 @@ class DnsRepository {
       primary: '1.1.1.1',
       secondary: '1.0.0.1',
       ping: 'بسیار کم (جهانی)',
-      desc: 'سریع‌ترین رزولوشن DNS جهان با شبکه توزیع‌شده جهانی Anycast و بیشترین حریم خصوصی.',
+      desc:
+          'سریع‌ترین رزولوشن DNS جهان با شبکه توزیع‌شده جهانی Anycast و بیشترین حریم خصوصی.',
       suitable: 'پینگ فوق‌العاده کم و اتصال پایدار',
     ),
     DnsServer(
@@ -88,7 +94,8 @@ class DnsRepository {
       primary: '1.1.1.2',
       secondary: '1.0.0.2',
       ping: 'بسیار کم',
-      desc: 'همان سرعت بالای کلودفلر همراه با مسدودسازی هوشمند ترافیک مخرب و ناهنجاری‌های شبکه.',
+      desc:
+          'همان سرعت بالای کلودفلر همراه با مسدودسازی هوشمند ترافیک مخرب و ناهنجاری‌های شبکه.',
       suitable: 'امنیت شبکه کنسول و کاهش نوسان پینگ',
     ),
     DnsServer(
@@ -100,7 +107,8 @@ class DnsRepository {
       primary: '8.8.8.8',
       secondary: '8.8.4.4',
       ping: 'کم و باثبات',
-      desc: 'سازگارترین دی‌ان‌اس با تمامی سرورهای بازی سونی و EA در سراسر جهان با آپ‌تایم ۹۹.۹۹٪.',
+      desc:
+          'سازگارترین دی‌ان‌اس با تمامی سرورهای بازی سونی و EA در سراسر جهان با آپ‌تایم ۹۹.۹۹٪.',
       suitable: 'هماهنگی ۱۰۰٪ با تمامی ریجن‌های پلی‌استیشن',
     ),
     DnsServer(
@@ -112,7 +120,8 @@ class DnsRepository {
       primary: '9.9.9.9',
       secondary: '149.112.112.112',
       ping: 'کم',
-      desc: 'توصیه شده توسط کارشناسان امنیت شبکه برای جلوگیری از دستکاری پکت‌های ارسالی بدون کاهش سرعت.',
+      desc:
+          'توصیه شده توسط کارشناسان امنیت شبکه برای جلوگیری از دستکاری پکت‌های ارسالی بدون کاهش سرعت.',
       suitable: 'مسابقات آنلاین بدون قطعی ناگهانی',
     ),
     DnsServer(
@@ -124,7 +133,8 @@ class DnsRepository {
       primary: '208.67.222.222',
       secondary: '208.67.220.220',
       ping: 'کم',
-      desc: 'شبکه قدرتمند سیسکو با پهنای باند عالی جهت دانلود با حداکثر سرعت در پلی‌استیشن ۵.',
+      desc:
+          'شبکه قدرتمند سیسکو با پهنای باند عالی جهت دانلود با حداکثر سرعت در پلی‌استیشن ۵.',
       suitable: 'دانلود بازی و آپدیت‌های حجیم در PS5',
     ),
     DnsServer(
@@ -136,7 +146,8 @@ class DnsRepository {
       primary: '208.67.222.2',
       secondary: '208.67.220.2',
       ping: 'کم',
-      desc: 'زیرساخت اینترپرایز سیسکو جهت اتصال بی‌وقفه در مسابقات طولانی و ماراتن‌های Weekend League.',
+      desc:
+          'زیرساخت اینترپرایز سیسکو جهت اتصال بی‌وقفه در مسابقات طولانی و ماراتن‌های Weekend League.',
       suitable: 'مسابقات فشرده Champions و Division Rivals',
     ),
     DnsServer(
@@ -148,7 +159,8 @@ class DnsRepository {
       primary: '94.140.14.14',
       secondary: '94.140.15.15',
       ping: 'مناسب',
-      desc: 'مسدودسازی درخواست‌های تبلیغاتی و ردیاب‌ها برای کاهش مصرف ترافیک و باز شدن سریع‌تر وب.',
+      desc:
+          'مسدودسازی درخواست‌های تبلیغاتی و ردیاب‌ها برای کاهش مصرف ترافیک و باز شدن سریع‌تر وب.',
       suitable: 'مرور وب و استور کنسول با ترافیک بهینه',
     ),
     DnsServer(
@@ -160,7 +172,8 @@ class DnsRepository {
       primary: '94.140.14.140',
       secondary: '94.140.14.141',
       ping: 'کم',
-      desc: 'اتصال خالص و بدون فیلترینگ با پاسخگویی فوق‌سریع برای بازی‌های شوتر و آنلاین رقابتی.',
+      desc:
+          'اتصال خالص و بدون فیلترینگ با پاسخگویی فوق‌سریع برای بازی‌های شوتر و آنلاین رقابتی.',
       suitable: 'گیمینگ بدون واسطه با پاسخ‌دهی آنی',
     ),
     DnsServer(
@@ -172,7 +185,8 @@ class DnsRepository {
       primary: '4.2.2.4',
       secondary: '4.2.2.2',
       ping: 'کم',
-      desc: 'مسیریابی مستقیم از طریق نودهای Tier 1 اینترنت بین‌المللی با حداقل تعداد هاپ تا سرورهای بازی.',
+      desc:
+          'مسیریابی مستقیم از طریق نودهای Tier 1 اینترنت بین‌المللی با حداقل تعداد هاپ تا سرورهای بازی.',
       suitable: 'کاهش نوسان پینگ در اتصال به اروپا',
     ),
     DnsServer(
@@ -184,7 +198,8 @@ class DnsRepository {
       primary: '84.200.69.80',
       secondary: '84.200.70.40',
       ping: 'بسیار مناسب',
-      desc: 'سرورهای آلمان با پینگ عالی برای دیتاسنترهای اروپایی EA Sports FC و بدون هرگونه ثبت لاگ.',
+      desc:
+          'سرورهای آلمان با پینگ عالی برای دیتاسنترهای اروپایی EA Sports FC و بدون هرگونه ثبت لاگ.',
       suitable: 'بازی روی سرورهای فرانکفورت EA',
     ),
     DnsServer(
@@ -196,7 +211,8 @@ class DnsRepository {
       primary: '8.26.56.26',
       secondary: '8.20.247.20',
       ping: 'کم',
-      desc: 'پایداری بالا در زمان افت کیفیت خط یا نوسانات اینترنت با روتینگ خودکار به سالم‌ترین سرور.',
+      desc:
+          'پایداری بالا در زمان افت کیفیت خط یا نوسانات اینترنت با روتینگ خودکار به سالم‌ترین سرور.',
       suitable: 'جلوگیری از قطعی حین بازی',
     ),
     DnsServer(
@@ -208,7 +224,8 @@ class DnsRepository {
       primary: '76.76.2.0',
       secondary: '76.76.10.0',
       ping: 'کم',
-      desc: 'پروتکل Anycast نسل نهم با زمان پاسخگویی سریع، مخصوص کنسول‌های جدید پلی‌استیشن ۵.',
+      desc:
+          'پروتکل Anycast نسل نهم با زمان پاسخگویی سریع، مخصوص کنسول‌های جدید پلی‌استیشن ۵.',
       suitable: 'کنسول نسل ۹ و بازی‌های ورزشی EA',
     ),
     DnsServer(
@@ -220,7 +237,8 @@ class DnsRepository {
       primary: '45.90.28.0',
       secondary: '45.90.30.0',
       ping: 'بسیار کم',
-      desc: 'طراحی شده برای به حداقل رساندن نوسان زمان تاخیر بسته (Jitter) در مسابقات ورزش‌های الکترونیک.',
+      desc:
+          'طراحی شده برای به حداقل رساندن نوسان زمان تاخیر بسته (Jitter) در مسابقات ورزش‌های الکترونیک.',
       suitable: 'مسابقات حساس و رنک‌آپ بدون لگ',
     ),
     DnsServer(
@@ -232,7 +250,8 @@ class DnsRepository {
       primary: '156.154.70.1',
       secondary: '156.154.71.1',
       ping: 'مناسب',
-      desc: 'زیرساخت مقاومت در برابر حملات توزیع‌شده با آپ‌تایم دائمی و پهنای باند گسترده.',
+      desc:
+          'زیرساخت مقاومت در برابر حملات توزیع‌شده با آپ‌تایم دائمی و پهنای باند گسترده.',
       suitable: 'استریم پایدار و اتصال مطمئن',
     ),
     DnsServer(
@@ -244,7 +263,8 @@ class DnsRepository {
       primary: '76.76.19.19',
       secondary: '76.223.122.150',
       ping: 'مناسب',
-      desc: 'مسیردهی از گره‌های خلوت شبکه اینترنت در ساعات پیک مصرف و ترافیک سنگین مسابقات جمعه.',
+      desc:
+          'مسیردهی از گره‌های خلوت شبکه اینترنت در ساعات پیک مصرف و ترافیک سنگین مسابقات جمعه.',
       suitable: 'ساعات شلوغی اینترنت و ساعات مسابقات',
     ),
   ];
@@ -272,9 +292,13 @@ class DnsRepository {
     if (category == 'all') return defaultServers.length;
     return defaultServers.where((s) => s.category == category).length;
   }
+
   /// Measures connection latency in milliseconds to the DNS server port (53) or fallback (443/80).
   /// Returns ping in milliseconds, or null if unreachable / timed out.
-  Future<int?> measurePing(String ip, {Duration timeout = const Duration(milliseconds: 1800)}) async {
+  Future<int?> measurePing(
+    String ip, {
+    Duration timeout = const Duration(milliseconds: 1800),
+  }) async {
     final cleanIp = ip.trim();
     if (cleanIp.isEmpty) return null;
 
@@ -286,7 +310,11 @@ class DnsRepository {
       return stopwatch.elapsedMilliseconds;
     } catch (_) {
       try {
-        final socket2 = await Socket.connect(cleanIp, 443, timeout: const Duration(milliseconds: 1200));
+        final socket2 = await Socket.connect(
+          cleanIp,
+          443,
+          timeout: const Duration(milliseconds: 1200),
+        );
         stopwatch.stop();
         await socket2.close();
         return stopwatch.elapsedMilliseconds;

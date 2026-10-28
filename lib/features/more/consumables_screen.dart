@@ -65,8 +65,7 @@ class ConsumablesScreen extends StatelessWidget {
           const _InfoCard(
             icon: Icons.badge_outlined,
             title: 'Manager Leagues',
-            subtitle:
-                'برای تغییر League مدیر و کمک به Squad Chemistry.',
+            subtitle: 'برای تغییر League مدیر و کمک به Squad Chemistry.',
           ),
           const SizedBox(height: 22),
           Text(
@@ -102,9 +101,7 @@ class ConsumablesScreen extends StatelessWidget {
                     children: [
                       Text(
                         item.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w900,
-                        ),
+                        style: const TextStyle(fontWeight: FontWeight.w900),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -144,14 +141,8 @@ class _InfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        leading: Icon(
-          icon,
-          color: Theme.of(context).colorScheme.primary,
-        ),
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w900),
-        ),
+        leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+        title: Text(title, style: const TextStyle(fontWeight: FontWeight.w900)),
         subtitle: Text(subtitle),
       ),
     );

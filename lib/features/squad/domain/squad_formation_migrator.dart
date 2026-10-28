@@ -30,11 +30,13 @@ class SquadFormationMigrator {
     final remaining = <_SourcePlayer>[];
 
     for (final entry in squad.playersBySlot.entries) {
-      remaining.add(_SourcePlayer(
-        oldSlotId: entry.key,
-        player: entry.value,
-        config: squad.playerConfigs[entry.key],
-      ));
+      remaining.add(
+        _SourcePlayer(
+          oldSlotId: entry.key,
+          player: entry.value,
+          config: squad.playerConfigs[entry.key],
+        ),
+      );
     }
 
     for (final target in to.slots) {

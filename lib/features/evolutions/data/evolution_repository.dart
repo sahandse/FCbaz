@@ -3,11 +3,9 @@ import '../../../core/network/live_fc27_catalog.dart';
 import '../domain/evolution.dart';
 
 class EvolutionRepository {
-  EvolutionRepository({
-    FCBazApi? api,
-    LiveFc27Catalog? liveCatalog,
-  })  : api = api ?? FCBazApi(),
-        liveCatalog = liveCatalog ?? LiveFc27Catalog();
+  EvolutionRepository({FCBazApi? api, LiveFc27Catalog? liveCatalog})
+    : api = api ?? FCBazApi(),
+      liveCatalog = liveCatalog ?? LiveFc27Catalog();
 
   final FCBazApi api;
   final LiveFc27Catalog liveCatalog;
@@ -20,7 +18,9 @@ class EvolutionRepository {
           forceRefresh: forceRefresh,
           cacheTtl: const Duration(minutes: 2),
         );
-        final raw = json is Map ? (json['data'] ?? json['items'] ?? const []) : json;
+        final raw = json is Map
+            ? (json['data'] ?? json['items'] ?? const [])
+            : json;
         if (raw is List) {
           final items = raw
               .whereType<Map>()

@@ -59,7 +59,11 @@ class _DnsScreenState extends State<DnsScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.check_circle_rounded, color: Color(0xFFCAFF38), size: 20),
+            const Icon(
+              Icons.check_circle_rounded,
+              color: Color(0xFFCAFF38),
+              size: 20,
+            ),
             const SizedBox(width: 8),
             Text('$label ($text) کپی شد'),
           ],
@@ -73,16 +77,20 @@ class _DnsScreenState extends State<DnsScreen> {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    var servers = repository.filter(category: selectedCategory, query: searchQuery);
+    var servers = repository.filter(
+      category: selectedCategory,
+      query: searchQuery,
+    );
     if (_sortByPing) {
-      servers = List.of(servers)..sort((a, b) {
-        final pA = _livePings[a.id];
-        final pB = _livePings[b.id];
-        if (pA != null && pB != null) return pA.compareTo(pB);
-        if (pA != null) return -1;
-        if (pB != null) return 1;
-        return 0;
-      });
+      servers = List.of(servers)
+        ..sort((a, b) {
+          final pA = _livePings[a.id];
+          final pB = _livePings[b.id];
+          if (pA != null && pB != null) return pA.compareTo(pB);
+          if (pA != null) return -1;
+          if (pB != null) return 1;
+          return 0;
+        });
     }
 
     return Scaffold(
@@ -91,7 +99,9 @@ class _DnsScreenState extends State<DnsScreen> {
         actions: [
           IconButton(
             tooltip: showTutorial ? 'مخفی کردن راهنما' : 'نمایش راهنمای تنظیم',
-            icon: Icon(showTutorial ? Icons.help_rounded : Icons.help_outline_rounded),
+            icon: Icon(
+              showTutorial ? Icons.help_rounded : Icons.help_outline_rounded,
+            ),
             onPressed: () => setState(() => showTutorial = !showTutorial),
           ),
         ],
@@ -123,7 +133,9 @@ class _DnsScreenState extends State<DnsScreen> {
             decoration: BoxDecoration(
               color: const Color(0xFF131F15),
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: const Color(0xFFCAFF38).withValues(alpha: .2)),
+              border: Border.all(
+                color: const Color(0xFFCAFF38).withValues(alpha: .2),
+              ),
             ),
             child: Row(
               children: [
@@ -133,38 +145,69 @@ class _DnsScreenState extends State<DnsScreen> {
                     children: [
                       const Text(
                         '⚡ تست پینگ زنده',
-                        style: TextStyle(fontWeight: FontWeight.w800, fontSize: 13.5, color: Color(0xFFCAFF38)),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 13.5,
+                          color: Color(0xFFCAFF38),
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
-                        _isTestingAll ? 'در حال پینگ گرفتن...' : 'سنجش تاخیر واقعی پکت‌ها از نت شما',
-                        style: const TextStyle(fontSize: 11, color: Colors.white70),
+                        _isTestingAll
+                            ? 'در حال پینگ گرفتن...'
+                            : 'سنجش تاخیر واقعی پکت‌ها از نت شما',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: Colors.white70,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 if (_livePings.isNotEmpty) ...[
                   IconButton(
-                    tooltip: _sortByPing ? 'حالت عادی' : 'مرتب‌سازی بر اساس کمترین پینگ',
-                    icon: Icon(_sortByPing ? Icons.sort_rounded : Icons.filter_list_rounded,
-                        color: _sortByPing ? const Color(0xFFCAFF38) : Colors.white70),
+                    tooltip: _sortByPing
+                        ? 'حالت عادی'
+                        : 'مرتب‌سازی بر اساس کمترین پینگ',
+                    icon: Icon(
+                      _sortByPing
+                          ? Icons.sort_rounded
+                          : Icons.filter_list_rounded,
+                      color: _sortByPing
+                          ? const Color(0xFFCAFF38)
+                          : Colors.white70,
+                    ),
                     onPressed: () => setState(() => _sortByPing = !_sortByPing),
                   ),
                 ],
                 ElevatedButton.icon(
-                  onPressed: _isTestingAll ? null : () => _testAllPings(servers),
+                  onPressed: _isTestingAll
+                      ? null
+                      : () => _testAllPings(servers),
                   icon: _isTestingAll
                       ? const SizedBox(
                           width: 14,
                           height: 14,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.black),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.black,
+                          ),
                         )
                       : const Icon(Icons.network_check_rounded, size: 16),
-                  label: Text(_isTestingAll ? 'سنجش...' : 'تست همه', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                  label: Text(
+                    _isTestingAll ? 'سنجش...' : 'تست همه',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFFCAFF38),
                     foregroundColor: Colors.black,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 8,
+                    ),
                     minimumSize: Size.zero,
                   ),
                 ),
@@ -177,7 +220,9 @@ class _DnsScreenState extends State<DnsScreen> {
             children: [
               Text(
                 'فهرست سرورهای DNS',
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+                style: Theme.of(
+                  context,
+                ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
               ),
               Text(
                 '${servers.length} سرور فعال',
@@ -187,19 +232,23 @@ class _DnsScreenState extends State<DnsScreen> {
           ),
           const SizedBox(height: 10),
           if (servers.isEmpty)
-            _EmptyState(onReset: () {
-              searchController.clear();
-              setState(() {
-                searchQuery = '';
-                selectedCategory = 'all';
-              });
-            })
+            _EmptyState(
+              onReset: () {
+                searchController.clear();
+                setState(() {
+                  searchQuery = '';
+                  selectedCategory = 'all';
+                });
+              },
+            )
           else
             for (final server in servers) ...[
               _DnsCard(
                 server: server,
-                onCopyPrimary: () => _copyToClipboard(server.primary, 'Primary DNS'),
-                onCopySecondary: () => _copyToClipboard(server.secondary, 'Secondary DNS'),
+                onCopyPrimary: () =>
+                    _copyToClipboard(server.primary, 'Primary DNS'),
+                onCopySecondary: () =>
+                    _copyToClipboard(server.secondary, 'Secondary DNS'),
                 onCopyBoth: () => _copyToClipboard(
                   'Primary: ${server.primary}\nSecondary: ${server.secondary}',
                   'هر دو DNS',
@@ -238,7 +287,11 @@ class _TutorialCard extends StatelessWidget {
                   color: scheme.primary.withValues(alpha: .15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.sports_esports_rounded, size: 20, color: Color(0xFFCAFF38)),
+                child: const Icon(
+                  Icons.sports_esports_rounded,
+                  size: 20,
+                  color: Color(0xFFCAFF38),
+                ),
               ),
               const SizedBox(width: 10),
               const Expanded(
@@ -255,10 +308,24 @@ class _TutorialCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          const _StepRow(num: '۱', text: 'وارد Settings کنسول شده و بخش Network را باز کنید.'),
-          const _StepRow(num: '۲', text: 'به Settings > Set Up Internet Connection بروید.'),
-          const _StepRow(num: '۳', text: 'روی وای‌فای یا کابل متصل دکمه Options را زده و Advanced Settings را انتخاب کنید.'),
-          const _StepRow(num: '۴', text: 'بخش DNS Settings را روی Manual قرار داده و Primary و Secondary را وارد کنید.'),
+          const _StepRow(
+            num: '۱',
+            text: 'وارد Settings کنسول شده و بخش Network را باز کنید.',
+          ),
+          const _StepRow(
+            num: '۲',
+            text: 'به Settings > Set Up Internet Connection بروید.',
+          ),
+          const _StepRow(
+            num: '۳',
+            text:
+                'روی وای‌فای یا کابل متصل دکمه Options را زده و Advanced Settings را انتخاب کنید.',
+          ),
+          const _StepRow(
+            num: '۴',
+            text:
+                'بخش DNS Settings را روی Manual قرار داده و Primary و Secondary را وارد کنید.',
+          ),
         ],
       ),
     );
@@ -287,7 +354,11 @@ class _StepRow extends StatelessWidget {
             ),
             child: Text(
               num,
-              style: const TextStyle(color: Colors.black, fontWeight: FontWeight.w900, fontSize: 11),
+              style: const TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w900,
+                fontSize: 11,
+              ),
             ),
           ),
           const SizedBox(width: 10),
@@ -324,11 +395,17 @@ class _SearchBar extends StatelessWidget {
         hintText: 'جستجوی نام دی‌ان‌اس (مثلاً الکترو، رادار، کلودفلر)...',
         prefixIcon: const Icon(Icons.search_rounded),
         suffixIcon: controller.text.isNotEmpty
-            ? IconButton(icon: const Icon(Icons.clear_rounded), onPressed: onClear)
+            ? IconButton(
+                icon: const Icon(Icons.clear_rounded),
+                onPressed: onClear,
+              )
             : null,
         filled: true,
         fillColor: scheme.surface,
-        contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 14,
+          vertical: 12,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -353,9 +430,17 @@ class _CategoryFilterChips extends StatelessWidget {
   Widget build(BuildContext context) {
     final categories = [
       ('all', 'همه', repository.countForCategory('all')),
-      ('anti-sanction', '🇮🇷 ضدتحریم گیمینگ', repository.countForCategory('anti-sanction')),
+      (
+        'anti-sanction',
+        '🇮🇷 ضدتحریم گیمینگ',
+        repository.countForCategory('anti-sanction'),
+      ),
       ('speed', '⚡ سریع و کم‌پینگ', repository.countForCategory('speed')),
-      ('stability', '🛡️ پایدار و امن', repository.countForCategory('stability')),
+      (
+        'stability',
+        '🛡️ پایدار و امن',
+        repository.countForCategory('stability'),
+      ),
     ];
 
     return SingleChildScrollView(
@@ -399,7 +484,9 @@ class _DnsCard extends StatelessWidget {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
         side: BorderSide(
-          color: isAntiSanction ? scheme.primary.withValues(alpha: .32) : Colors.white10,
+          color: isAntiSanction
+              ? scheme.primary.withValues(alpha: .32)
+              : Colors.white10,
         ),
       ),
       child: Padding(
@@ -416,7 +503,10 @@ class _DnsCard extends StatelessWidget {
                     children: [
                       Text(
                         server.name,
-                        style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 15),
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 15,
+                        ),
                       ),
                       const SizedBox(height: 2),
                       Text(
@@ -432,7 +522,10 @@ class _DnsCard extends StatelessWidget {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: isAntiSanction
                         ? scheme.primary.withValues(alpha: .18)
@@ -477,15 +570,25 @@ class _DnsCard extends StatelessWidget {
                 const SizedBox(width: 4),
                 Text(
                   'پینگ: ${server.ping}',
-                  style: TextStyle(fontSize: 11, color: scheme.primary, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: scheme.primary,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const Spacer(),
                 TextButton.icon(
                   onPressed: onCopyBoth,
                   icon: const Icon(Icons.copy_all_rounded, size: 14),
-                  label: const Text('کپی هر دو', style: TextStyle(fontSize: 11)),
+                  label: const Text(
+                    'کپی هر دو',
+                    style: TextStyle(fontSize: 11),
+                  ),
                   style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
                     visualDensity: VisualDensity.compact,
                   ),
                 ),
@@ -494,17 +597,28 @@ class _DnsCard extends StatelessWidget {
             const Divider(height: 16),
             Text(
               server.desc,
-              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12, height: 1.45),
+              style: TextStyle(
+                color: scheme.onSurfaceVariant,
+                fontSize: 12,
+                height: 1.45,
+              ),
             ),
             const SizedBox(height: 6),
             Row(
               children: [
-                const Icon(Icons.check_rounded, size: 14, color: Colors.greenAccent),
+                const Icon(
+                  Icons.check_rounded,
+                  size: 14,
+                  color: Colors.greenAccent,
+                ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
                     'مناسب برای: ${server.suitable}',
-                    style: const TextStyle(fontSize: 11.5, fontWeight: FontWeight.w600),
+                    style: const TextStyle(
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -517,11 +631,7 @@ class _DnsCard extends StatelessWidget {
 }
 
 class _IpBox extends StatelessWidget {
-  const _IpBox({
-    required this.label,
-    required this.ip,
-    required this.onCopy,
-  });
+  const _IpBox({required this.label, required this.ip, required this.onCopy});
 
   final String label;
   final String ip;
@@ -544,7 +654,11 @@ class _IpBox extends StatelessWidget {
           children: [
             Text(
               label,
-              style: const TextStyle(fontSize: 9.5, color: Colors.white54, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                fontSize: 9.5,
+                color: Colors.white54,
+                fontWeight: FontWeight.w700,
+              ),
             ),
             const SizedBox(height: 3),
             Row(
@@ -584,7 +698,10 @@ class _EmptyState extends StatelessWidget {
         children: [
           const Icon(Icons.search_off_rounded, size: 48, color: Colors.white38),
           const SizedBox(height: 12),
-          const Text('سرور DNS مورد نظر یافت نشد', style: TextStyle(fontWeight: FontWeight.w700)),
+          const Text(
+            'سرور DNS مورد نظر یافت نشد',
+            style: TextStyle(fontWeight: FontWeight.w700),
+          ),
           const SizedBox(height: 6),
           const Text('لطفاً عبارت جستجو یا فیلتر دسته‌بندی را تغییر دهید.'),
           const SizedBox(height: 12),
