@@ -141,7 +141,8 @@ class _CardsScreenState extends State<CardsScreen> {
   String _priceAgeLabel(DateTime at) {
     final elapsed = DateTime.now().difference(at.toLocal());
     if (elapsed.inMinutes < 1) return 'همین حالا';
-    if (elapsed.inMinutes < 60) return '${faDigits(elapsed.inMinutes)} دقیقه پیش';
+    if (elapsed.inMinutes < 60)
+      return '${faDigits(elapsed.inMinutes)} دقیقه پیش';
     if (elapsed.inHours < 24) return '${faDigits(elapsed.inHours)} ساعت پیش';
     return '${faDigits(elapsed.inDays)} روز پیش';
   }
@@ -185,7 +186,8 @@ class _CardsScreenState extends State<CardsScreen> {
                 _FreshnessRow(
                   icon: Icons.schedule_rounded,
                   label: 'بازه به‌روزرسانی',
-                  value: 'هر ۳۰ دقیقه از فید عمومی',
+                  value:
+                      'همگام‌سازی منبع هر ۶ ساعت؛ اپ هر ۳۰ دقیقه بررسی می‌کند',
                 ),
                 _FreshnessRow(
                   icon: Icons.info_outline_rounded,

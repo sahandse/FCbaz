@@ -41,8 +41,8 @@ class LiveFc27Catalog {
   // FC27 Hub is the canonical public data source. Do not point this back at
   // FCBaz: that created a circular dependency and prevented source updates.
   static const _hubBase = 'https://sahandse.github.io/FC27/data/';
-  static const _cacheJsonKey = 'fcbaz_live_fc27_catalog_json_v2';
-  static const _cacheSavedAtKey = 'fcbaz_live_fc27_catalog_saved_at_v2';
+  static const _cacheJsonKey = 'fcbaz_live_fc27_catalog_json_v3';
+  static const _cacheSavedAtKey = 'fcbaz_live_fc27_catalog_saved_at_v3';
 
   static const _feedNames = <String>[
     'fc27-players.json',
@@ -141,17 +141,26 @@ class LiveFc27Catalog {
     // than letting the last platform row overwrite the first one.
     final pricesById = <String, Map<String, dynamic>>{};
     for (final row in priceRows) {
-      final id = (row['cardId'] ??
-              row['card_id'] ??
-              row['versionId'] ??
-              row['version_id'] ??
-              _recordId(row))
-          .toString()
-          .trim();
+      final id =
+          (row['cardId'] ??
+                  row['card_id'] ??
+                  row['versionId'] ??
+                  row['version_id'] ??
+                  _recordId(row))
+              .toString()
+              .trim();
       if (id.isEmpty) continue;
       final platform = (row['platform'] ?? '').toString().toLowerCase();
-      final coins = int.tryParse((row['coins'] ?? row['price'] ?? '').toString()) ?? 0;
-      if (coins <= 0 || (row['status'] != null && row['status'] != 'verified')) {
+      final coins =
+          int.tryParse(
+            (row['coins'] ?? row['price'] ?? '').toString().replaceAll(
+              RegExp(r'[^0-9]'),
+              '',
+            ),
+          ) ??
+          0;
+      if (coins <= 0 ||
+          (row['status'] != null && row['status'] != 'verified')) {
         continue;
       }
       final merged = pricesById.putIfAbsent(id, () => <String, dynamic>{});
@@ -187,26 +196,31 @@ class LiveFc27Catalog {
       sections['objectives'] ?? sections['objective'],
     );
     final evolutionFeed = _asMap(feeds['fc27-evolutions.json']);
-    final evolutions = _extractList(
-      evolutionFeed,
-      const ['evolutions', 'data', 'items', 'results'],
-    ).where((item) {
-      final text = jsonEncode(item).toLowerCase();
-      return !text.contains('fc26');
-    }).toList();
+    final evolutions =
+        _extractList(evolutionFeed, const [
+          'evolutions',
+          'data',
+          'items',
+          'results',
+        ]).where((item) {
+          final text = jsonEncode(item).toLowerCase();
+          return !text.contains('fc26');
+        }).toList();
     final newsFeed = _asMap(feeds['fc27-news.json']);
     final news = _extractList(newsFeed, const ['items', 'news', 'data']);
     final artFeed = _asMap(feeds['fc27-card-art.json']);
     final portraitsFeed = _asMap(feeds['available-portraits.json']);
+    final pricesFeed = _asMap(feeds['fc27-prices.json']);
 
-    final timestamps = feeds.values
-        .whereType<Map>()
-        .map((value) => value['checked_at'] ?? value['updated_at'])
-        .whereType<String>()
-        .map(DateTime.tryParse)
-        .whereType<DateTime>()
-        .toList()
-      ..sort((a, b) => b.compareTo(a));
+    final timestamps =
+        feeds.values
+            .whereType<Map>()
+            .map((value) => value['checked_at'] ?? value['updated_at'])
+            .whereType<String>()
+            .map(DateTime.tryParse)
+            .whereType<DateTime>()
+            .toList()
+          ..sort((a, b) => b.compareTo(a));
 
     return <String, dynamic>{
       'game_year': '27',
@@ -219,10 +233,15 @@ class LiveFc27Catalog {
       'objectives': objectives,
       'news': news,
       'card_art': _asMap(artFeed['art']),
-      'available_portraits': _extractList(
-        portraitsFeed,
-        const ['ids', 'portraits', 'items'],
-      ),
+      'available_portraits': _extractList(portraitsFeed, const [
+        'ids',
+        'portraits',
+        'items',
+      ]),
+      'price_source': pricesFeed['source'] ?? pricesFeed['provider'],
+      'price_source_url': pricesFeed['source_url'],
+      'price_updated_at': pricesFeed['updated_at'] ?? pricesFeed['checked_at'],
+      'priced_players': pricesById.length,
       'sources': _feedNames
           .where((name) => feeds[name] != null)
           .map((name) => '$_hubBase$name')
@@ -231,9 +250,9 @@ class LiveFc27Catalog {
   }
 
   Future<dynamic> _getJson(Uri uri) async {
-    final request = await _client.getUrl(uri).timeout(
-          const Duration(seconds: 10),
-        );
+    final request = await _client
+        .getUrl(uri)
+        .timeout(const Duration(seconds: 10));
     request.headers.set(HttpHeaders.acceptHeader, 'application/json');
     request.headers.set(
       HttpHeaders.userAgentHeader,
@@ -252,7 +271,8 @@ class LiveFc27Catalog {
     List<String> candidateKeys,
   ) {
     if (value is List) {
-      return value.whereType<Map>()
+      return value
+          .whereType<Map>()
           .map((e) => Map<String, dynamic>.from(e))
           .toList();
     }
@@ -266,7 +286,8 @@ class LiveFc27Catalog {
 
   List<Map<String, dynamic>> _extractListFromValue(dynamic value) {
     if (value is List) {
-      return value.whereType<Map>()
+      return value
+          .whereType<Map>()
           .map((e) => Map<String, dynamic>.from(e))
           .toList();
     }
@@ -274,7 +295,8 @@ class LiveFc27Catalog {
       for (final key in const ['items', 'data', 'results', 'challenges']) {
         final nested = value[key];
         if (nested is List) {
-          return nested.whereType<Map>()
+          return nested
+              .whereType<Map>()
               .map((e) => Map<String, dynamic>.from(e))
               .toList();
         }
@@ -320,9 +342,10 @@ class LiveFc27Catalog {
           ? current
           : num.tryParse(current?.toString().trim() ?? '');
       final isPrice = key.toLowerCase().contains('price');
-      final missing = current == null ||
+      final missing =
+          current == null ||
           current.toString().trim().isEmpty ||
-          (isPrice && numericCurrent != null && numericCurrent <= 0);
+          (isPrice && (numericCurrent == null || numericCurrent <= 0));
       if (missing && source.containsKey(key)) {
         target[key] = source[key];
       }
@@ -399,7 +422,8 @@ class LiveFc27Catalog {
     final data = await load(forceRefresh: forceRefresh);
     final raw = data[key];
     if (raw is! List) return const [];
-    return raw.whereType<Map>()
+    return raw
+        .whereType<Map>()
         .map((e) => Map<String, dynamic>.from(e))
         .where((e) => e.isNotEmpty)
         .toList();
@@ -423,7 +447,10 @@ class LiveFc27Catalog {
     int count(String key) => data[key] is List ? (data[key] as List).length : 0;
     final rawSources = data['sources'];
     final sources = rawSources is List
-        ? rawSources.map((e) => e.toString()).where((e) => e.isNotEmpty).toList()
+        ? rawSources
+              .map((e) => e.toString())
+              .where((e) => e.isNotEmpty)
+              .toList()
         : const <String>[];
     return LiveCatalogHealth(
       generatedAt: DateTime.tryParse((data['generated_at'] ?? '').toString()),

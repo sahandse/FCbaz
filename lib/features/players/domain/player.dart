@@ -86,39 +86,39 @@ class Player {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'rating': rating,
-        'position': position,
-        'positions': positions,
-        'club_name': clubName,
-        'league_name': leagueName,
-        'nation_name': nationName,
-        'version': version,
-        'image_url': imageUrl,
-        'card_image_url': cardImageUrl,
-        'card_art_url': cardArtUrl,
-        'pace': pace,
-        'shooting': shooting,
-        'passing': passing,
-        'dribbling': dribbling,
-        'defending': defending,
-        'physical': physical,
-        'skill_moves': skillMoves,
-        'weak_foot': weakFoot,
-        'playstyles': playStyles,
-        'playstyles_plus': playStylesPlus,
-        'roles': roles,
-        'in_game_stats': inGameStats,
-        'traits': traits,
-        'foot': foot,
-        'height': height,
-        'work_rates': workRates,
-        'rarity': rarity,
-        'card_type': cardType,
-        'price_ps': pricePs,
-        'price_pc': pricePc,
-      };
+    'id': id,
+    'name': name,
+    'rating': rating,
+    'position': position,
+    'positions': positions,
+    'club_name': clubName,
+    'league_name': leagueName,
+    'nation_name': nationName,
+    'version': version,
+    'image_url': imageUrl,
+    'card_image_url': cardImageUrl,
+    'card_art_url': cardArtUrl,
+    'pace': pace,
+    'shooting': shooting,
+    'passing': passing,
+    'dribbling': dribbling,
+    'defending': defending,
+    'physical': physical,
+    'skill_moves': skillMoves,
+    'weak_foot': weakFoot,
+    'playstyles': playStyles,
+    'playstyles_plus': playStylesPlus,
+    'roles': roles,
+    'in_game_stats': inGameStats,
+    'traits': traits,
+    'foot': foot,
+    'height': height,
+    'work_rates': workRates,
+    'rarity': rarity,
+    'card_type': cardType,
+    'price_ps': pricePs,
+    'price_pc': pricePc,
+  };
 
   factory Player.fromJson(Map<String, dynamic> json) {
     int asInt(dynamic value) =>
@@ -198,15 +198,17 @@ class Player {
             json['playerid'] ??
             json['resource_id'],
       ),
-      name: asString(
-        json['name'] ??
-            json['playername'] ??
-            json['common_name'],
+      name: asString(json['name'] ?? json['playername'] ?? json['common_name']),
+      rating: asInt(
+        json['rating'] ??
+            json['overall'] ??
+            json['overall_rating'] ??
+            json['rat'],
       ),
-      rating: asInt(json['rating'] ?? json['overall'] ?? json['overall_rating'] ?? json['rat']),
       position: asString(json['position'] ?? json['pos']),
       positions: (() {
-        final value = json['positions'] ??
+        final value =
+            json['positions'] ??
             json['alternative_positions'] ??
             json['alternate_positions'] ??
             json['altPos'] ??
@@ -222,32 +224,34 @@ class Player {
         return asStrings(value);
       })(),
       clubName: asString(json['club_name'] ?? json['club']),
-      leagueName: asString(json['league_name'] ?? json['league'] ?? json['leagueFA']),
-      nationName: asString(json['nation_name'] ?? json['nation'] ?? json['nationality'] ?? json['nat']),
-      version: asString(json['version'] ?? json['rarity']),
-      imageUrl: (() {
-        final explicit = asString(
-          json['image_url'] ??
-              json['imageUrl'] ??
-              json['image'] ??
-              json['portrait_url'] ??
-              json['portraitUrl'] ??
-              json['headshot_url'] ??
-              json['headshot'] ??
-              json['player_image'] ??
-              json['playerImage'] ??
-              json['face_url'],
-        );
-        if (explicit.isNotEmpty) return explicit;
-        final rawId = asString(
-          json['ea_id'] ?? json['resource_id'] ?? json['id'] ?? '',
-        );
-        final digitsMatch = RegExp(r'\d+').firstMatch(rawId);
-        if (digitsMatch != null && digitsMatch.group(0)!.length >= 4) {
-          return 'https://cdn.futbin.com/content/fifa27/img/players/${digitsMatch.group(0)!}.png';
-        }
-        return '';
-      })(),
+      leagueName: asString(
+        json['league_name'] ?? json['league'] ?? json['leagueFA'],
+      ),
+      nationName: asString(
+        json['nation_name'] ??
+            json['nation'] ??
+            json['nationality'] ??
+            json['nat'],
+      ),
+      version: asString(
+        json['version'] ??
+            json['rarity'] ??
+            json['raretype'] ??
+            json['card_type'] ??
+            json['cardType'],
+      ),
+      imageUrl: asString(
+        json['image_url'] ??
+            json['imageUrl'] ??
+            json['image'] ??
+            json['portrait_url'] ??
+            json['portraitUrl'] ??
+            json['headshot_url'] ??
+            json['headshot'] ??
+            json['player_image'] ??
+            json['playerImage'] ??
+            json['face_url'],
+      ),
       cardImageUrl: asString(
         json['card_image_url'] ??
             json['cardImageUrl'] ??
@@ -258,24 +262,59 @@ class Player {
       cardArtUrl: asString(
         json['card_art_url'] ?? json['cardArtUrl'] ?? json['futgg_card_url'],
       ),
-      pace: asInt(json['pace'] ?? json['pac'] ?? (json['stats'] is Map ? (json['stats'] as Map)['PAC'] : null)),
-      shooting: asInt(json['shooting'] ?? json['sho'] ?? (json['stats'] is Map ? (json['stats'] as Map)['SHO'] : null)),
-      passing: asInt(json['passing'] ?? json['pas'] ?? (json['stats'] is Map ? (json['stats'] as Map)['PAS'] : null)),
-      dribbling: asInt(json['dribbling'] ?? json['dri'] ?? (json['stats'] is Map ? (json['stats'] as Map)['DRI'] : null)),
-      defending: asInt(json['defending'] ?? json['def'] ?? (json['stats'] is Map ? (json['stats'] as Map)['DEF'] : null)),
-      physical: asInt(json['physical'] ?? json['physicality'] ?? json['phy'] ?? (json['stats'] is Map ? (json['stats'] as Map)['PHY'] : null)),
+      pace: asInt(
+        json['pace'] ??
+            json['pac'] ??
+            (json['stats'] is Map ? (json['stats'] as Map)['PAC'] : null),
+      ),
+      shooting: asInt(
+        json['shooting'] ??
+            json['sho'] ??
+            (json['stats'] is Map ? (json['stats'] as Map)['SHO'] : null),
+      ),
+      passing: asInt(
+        json['passing'] ??
+            json['pas'] ??
+            (json['stats'] is Map ? (json['stats'] as Map)['PAS'] : null),
+      ),
+      dribbling: asInt(
+        json['dribbling'] ??
+            json['dri'] ??
+            (json['stats'] is Map ? (json['stats'] as Map)['DRI'] : null),
+      ),
+      defending: asInt(
+        json['defending'] ??
+            json['def'] ??
+            (json['stats'] is Map ? (json['stats'] as Map)['DEF'] : null),
+      ),
+      physical: asInt(
+        json['physical'] ??
+            json['physicality'] ??
+            json['phy'] ??
+            (json['stats'] is Map ? (json['stats'] as Map)['PHY'] : null),
+      ),
       skillMoves: asInt(json['skill_moves'] ?? json['skillMoves']),
       weakFoot: asInt(json['weak_foot'] ?? json['weakFoot']),
-      playStyles: asStrings(json['playstyles'] ?? json['play_styles']),
+      playStyles: asStrings(
+        json['playstyles'] ?? json['play_styles'] ?? json['playStyles'],
+      ),
       playStylesPlus: asStrings(
-        json['playstyles_plus'] ?? json['play_styles_plus'],
+        json['playstyles_plus'] ??
+            json['play_styles_plus'] ??
+            json['playStylesPlus'],
       ),
       roles: asStrings(json['roles'] ?? json['player_roles']),
       inGameStats: asStats(
-        json['in_game_stats'] ?? json['detailed_stats'] ?? json['attributes'] ?? json['stats'],
+        json['in_game_stats'] ??
+            json['inGameStats'] ??
+            json['detailed_stats'] ??
+            json['attributes'] ??
+            json['stats'],
       ),
       traits: asStrings(json['traits']),
-      foot: asString(json['foot'] ?? json['preferred_foot'] ?? json['preferredFoot']),
+      foot: asString(
+        json['foot'] ?? json['preferred_foot'] ?? json['preferredFoot'],
+      ),
       height: asString(json['height']),
       workRates: asString(json['work_rates'] ?? json['workrates']),
       rarity: asString(json['rarity'] ?? json['raretype']),

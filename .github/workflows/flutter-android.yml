@@ -10,7 +10,12 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 2.3.2
+        default: 2.6.0
+        type: string
+      build_number:
+        description: Android versionCode (must be greater than the previous 47)
+        required: true
+        default: '48'
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -21,15 +26,11 @@ on:
     branches:
       - main
     paths:
-      - '.release/fcbaz-v2.3.2'
-      - '.release/fcbaz-v2.3.1'
-      - '.release/fcbaz-v2.1.0'
-      - '.release/fcbaz-v2.0.0'
-      - '.release/fcbaz-v1.9.0'
+      - '.release/fcbaz-v2.6.0'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.3.2' }}
-  RELEASE_BUILD_NUMBER: ${{ github.run_number }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.6.0' }}
+  RELEASE_BUILD_NUMBER: ${{ github.event_name == 'workflow_dispatch' && inputs.build_number || '48' }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
 
 jobs:
@@ -58,6 +59,12 @@ jobs:
         run: |
           set -euo pipefail
           [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "release_version must be X.Y.Z"; exit 1; }
+          [[ "$RELEASE_BUILD_NUMBER" =~ ^[0-9]+$ ]] || { echo "build_number must be numeric"; exit 1; }
+          [ "$RELEASE_BUILD_NUMBER" -ge 48 ] || { echo "build_number must be 48 or newer"; exit 1; }
+          if git ls-remote --tags origin "refs/tags/v${RELEASE_VERSION}" | grep -q .; then
+            echo "Tag v${RELEASE_VERSION} already exists; choose a new release_version instead of overwriting it"
+            exit 1
+          fi
           if [ -n "$FCBAZ_API_BASE_URL" ] && [[ ! "$FCBAZ_API_BASE_URL" =~ ^https:// ]]; then
             echo "Production API URL must use HTTPS when configured"
             exit 1
@@ -133,6 +140,12 @@ jobs:
           p.write_text(s)
           PY
           keytool -list -keystore android/app/fcbaz-release.jks -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
+          # Guard against flutter create replacing project-specific identity.
+          grep -q 'applicationId = "ir.fcbaz.app"' android/app/build.gradle.kts
+          grep -q 'namespace = "ir.fcbaz.app"' android/app/build.gradle.kts
+          grep -q 'android:label="FCBaz"' android/app/src/main/AndroidManifest.xml
+          grep -q 'package ir.fcbaz.app' android/app/src/main/kotlin/ir/fcbaz/app/MainActivity.kt
+          test -f android/app/src/main/res/drawable/fcbaz_launcher.xml
 
       - name: Set release version
         shell: bash
@@ -196,29 +209,49 @@ jobs:
       - name: Prepare and verify release files
         shell: bash
         run: |
+          set -euo pipefail
           cp build/app/outputs/flutter-apk/app-release.apk "FCBaz-v${RELEASE_VERSION}.apk"
           cp build/app/outputs/bundle/release/app-release.aab "FCBaz-v${RELEASE_VERSION}.aab"
           sha256sum "FCBaz-v${RELEASE_VERSION}.apk" "FCBaz-v${RELEASE_VERSION}.aab" > SHA256SUMS.txt
+          read -r PLAYERS PS_COUNT PC_COUNT STYLES PLUS SBCS OBJECTIVES EVOLUTIONS NEWS PRICE_UPDATED < <(python3 - <<'PY'
+          import json
+          catalog = json.load(open('data/live/catalog.json', encoding='utf-8'))
+          players = catalog.get('players') or []
+          def count(key):
+              return sum(1 for p in players if int(p.get(key) or 0) > 0)
+          styles = sum(1 for p in players if p.get('playstyles'))
+          plus = sum(1 for p in players if p.get('playstyles_plus'))
+          print(
+              len(players), count('price_ps'), count('price_pc'), styles, plus,
+              len(catalog.get('sbcs') or []), len(catalog.get('objectives') or []),
+              len(catalog.get('evolutions') or []), len(catalog.get('news') or []),
+              catalog.get('price_updated_at') or 'نامشخص',
+          )
+          PY
+          )
           cat > RELEASE_NOTES.md <<EOF
           ## FCBaz v${RELEASE_VERSION}
 
-          - پرتره بازیکنان در کارت بزرگ از عکس رسمی ۵۱۲×۵۱۲ EA خوانده می‌شود؛ اگر در دسترس نباشد تصویر هاب FC27 نمایش داده می‌شود.
-          - هیروی خانه تا آماده‌شدن داده باشگاه، وضعیت «باشگاهت را بساز» را نشان می‌دهد و دیگر باشگاه خالی را زنده اعلام نمی‌کند.
-          - اسنپ‌شات FC27 داخل اپ به ۲۵ اکتبر ۲۰۲۶ به‌روزرسانی شد؛ هر ۲٬۵۷۶ آدرس تصویر بازیکن بررسی و بدون خطا تأیید شدند.
-          - تب خانه مستقیم فید اخبار FC27 است، با فیلتر بر اساس تگ‌های واقعی، رفرش کشویی و حالت خطا/خالی صادقانه.
-          - گرید کارت‌ها از کاشی بازار جدید استفاده می‌کند: کارت FC27، ستاره علاقه‌مندی، شش ستون آمار رنگی و قیمت سکه با ارقام فارسی؛ بدون عدد ساختگی.
-          - صفحه‌های خالی SBC، Objectives و Evolutions با نرمال‌سازی id، Requirementهای تو در تو و target تسک‌ها از کاتالوگ زنده پر شدند؛ Retry حالا واقعاً force refresh می‌کند.
-          - چهار Overflow در عرض ۳۲۰dp (بیشتر، دو هدر اخبار، زیرعنوان Evolutions) برطرف شد.
-          - کارت‌های بازیکن با طراحی جدید به سبک EA FC / FUT: بدنه FUT، گرادیان کمیابیت، تایپوگرافی فشرده، نشان ملیت/لیگ/باشگاه و قیمت PS/PC.
-          - ریتینگ، پست و نشان PlayStyle+ روی کارت؛ تم اختصاصی برای Gold، Silver، Bronze، Icon، Hero، TOTW و Hall of FUT.
-          - کاتالوگ FC27 از FC27 Hub پر شد: بیش از ۱۹٬۸۰۰ کارت بازیکن با آمار کامل، کلاب، لیگ و ملیت.
-          - قیمت واقعی PS برای بیش از ۱۸٬۴۸۹ کارت از نقل‌قول‌های تأییدشده FUT.GG؛ PC فقط در صورت منبع مستقل واقعی مقدار دارد.
-          - ۲۷ SBC، ۴۱ Objective و ۱۸ Evolution با Requirement، جایزه و راهنمای فارسی؛ داده ساختگی ساخته نمی‌شود.
-          - ۱۳ خبر FC27 به فارسی، همراه با تصاویر کارت و پرتره بازیکنان.
-          - آمار دروازه‌بان‌ها با DIV/HAN/KIC/REF/SPD/POS نمایش داده می‌شود.
-          - داده‌های FC26 فیلتر می‌شوند و کاتالوگ به‌صورت خودکار هر ۶ ساعت به‌روزرسانی می‌شود.
-          - Catalog زنده FC27 و کش آخرین داده سالم حفظ شده‌اند.
+          - کاتالوگ FC27 با ${PLAYERS} کارت بازیکن از اسنپ‌شات رسمی EA/FUT.GG همگام شد؛ پست اصلی و پست‌های جایگزین، قد، پای تخصصی، Skill Move و Weak Foot از منبع اصلی حفظ می‌شوند.
+          - PlayStyle برای ${STYLES} کارت و PlayStyle+ برای ${PLUS} کارت از فید FC27 بازیابی شد؛ آمار داخل بازی و آمار دروازه‌بان‌ها (DIV/HAN/KIC/REF/SPD/POS) از همان منبع خوانده می‌شود.
+          - قیمت PS برای ${PS_COUNT} کارت و قیمت PC برای ${PC_COUNT} کارت جداگانه نگهداری می‌شود؛ هیچ تبدیل ارز یا برآورد قیمتی انجام نمی‌شود و قیمت صفر/ناموجود به‌صورت «—» نمایش داده می‌شود.
+          - مهر زمانی آخرین اسنپ‌شات تأییدشده قیمت: ${PRICE_UPDATED}. در نبود شبکه، آخرین کاتالوگ سالم از کش خوانده می‌شود و منبع/زمان آن در صفحه «تازگی قیمت‌ها» قابل بررسی است.
+          - تصویر بازیکن فقط از آدرس‌های تأییدشده EA و هاب FC27 خوانده می‌شود؛ برای کارت بدون تصویر، سیلوئت نمایش داده می‌شود و هیچ URL حدسی یا عکس بازیکن دیگر استفاده نمی‌شود.
+          - ${SBCS} SBC، ${OBJECTIVES} Objective و ${EVOLUTIONS} Evolution از منابع عمومی FUT.GG؛ ${NEWS} خبر FC27 به فارسی. داده ساختگی ساخته نمی‌شود و FC26 فیلتر می‌شود.
+          - مسیر انتشار debug-signed حذف شد؛ فقط همین workflow با keystore پایدار مجوز انتشار GitHub Release دارد و قبل از انتشار، امضا، package، versionCode/versionName، نام FCBaz و آیکون سفارشی بررسی می‌شوند.
+          - کارت‌های بازیکن با طراحی FC27، قیمت PS/PC جدا، نشان PlayStyle+ و کارت رسمی EA؛ هاب خانه، جستجو، فیلترها، SBC، Objectives، Evolutions و اخبار از کاتالوگ زنده تغذیه می‌شوند.
+          - سازگاری نصب: Android 7.0 (API 24) و بالاتر. نسخه v2.5.0 با امضای debug منتشر شده بود؛ اگر آن را نصب کرده‌اید، برای نصب این نسخه امضاشده باید نسخه قبلی را حذف کنید. ارتقای مستقیم از v2.3.2 و نسخه‌های با امضای پایدار حفظ می‌شود.
           EOF
+
+          sdk="${ANDROID_HOME:-$ANDROID_SDK_ROOT}"
+          build_tools="$(ls -d "$sdk"/build-tools/* | sort -V | tail -n 1)"
+          "$build_tools/apksigner" verify --print-certs "FCBaz-v${RELEASE_VERSION}.apk" | tee apk-signature.txt
+          badging="$("$build_tools/aapt2" dump badging "FCBaz-v${RELEASE_VERSION}.apk")"
+          echo "$badging" | grep -q "package: name='ir.fcbaz.app'"
+          echo "$badging" | grep -q "versionCode='${RELEASE_BUILD_NUMBER}'"
+          echo "$badging" | grep -q "versionName='${RELEASE_VERSION}'"
+          echo "$badging" | grep -q "application-label:'FCBaz'"
+          echo "$badging" | grep -q "launchable-activity: name='ir.fcbaz.app.MainActivity'"
 
       - name: Upload release artifact
         uses: actions/upload-artifact@v4

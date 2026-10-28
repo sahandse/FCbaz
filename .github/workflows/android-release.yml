@@ -1,13 +1,12 @@
-name: Android release
+name: Android verification build
 
 on:
   workflow_dispatch:
   push:
     branches: [main]
-    tags: ['v*']
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   verify-and-build:
@@ -62,28 +61,13 @@ jobs:
           done
           exit 1
 
-      - name: Upload APK artifact
+      - name: Upload verification APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fcbaz-android-release
+          # This build is signed with the debug key for verification only. It is
+          # deliberately not published as a GitHub Release; production releases
+          # are built by flutter-android.yml with the stable release keystore.
+          name: fcbaz-android-verification
           path: build/app/outputs/flutter-apk/app-release.apk
           if-no-files-found: error
           retention-days: 30
-
-      - name: Publish GitHub release
-        if: github.ref == 'refs/heads/main'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # The release tag always follows pubspec.yaml so a version bump cannot
-          # be forgotten in this workflow.
-          version="$(sed -n 's/^version:[[:space:]]*//p' pubspec.yaml | tr -d '\r')"
-          tag="v${version%%+*}"
-          build="${version##*+}"
-          apk="build/app/outputs/flutter-apk/app-release.apk"
-          notes="FCBaz Android release ${tag} (build ${build}). Official EA FC27 item cards, FC27 Hub prices, Hall of FUT artwork and a price freshness indicator."
-          if gh release view "$tag" >/dev/null 2>&1; then
-            gh release upload "$tag" "$apk" --clobber
-          else
-            gh release create "$tag" "$apk" --title "FCBaz ${tag}" --notes "$notes"
-          fi

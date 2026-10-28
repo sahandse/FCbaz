@@ -73,7 +73,7 @@ void main() {
     final errors = await _pumpScreen(tester, const ObjectivesScreen());
 
     expect(find.text('هدف‌های زنده FC27'), findsOneWidget);
-    expect(find.textContaining('FC Heritage Circuit'), findsWidgets);
+    expect(find.byType(ExpansionTile), findsWidgets);
     expect(find.text('هدف‌ها در دسترس نیست'), findsNothing);
     expect(find.text('هدف فعالی پیدا نشد'), findsNothing);
     expect(errors, isEmpty);

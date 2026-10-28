@@ -165,6 +165,7 @@ function mapPlayer(sourcePlayer, priceIndex, art, portraits) {
   // The hub publishes an id allow-list; only a few ids need a filename override.
   const portrait =
     portraits.files[id] || (portraits.ids.has(id) ? `${id}.png` : '');
+  const sourcePortrait = clean(sourcePlayer.portraitUrl);
   const artHash = art[id];
   const officialCard = clean(
     sourcePlayer.cardImageUrl ??
@@ -172,13 +173,21 @@ function mapPlayer(sourcePlayer, priceIndex, art, portraits) {
       sourcePlayer.cardImage ??
       sourcePlayer.card_image,
   );
+  const positions = unique([
+    clean(sourcePlayer.pos),
+    ...arr(sourcePlayer.positions),
+  ]);
+  const sourceStats =
+    sourcePlayer.inGameStats && typeof sourcePlayer.inGameStats === 'object'
+      ? sourcePlayer.inGameStats
+      : null;
 
   const player = {
     id,
     name: clean(sourcePlayer.name),
     rating: num(sourcePlayer.rat),
     position: clean(sourcePlayer.pos),
-    positions: [clean(sourcePlayer.pos)],
+    positions: positions.length ? positions : [clean(sourcePlayer.pos)],
     club_name: clean(sourcePlayer.club),
     league_name: clean(sourcePlayer.leagueFA),
     nation_name: clean(sourcePlayer.nat),
@@ -193,10 +202,23 @@ function mapPlayer(sourcePlayer, priceIndex, art, portraits) {
     dribbling: isGk ? stat('REF') : stat('DRI'),
     defending: isGk ? stat('SPD') : stat('DEF'),
     physical: isGk ? stat('POS') : stat('PHY'),
+    skill_moves: num(sourcePlayer.skillMoves ?? sourcePlayer.skill_moves),
+    weak_foot: num(sourcePlayer.weakFoot ?? sourcePlayer.weak_foot),
+    foot: clean(sourcePlayer.foot ?? sourcePlayer.preferredFoot),
+    playstyles: arr(sourcePlayer.playStyles ?? sourcePlayer.play_styles),
+    playstyles_plus: arr(
+      sourcePlayer.playStylesPlus ?? sourcePlayer.play_styles_plus,
+    ),
     source_url: EA_PLAYER_SOURCE,
   };
 
-  if (isGk) {
+  if (sourceStats) {
+    player.in_game_stats = Object.fromEntries(
+      Object.entries(sourceStats)
+        .map(([key, value]) => [key, num(value)])
+        .filter(([, value]) => value > 0),
+    );
+  } else if (isGk) {
     player.in_game_stats = {
       DIV: stat('DIV'),
       HAN: stat('HAN'),
@@ -206,7 +228,12 @@ function mapPlayer(sourcePlayer, priceIndex, art, portraits) {
       POS: stat('POS'),
     };
   }
-  if (portrait) player.image_url = `${PORTRAIT_BASE}${portrait}`;
+  if (portrait) {
+    player.image_url = `${PORTRAIT_BASE}${portrait}`;
+  } else if (sourcePortrait.startsWith('https://')) {
+    // The source snapshot already verified this EA portrait for the exact id.
+    player.image_url = sourcePortrait;
+  }
   if (officialCard.startsWith('https://')) {
     player.card_image_url = officialCard;
   } else if (/^\d+$/.test(id)) {
