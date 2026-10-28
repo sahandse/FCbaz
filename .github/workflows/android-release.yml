@@ -24,13 +24,6 @@ jobs:
       - name: Flutter version
         run: flutter --version
 
-      - name: Regenerate missing Android platform scaffolding
-        run: |
-          flutter create --platforms=android .
-          # flutter create adds a template widget test that targets MyApp;
-          # this app has its own test suite and no MyApp entry point.
-          rm -f test/widget_test.dart
-
       - name: Install dependencies
         run: flutter pub get
 

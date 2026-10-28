@@ -71,9 +71,6 @@ jobs:
             exit 1
           fi
 
-      - name: Complete Android platform
-        run: flutter create . --platforms=android --org ir.fcbaz --project-name fcbaz
-
       - name: Configure Android identity, notification icon and stable signing
         shell: bash
         env:
@@ -141,7 +138,7 @@ jobs:
           p.write_text(s)
           PY
           keytool -list -keystore android/app/fcbaz-release.jks -storepass "$STORE_PASSWORD" -alias "$KEY_ALIAS" >/dev/null
-          # Guard against flutter create replacing project-specific identity.
+          # Guard the project-specific Android identity.
           grep -q 'applicationId = "ir.fcbaz.app"' android/app/build.gradle.kts
           grep -q 'namespace = "ir.fcbaz.app"' android/app/build.gradle.kts
           grep -q 'android:label="FCBaz"' android/app/src/main/AndroidManifest.xml
@@ -160,9 +157,6 @@ jobs:
           lines = p.read_text().splitlines()
           p.write_text('\n'.join(f'version: {version}+{build}' if line.startswith('version:') else line for line in lines) + '\n')
           PY
-
-      - name: Remove generated template test
-        run: rm -f test/widget_test.dart
 
       - name: Install dependencies
         run: flutter pub get
