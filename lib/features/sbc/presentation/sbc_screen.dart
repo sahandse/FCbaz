@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../domain/sbc.dart';
 import 'sbc_tools_screen.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class SbcScreen extends StatefulWidget {
   const SbcScreen({super.key});
@@ -478,7 +479,7 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
-                              '${i + 1}',
+                              faDigits(i + 1),
                               style: TextStyle(
                                 color: scheme.onPrimary,
                                 fontSize: 10,
@@ -578,7 +579,7 @@ class _SolutionCard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'از باشگاه من: ${solution.ownedPlayerIds.length} کارت',
+              'از باشگاه من: ${faDigits(solution.ownedPlayerIds.length)} کارت',
               style: TextStyle(
                 color: scheme.primary,
                 fontWeight: FontWeight.w900,
@@ -586,7 +587,7 @@ class _SolutionCard extends StatelessWidget {
             ),
             if (solution.itemScore != null) ...[
               const SizedBox(height: 6),
-              Text('Item Score راه‌حل: ${solution.itemScore}'),
+              Text('Item Score راه‌حل: ${faDigits(solution.itemScore!)}'),
             ],
             if (solution.players.isNotEmpty) ...[
               const SizedBox(height: 10),
@@ -605,7 +606,9 @@ class _SolutionCard extends StatelessWidget {
                   title: Text(
                     player.name.isEmpty ? player.playerId : player.name,
                   ),
-                  subtitle: Text('${player.rating} • ${player.price} C'),
+                  subtitle: Text(
+                    '${faDigits(player.rating)} • ${faDigits(player.price)} C',
+                  ),
                   trailing: solution.ownedPlayerIds.contains(player.playerId)
                       ? const Chip(label: Text('OWNED'))
                       : null,

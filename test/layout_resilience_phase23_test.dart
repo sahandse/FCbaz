@@ -51,7 +51,8 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('اخبار و رویدادهای FC 27'), findsOneWidget);
-    expect(find.text('پایگاه رسمی اخبار EA SPORTS FC 27'), findsOneWidget);
+    expect(find.text('FC 27 NEWSROOM'), findsOneWidget);
+    expect(find.text('گزارش در فید'), findsOneWidget);
     expect(find.text('آخرین اطلاعیه‌ها'), findsOneWidget);
     expect(find.text('اخبار در دسترس نیست'), findsNothing);
     expect(find.byType(FilterChip), findsWidgets);

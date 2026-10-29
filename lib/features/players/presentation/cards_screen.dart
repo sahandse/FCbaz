@@ -543,7 +543,7 @@ class _CardsScreenState extends State<CardsScreen> {
                         Text(
                           players.isEmpty
                               ? 'بدون نتیجه'
-                              : '${players.length} کارت',
+                              : '${faDigits(players.length)} کارت',
                           style: TextStyle(
                             color: palette.primary,
                             fontWeight: FontWeight.w800,
@@ -744,4 +744,3 @@ class _CardsScreenState extends State<CardsScreen> {
     ];
   }
 }
-

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../players/domain/player.dart';
 import '../domain/sbc_rating_tools.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class SbcToolsScreen extends StatefulWidget {
   const SbcToolsScreen({super.key});
@@ -82,13 +83,13 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
   String _coins(int value) {
     if (value >= 1000000) {
       final amount = value / 1000000;
-      return '${amount.toStringAsFixed(amount >= 10 ? 0 : 1)}M';
+      return faDigits('${amount.toStringAsFixed(amount >= 10 ? 0 : 1)}M');
     }
     if (value >= 1000) {
       final amount = value / 1000;
-      return '${amount.toStringAsFixed(amount >= 100 ? 0 : 1)}K';
+      return faDigits('${amount.toStringAsFixed(amount >= 100 ? 0 : 1)}K');
     }
-    return value.toString();
+    return faDigits(value);
   }
 
   @override
@@ -124,7 +125,7 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
                       for (var rating = 75; rating <= 95; rating++)
                         DropdownMenuItem(
                           value: rating,
-                          child: Text(rating.toString()),
+                          child: Text(faDigits(rating)),
                         ),
                     ],
                     onChanged: loading
@@ -212,11 +213,11 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
               children: [
                 Expanded(
                   child: Text(
-                    'ترکیب‌های مناسب برای $targetRating',
+                    'ترکیب‌های مناسب برای ${faDigits(targetRating)}',
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-                Chip(label: Text('${combinations.length} حالت')),
+                Chip(label: Text('${faDigits(combinations.length)} حالت')),
               ],
             ),
             const SizedBox(height: 6),
@@ -308,7 +309,7 @@ class _FodderCard extends StatelessWidget {
               Row(
                 children: [
                   Text(
-                    rating.toString(),
+                    faDigits(rating),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.w900,
                     ),
@@ -367,7 +368,7 @@ class _CombinationCard extends StatelessWidget {
         padding: const EdgeInsets.all(14),
         child: Row(
           children: [
-            CircleAvatar(radius: 18, child: Text(index.toString())),
+            CircleAvatar(radius: 18, child: Text(faDigits(index))),
             const SizedBox(width: 12),
             Expanded(
               child: Wrap(
@@ -377,7 +378,7 @@ class _CombinationCard extends StatelessWidget {
                   for (final entry in entries)
                     Chip(
                       visualDensity: VisualDensity.compact,
-                      label: Text('${entry.value}× ${entry.key}'),
+                      label: Text(faDigits('${entry.value}× ${entry.key}')),
                     ),
                 ],
               ),
@@ -387,7 +388,7 @@ class _CombinationCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  'ریتینگ ${combination.squadRating}',
+                  'ریتینگ ${faDigits(combination.squadRating)}',
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
                 Text(

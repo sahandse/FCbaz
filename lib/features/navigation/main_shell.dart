@@ -11,7 +11,9 @@ import '../players/presentation/cards_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../squad/squad_screen_pro.dart';
 import '../../src/theme/fcbaz_theme.dart';
+import '../../src/ui/fade_through_stack.dart';
 import '../../src/ui/fcbaz_top_bar.dart';
+import '../../src/ui/paper_pitch_background.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/navigation/app_navigator.dart';
 
@@ -27,6 +29,23 @@ class MainShell extends StatefulWidget {
 
   @override
   State<MainShell> createState() => _MainShellState();
+}
+
+class _TabIcon extends StatelessWidget {
+  const _TabIcon({required this.icon, required this.selected});
+
+  final IconData icon;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedScale(
+      scale: selected ? 1.08 : .94,
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutBack,
+      child: Icon(icon),
+    );
+  }
 }
 
 class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
@@ -162,7 +181,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
           onNotifications: _openNotifications,
           unread: unread,
         ),
-        body: IndexedStack(index: index, children: pages),
+        body: PaperPitchBackground(
+          child: FadeThroughStack(index: index, children: pages),
+        ),
         bottomNavigationBar: DecoratedBox(
           decoration: BoxDecoration(
             color: palette.surface,
@@ -173,30 +194,60 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
             child: NavigationBar(
               selectedIndex: index,
               onDestinationSelected: _selectTab,
-              destinations: const [
+              destinations: [
                 NavigationDestination(
-                  icon: Icon(Icons.newspaper_outlined),
-                  selectedIcon: Icon(Icons.newspaper_rounded),
+                  icon: _TabIcon(
+                    icon: Icons.newspaper_outlined,
+                    selected: index == 0,
+                  ),
+                  selectedIcon: _TabIcon(
+                    icon: Icons.newspaper_rounded,
+                    selected: index == 0,
+                  ),
                   label: 'اخبار',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.style_outlined),
-                  selectedIcon: Icon(Icons.style_rounded),
+                  icon: _TabIcon(
+                    icon: Icons.style_outlined,
+                    selected: index == 1,
+                  ),
+                  selectedIcon: _TabIcon(
+                    icon: Icons.style_rounded,
+                    selected: index == 1,
+                  ),
                   label: 'کارت‌ها',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.inventory_2_outlined),
-                  selectedIcon: Icon(Icons.inventory_2_rounded),
+                  icon: _TabIcon(
+                    icon: Icons.inventory_2_outlined,
+                    selected: index == 2,
+                  ),
+                  selectedIcon: _TabIcon(
+                    icon: Icons.inventory_2_rounded,
+                    selected: index == 2,
+                  ),
                   label: 'باشگاه',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.stadium_outlined),
-                  selectedIcon: Icon(Icons.stadium_rounded),
+                  icon: _TabIcon(
+                    icon: Icons.stadium_outlined,
+                    selected: index == 3,
+                  ),
+                  selectedIcon: _TabIcon(
+                    icon: Icons.stadium_rounded,
+                    selected: index == 3,
+                  ),
                   label: 'تیم',
                 ),
                 NavigationDestination(
-                  icon: Icon(Icons.grid_view_rounded),
-                  selectedIcon: Icon(Icons.grid_view_rounded),
+                  icon: _TabIcon(
+                    icon: Icons.grid_view_rounded,
+                    selected: index == 4,
+                  ),
+                  selectedIcon: _TabIcon(
+                    icon: Icons.grid_view_rounded,
+                    selected: index == 4,
+                  ),
                   label: 'بیشتر',
                 ),
               ],

@@ -15,19 +15,22 @@ class PublicFcData {
   static const _futbinBase = 'https://www.futbin.org/futbin/api/';
   static final Map<String, _PublicCacheEntry> _cache = {};
 
+  /// Page numbers keep the Futbin fallback lazy, but the verified live catalog
+  /// is already in memory, so a null [page] returns the complete list.
   Future<List<Player>> getPlayers({
-    int page = 1,
+    int? page,
     String platform = 'console',
   }) async {
     final live = await _livePlayers();
     if (live.isNotEmpty) {
+      if (page == null) return live;
       const pageSize = 100;
       final start = (page - 1).clamp(0, 9999) * pageSize;
       if (start >= live.length) return const [];
       final end = (start + pageSize).clamp(0, live.length);
       return live.sublist(start, end);
     }
-    return _futbinPlayers(page: page, platform: platform);
+    return _futbinPlayers(page: page ?? 1, platform: platform);
   }
 
   Future<List<Player>> search(
@@ -232,6 +235,8 @@ class PublicFcData {
   }
 
   Future<List<Player>> _livePlayers() async {
+    final cached = _livePlayersCache;
+    if (cached != null) return cached;
     try {
       final raw = await _liveCatalog.list('players');
       final players = raw
@@ -239,11 +244,14 @@ class PublicFcData {
           .where((p) => p.id.isNotEmpty && p.name.isNotEmpty)
           .toList();
       players.sort((a, b) => b.rating.compareTo(a.rating));
+      _livePlayersCache = players;
       return players;
     } catch (_) {
       return const [];
     }
   }
+
+  List<Player>? _livePlayersCache;
 
   Future<List<Player>> _futbinPlayers({
     required int page,

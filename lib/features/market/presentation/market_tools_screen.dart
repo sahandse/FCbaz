@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../players/domain/player.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/navigation/app_navigator.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class MarketToolsScreen extends StatefulWidget {
   const MarketToolsScreen({super.key});
@@ -86,10 +87,15 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
 
   String _coins(int value) {
     if (value <= 0) return 'قیمت ناموجود';
-    if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}M';
-    if (value >= 1000)
-      return '${(value / 1000).toStringAsFixed(value >= 100000 ? 0 : 1)}K';
-    return value.toString();
+    if (value >= 1000000) {
+      return faDigits('${(value / 1000000).toStringAsFixed(1)}M');
+    }
+    if (value >= 1000) {
+      return faDigits(
+        '${(value / 1000).toStringAsFixed(value >= 100000 ? 0 : 1)}K',
+      );
+    }
+    return faDigits(value);
   }
 
   @override
@@ -265,7 +271,7 @@ class _PlayerRow extends StatelessWidget {
               SizedBox(
                 width: 30,
                 child: Text(
-                  '#$rank',
+                  '#${faDigits(rank)}',
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w900,
@@ -278,7 +284,7 @@ class _PlayerRow extends StatelessWidget {
                     ? null
                     : NetworkImage(player.imageUrl),
                 child: player.imageUrl.isEmpty
-                    ? Text(player.rating.toString())
+                    ? Text(faDigits(player.rating))
                     : null,
               ),
               const SizedBox(width: 12),
@@ -295,7 +301,7 @@ class _PlayerRow extends StatelessWidget {
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      '${player.rating} • ${player.position}${player.clubName.isEmpty ? '' : ' • ${player.clubName}'}',
+                      '${faDigits(player.rating)} • ${player.position}${player.clubName.isEmpty ? '' : ' • ${player.clubName}'}',
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: Theme.of(context).textTheme.labelSmall,

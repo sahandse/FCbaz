@@ -4,6 +4,7 @@ import '../../players/domain/player.dart';
 import '../../players/presentation/player_card.dart';
 import '../domain/draft_models.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class DraftScreen extends StatefulWidget {
   const DraftScreen({super.key});
@@ -158,9 +159,7 @@ class _DraftScoreboard extends StatelessWidget {
       decoration: BoxDecoration(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: scheme.primary.withValues(alpha: .28),
-        ),
+        border: Border.all(color: scheme.primary.withValues(alpha: .28)),
       ),
       child: Column(
         children: [
@@ -184,7 +183,7 @@ class _DraftScoreboard extends StatelessWidget {
                 child: Text(
                   isCompleted
                       ? 'تکمیل شد ✓'
-                      : 'موقعیت ${currentSlot + 1} از $totalSlots',
+                      : 'موقعیت ${faDigits(currentSlot + 1)} از ${faDigits(totalSlots)}',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
@@ -333,7 +332,7 @@ class _DraftCompletedSummary extends StatelessWidget {
           ),
           const SizedBox(height: 6),
           Text(
-            'ریتینگ نهایی: ${state.teamRating}  |  شیمی نهایی: ${state.teamChemistry} از ۳۳',
+            'ریتینگ نهایی: ${faDigits(state.teamRating)}  |  شیمی نهایی: ${faDigits(state.teamChemistry)} از ۳۳',
             style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
@@ -437,7 +436,7 @@ class _PickRow extends StatelessWidget {
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
-                '${player!.rating}',
+                '${faDigits(player!.rating)}',
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   color: scheme.onPrimary,

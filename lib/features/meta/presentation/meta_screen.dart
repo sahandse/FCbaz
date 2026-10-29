@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../domain/meta_player_entry.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/navigation/app_navigator.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class MetaScreen extends StatefulWidget {
   const MetaScreen({super.key});
@@ -267,11 +268,11 @@ class _MetaPlayerCard extends StatelessWidget {
                           ),
                         ),
                         if (entry.isVerifiedMeta && entry.rank != null)
-                          Chip(label: Text('#${entry.rank}')),
+                          Chip(label: Text('#${faDigits(entry.rank!)}')),
                       ],
                     ),
                     Text(
-                      '${player.rating} • ${player.position} • ${player.clubName}',
+                      '${faDigits(player.rating)} • ${player.position} • ${player.clubName}',
                       style: Theme.of(context).textTheme.bodySmall,
                     ),
                     if (entry.isVerifiedMeta &&
@@ -288,7 +289,7 @@ class _MetaPlayerCard extends StatelessWidget {
                           if (entry.score != null)
                             Chip(
                               label: Text(
-                                'امتیاز ${entry.score!.toStringAsFixed(1)}',
+                                'امتیاز ${faDigits(entry.score!.toStringAsFixed(1))}',
                               ),
                             ),
                         ],

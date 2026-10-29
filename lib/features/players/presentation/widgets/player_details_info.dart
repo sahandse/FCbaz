@@ -11,8 +11,14 @@ class _InfoGrid extends StatelessWidget {
       ('LEAGUE', player.leagueName),
       ('NATION', player.nationName),
       ('VERSION', player.version.isNotEmpty ? player.version : player.rarity),
-      ('SKILLS', player.skillMoves > 0 ? '${player.skillMoves}★' : '—'),
-      ('WEAK FOOT', player.weakFoot > 0 ? '${player.weakFoot}★' : '—'),
+      (
+        'SKILLS',
+        player.skillMoves > 0 ? '${faDigits(player.skillMoves)}★' : '—',
+      ),
+      (
+        'WEAK FOOT',
+        player.weakFoot > 0 ? '${faDigits(player.weakFoot)}★' : '—',
+      ),
       ('FOOT', player.foot),
       ('HEIGHT', player.height),
       ('WORK RATES', player.workRates),

@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../domain/news_article.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/theme/fcbaz_theme.dart';
+import 'package:fcbaz/src/ui/section_heading.dart';
+import 'package:fcbaz/src/ui/stadium_hero.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({this.embedded = false, super.key});
@@ -94,70 +98,24 @@ class _NewsScreenState extends State<NewsScreen> {
       child: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
         children: [
-          if (widget.embedded) ...[
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    'اخبار و رویدادهای FC 27',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                IconButton(
-                  tooltip: 'بروزرسانی اخبار',
-                  onPressed: () => _loadNews(forceRefresh: true),
-                  icon: const Icon(Icons.refresh_rounded),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-          ],
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: scheme.surface,
-              borderRadius: BorderRadius.circular(16),
-              border: Border.all(color: scheme.primary.withValues(alpha: .22)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: scheme.primary.withValues(alpha: .15),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.newspaper_rounded,
-                    color: scheme.primary,
-                    size: 24,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'پایگاه رسمی اخبار EA SPORTS FC 27',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w800,
-                          fontSize: 13.5,
-                        ),
-                      ),
-                      const SizedBox(height: 3),
-                      Text(
-                        'پچ‌نوت‌ها، ایونت‌های FUT، تغییرات گیم‌پلی و راهنماهای کاربردی.',
-                        style: TextStyle(
-                          color: scheme.onSurfaceVariant,
-                          fontSize: 11,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+          StadiumHero(
+            eyebrow: 'FC 27 NEWSROOM',
+            title: 'اخبار و رویدادهای FC 27',
+            subtitle:
+                'پچ‌نوت‌ها، ایونت‌های FUT، تغییرات گیم‌پلی و راهنماهای کاربردی؛ '
+                'همه از اتاق خبر رسمی EA SPORTS FC 27.',
+            metric: loading ? '—' : faDigits(filtered.length),
+            metricLabel: 'گزارش در فید',
+            metricNote: error == null
+                ? 'همگام‌سازی زنده با منبع رسمی'
+                : 'نسخه آفلاین ذخیره‌شده روی دستگاه',
+            trailing: widget.embedded
+                ? IconButton(
+                    tooltip: 'بروزرسانی اخبار',
+                    onPressed: () => _loadNews(forceRefresh: true),
+                    icon: const Icon(Icons.refresh_rounded),
+                  )
+                : null,
           ),
           const SizedBox(height: 12),
           TextField(
@@ -194,34 +152,17 @@ class _NewsScreenState extends State<NewsScreen> {
             onSelected: (cat) => setState(() => selectedCategory = cat),
           ),
           const SizedBox(height: 14),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Text(
-                  'آخرین اطلاعیه‌ها',
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
-                  ),
-                ),
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${filtered.length} گزارش',
-                style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
-              ),
-            ],
+          SectionHeading(
+            title: 'آخرین اطلاعیه‌ها',
+            eyebrow: 'LATEST BRIEFINGS',
+            trailing: Text(
+              '${faDigits(filtered.length)} گزارش',
+              style: TextStyle(color: scheme.onSurfaceVariant, fontSize: 12),
+            ),
           ),
           const SizedBox(height: 10),
           if (loading)
-            const Center(
-              child: Padding(
-                padding: EdgeInsets.all(32),
-                child: CircularProgressIndicator(),
-              ),
-            )
+            const _NewsSkeleton()
           else if (error != null)
             Card(
               child: ListTile(
@@ -246,11 +187,17 @@ class _NewsScreenState extends State<NewsScreen> {
               },
               onRetry: () => _loadNews(forceRefresh: true),
             )
-          else
-            for (final article in filtered) ...[
+          else ...[
+            _FeaturedNewsCard(
+              article: filtered.first,
+              onTap: () => _openDetails(filtered.first),
+            ),
+            const SizedBox(height: 12),
+            for (final article in filtered.skip(1)) ...[
               _NewsCard(article: article, onTap: () => _openDetails(article)),
               const SizedBox(height: 10),
             ],
+          ],
         ],
       ),
     );
@@ -354,8 +301,7 @@ class _NewsCard extends StatelessWidget {
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    article.published,
-                    textDirection: TextDirection.ltr,
+                    formatNewsDateFa(article.published),
                     style: TextStyle(
                       fontSize: 10.5,
                       color: scheme.onSurfaceVariant,
@@ -424,6 +370,238 @@ class _NewsCard extends StatelessWidget {
   }
 }
 
+class _FeaturedNewsCard extends StatelessWidget {
+  const _FeaturedNewsCard({required this.article, required this.onTap});
+
+  final NewsArticle article;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return Semantics(
+      button: true,
+      label: 'گزارش ویژه: ${article.displayTitle}',
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: scheme.primary.withValues(alpha: .35)),
+          gradient: LinearGradient(
+            begin: AlignmentDirectional.topStart,
+            end: AlignmentDirectional.bottomEnd,
+            colors: [
+              Color.alphaBlend(
+                scheme.primary.withValues(alpha: .18),
+                scheme.surface,
+              ),
+              scheme.surface,
+              Color.alphaBlend(
+                scheme.secondary.withValues(alpha: .09),
+                scheme.surface,
+              ),
+            ],
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(19),
+          child: Stack(
+            children: [
+              PositionedDirectional(
+                end: 10,
+                bottom: -14,
+                child: IgnorePointer(
+                  child: Text(
+                    'NEWS',
+                    textDirection: TextDirection.ltr,
+                    style: TextStyle(
+                      fontFamily: 'BarlowCondensed',
+                      fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 64,
+                      height: .8,
+                      color: scheme.primary.withValues(alpha: .07),
+                    ),
+                  ),
+                ),
+              ),
+              Material(
+                type: MaterialType.transparency,
+                child: InkWell(
+                  onTap: onTap,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 9,
+                                vertical: 5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: scheme.primary,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(
+                                    Icons.bolt_rounded,
+                                    size: 13,
+                                    color: scheme.onPrimary,
+                                  ),
+                                  const SizedBox(width: 3),
+                                  Text(
+                                    'گزارش ویژه',
+                                    style: TextStyle(
+                                      fontSize: 10.5,
+                                      fontWeight: FontWeight.w800,
+                                      color: scheme.onPrimary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Flexible(
+                              child: Text(
+                                article.tagFa.isEmpty
+                                    ? formatNewsDateFa(article.published)
+                                    : '${article.tagFa} • ${formatNewsDateFa(article.published)}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 10.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: scheme.onSurfaceVariant,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          article.displayTitle,
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w900,
+                            height: 1.35,
+                          ),
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          article.displaySummary,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: scheme.onSurfaceVariant,
+                            height: 1.55,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.auto_awesome_rounded,
+                              size: 15,
+                              color: scheme.primary,
+                            ),
+                            const SizedBox(width: 5),
+                            Flexible(
+                              child: Text(
+                                'مطالعه گزارش ویژه',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11.5,
+                                  fontWeight: FontWeight.w800,
+                                  color: scheme.primary,
+                                ),
+                              ),
+                            ),
+                            const Spacer(),
+                            Icon(
+                              Icons.arrow_back_rounded,
+                              size: 16,
+                              color: scheme.primary,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _NewsSkeleton extends StatelessWidget {
+  const _NewsSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+
+    Widget bar(double width, double height, {double radius = 4}) {
+      return Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          color: palette.surfaceRaised,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+      );
+    }
+
+    return Semantics(
+      label: 'در حال بارگذاری اخبار',
+      child: Column(
+        children: [
+          for (var i = 0; i < 3; i++) ...[
+            Container(
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: palette.surface,
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: palette.line),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [bar(62, 16, radius: 6), bar(44, 10)],
+                  ),
+                  const SizedBox(height: 12),
+                  bar(double.infinity, 12),
+                  const SizedBox(height: 8),
+                  bar(210, 12),
+                  const SizedBox(height: 12),
+                  bar(double.infinity, 9),
+                  const SizedBox(height: 6),
+                  bar(double.infinity, 9),
+                  const SizedBox(height: 6),
+                  bar(136, 9),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
 class _NewsDetailsSheet extends StatelessWidget {
   const _NewsDetailsSheet({required this.article});
   final NewsArticle article;
@@ -485,8 +663,7 @@ class _NewsDetailsSheet extends StatelessWidget {
                         ),
                         const SizedBox(width: 8),
                         Text(
-                          article.published,
-                          textDirection: TextDirection.ltr,
+                          formatNewsDateFa(article.published),
                           style: TextStyle(
                             fontSize: 11,
                             color: scheme.onSurfaceVariant,

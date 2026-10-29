@@ -49,16 +49,17 @@ class FcbazPalette extends ThemeExtension<FcbazPalette> {
   );
 
   static const light = FcbazPalette(
-    canvas: Color(0xFFF2F5EE),
-    surface: Color(0xFFFFFFFF),
-    surfaceRaised: Color(0xFFE9EFE3),
-    line: Color(0xFFC7D2BC),
-    lineStrong: Color(0xFFA9B79E),
-    text: Color(0xFF121711),
-    textMuted: Color(0xFF5C6B5A),
-    primary: Color(0xFF486900),
+    // Paper Pitch: a warm, matte paper canvas instead of a cool grey one.
+    canvas: Color(0xFFF4EDDD),
+    surface: Color(0xFFFFFBF2),
+    surfaceRaised: Color(0xFFEAE0CC),
+    line: Color(0xFFD6C9AF),
+    lineStrong: Color(0xFFB7A786),
+    text: Color(0xFF241F14),
+    textMuted: Color(0xFF6A5F4B),
+    primary: Color(0xFF4A6600),
     onPrimary: Color(0xFFFFFFFF),
-    secondary: Color(0xFF006879),
+    secondary: Color(0xFF00695C),
     warning: Color(0xFF8A5B00),
     danger: Color(0xFFB3263A),
     success: Color(0xFF1F6B3A),
@@ -150,27 +151,65 @@ class FCBazTheme {
   static const warning = Color(0xFFFFD76A);
   static const outline = Color(0xFF26352A);
 
-  static ThemeData dark([Color? accent]) => _build(
-    brightness: Brightness.dark,
-    palette: accent == null
-        ? FcbazPalette.dark
-        : FcbazPalette.dark.copyWith(
-            primary: accent,
-            onPrimary: _onColor(accent),
-          ),
-  );
+  static ThemeData dark([Color? accent]) {
+    final resolved = accent == null
+        ? null
+        : accessibleAccent(accent, Brightness.dark);
+    return _build(
+      brightness: Brightness.dark,
+      palette: resolved == null
+          ? FcbazPalette.dark
+          : FcbazPalette.dark.copyWith(
+              primary: resolved,
+              onPrimary: _onColor(resolved),
+            ),
+    );
+  }
 
-  static ThemeData light([Color? accent]) => _build(
-    brightness: Brightness.light,
-    palette: accent == null
-        ? FcbazPalette.light
-        : FcbazPalette.light.copyWith(
-            primary: accent,
-            onPrimary: _onColor(accent),
-          ),
-  );
+  static ThemeData light([Color? accent]) {
+    final resolved = accent == null
+        ? null
+        : accessibleAccent(accent, Brightness.light);
+    return _build(
+      brightness: Brightness.light,
+      palette: resolved == null
+          ? FcbazPalette.light
+          : FcbazPalette.light.copyWith(
+              primary: resolved,
+              onPrimary: _onColor(resolved),
+            ),
+    );
+  }
 
-  static Color _onColor(Color color) =>
+  /// Shifts [accent] lightness until it reaches 4.5:1 contrast on the base
+  /// surface of [brightness], so bright club kits stay readable on paper and
+  /// dark kits stay readable in the dark theme.
+  static Color accessibleAccent(Color accent, Brightness brightness) {
+    final background = brightness == Brightness.dark
+        ? FcbazPalette.dark.surface
+        : FcbazPalette.light.surface;
+    final step = brightness == Brightness.dark ? .04 : -.04;
+    var resolved = accent;
+    for (var i = 0; i < 24 && contrastRatio(resolved, background) < 4.5; i++) {
+      final hsl = HSLColor.fromColor(resolved);
+      resolved = hsl
+          .withLightness((hsl.lightness + step).clamp(0.0, 1.0))
+          .toColor();
+    }
+    return resolved;
+  }
+
+  static double contrastRatio(Color a, Color b) {
+    final la = a.computeLuminance();
+    final lb = b.computeLuminance();
+    final lighter = la > lb ? la : lb;
+    final darker = la > lb ? lb : la;
+    return (lighter + .05) / (darker + .05);
+  }
+
+  static Color _onColor(Color color) => foregroundOn(color);
+
+  static Color foregroundOn(Color color) =>
       ThemeData.estimateBrightnessForColor(color) == Brightness.dark
       ? Colors.white
       : const Color(0xFF10140C);
@@ -279,11 +318,11 @@ class FCBazTheme {
             ),
           ),
       cardTheme: CardThemeData(
-        // A white card on the pale canvas needs a whisper of lift to read as a
-        // separate surface; dark mode keeps the flat, borderless look.
-        elevation: brightness == Brightness.light ? 1.5 : 0,
+        // Paper Pitch cards sit on warm paper: a soft-but-crisp warm shadow
+        // keeps them legible without the flat dark-mode look.
+        elevation: brightness == Brightness.light ? 2 : 0,
         shadowColor: brightness == Brightness.light
-            ? const Color(0x1A1B241A)
+            ? const Color(0x2E6B5A38)
             : Colors.transparent,
         margin: EdgeInsets.zero,
         color: palette.surface,

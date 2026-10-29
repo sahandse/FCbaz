@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../src/theme/fcbaz_theme.dart';
 import '../domain/player.dart';
+import 'card/card_shine.dart';
 import 'card/player_card_badges.dart';
 import 'card/player_card_painters.dart';
 import 'card/player_card_theme.dart';
@@ -148,8 +149,11 @@ class PlayerItemVisual extends StatelessWidget {
                   top: top,
                   width: shieldWidth,
                   height: shieldHeight,
-                  child: fullCardArt
-                      ? _ArtworkImage(
+                  child: Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      if (fullCardArt)
+                        _ArtworkImage(
                           url: artworkUrl,
                           fit: BoxFit.contain,
                           width: shieldWidth,
@@ -163,8 +167,8 @@ class PlayerItemVisual extends StatelessWidget {
                             displayName: _titleCase(player.name),
                           ),
                         )
-                      : player.cardImageUrl.isNotEmpty
-                      ? ClipPath(
+                      else if (player.cardImageUrl.isNotEmpty)
+                        ClipPath(
                           clipper: FutCardClipper(ornate: theme.ornate),
                           child: _ArtworkImage(
                             url: player.cardImageUrl,
@@ -181,7 +185,8 @@ class PlayerItemVisual extends StatelessWidget {
                             ),
                           ),
                         )
-                      : _CardBody(
+                      else
+                        _CardBody(
                           player: player,
                           theme: theme,
                           compact: compact,
@@ -189,6 +194,15 @@ class PlayerItemVisual extends StatelessWidget {
                           statValues: statValues,
                           displayName: _titleCase(player.name),
                         ),
+                      if (theme.shine)
+                        ClipPath(
+                          clipper: fullCardArt
+                              ? const _CardArtClipper()
+                              : FutCardClipper(ornate: theme.ornate),
+                          child: CardShine(glow: theme.glow),
+                        ),
+                    ],
+                  ),
                 ),
                 if (!fullCardArt && alternate.isNotEmpty)
                   Positioned(
@@ -666,6 +680,22 @@ class _Price extends StatelessWidget {
       ),
     );
   }
+}
+
+class _CardArtClipper extends CustomClipper<Path> {
+  const _CardArtClipper();
+
+  @override
+  Path getClip(Size size) => Path()
+    ..addRRect(
+      RRect.fromRectAndRadius(
+        Offset.zero & size,
+        const Radius.circular(FcbazRadius.md),
+      ),
+    );
+
+  @override
+  bool shouldReclip(covariant _CardArtClipper oldClipper) => false;
 }
 
 class _PlayerImage extends StatelessWidget {

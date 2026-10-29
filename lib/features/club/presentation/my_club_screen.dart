@@ -9,6 +9,7 @@ import '../my_club_service.dart';
 import 'add_club_player_dialog.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/navigation/app_navigator.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class MyClubScreen extends StatefulWidget {
   const MyClubScreen({this.embedded = false, super.key});
@@ -160,11 +161,17 @@ class _MyClubScreenState extends State<MyClubScreen> {
 
   String _coins(int value) {
     if (value <= 0) return '—';
-    if (value >= 1000000)
-      return '${(value / 1000000).toStringAsFixed(value >= 10000000 ? 0 : 1)}M';
-    if (value >= 1000)
-      return '${(value / 1000).toStringAsFixed(value >= 100000 ? 0 : 1)}K';
-    return '$value';
+    if (value >= 1000000) {
+      return faDigits(
+        '${(value / 1000000).toStringAsFixed(value >= 10000000 ? 0 : 1)}M',
+      );
+    }
+    if (value >= 1000) {
+      return faDigits(
+        '${(value / 1000).toStringAsFixed(value >= 100000 ? 0 : 1)}K',
+      );
+    }
+    return faDigits(value);
   }
 
   @override
@@ -347,7 +354,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
                           ),
                         ),
                         Text(
-                          '${bestSquad!.formation.name} • شیمی ${bestSquad!.chemistry.total}/33 • میانگین ${bestSquad!.averageRating.toStringAsFixed(1)}',
+                          '${bestSquad!.formation.name} • شیمی ${faDigits('${bestSquad!.chemistry.total}/33')} • میانگین ${faDigits(bestSquad!.averageRating.toStringAsFixed(1))}',
                           style: TextStyle(
                             color: scheme.onSurfaceVariant,
                             fontSize: 11,

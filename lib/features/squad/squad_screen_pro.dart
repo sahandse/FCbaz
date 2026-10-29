@@ -7,10 +7,13 @@ import 'domain/chemistry_engine.dart';
 import 'domain/squad_chemistry_optimizer.dart';
 import 'domain/squad_formation_migrator.dart';
 import 'domain/squad_models.dart';
+import 'presentation/chemistry_links.dart';
 import 'presentation/formation_picker_sheet.dart';
 import 'presentation/squad_insights_panel.dart';
 import 'presentation/tactics_editor_sheet.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/ui/section_heading.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class SquadScreenPro extends StatefulWidget {
   const SquadScreenPro({super.key});
@@ -146,8 +149,8 @@ class _SquadScreenProState extends State<SquadScreenPro> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            '${migrated.movedToBench} بازیکن به نیمکت منتقل شد • '
-            '${migrated.outOfPositionPlacements} بازیکن موقتاً خارج از پست قرار گرفت',
+            '${faDigits(migrated.movedToBench)} بازیکن به نیمکت منتقل شد • '
+            '${faDigits(migrated.outOfPositionPlacements)} بازیکن موقتاً خارج از پست قرار گرفت',
           ),
         ),
       );
@@ -197,7 +200,7 @@ class _SquadScreenProState extends State<SquadScreenPro> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  '${analysis.matchedCount} بازیکن از تصویر شناسایی شد.',
+                  '${faDigits(analysis.matchedCount)} بازیکن از تصویر شناسایی شد.',
                   style: Theme.of(dialogContext).textTheme.titleMedium,
                 ),
                 const SizedBox(height: 8),
@@ -281,7 +284,7 @@ class _SquadScreenProState extends State<SquadScreenPro> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'ترکیب وارد شد؛ شیمی فعلی ${chemistry.total}/${chemistry.maxForFilledPlayers} است. پیشنهادها پایین صفحه نمایش داده می‌شوند.',
+            'ترکیب وارد شد؛ شیمی فعلی ${faDigits('${chemistry.total}/${chemistry.maxForFilledPlayers}')} است. پیشنهادها پایین صفحه نمایش داده می‌شوند.',
           ),
         ),
       );
@@ -382,7 +385,7 @@ class _SquadScreenProState extends State<SquadScreenPro> {
                       style: Theme.of(context).textTheme.headlineSmall,
                     ),
                     Text(
-                      '${formation.name} • ${squad.playersBySlot.length}/11 بازیکن',
+                      '${formation.name} • ${faDigits('${squad.playersBySlot.length}/11')} بازیکن',
                       style: Theme.of(context).textTheme.labelMedium,
                     ),
                   ],
@@ -474,12 +477,13 @@ class _SquadScreenProState extends State<SquadScreenPro> {
           _Pitch(
             formation: formation,
             players: squad.playersBySlot,
+            chemistry: chemistry,
             onTapSlot: _pickPlayer,
             onRemove: _removePlayer,
           ),
           if (squad.bench.isNotEmpty) ...[
             const SizedBox(height: 18),
-            Text('نیمکت', style: Theme.of(context).textTheme.titleMedium),
+            const SectionHeading(title: 'نیمکت', eyebrow: 'BENCH'),
             const SizedBox(height: 8),
             SizedBox(
               height: 92,
@@ -509,12 +513,14 @@ class _Pitch extends StatelessWidget {
   const _Pitch({
     required this.formation,
     required this.players,
+    required this.chemistry,
     required this.onTapSlot,
     required this.onRemove,
   });
 
   final FormationDefinition formation;
   final Map<String, Player> players;
+  final ChemistryResult chemistry;
   final ValueChanged<FormationSlot> onTapSlot;
   final ValueChanged<String> onRemove;
 
@@ -530,31 +536,131 @@ class _Pitch extends StatelessWidget {
           border: Border.all(color: scheme.primary.withValues(alpha: .25)),
         ),
         child: LayoutBuilder(
-          builder: (context, c) => Stack(
-            children: [
-              Positioned(
-                left: 10,
-                right: 10,
-                top: c.maxHeight / 2,
-                child: Divider(color: scheme.primary.withValues(alpha: .22)),
-              ),
-              for (final slot in formation.slots)
-                Positioned(
-                  left: (c.maxWidth - 74) * slot.x,
-                  top: (c.maxHeight - 86) * slot.y,
-                  child: _SlotCard(
-                    slot: slot,
-                    player: players[slot.id],
-                    onTap: () => onTapSlot(slot),
-                    onRemove: () => onRemove(slot.id),
+          builder: (context, c) {
+            final links = buildChemistryLinks(
+              formation: formation,
+              players: players,
+              chemistryBySlot: chemistry.bySlot,
+              size: Size(c.maxWidth, c.maxHeight),
+            );
+            return Stack(
+              children: [
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: CustomPaint(
+                      painter: _PitchLinesPainter(color: scheme.primary),
+                    ),
                   ),
                 ),
-            ],
-          ),
+                Positioned.fill(
+                  child: ChemistryLinks(
+                    links: links,
+                    strongColor: scheme.primary,
+                    weakColor: scheme.secondary,
+                  ),
+                ),
+                for (final slot in formation.slots)
+                  Positioned(
+                    left: (c.maxWidth - 74) * slot.x,
+                    top: (c.maxHeight - 86) * slot.y,
+                    child: _SlotCard(
+                      slot: slot,
+                      player: players[slot.id],
+                      onTap: () => onTapSlot(slot),
+                      onRemove: () => onRemove(slot.id),
+                    ),
+                  ),
+              ],
+            );
+          },
         ),
       ),
     );
   }
+}
+
+class _PitchLinesPainter extends CustomPainter {
+  const _PitchLinesPainter({required this.color});
+
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final stroke = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1
+      ..color = color.withValues(alpha: .16);
+
+    const inset = 12.0;
+    final field = Rect.fromLTWH(
+      inset,
+      inset,
+      size.width - inset * 2,
+      size.height - inset * 2,
+    );
+    if (field.width <= 0 || field.height <= 0) return;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(field, Radius.circular(field.shortestSide * .07)),
+      stroke,
+    );
+    canvas.drawLine(
+      Offset(field.left, field.center.dy),
+      Offset(field.right, field.center.dy),
+      stroke,
+    );
+    canvas.drawCircle(field.center, field.width * .11, stroke);
+    canvas.drawCircle(
+      field.center,
+      1.8,
+      Paint()..color = color.withValues(alpha: .22),
+    );
+
+    final boxWidth = field.width * .5;
+    final boxHeight = field.height * .11;
+    final goalWidth = field.width * .24;
+    final goalHeight = boxHeight * .42;
+    canvas.drawRect(
+      Rect.fromLTWH(
+        field.center.dx - boxWidth / 2,
+        field.top,
+        boxWidth,
+        boxHeight,
+      ),
+      stroke,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(
+        field.center.dx - boxWidth / 2,
+        field.bottom - boxHeight,
+        boxWidth,
+        boxHeight,
+      ),
+      stroke,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(
+        field.center.dx - goalWidth / 2,
+        field.top,
+        goalWidth,
+        goalHeight,
+      ),
+      stroke,
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(
+        field.center.dx - goalWidth / 2,
+        field.bottom - goalHeight,
+        goalWidth,
+        goalHeight,
+      ),
+      stroke,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _PitchLinesPainter oldDelegate) =>
+      oldDelegate.color != color;
 }
 
 class _SlotCard extends StatelessWidget {
@@ -597,7 +703,7 @@ class _SlotCard extends StatelessWidget {
                         ? null
                         : NetworkImage(player!.imageUrl),
                     child: player!.imageUrl.isEmpty
-                        ? Text(player!.rating.toString())
+                        ? Text(faDigits(player!.rating))
                         : null,
                   ),
                 const SizedBox(height: 4),
@@ -612,7 +718,7 @@ class _SlotCard extends StatelessWidget {
                 ),
                 if (player != null)
                   Text(
-                    '${player!.rating} • ${slot.position}',
+                    '${faDigits(player!.rating)} • ${slot.position}',
                     style: Theme.of(context).textTheme.labelSmall,
                   ),
               ],
@@ -644,7 +750,7 @@ class _BenchCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: const TextStyle(fontWeight: FontWeight.w900),
               ),
-              Text('${player.rating} • ${player.position}'),
+              Text('${faDigits(player.rating)} • ${player.position}'),
             ],
           ),
         ),
@@ -669,26 +775,59 @@ class _PlayerPicker extends StatefulWidget {
 }
 
 class _PlayerPickerState extends State<_PlayerPicker> {
+  final controller = TextEditingController();
+  late final String normalizedPosition;
+  late final List<Player> candidates;
   String query = '';
+  bool onlyFit = false;
+
+  @override
+  void initState() {
+    super.initState();
+    normalizedPosition = widget.slotPosition.toUpperCase();
+    candidates =
+        widget.players
+            .where((player) => !widget.selectedIds.contains(player.id))
+            .toList()
+          ..sort((a, b) {
+            final aFit = _fits(a);
+            final bFit = _fits(b);
+            if (aFit != bFit) return aFit ? -1 : 1;
+            final byRating = b.rating.compareTo(a.rating);
+            return byRating != 0 ? byRating : a.name.compareTo(b.name);
+          });
+  }
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  bool _fits(Player player) {
+    if (normalizedPosition.isEmpty) return true;
+    return player.position.toUpperCase() == normalizedPosition ||
+        player.positions.any((alt) => alt.toUpperCase() == normalizedPosition);
+  }
+
+  List<Player> get visible {
+    final q = query.trim().toLowerCase();
+    return candidates
+        .where((player) {
+          if (onlyFit && !_fits(player)) return false;
+          if (q.isEmpty) return true;
+          return player.name.toLowerCase().contains(q) ||
+              player.clubName.toLowerCase().contains(q) ||
+              player.leagueName.toLowerCase().contains(q) ||
+              player.nationName.toLowerCase().contains(q) ||
+              player.version.toLowerCase().contains(q);
+        })
+        .toList(growable: false);
+  }
 
   @override
   Widget build(BuildContext context) {
-    final normalized = widget.slotPosition.toUpperCase();
-    final filtered = widget.players
-        .where((player) {
-          if (widget.selectedIds.contains(player.id)) return false;
-          final positions = <String>{
-            player.position.toUpperCase(),
-            ...player.positions.map((p) => p.toUpperCase()),
-          };
-          final matchesPosition = positions.contains(normalized);
-          final matchesQuery =
-              query.isEmpty ||
-              player.name.toLowerCase().contains(query.toLowerCase());
-          return matchesPosition && matchesQuery;
-        })
-        .take(80)
-        .toList();
+    final players = visible;
 
     return SafeArea(
       child: SizedBox(
@@ -696,38 +835,98 @@ class _PlayerPickerState extends State<_PlayerPicker> {
         child: Column(
           children: [
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 4, 16, 12),
+              padding: const EdgeInsets.fromLTRB(16, 4, 16, 0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      widget.slotPosition.isEmpty
+                          ? 'انتخاب بازیکن'
+                          : 'انتخاب بازیکن برای ${widget.slotPosition}',
+                      style: Theme.of(context).textTheme.titleLarge,
+                    ),
+                  ),
+                  Text('${faDigits(players.length)} بازیکن'),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 10, 16, 0),
               child: TextField(
-                onChanged: (value) => setState(() => query = value.trim()),
+                controller: controller,
+                onChanged: (value) => setState(() => query = value),
                 decoration: InputDecoration(
-                  labelText: 'بازیکن مناسب ${widget.slotPosition}',
+                  hintText: 'نام، باشگاه، لیگ یا ملیت...',
                   prefixIcon: const Icon(Icons.search_rounded),
+                  suffixIcon: controller.text.isEmpty
+                      ? null
+                      : IconButton(
+                          tooltip: 'پاک کردن جستجو',
+                          icon: const Icon(Icons.clear_rounded),
+                          onPressed: () {
+                            controller.clear();
+                            setState(() => query = '');
+                          },
+                        ),
                 ),
               ),
             ),
+            if (widget.slotPosition.isNotEmpty)
+              Align(
+                alignment: AlignmentDirectional.centerStart,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: FilterChip(
+                    label: const Text('فقط پست مناسب'),
+                    selected: onlyFit,
+                    onSelected: (value) => setState(() => onlyFit = value),
+                  ),
+                ),
+              ),
+            const SizedBox(height: 6),
             Expanded(
-              child: filtered.isEmpty
-                  ? const Center(child: Text('بازیکن سازگار پیدا نشد'))
-                  : ListView.builder(
-                      itemCount: filtered.length,
+              child: players.isEmpty
+                  ? const Center(child: Text('بازیکنی با این مشخصات پیدا نشد'))
+                  : ListView.separated(
+                      padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+                      itemCount: players.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 8),
                       itemBuilder: (_, index) {
-                        final player = filtered[index];
-                        return ListTile(
-                          onTap: () => Navigator.pop(context, player),
-                          leading: CircleAvatar(
-                            backgroundImage: player.imageUrl.isEmpty
-                                ? null
-                                : NetworkImage(player.imageUrl),
-                            child: player.imageUrl.isEmpty
-                                ? Text(player.rating.toString())
-                                : null,
-                          ),
-                          title: Text(
-                            player.name,
-                            style: const TextStyle(fontWeight: FontWeight.w900),
-                          ),
-                          subtitle: Text(
-                            '${player.rating} • ${player.position} • ${player.version}',
+                        final player = players[index];
+                        final fit = _fits(player);
+                        return Card(
+                          clipBehavior: Clip.antiAlias,
+                          child: ListTile(
+                            onTap: () => Navigator.pop(context, player),
+                            leading: CircleAvatar(
+                              backgroundImage: player.imageUrl.isEmpty
+                                  ? null
+                                  : NetworkImage(player.imageUrl),
+                              child: player.imageUrl.isEmpty
+                                  ? Text(faDigits(player.rating))
+                                  : null,
+                            ),
+                            title: Text(
+                              player.name,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                            subtitle: Text(
+                              '${faDigits(player.rating)} • ${player.position} • ${player.clubName}',
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            trailing: widget.slotPosition.isEmpty
+                                ? const Icon(Icons.add_rounded)
+                                : Icon(
+                                    fit
+                                        ? Icons.check_circle_rounded
+                                        : Icons.warning_amber_rounded,
+                                    color: fit
+                                        ? Theme.of(context).colorScheme.primary
+                                        : Theme.of(context).colorScheme.error,
+                                  ),
                           ),
                         );
                       },

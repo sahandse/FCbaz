@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../core/network/live_fc27_catalog.dart';
+import '../../src/theme/club_kits.dart';
+import '../../src/theme/fcbaz_theme.dart';
 import 'app_settings_repository.dart';
 import 'update_repository.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
@@ -89,6 +91,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget build(BuildContext context) {
     final health = dataHealth;
     final scheme = Theme.of(context).colorScheme;
+    final activeKit = clubKitFor(settings.accentColorValue);
 
     return Scaffold(
       appBar: AppBar(title: const Text('تنظیمات')),
@@ -118,7 +121,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       _apply(settings.copyWith(themeMode: value));
                     }
                   },
-                  title: const Text('روشن'),
+                  title: const Text('روشن (Paper Pitch)'),
+                  subtitle: const Text('کاغذ گرم با خطوط محو زمین فوتبال'),
                 ),
                 RadioListTile<ThemeMode>(
                   value: ThemeMode.system,
@@ -132,65 +136,55 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
                 const Divider(height: 24),
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 16),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
-                        'رنگ تم اختصاصی باشگاه (Club Accent)',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 10,
-                        runSpacing: 8,
+                      Row(
                         children: [
-                          _AccentColorChip(
-                            label: 'سبز EA Sports',
-                            color: const Color(0xFFC8FF42),
-                            isSelected: settings.accentColorValue == 0xFFC8FF42,
-                            onTap: () => _apply(
-                              settings.copyWith(accentColorValue: 0xFFC8FF42),
+                          const Expanded(
+                            child: Text(
+                              'کیت رنگی باشگاه (Club Kit)',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
+                              ),
                             ),
                           ),
-                          _AccentColorChip(
-                            label: 'فیروزه‌ای City',
-                            color: const Color(0xFF7DEBFF),
-                            isSelected: settings.accentColorValue == 0xFF7DEBFF,
-                            onTap: () => _apply(
-                              settings.copyWith(accentColorValue: 0xFF7DEBFF),
-                            ),
-                          ),
-                          _AccentColorChip(
-                            label: 'طلایی آیکان',
-                            color: const Color(0xFFFFD700),
-                            isSelected: settings.accentColorValue == 0xFFFFD700,
-                            onTap: () => _apply(
-                              settings.copyWith(accentColorValue: 0xFFFFD700),
-                            ),
-                          ),
-                          _AccentColorChip(
-                            label: 'قرمز بارسا/آرسنال',
-                            color: const Color(0xFFFF3366),
-                            isSelected: settings.accentColorValue == 0xFFFF3366,
-                            onTap: () => _apply(
-                              settings.copyWith(accentColorValue: 0xFFFF3366),
-                            ),
-                          ),
-                          _AccentColorChip(
-                            label: 'بنفش هولوگرافیک',
-                            color: const Color(0xFFB388FF),
-                            isSelected: settings.accentColorValue == 0xFFB388FF,
-                            onTap: () => _apply(
-                              settings.copyWith(accentColorValue: 0xFFB388FF),
+                          Text(
+                            activeKit?.label ?? 'کیت سفارشی',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w800,
+                              color: scheme.primary,
                             ),
                           ),
                         ],
                       ),
+                      const SizedBox(height: 10),
+                      _ClubKitPreview(
+                        accent: settings.accentColor,
+                        label: activeKit?.label ?? 'کیت سفارشی',
+                      ),
                       const SizedBox(height: 12),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          for (final kit in kClubKits)
+                            _ClubKitTile(
+                              kit: kit,
+                              isSelected:
+                                  settings.accentColorValue ==
+                                  kit.accent.toARGB32(),
+                              onTap: () => _apply(
+                                settings.copyWith(
+                                  accentColorValue: kit.accent.toARGB32(),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -415,51 +409,231 @@ class _DataChip extends StatelessWidget {
   }
 }
 
-class _AccentColorChip extends StatelessWidget {
-  const _AccentColorChip({
-    required this.label,
-    required this.color,
+class _ClubKitPreview extends StatelessWidget {
+  const _ClubKitPreview({required this.accent, required this.label});
+
+  final Color accent;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final darkVariant = FCBazTheme.accessibleAccent(accent, Brightness.dark);
+    final lightVariant = FCBazTheme.accessibleAccent(accent, Brightness.light);
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: accent.withValues(alpha: .4)),
+        gradient: LinearGradient(
+          begin: AlignmentDirectional.topStart,
+          end: AlignmentDirectional.bottomEnd,
+          colors: [
+            Color.alphaBlend(accent.withValues(alpha: .18), scheme.surface),
+            scheme.surface,
+          ],
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 36,
+                height: 36,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [accent, accent.withValues(alpha: .55)],
+                  ),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(
+                  Icons.shield_rounded,
+                  size: 19,
+                  color: FCBazTheme.foregroundOn(accent),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w900,
+                        fontSize: 14,
+                      ),
+                    ),
+                    Text(
+                      'پیش‌نمایش زنده کیت باشگاه',
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              _KitSwatch(label: 'تم تاریک', color: darkVariant),
+              _KitSwatch(label: 'تم روشن', color: lightVariant),
+              Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
+                decoration: BoxDecoration(
+                  color: scheme.primary,
+                  borderRadius: BorderRadius.circular(99),
+                ),
+                child: Text(
+                  'FCBaz',
+                  textDirection: TextDirection.ltr,
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    fontWeight: FontWeight.w800,
+                    color: scheme.onPrimary,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _KitSwatch extends StatelessWidget {
+  const _KitSwatch({required this.label, required this.color});
+
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: 13,
+          height: 13,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            border: Border.all(
+              color: Theme.of(context).colorScheme.outlineVariant,
+            ),
+          ),
+        ),
+        const SizedBox(width: 5),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            fontWeight: FontWeight.w600,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ClubKitTile extends StatelessWidget {
+  const _ClubKitTile({
+    required this.kit,
     required this.isSelected,
     required this.onTap,
   });
 
-  final String label;
-  final Color color;
+  final ClubKit kit;
   final bool isSelected;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: isSelected ? color.withValues(alpha: .2) : Colors.white10,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: isSelected ? color : Colors.transparent,
-            width: 1.5,
+    final scheme = Theme.of(context).colorScheme;
+
+    return Semantics(
+      selected: isSelected,
+      button: true,
+      label: 'کیت ${kit.label}',
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(10, 8, 12, 8),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? Color.alphaBlend(
+                    kit.accent.withValues(alpha: .14),
+                    scheme.surface,
+                  )
+                : scheme.surface,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(
+              color: isSelected ? kit.accent : scheme.outlineVariant,
+              width: isSelected ? 1.5 : 1,
+            ),
           ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 14,
-              height: 14,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
-            ),
-            const SizedBox(width: 6),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 11,
-                fontWeight: isSelected ? FontWeight.w900 : FontWeight.w500,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 20,
+                height: 20,
+                decoration: BoxDecoration(
+                  color: kit.accent,
+                  shape: BoxShape.circle,
+                ),
+                child: isSelected
+                    ? Icon(
+                        Icons.check_rounded,
+                        size: 13,
+                        color: FCBazTheme.foregroundOn(kit.accent),
+                      )
+                    : null,
               ),
-            ),
-          ],
+              const SizedBox(width: 7),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    kit.label,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: isSelected
+                          ? FontWeight.w900
+                          : FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    kit.tagline,
+                    style: TextStyle(
+                      fontSize: 9.5,
+                      color: scheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

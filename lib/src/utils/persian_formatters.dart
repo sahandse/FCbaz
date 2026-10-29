@@ -23,6 +23,51 @@ const _weekdays = [
   'جمعه',
 ];
 
+const _gregorianMonthsFa = [
+  'ژانویه',
+  'فوریه',
+  'مارس',
+  'آوریل',
+  'مه',
+  'ژوئن',
+  'ژوئیه',
+  'اوت',
+  'سپتامبر',
+  'اکتبر',
+  'نوامبر',
+  'دسامبر',
+];
+
+/// Turns an English feed date such as "October 26, 2026" into
+/// "۲۶ اکتبر ۲۰۲۶". Unknown shapes only get Persian digits.
+String formatNewsDateFa(String raw) {
+  final trimmed = raw.trim();
+  if (trimmed.isEmpty) return trimmed;
+  final match = RegExp(
+    r'([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})',
+  ).firstMatch(trimmed);
+  if (match == null) return faDigits(trimmed);
+  final monthIndex = _englishMonths.indexOf(match.group(1)!.toLowerCase());
+  final day = int.tryParse(match.group(2)!);
+  if (monthIndex < 0 || day == null) return faDigits(trimmed);
+  return '${faDigits(day)} ${_gregorianMonthsFa[monthIndex]} ${faDigits(match.group(3)!)}';
+}
+
+const _englishMonths = [
+  'january',
+  'february',
+  'march',
+  'april',
+  'may',
+  'june',
+  'july',
+  'august',
+  'september',
+  'october',
+  'november',
+  'december',
+];
+
 String faDigits(Object? value) {
   final text = '$value';
   return text.replaceAllMapped(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../domain/player.dart';
 import '../domain/player_value_analysis.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class PlayerCompareScreen extends StatefulWidget {
   const PlayerCompareScreen({this.initialPlayers = const [], super.key});
@@ -119,13 +120,13 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
     if (value <= 0) return 'ناموجود';
     if (value >= 1000000) {
       final n = value / 1000000;
-      return '${n.toStringAsFixed(n >= 10 ? 0 : 1)}M';
+      return faDigits('${n.toStringAsFixed(n >= 10 ? 0 : 1)}M');
     }
     if (value >= 1000) {
       final n = value / 1000;
-      return '${n.toStringAsFixed(n >= 100 ? 0 : 1)}K';
+      return faDigits('${n.toStringAsFixed(n >= 100 ? 0 : 1)}K');
     }
-    return value.toString();
+    return faDigits(value);
   }
 
   @override
@@ -295,7 +296,7 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
                                 ),
                               ),
                             ),
-                            Text('${p.rating} • ${p.position}'),
+                            Text('${faDigits(p.rating)} • ${p.position}'),
                             Text(
                               p.version.isEmpty ? '—' : p.version,
                               maxLines: 1,
@@ -453,7 +454,7 @@ class _ValueSection extends StatelessWidget {
                   Text(
                     item.valueIndex == null
                         ? 'شاخص: —'
-                        : 'شاخص: ${item.valueIndex!.toStringAsFixed(1)}',
+                        : 'شاخص: ${faDigits(item.valueIndex!.toStringAsFixed(1))}',
                     style: TextStyle(
                       color: item.valueIndex == null
                           ? null
@@ -514,7 +515,7 @@ class _CompareRow extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${getter(p)}$suffix',
+                    faDigits('${getter(p)}$suffix'),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.w900,
@@ -624,7 +625,7 @@ class _ComparePickerState extends State<_ComparePicker> {
                               ? null
                               : NetworkImage(p.imageUrl),
                           child: p.imageUrl.isEmpty
-                              ? Text(p.rating.toString())
+                              ? Text(faDigits(p.rating))
                               : null,
                         ),
                         title: Directionality(
@@ -632,7 +633,7 @@ class _ComparePickerState extends State<_ComparePicker> {
                           child: Text(p.name),
                         ),
                         subtitle: Text(
-                          '${p.rating} • ${p.position} • ${p.version}',
+                          '${faDigits(p.rating)} • ${p.position} • ${p.version}',
                         ),
                       ),
                     );

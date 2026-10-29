@@ -5,6 +5,7 @@ import '../domain/evolution.dart';
 import '../domain/evolution_eligibility_engine.dart';
 import '../domain/evolution_projection.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class EvolutionsScreen extends StatefulWidget {
   const EvolutionsScreen({super.key});
@@ -217,15 +218,18 @@ class _EvolutionCardState extends State<_EvolutionCard> {
   String _expiry(Evolution item) {
     final value = item.expiresAt;
     if (value == null) return '—';
-    final local = value.toLocal();
-    return '${local.year}/${local.month.toString().padLeft(2, '0')}/${local.day.toString().padLeft(2, '0')}';
+    return formatJalaliShort(value);
   }
 
   String _cost(int value) {
     if (value <= 0) return 'FREE';
-    if (value >= 1000000) return '${(value / 1000000).toStringAsFixed(1)}M';
-    if (value >= 1000) return '${(value / 1000).toStringAsFixed(0)}K';
-    return '$value';
+    if (value >= 1000000) {
+      return faDigits('${(value / 1000000).toStringAsFixed(1)}M');
+    }
+    if (value >= 1000) {
+      return faDigits('${(value / 1000).toStringAsFixed(0)}K');
+    }
+    return faDigits(value);
   }
 
   void _showProjection(MyClubItem player) {
@@ -270,9 +274,11 @@ class _EvolutionCardState extends State<_EvolutionCard> {
                     dense: true,
                     title: Text(labels[key] ?? key),
                     subtitle: Text(
-                      '${projection.before[key]}  ←  ${projection.after[key]}',
+                      '${faDigits(projection.before[key])}  ←  ${faDigits(projection.after[key])}',
                     ),
-                    trailing: Chip(label: Text('+${projection.changes[key]}')),
+                    trailing: Chip(
+                      label: Text('+${faDigits(projection.changes[key])}'),
+                    ),
                   ),
               const SizedBox(height: 8),
               Text(
@@ -359,7 +365,7 @@ class _EvolutionCardState extends State<_EvolutionCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '${i + 1}. ${item.steps[i].title.isEmpty ? 'مرحله ${i + 1}' : item.steps[i].title}',
+                      '${faDigits(i + 1)}. ${item.steps[i].title.isEmpty ? 'مرحله ${faDigits(i + 1)}' : item.steps[i].title}',
                       style: const TextStyle(fontWeight: FontWeight.w900),
                     ),
                     if (item.steps[i].requirements.isNotEmpty) ...[
@@ -450,7 +456,9 @@ class _EvolutionCardState extends State<_EvolutionCard> {
                       player.playerName,
                       style: const TextStyle(fontWeight: FontWeight.w800),
                     ),
-                    subtitle: Text('${player.rating} • ${player.position}'),
+                    subtitle: Text(
+                      '${faDigits(player.rating)} • ${player.position}',
+                    ),
                     trailing: projection == null
                         ? null
                         : TextButton(

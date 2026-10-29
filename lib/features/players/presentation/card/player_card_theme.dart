@@ -17,6 +17,7 @@ class PlayerCardTheme {
     required this.line,
     this.finish = CardFinish.satin,
     this.ornate = false,
+    this.shine = false,
   });
 
   final List<Color> gradient;
@@ -29,6 +30,9 @@ class PlayerCardTheme {
   final Color line;
   final CardFinish finish;
   final bool ornate;
+
+  /// Premium finishes get an animated specular sweep on top of the card.
+  final bool shine;
 
   static PlayerCardTheme forPlayer(Player player) =>
       forRarity('${player.version} ${player.rarity} ${player.cardType}');
@@ -114,6 +118,7 @@ class PlayerCardTheme {
     line: Color(0xFF5A3F0A),
     finish: CardFinish.marble,
     ornate: true,
+    shine: true,
   );
 
   static const hero = PlayerCardTheme(
@@ -130,6 +135,7 @@ class PlayerCardTheme {
     ],
     band: Color(0x33000000),
     line: Color(0xFFFFCF7A),
+    shine: true,
   );
 
   static const totw = PlayerCardTheme(
@@ -147,6 +153,7 @@ class PlayerCardTheme {
     band: Color(0x4D000000),
     line: Color(0xFFC9B14A),
     finish: CardFinish.holo,
+    shine: true,
   );
 
   static const hallOfFut = PlayerCardTheme(
@@ -163,6 +170,7 @@ class PlayerCardTheme {
     ],
     band: Color(0x33000000),
     line: Color(0xFF8CFFF1),
+    shine: true,
   );
 
   static const holographic = PlayerCardTheme(
@@ -180,6 +188,7 @@ class PlayerCardTheme {
     band: Color(0x33000000),
     line: Color(0xFFC9FFF5),
     finish: CardFinish.holo,
+    shine: true,
   );
 
   static const standard = PlayerCardTheme(

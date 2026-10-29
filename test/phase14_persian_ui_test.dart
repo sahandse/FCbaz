@@ -35,8 +35,8 @@ void main() {
     expect(source, contains("'مقایسه'"));
     expect(source, contains("'یادداشت شخصی'"));
     expect(source, contains("'هنوز نظری ثبت نشده'"));
-    expect(source, contains("('SKILLS'"));
-    expect(source, contains("('WEAK FOOT'"));
+    expect(source, contains("'SKILLS'"));
+    expect(source, contains("'WEAK FOOT'"));
   });
 
   test('cards discovery keeps Persian labels', () {

@@ -4,6 +4,7 @@ import '../../players/domain/player.dart';
 import '../domain/chemistry_engine.dart';
 import '../domain/squad_insights_service.dart';
 import '../domain/squad_models.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class SquadInsightsPanel extends StatefulWidget {
   const SquadInsightsPanel({
@@ -257,7 +258,7 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
                 subtitle: Text(
-                  '${suggestion.replacement.rating} • ${suggestion.replacement.position} • ${_coins(suggestion.price)} سکه • Meta +${suggestion.scoreGain.toStringAsFixed(1)}',
+                  '${faDigits(suggestion.replacement.rating)} • ${suggestion.replacement.position} • ${faDigits(_coins(suggestion.price))} سکه • Meta +${faDigits(suggestion.scoreGain.toStringAsFixed(1))}',
                 ),
                 trailing: FilledButton(
                   onPressed: () => widget.onReplace(
@@ -299,7 +300,7 @@ class _ChemistryBadge extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            '${chemistry.total}/${max == 0 ? 33 : max}',
+            faDigits('${chemistry.total}/${max == 0 ? 33 : max}'),
             style: TextStyle(
               fontWeight: FontWeight.w900,
               color: full ? scheme.onPrimary : scheme.onSurface,
@@ -370,7 +371,7 @@ class _TacticsSummary extends StatelessWidget {
               ),
               _InfoPill(
                 label: 'ارتفاع خط',
-                value: lineHeight == null ? '—' : lineHeight.toString(),
+                value: lineHeight == null ? '—' : faDigits(lineHeight),
               ),
             ],
           ),
@@ -431,7 +432,7 @@ class _ChemistryBreakdown extends StatelessWidget {
         subtitle: Text(
           chemistry.filledSlots == 0
               ? 'بازیکنی در ترکیب نیست'
-              : '${chemistry.inPositionSlots} بازیکن در پست معتبر • ${chemistry.missingChemistry} شیمی تا سقف',
+              : '${faDigits(chemistry.inPositionSlots)} بازیکن در پست معتبر • ${faDigits(chemistry.missingChemistry)} شیمی تا سقف',
         ),
         children: rows.isEmpty
             ? const [
@@ -479,7 +480,7 @@ class _ChemistryPlayerRow extends StatelessWidget {
                 ),
                 Text(
                   detail.inPosition
-                      ? '$position • باشگاه ${detail.clubCount} • لیگ ${detail.leagueCount} • کشور ${detail.nationCount}'
+                      ? '$position • باشگاه ${faDigits(detail.clubCount)} • لیگ ${faDigits(detail.leagueCount)} • کشور ${faDigits(detail.nationCount)}'
                       : '$position • خارج از پست معتبر',
                   style: TextStyle(
                     fontSize: 11,
@@ -505,7 +506,7 @@ class _ChemistryPlayerRow extends StatelessWidget {
           Column(
             children: [
               Text(
-                '${detail.chemistry}/3',
+                faDigits('${detail.chemistry}/3'),
                 style: TextStyle(
                   fontWeight: FontWeight.w900,
                   color: detail.chemistry == 3
