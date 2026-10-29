@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../club/data/my_club_repository.dart';
-import '../data/evolution_repository.dart';
 import '../domain/evolution.dart';
 import '../domain/evolution_eligibility_engine.dart';
 import '../domain/evolution_projection.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class EvolutionsScreen extends StatefulWidget {
   const EvolutionsScreen({super.key});
@@ -14,7 +14,7 @@ class EvolutionsScreen extends StatefulWidget {
 }
 
 class _EvolutionsScreenState extends State<EvolutionsScreen> {
-  final repository = EvolutionRepository();
+  final repository = AppDependencies.instance.evolutions;
   bool loading = true;
   String? error;
   List<Evolution> items = const [];
@@ -84,11 +84,11 @@ class _EvolutionsScreenState extends State<EvolutionsScreen> {
                           color: scheme.secondary,
                           borderRadius: BorderRadius.circular(7),
                         ),
-                        child: const Text(
+                        child: Text(
                           'FC27 • LIVE LAB',
                           textDirection: TextDirection.ltr,
                           style: TextStyle(
-                            color: Color(0xFF071014),
+                            color: scheme.onPrimary,
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                           ),
@@ -170,7 +170,7 @@ class _EvolutionCard extends StatefulWidget {
 }
 
 class _EvolutionCardState extends State<_EvolutionCard> {
-  final clubRepository = MyClubRepository();
+  final clubRepository = AppDependencies.instance.club;
   final eligibilityEngine = const EvolutionEligibilityEngine();
   final projectionEngine = const EvolutionProjectionEngine();
 

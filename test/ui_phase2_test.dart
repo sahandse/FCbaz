@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:fcbaz/features/players/domain/player.dart';
 import 'package:fcbaz/features/players/presentation/player_details_screen.dart';
 import 'package:fcbaz/src/theme/fcbaz_theme.dart';
@@ -8,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'support/source_bundle.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -50,9 +50,9 @@ void main() {
   });
 
   test('player details source exposes the approved phase 2 structure', () {
-    final source = File(
+    final source = readSourceBundle(
       'lib/features/players/presentation/player_details_screen.dart',
-    ).readAsStringSync();
+    );
 
     expect(source, contains('NestedScrollView'));
     expect(source, contains('SegmentedTabs'));

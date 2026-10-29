@@ -2,23 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../club/presentation/my_club_screen.dart';
-import '../evolutions/presentation/evolutions_screen.dart';
-import '../home/objectives_screen.dart';
 import '../more/more_screen.dart';
 import '../news/presentation/news_screen.dart';
 import '../notifications/deadline_alert_service.dart';
-import '../notifications/notification_center_screen.dart';
-import '../notifications/notification_repository.dart';
 import '../notifications/price_alert_service.dart';
 import '../notifications/system_notification_service.dart';
-import '../players/data/player_repository.dart';
 import '../players/presentation/cards_screen.dart';
-import '../players/presentation/player_details_screen.dart';
 import '../settings/app_settings_repository.dart';
 import '../squad/squad_screen_pro.dart';
 import '../../src/theme/fcbaz_theme.dart';
 import '../../src/ui/fcbaz_top_bar.dart';
-import 'app_navigation_repository.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
 
 class MainShell extends StatefulWidget {
   const MainShell({
@@ -37,12 +32,12 @@ class MainShell extends StatefulWidget {
 class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   static const _titles = ['اخبار', 'کارت‌ها', 'باشگاه', 'تیم', 'بیشتر'];
 
-  final notificationRepository = NotificationRepository();
+  final notificationRepository = AppDependencies.instance.notifications;
   final priceAlertService = PriceAlertService();
   final deadlineAlertService = DeadlineAlertService();
   final systemNotifications = SystemNotificationService.instance;
-  final navigationRepository = AppNavigationRepository();
-  final playerRepository = PlayerRepository();
+  final navigationRepository = AppDependencies.instance.navigation;
+  final playerRepository = AppDependencies.instance.players;
   final searchRequests = ValueNotifier<int>(0);
 
   int index = 0;
@@ -115,45 +110,14 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
     final playerId = await navigationRepository.takePendingPlayer();
     if (playerId == null || playerId.isEmpty || !mounted) return;
     try {
-      final player = await playerRepository.getPlayer(playerId);
-      if (!mounted) return;
-      await Navigator.of(context).push(
-        MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
-      );
+      await AppNavigator.playerById(context, playerId);
     } catch (_) {}
   }
 
   Future<void> _openPendingSystemNotification() async {
     final payload = await systemNotifications.consumePendingPayload();
     if (payload == null || payload.isEmpty || !mounted) return;
-    final separator = payload.indexOf(':');
-    if (separator <= 0 || separator == payload.length - 1) return;
-    final type = payload.substring(0, separator);
-    final id = payload.substring(separator + 1);
-
-    if (type == 'player') {
-      try {
-        final player = await playerRepository.getPlayer(id);
-        if (!mounted) return;
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PlayerDetailsScreen(player: player),
-          ),
-        );
-      } catch (_) {}
-      return;
-    }
-    if (type == 'objective') {
-      await Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const ObjectivesScreen()));
-      return;
-    }
-    if (type == 'evolution') {
-      await Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const EvolutionsScreen()));
-    }
+    await AppNavigator.openNotificationPayload(context, payload);
   }
 
   Future<void> _refreshUnread() async {
@@ -163,9 +127,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 
   Future<void> _openNotifications() async {
-    await Navigator.of(
-      context,
-    ).push(MaterialPageRoute(builder: (_) => const NotificationCenterScreen()));
+    await AppNavigator.notifications(context);
     await _refreshUnread();
   }
 
@@ -208,9 +170,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
               onDestinationSelected: _selectTab,
               destinations: const [
                 NavigationDestination(
-                  icon: Icon(Icons.home_outlined),
-                  selectedIcon: Icon(Icons.home_rounded),
-                  label: 'خانه',
+                  icon: Icon(Icons.newspaper_outlined),
+                  selectedIcon: Icon(Icons.newspaper_rounded),
+                  label: 'اخبار',
                 ),
                 NavigationDestination(
                   icon: Icon(Icons.style_outlined),

@@ -5,7 +5,7 @@ import 'package:fcbaz/features/players/domain/player.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Map<String, dynamic> _catalog() =>
-    jsonDecode(File('assets/data/catalog.json').readAsStringSync())
+    jsonDecode(File('data/live/catalog.json').readAsStringSync())
         as Map<String, dynamic>;
 
 void main() {

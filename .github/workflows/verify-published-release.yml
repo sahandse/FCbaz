@@ -1,6 +1,11 @@
 name: Verify published release
 
 on:
+  workflow_run:
+    workflows:
+      - FCBaz Android Production Release
+    types:
+      - completed
   workflow_dispatch:
     inputs:
       tag:
@@ -24,6 +29,7 @@ permissions:
 
 jobs:
   verify:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     timeout-minutes: 20
 
@@ -42,18 +48,27 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          check_code=true
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             tag="${{ inputs.tag }}"
             code="${{ inputs.version_code }}"
+          elif [ "${{ github.event_name }}" = "workflow_run" ]; then
+            # The release workflow just finished; verify whatever it published.
+            tag="$(gh release view --json tagName --jq .tagName)"
+            code=""
+            check_code=false
           else
             tag="$(sed -n 's/^tag=//p' .verify/published-release | tr -d '\r')"
             code="$(sed -n 's/^version_code=//p' .verify/published-release | tr -d '\r')"
           fi
           test -n "$tag"
           [[ "$tag" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Invalid tag: $tag"; exit 1; }
-          [[ "$code" =~ ^[0-9]+$ ]] || { echo "Invalid version_code: $code"; exit 1; }
+          if [ "$check_code" = "true" ]; then
+            [[ "$code" =~ ^[0-9]+$ ]] || { echo "Invalid version_code: $code"; exit 1; }
+          fi
           echo "TAG=$tag" >> "$GITHUB_ENV"
           echo "VERSION_CODE=$code" >> "$GITHUB_ENV"
+          echo "CHECK_VERSION_CODE=$check_code" >> "$GITHUB_ENV"
 
       - name: Setup Java 17
         uses: actions/setup-java@v5
@@ -122,7 +137,7 @@ jobs:
           badging="$("$build_tools/aapt2" dump badging "$apk")"
           printf '%s\n' "$badging" > badging.txt
           {
-            echo "### Published APK identity: ${TAG} (versionCode ${VERSION_CODE})"
+            echo "### Published APK identity: ${TAG} (versionCode ${VERSION_CODE:-auto})"
             echo '```'
             printf '%s\n' "$badging" | grep -E "^(package|versionCode|versionName|application-label|application-icon|launchable-activity)" || true
             echo '```'
@@ -134,13 +149,24 @@ jobs:
           pkg="$(printf '%s\n' "$badging" | grep -m1 '^package:')"
           for expected in \
             "name='${EXPECTED_PACKAGE}'" \
-            "versionCode='${VERSION_CODE}'" \
             "versionName='${TAG#v}'"; do
             if ! printf '%s\n' "$pkg" | grep -qF "$expected"; then
               echo "::error title=Package identity mismatch::${pkg}; missing ${expected}"
               exit 1
             fi
           done
+          if [ "$CHECK_VERSION_CODE" = "true" ]; then
+            if ! printf '%s\n' "$pkg" | grep -qF "versionCode='${VERSION_CODE}'"; then
+              echo "::error title=Version code mismatch::${pkg}; missing versionCode='${VERSION_CODE}'"
+              exit 1
+            fi
+          else
+            actual_code="$(printf '%s\n' "$pkg" | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p")"
+            if ! [[ "$actual_code" =~ ^[0-9]+$ ]] || [ "$actual_code" -lt 50 ]; then
+              echo "::error title=Published versionCode invalid::${pkg}"
+              exit 1
+            fi
+          fi
           if ! grep -qF "application-label:'${EXPECTED_LABEL}'" badging.txt; then
             echo "::error title=App label mismatch::$(grep -m1 'application-label' badging.txt || echo 'label missing')"
             exit 1

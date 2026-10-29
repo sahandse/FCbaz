@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../players/domain/player.dart';
 import '../../players/presentation/player_card.dart';
-import '../../settings/app_settings_repository.dart';
-import '../data/market_repository.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -15,9 +14,9 @@ class MarketScreen extends StatefulWidget {
 }
 
 class _MarketScreenState extends State<MarketScreen> {
-  final market = MarketRepository();
-  final watchlist = WatchlistRepository();
-  final settingsRepository = AppSettingsRepository();
+  final market = AppDependencies.instance.market;
+  final watchlist = AppDependencies.instance.watchlist;
+  final settingsRepository = AppDependencies.instance.settings;
 
   List<Map<String, dynamic>> feed = const [];
   List<WatchlistItem> saved = const [];
@@ -138,7 +137,7 @@ class _MarketScreenState extends State<MarketScreen> {
             Container(
               padding: const EdgeInsets.all(14),
               decoration: BoxDecoration(
-                color: const Color(0xFF090E0A),
+                color: scheme.surface,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
                   color: scheme.primary.withValues(alpha: .26),

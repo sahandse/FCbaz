@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../club/data/my_club_repository.dart';
-import '../market/data/watchlist_repository.dart';
-import '../search/search_history_repository.dart';
-import '../squad/data/squad_repository.dart';
 import 'local_profile_repository.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -14,11 +11,11 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  final profileRepository = LocalProfileRepository();
-  final favoritesRepository = SearchHistoryRepository();
-  final clubRepository = MyClubRepository();
-  final squadRepository = SquadRepository();
-  final watchlistRepository = WatchlistRepository();
+  final profileRepository = AppDependencies.instance.profile;
+  final favoritesRepository = AppDependencies.instance.history;
+  final clubRepository = AppDependencies.instance.club;
+  final squadRepository = AppDependencies.instance.squads;
+  final watchlistRepository = AppDependencies.instance.watchlist;
 
   bool loading = true;
   String displayName = '';

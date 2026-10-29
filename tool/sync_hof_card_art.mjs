@@ -10,7 +10,7 @@ import path from 'node:path';
 
 const ROOT = path.resolve(import.meta.dirname, '..');
 const DEST = path.join(ROOT, 'assets/data/hof-card-art.json');
-const CATALOG = path.join(ROOT, 'assets/data/catalog.json');
+const CATALOG = path.join(ROOT, 'data/live/catalog.json');
 const RARITY_PAGE = 'https://www.fut.gg/rarities/base-hall-of-fut/';
 const ART_BASE = 'https://game-assets.fut.gg/2027/futgg-player-item-card/';
 

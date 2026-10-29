@@ -74,7 +74,7 @@ void main() {
     'bundled catalog keeps verified FC27 fields and per-platform prices',
     () async {
       final raw =
-          jsonDecode(await File('assets/data/catalog.json').readAsString())
+          jsonDecode(await File('data/live/catalog.json').readAsString())
               as Map<String, dynamic>;
       final players = (raw['players'] as List)
           .whereType<Map>()

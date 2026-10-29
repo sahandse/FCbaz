@@ -1,9 +1,9 @@
 import 'package:flutter/widgets.dart';
 import 'package:workmanager/workmanager.dart';
 
-import 'background_sync_status_repository.dart';
 import 'price_alert_service.dart';
 import 'system_notification_service.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 const String backgroundPriceCheckUniqueName = 'fcbaz-background-price-check';
 const String backgroundPriceCheckTask = 'fcbaz.price_check';
@@ -15,7 +15,7 @@ void fcbazBackgroundCallbackDispatcher() {
     if (task != backgroundPriceCheckTask) return true;
 
     WidgetsFlutterBinding.ensureInitialized();
-    final statusRepository = BackgroundSyncStatusRepository();
+    final statusRepository = AppDependencies.instance.syncStatus;
 
     try {
       await SystemNotificationService.instance.initialize();

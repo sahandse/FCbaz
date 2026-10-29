@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../club/data/my_club_repository.dart';
-import '../data/sbc_repository.dart';
 import '../domain/sbc.dart';
 import 'sbc_tools_screen.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class SbcScreen extends StatefulWidget {
   const SbcScreen({super.key});
@@ -13,7 +12,7 @@ class SbcScreen extends StatefulWidget {
 }
 
 class _SbcScreenState extends State<SbcScreen> {
-  final repository = SbcRepository();
+  final repository = AppDependencies.instance.sbc;
   bool loading = true;
   String? error;
   List<SbcChallenge> items = const [];
@@ -98,11 +97,11 @@ class _SbcScreenState extends State<SbcScreen> {
                           color: scheme.primary,
                           borderRadius: BorderRadius.circular(7),
                         ),
-                        child: const Text(
+                        child: Text(
                           'FC27 • LIVE',
                           textDirection: TextDirection.ltr,
                           style: TextStyle(
-                            color: Color(0xFF10140C),
+                            color: scheme.onPrimary,
                             fontSize: 9,
                             fontWeight: FontWeight.w900,
                           ),
@@ -339,8 +338,8 @@ class SbcDetailScreen extends StatefulWidget {
 }
 
 class _SbcDetailScreenState extends State<SbcDetailScreen> {
-  final repository = SbcRepository();
-  final clubRepository = MyClubRepository();
+  final repository = AppDependencies.instance.sbc;
+  final clubRepository = AppDependencies.instance.club;
   SbcSolution? solution;
   bool solving = false;
   String? solveError;
@@ -480,8 +479,8 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                             ),
                             child: Text(
                               '${i + 1}',
-                              style: const TextStyle(
-                                color: Color(0xFF10140C),
+                              style: TextStyle(
+                                color: scheme.onPrimary,
                                 fontSize: 10,
                                 fontWeight: FontWeight.w900,
                               ),

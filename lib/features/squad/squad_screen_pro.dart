@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'squad_screenshot_analyzer.dart';
 
-import '../players/data/player_repository.dart';
 import '../players/domain/player.dart';
-import 'data/squad_repository.dart';
 import 'domain/chemistry_engine.dart';
 import 'domain/squad_chemistry_optimizer.dart';
 import 'domain/squad_formation_migrator.dart';
@@ -12,6 +10,7 @@ import 'domain/squad_models.dart';
 import 'presentation/formation_picker_sheet.dart';
 import 'presentation/squad_insights_panel.dart';
 import 'presentation/tactics_editor_sheet.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class SquadScreenPro extends StatefulWidget {
   const SquadScreenPro({super.key});
@@ -21,8 +20,8 @@ class SquadScreenPro extends StatefulWidget {
 }
 
 class _SquadScreenProState extends State<SquadScreenPro> {
-  final squadRepository = SquadRepository();
-  final playerRepository = PlayerRepository();
+  final squadRepository = AppDependencies.instance.squads;
+  final playerRepository = AppDependencies.instance.players;
   final chemistryEngine = const ChemistryEngineFC27();
   final formationMigrator = const SquadFormationMigrator();
   final chemistryOptimizer = const SquadChemistryOptimizer();

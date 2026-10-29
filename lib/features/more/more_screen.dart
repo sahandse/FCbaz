@@ -1,5 +1,7 @@
-import '../draft/presentation/draft_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
+
+import '../draft/presentation/draft_screen.dart';
 
 import '../club/presentation/my_club_screen.dart';
 import '../dns/presentation/dns_screen.dart';
@@ -42,7 +44,7 @@ class MoreScreen extends StatelessWidget {
               end: Alignment.bottomLeft,
               colors: [
                 scheme.primary.withValues(alpha: .22),
-                const Color(0xFF0C120D),
+                scheme.surfaceContainerHighest,
                 scheme.surface,
               ],
             ),
@@ -67,7 +69,7 @@ class MoreScreen extends StatelessWidget {
                     CircleAvatar(
                       radius: 28,
                       backgroundColor: scheme.primary,
-                      foregroundColor: const Color(0xFF10140C),
+                      foregroundColor: scheme.onPrimary,
                       child: const Icon(Icons.person_rounded, size: 32),
                     ),
                     const SizedBox(width: 14),
@@ -294,7 +296,7 @@ class MoreScreen extends StatelessWidget {
   }
 
   void _open(BuildContext context, Widget screen) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+    AppNavigator.push(context, screen);
   }
 }
 

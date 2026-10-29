@@ -740,7 +740,6 @@ async function main() {
   await writeJson(path.join(ROOT, 'data/live/catalog.json'), catalog);
 
   if (!liveOnly) {
-    await writeJson(path.join(ROOT, 'assets/data/catalog.json'), catalog);
     await writeJson(path.join(ROOT, 'assets/data/fc27-challenges.json'), challengesFeed, true);
     await writeJson(path.join(ROOT, 'assets/data/fc27-evolutions.json'), evolutionsFeed, true);
     await writeJson(path.join(ROOT, 'assets/data/available-portraits.json'), portraitsFeed, true);

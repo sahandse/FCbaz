@@ -4,6 +4,7 @@ import '../settings/app_settings_repository.dart';
 import 'background_sync_status_repository.dart';
 import 'notification_preferences_repository.dart';
 import 'system_notification_service.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class NotificationSettingsScreen extends StatefulWidget {
   const NotificationSettingsScreen({super.key});
@@ -15,9 +16,9 @@ class NotificationSettingsScreen extends StatefulWidget {
 
 class _NotificationSettingsScreenState
     extends State<NotificationSettingsScreen> {
-  final preferencesRepository = NotificationPreferencesRepository();
-  final appSettingsRepository = AppSettingsRepository();
-  final syncStatusRepository = BackgroundSyncStatusRepository();
+  final preferencesRepository = AppDependencies.instance.notificationPreferences;
+  final appSettingsRepository = AppDependencies.instance.settings;
+  final syncStatusRepository = AppDependencies.instance.syncStatus;
   final systemNotifications = SystemNotificationService.instance;
 
   NotificationPreferences preferences = const NotificationPreferences();

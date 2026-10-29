@@ -39,7 +39,7 @@ void main() {
     final source = File(
       'lib/features/navigation/main_shell.dart',
     ).readAsStringSync();
-    for (final label in ['خانه', 'کارت‌ها', 'باشگاه', 'تیم', 'بیشتر']) {
+    for (final label in ['اخبار', 'کارت‌ها', 'باشگاه', 'تیم', 'بیشتر']) {
       expect(source, contains("label: '$label'"));
     }
     expect(source, isNot(contains("label: 'جستجو'")));

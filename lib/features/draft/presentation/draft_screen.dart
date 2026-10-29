@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../players/data/player_repository.dart';
 import '../../players/domain/player.dart';
 import '../../players/presentation/player_card.dart';
 import '../domain/draft_models.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class DraftScreen extends StatefulWidget {
   const DraftScreen({super.key});
@@ -14,7 +14,7 @@ class DraftScreen extends StatefulWidget {
 
 class _DraftScreenState extends State<DraftScreen> {
   final _service = const DraftSimulatorService();
-  final _playerRepo = PlayerRepository();
+  final _playerRepo = AppDependencies.instance.players;
   DraftState? _draftState;
   List<Player> _allPlayers = [];
   bool _isLoading = true;
@@ -110,7 +110,7 @@ class _DraftScreenState extends State<DraftScreen> {
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: Colors.white12),
+                  border: Border.all(color: scheme.outlineVariant),
                 ),
                 child: PlayerCard(player: candidate),
               ),
@@ -152,13 +152,14 @@ class _DraftScoreboard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF101A12),
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: const Color(0xFFCAFF38).withValues(alpha: .28),
+          color: scheme.primary.withValues(alpha: .28),
         ),
       ),
       child: Column(
@@ -168,18 +169,16 @@ class _DraftScoreboard extends StatelessWidget {
             children: [
               Text(
                 'سیستم: $formation',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 13,
-                  color: Colors.white70,
+                  color: scheme.onSurfaceVariant,
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: isCompleted
-                      ? Colors.green.withValues(alpha: .2)
-                      : const Color(0xFFCAFF38).withValues(alpha: .15),
+                  color: scheme.primary.withValues(alpha: .15),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
@@ -189,28 +188,26 @@ class _DraftScoreboard extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.bold,
-                    color: isCompleted
-                        ? Colors.greenAccent
-                        : const Color(0xFFCAFF38),
+                    color: scheme.primary,
                   ),
                 ),
               ),
             ],
           ),
-          const Divider(height: 20, color: Colors.white12),
+          Divider(height: 20, color: scheme.outlineVariant),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _MetricItem(
                 label: 'ریتینگ تیم (Rating)',
                 value: '$rating',
-                color: const Color(0xFFCAFF38),
+                color: scheme.primary,
                 icon: Icons.star_rounded,
               ),
               _MetricItem(
                 label: 'شیمی تیم (Chemistry)',
                 value: '$chemistry / 33',
-                color: Colors.amberAccent,
+                color: scheme.secondary,
                 icon: Icons.science_rounded,
               ),
             ],
@@ -236,6 +233,7 @@ class _MetricItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Column(
       children: [
         Row(
@@ -256,7 +254,7 @@ class _MetricItem extends StatelessWidget {
         const SizedBox(height: 2),
         Text(
           label,
-          style: const TextStyle(fontSize: 11, color: Colors.white60),
+          style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant),
         ),
       ],
     );
@@ -269,26 +267,27 @@ class _SlotPromptHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
       decoration: BoxDecoration(
-        color: const Color(0xFF162319),
+        color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.white10),
+        border: Border.all(color: scheme.outlineVariant),
       ),
       child: Row(
         children: [
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: const Color(0xFFCAFF38),
+              color: scheme.primary,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               slot.position,
-              style: const TextStyle(
+              style: TextStyle(
                 fontWeight: FontWeight.w900,
-                color: Colors.black,
+                color: scheme.onPrimary,
                 fontSize: 13,
               ),
             ),
@@ -316,20 +315,17 @@ class _DraftCompletedSummary extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: const Color(0xFF132A17),
+        color: scheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.greenAccent.withValues(alpha: .4)),
+        border: Border.all(color: scheme.primary.withValues(alpha: .4)),
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.emoji_events_rounded,
-            size: 52,
-            color: Color(0xFFCAFF38),
-          ),
+          Icon(Icons.emoji_events_rounded, size: 52, color: scheme.primary),
           const SizedBox(height: 10),
           const Text(
             '🎉 درافت با موفقیت بسته شد!',
@@ -338,7 +334,7 @@ class _DraftCompletedSummary extends StatelessWidget {
           const SizedBox(height: 6),
           Text(
             'ریتینگ نهایی: ${state.teamRating}  |  شیمی نهایی: ${state.teamChemistry} از ۳۳',
-            style: const TextStyle(fontSize: 13, color: Colors.white70),
+            style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
           ),
           const SizedBox(height: 16),
           FilledButton.icon(
@@ -346,8 +342,8 @@ class _DraftCompletedSummary extends StatelessWidget {
             icon: const Icon(Icons.replay_rounded),
             label: const Text('شروع یک درافت دیگر'),
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFCAFF38),
-              foregroundColor: Colors.black,
+              backgroundColor: scheme.primary,
+              foregroundColor: scheme.onPrimary,
             ),
           ),
         ],
@@ -380,15 +376,16 @@ class _PickRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F1511),
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
           color: player != null
-              ? const Color(0xFFCAFF38).withValues(alpha: .2)
-              : Colors.white10,
+              ? scheme.primary.withValues(alpha: .2)
+              : scheme.outlineVariant,
         ),
       ),
       child: Row(
@@ -399,8 +396,8 @@ class _PickRow extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 4),
             decoration: BoxDecoration(
               color: player != null
-                  ? const Color(0xFFCAFF38).withValues(alpha: .15)
-                  : Colors.white10,
+                  ? scheme.primary.withValues(alpha: .15)
+                  : scheme.surfaceContainerHighest,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
@@ -409,8 +406,8 @@ class _PickRow extends StatelessWidget {
                 fontWeight: FontWeight.bold,
                 fontSize: 11,
                 color: player != null
-                    ? const Color(0xFFCAFF38)
-                    : Colors.white60,
+                    ? scheme.primary
+                    : scheme.onSurfaceVariant,
               ),
             ),
           ),
@@ -426,21 +423,24 @@ class _PickRow extends StatelessWidget {
                   )
                 : Text(
                     'انتخاب نشده (${slot.titleFa})',
-                    style: const TextStyle(color: Colors.white38, fontSize: 12),
+                    style: TextStyle(
+                      color: scheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
                   ),
           ),
           if (player != null) ...[
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
-                color: const Color(0xFFCAFF38),
+                color: scheme.primary,
                 borderRadius: BorderRadius.circular(6),
               ),
               child: Text(
                 '${player!.rating}',
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w900,
-                  color: Colors.black,
+                  color: scheme.onPrimary,
                   fontSize: 11,
                 ),
               ),

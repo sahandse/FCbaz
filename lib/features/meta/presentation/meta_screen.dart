@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../players/presentation/player_details_screen.dart';
-import '../data/meta_repository.dart';
 import '../domain/meta_player_entry.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
 
 class MetaScreen extends StatefulWidget {
   const MetaScreen({super.key});
@@ -12,7 +12,7 @@ class MetaScreen extends StatefulWidget {
 }
 
 class _MetaScreenState extends State<MetaScreen> {
-  final repository = MetaRepository();
+  final repository = AppDependencies.instance.meta;
 
   String? position;
   String? role;
@@ -238,11 +238,7 @@ class _MetaPlayerCard extends StatelessWidget {
     return Card(
       child: InkWell(
         borderRadius: BorderRadius.circular(20),
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PlayerDetailsScreen(player: player),
-          ),
-        ),
+        onTap: () => AppNavigator.playerDetails(context, player),
         child: Padding(
           padding: const EdgeInsets.all(14),
           child: Row(
@@ -344,7 +340,7 @@ class NewsScreen extends StatefulWidget {
 }
 
 class _NewsScreenState extends State<NewsScreen> {
-  final repository = MetaRepository();
+  final repository = AppDependencies.instance.meta;
   bool loading = true;
   String? error;
   List<Map<String, dynamic>> items = const [];

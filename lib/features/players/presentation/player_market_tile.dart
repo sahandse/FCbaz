@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../../../src/theme/fcbaz_theme.dart';
 import '../../../src/utils/persian_formatters.dart';
-import '../../search/search_history_repository.dart';
 import '../domain/player.dart';
-import 'player_details_screen.dart';
 import 'player_item_visual.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
 
 class PlayerMarketTile extends StatefulWidget {
   const PlayerMarketTile({
@@ -27,7 +27,7 @@ class PlayerMarketTile extends StatefulWidget {
 }
 
 class _PlayerMarketTileState extends State<PlayerMarketTile> {
-  final history = SearchHistoryRepository();
+  final history = AppDependencies.instance.history;
   bool favorite = false;
 
   Player get player => widget.player;
@@ -63,9 +63,7 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
   }
 
   void _openDetails() {
-    Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => PlayerDetailsScreen(player: player)),
-    );
+    AppNavigator.playerDetails(context, player);
   }
 
   Widget _tileVisual() {
@@ -111,12 +109,13 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
         behavior: HitTestBehavior.opaque,
         onTap: _openDetails,
         child: Container(
+          key: const ValueKey('player-market-tile-surface'),
           clipBehavior: Clip.antiAlias,
           decoration: BoxDecoration(
-            gradient: const LinearGradient(
+            gradient: LinearGradient(
               begin: Alignment.topCenter,
               end: Alignment.bottomCenter,
-              colors: [Color(0xFF111811), Color(0xFF090E0A)],
+              colors: [palette.surfaceRaised, palette.surface],
             ),
             borderRadius: BorderRadius.circular(FcbazRadius.lg),
             border: Border.all(color: palette.line.withValues(alpha: .9)),

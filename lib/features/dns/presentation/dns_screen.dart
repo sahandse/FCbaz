@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../data/dns_repository.dart';
 import '../domain/dns_model.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class DnsScreen extends StatefulWidget {
   const DnsScreen({super.key});
@@ -12,7 +13,7 @@ class DnsScreen extends StatefulWidget {
 }
 
 class _DnsScreenState extends State<DnsScreen> {
-  final repository = const DnsRepository();
+  final repository = AppDependencies.instance.dns;
   String selectedCategory = 'all';
   String searchQuery = '';
   bool showTutorial = true;
@@ -59,9 +60,9 @@ class _DnsScreenState extends State<DnsScreen> {
       SnackBar(
         content: Row(
           children: [
-            const Icon(
+            Icon(
               Icons.check_circle_rounded,
-              color: Color(0xFFCAFF38),
+              color: Theme.of(context).colorScheme.primary,
               size: 20,
             ),
             const SizedBox(width: 8),
@@ -131,10 +132,10 @@ class _DnsScreenState extends State<DnsScreen> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             decoration: BoxDecoration(
-              color: const Color(0xFF131F15),
+              color: scheme.surface,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: const Color(0xFFCAFF38).withValues(alpha: .2),
+                color: scheme.primary.withValues(alpha: .2),
               ),
             ),
             child: Row(
@@ -143,12 +144,12 @@ class _DnsScreenState extends State<DnsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         '⚡ تست پینگ زنده',
                         style: TextStyle(
                           fontWeight: FontWeight.w800,
                           fontSize: 13.5,
-                          color: Color(0xFFCAFF38),
+                          color: scheme.primary,
                         ),
                       ),
                       const SizedBox(height: 2),
@@ -156,9 +157,9 @@ class _DnsScreenState extends State<DnsScreen> {
                         _isTestingAll
                             ? 'در حال پینگ گرفتن...'
                             : 'سنجش تاخیر واقعی پکت‌ها از نت شما',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
-                          color: Colors.white70,
+                          color: scheme.onSurfaceVariant,
                         ),
                       ),
                     ],
@@ -174,8 +175,8 @@ class _DnsScreenState extends State<DnsScreen> {
                           ? Icons.sort_rounded
                           : Icons.filter_list_rounded,
                       color: _sortByPing
-                          ? const Color(0xFFCAFF38)
-                          : Colors.white70,
+                          ? scheme.primary
+                          : scheme.onSurfaceVariant,
                     ),
                     onPressed: () => setState(() => _sortByPing = !_sortByPing),
                   ),
@@ -185,12 +186,12 @@ class _DnsScreenState extends State<DnsScreen> {
                       ? null
                       : () => _testAllPings(servers),
                   icon: _isTestingAll
-                      ? const SizedBox(
+                      ? SizedBox(
                           width: 14,
                           height: 14,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.black,
+                            color: scheme.onPrimary,
                           ),
                         )
                       : const Icon(Icons.network_check_rounded, size: 16),
@@ -202,8 +203,8 @@ class _DnsScreenState extends State<DnsScreen> {
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFCAFF38),
-                    foregroundColor: Colors.black,
+                    backgroundColor: scheme.primary,
+                    foregroundColor: scheme.onPrimary,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
                       vertical: 8,
@@ -272,7 +273,7 @@ class _TutorialCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFF0F1710),
+        color: scheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: scheme.primary.withValues(alpha: .24)),
       ),
@@ -287,10 +288,10 @@ class _TutorialCard extends StatelessWidget {
                   color: scheme.primary.withValues(alpha: .15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(
+                child: Icon(
                   Icons.sports_esports_rounded,
                   size: 20,
-                  color: Color(0xFFCAFF38),
+                  color: scheme.primary,
                 ),
               ),
               const SizedBox(width: 10),
@@ -339,6 +340,7 @@ class _StepRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
@@ -349,13 +351,13 @@ class _StepRow extends StatelessWidget {
             height: 20,
             alignment: Alignment.center,
             decoration: BoxDecoration(
-              color: const Color(0xFFCAFF38),
+              color: scheme.primary,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               num,
-              style: const TextStyle(
-                color: Colors.black,
+              style: TextStyle(
+                color: scheme.onPrimary,
                 fontWeight: FontWeight.w900,
                 fontSize: 11,
               ),
@@ -486,7 +488,7 @@ class _DnsCard extends StatelessWidget {
         side: BorderSide(
           color: isAntiSanction
               ? scheme.primary.withValues(alpha: .32)
-              : Colors.white10,
+              : scheme.outlineVariant,
         ),
       ),
       child: Padding(
@@ -537,7 +539,7 @@ class _DnsCard extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: isAntiSanction ? const Color(0xFFCAFF38) : null,
+                      color: isAntiSanction ? scheme.primary : null,
                     ),
                   ),
                 ),
@@ -639,24 +641,25 @@ class _IpBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
     return InkWell(
       onTap: onCopy,
       borderRadius: BorderRadius.circular(10),
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
         decoration: BoxDecoration(
-          color: const Color(0xFF070B08),
+          color: scheme.surface,
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: Colors.white12),
+          border: Border.all(color: scheme.outlineVariant),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               label,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 9.5,
-                color: Colors.white54,
+                color: scheme.onSurfaceVariant,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -667,16 +670,20 @@ class _IpBox extends StatelessWidget {
                   child: Text(
                     ip,
                     textDirection: TextDirection.ltr,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: 'monospace',
                       fontWeight: FontWeight.w900,
                       fontSize: 13,
                       letterSpacing: .5,
-                      color: Color(0xFFCAFF38),
+                      color: scheme.primary,
                     ),
                   ),
                 ),
-                const Icon(Icons.copy_rounded, size: 14, color: Colors.white60),
+                Icon(
+                  Icons.copy_rounded,
+                  size: 14,
+                  color: scheme.onSurfaceVariant,
+                ),
               ],
             ),
           ],
@@ -696,7 +703,11 @@ class _EmptyState extends StatelessWidget {
       padding: const EdgeInsets.all(32),
       child: Column(
         children: [
-          const Icon(Icons.search_off_rounded, size: 48, color: Colors.white38),
+          Icon(
+            Icons.search_off_rounded,
+            size: 48,
+            color: Theme.of(context).colorScheme.outline,
+          ),
           const SizedBox(height: 12),
           const Text(
             'سرور DNS مورد نظر یافت نشد',

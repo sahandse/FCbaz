@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../data/market_repository.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
 import 'price_history_chart.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class PlayerMarketPanel extends StatefulWidget {
   const PlayerMarketPanel({
@@ -20,8 +20,8 @@ class PlayerMarketPanel extends StatefulWidget {
 }
 
 class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
-  final market = MarketRepository();
-  final watchlist = WatchlistRepository();
+  final market = AppDependencies.instance.market;
+  final watchlist = AppDependencies.instance.watchlist;
 
   PlayerPrice? price;
   List<PricePoint> history = const [];

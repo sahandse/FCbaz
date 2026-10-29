@@ -5,6 +5,8 @@ import '../features/navigation/main_shell.dart';
 import '../features/notifications/price_alert_service.dart';
 import '../features/settings/app_settings_repository.dart';
 import 'theme/fcbaz_theme.dart';
+import 'ui/fcbaz_splash.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class FCBazApp extends StatefulWidget {
   const FCBazApp({super.key});
@@ -14,7 +16,7 @@ class FCBazApp extends StatefulWidget {
 }
 
 class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
-  final settingsRepository = AppSettingsRepository();
+  final settingsRepository = AppDependencies.instance.settings;
   final priceAlertService = PriceAlertService();
 
   AppSettings settings = const AppSettings();
@@ -82,7 +84,7 @@ class _FCBazAppState extends State<FCBazApp> with WidgetsBindingObserver {
         theme: FCBazTheme.light(),
         darkTheme: FCBazTheme.dark(),
         themeMode: ThemeMode.dark,
-        home: const Scaffold(body: Center(child: CircularProgressIndicator())),
+        home: const FcbazSplash(),
       );
     }
 

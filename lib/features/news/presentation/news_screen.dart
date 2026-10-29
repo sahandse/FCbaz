@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../data/news_repository.dart';
 import '../domain/news_article.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class NewsScreen extends StatefulWidget {
   const NewsScreen({this.embedded = false, super.key});
@@ -13,7 +13,7 @@ class NewsScreen extends StatefulWidget {
 }
 
 class _NewsScreenState extends State<NewsScreen> {
-  final repository = NewsRepository();
+  final repository = AppDependencies.instance.news;
   List<NewsArticle> allArticles = const [];
   bool loading = true;
   String? error;
@@ -115,7 +115,7 @@ class _NewsScreenState extends State<NewsScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFF0A100B),
+              color: scheme.surface,
               borderRadius: BorderRadius.circular(16),
               border: Border.all(color: scheme.primary.withValues(alpha: .22)),
             ),
@@ -127,9 +127,9 @@ class _NewsScreenState extends State<NewsScreen> {
                     color: scheme.primary.withValues(alpha: .15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.newspaper_rounded,
-                    color: Color(0xFFCAFF38),
+                    color: scheme.primary,
                     size: 24,
                   ),
                 ),
@@ -317,7 +317,7 @@ class _NewsCard extends StatelessWidget {
     return Card(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        side: const BorderSide(color: Colors.white10),
+        side: BorderSide(color: scheme.outlineVariant),
       ),
       child: InkWell(
         onTap: onTap,
@@ -344,10 +344,10 @@ class _NewsCard extends StatelessWidget {
                         article.tagFa,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 11,
                           fontWeight: FontWeight.w800,
-                          color: Color(0xFFCAFF38),
+                          color: scheme.primary,
                         ),
                       ),
                     ),
@@ -449,7 +449,7 @@ class _NewsDetailsSheet extends StatelessWidget {
                 width: 40,
                 height: 4,
                 decoration: BoxDecoration(
-                  color: Colors.white24,
+                  color: scheme.outline,
                   borderRadius: BorderRadius.circular(2),
                 ),
               ),
@@ -475,10 +475,10 @@ class _NewsDetailsSheet extends StatelessWidget {
                               article.tagFa,
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w800,
-                                color: Color(0xFFCAFF38),
+                                color: scheme.primary,
                               ),
                             ),
                           ),
@@ -523,7 +523,7 @@ class _NewsDetailsSheet extends StatelessWidget {
                         decoration: BoxDecoration(
                           color: scheme.surface,
                           borderRadius: BorderRadius.circular(14),
-                          border: Border.all(color: Colors.white10),
+                          border: Border.all(color: scheme.outlineVariant),
                         ),
                         child: Text(
                           article.intro,
@@ -537,7 +537,7 @@ class _NewsDetailsSheet extends StatelessWidget {
                         'نکات کلیدی و تغییرات مهم',
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w800,
-                          color: const Color(0xFFCAFF38),
+                          color: scheme.primary,
                         ),
                       ),
                       const SizedBox(height: 8),
@@ -547,12 +547,12 @@ class _NewsDetailsSheet extends StatelessWidget {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Padding(
-                                padding: EdgeInsets.only(top: 4),
+                              Padding(
+                                padding: const EdgeInsets.only(top: 4),
                                 child: Icon(
                                   Icons.check_circle_outline_rounded,
                                   size: 16,
-                                  color: Color(0xFFCAFF38),
+                                  color: scheme.primary,
                                 ),
                               ),
                               const SizedBox(width: 8),
@@ -695,7 +695,11 @@ class _EmptyNews extends StatelessWidget {
       padding: const EdgeInsets.all(32),
       child: Column(
         children: [
-          const Icon(Icons.article_outlined, size: 48, color: Colors.white38),
+          Icon(
+            Icons.article_outlined,
+            size: 48,
+            color: Theme.of(context).colorScheme.outline,
+          ),
           const SizedBox(height: 12),
           const Text(
             'مطلبی در این دسته‌بندی یافت نشد',

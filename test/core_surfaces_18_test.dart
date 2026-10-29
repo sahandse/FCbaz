@@ -2,11 +2,13 @@ import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import 'support/source_bundle.dart';
+
 void main() {
   test('1.8 player details uses shared FC item visual', () {
-    final source = File(
+    final source = readSourceBundle(
       'lib/features/players/presentation/player_details_screen.dart',
-    ).readAsStringSync();
+    );
     expect(source, contains('PlayerItemVisual'));
     expect(source, contains('PLAYER ITEM'));
     expect(source, contains('FACE STATS'));

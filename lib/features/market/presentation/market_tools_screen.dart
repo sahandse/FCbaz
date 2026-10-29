@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../players/data/player_repository.dart';
 import '../../players/domain/player.dart';
-import '../../players/presentation/player_details_screen.dart';
-import '../data/market_repository.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
 
 class MarketToolsScreen extends StatefulWidget {
   const MarketToolsScreen({super.key});
@@ -14,8 +13,8 @@ class MarketToolsScreen extends StatefulWidget {
 
 class _MarketToolsScreenState extends State<MarketToolsScreen>
     with SingleTickerProviderStateMixin {
-  final marketRepository = MarketRepository();
-  final playerRepository = PlayerRepository();
+  final marketRepository = AppDependencies.instance.market;
+  final playerRepository = AppDependencies.instance.players;
 
   late final TabController tabController;
   List<Player> cheapest = const [];
@@ -258,11 +257,7 @@ class _PlayerRow extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PlayerDetailsScreen(player: player),
-          ),
-        ),
+        onTap: () => AppNavigator.playerDetails(context, player),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(

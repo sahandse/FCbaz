@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../data/player_repository.dart';
 import '../domain/player.dart';
 import '../domain/player_value_analysis.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class PlayerCompareScreen extends StatefulWidget {
   const PlayerCompareScreen({this.initialPlayers = const [], super.key});
@@ -14,7 +14,7 @@ class PlayerCompareScreen extends StatefulWidget {
 }
 
 class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
-  final repository = PlayerRepository();
+  final repository = AppDependencies.instance.players;
   final analyzer = const PlayerValueAnalyzer();
 
   late List<Player> selected = widget.initialPlayers

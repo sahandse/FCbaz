@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../../search/search_history_repository.dart';
 import '../domain/player.dart';
-import 'player_details_screen.dart';
 import 'player_item_visual.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
 
 class PlayerCard extends StatefulWidget {
   const PlayerCard({
@@ -20,7 +20,7 @@ class PlayerCard extends StatefulWidget {
 }
 
 class _PlayerCardState extends State<PlayerCard> {
-  final history = SearchHistoryRepository();
+  final history = AppDependencies.instance.history;
   bool favorite = false;
 
   Player get player => widget.player;
@@ -50,11 +50,7 @@ class _PlayerCardState extends State<PlayerCard> {
       label: '${player.name} ${player.rating} ${player.position}',
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
-        onTap: () => Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PlayerDetailsScreen(player: player),
-          ),
-        ),
+        onTap: () => AppNavigator.playerDetails(context, player),
         child: LayoutBuilder(
           builder: (context, constraints) {
             final heart = (constraints.maxWidth * .18).clamp(22.0, 32.0);

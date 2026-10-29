@@ -1,18 +1,14 @@
 import 'package:flutter/material.dart';
 
-import '../../evolutions/presentation/evolutions_screen.dart';
-import '../../players/data/player_repository.dart';
 import '../../players/domain/player.dart';
-import '../../players/presentation/player_details_screen.dart';
 import '../../players/presentation/player_item_visual.dart';
-import '../../squad/data/squad_repository.dart';
 import '../../squad/domain/squad_models.dart';
-import '../../squad/squad_screen.dart';
-import '../../settings/app_settings_repository.dart';
 import '../data/my_club_repository.dart';
 import '../domain/club_inventory_analysis.dart';
 import '../my_club_service.dart';
 import 'add_club_player_dialog.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
 
 class MyClubScreen extends StatefulWidget {
   const MyClubScreen({this.embedded = false, super.key});
@@ -24,11 +20,11 @@ class MyClubScreen extends StatefulWidget {
 }
 
 class _MyClubScreenState extends State<MyClubScreen> {
-  final clubRepository = MyClubRepository();
-  final playerRepository = PlayerRepository();
+  final clubRepository = AppDependencies.instance.club;
+  final playerRepository = AppDependencies.instance.players;
   final clubService = MyClubService();
-  final squadRepository = SquadRepository();
-  final settingsRepository = AppSettingsRepository();
+  final squadRepository = AppDependencies.instance.squads;
+  final settingsRepository = AppDependencies.instance.settings;
   final inventoryAnalysis = const ClubInventoryAnalysis();
   final searchController = TextEditingController();
 
@@ -424,11 +420,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
                 final value = _valueFor(item.playerId);
                 final p = item.toPlayer();
                 return GestureDetector(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => PlayerDetailsScreen(player: p),
-                    ),
-                  ),
+                  onTap: () => AppNavigator.playerDetails(context, p),
                   onLongPress: () => _showActions(item, value),
                   child: Stack(
                     children: [
@@ -532,12 +524,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
                 title: const Text('جزئیات بازیکن'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) =>
-                          PlayerDetailsScreen(player: item.toPlayer()),
-                    ),
-                  );
+                  AppNavigator.playerDetails(context, item.toPlayer());
                 },
               ),
               ListTile(
@@ -545,9 +532,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
                 title: const Text('باز کردن تیم‌ساز'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const SquadScreen()),
-                  );
+                  AppNavigator.squad(context);
                 },
               ),
               ListTile(
@@ -555,9 +540,7 @@ class _MyClubScreenState extends State<MyClubScreen> {
                 title: const Text('بررسی Evolution'),
                 onTap: () {
                   Navigator.pop(context);
-                  Navigator.of(context).push(
-                    MaterialPageRoute(builder: (_) => const EvolutionsScreen()),
-                  );
+                  AppNavigator.evolutions(context);
                 },
               ),
               ListTile(

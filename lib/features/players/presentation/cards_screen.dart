@@ -8,7 +8,6 @@ import '../../../src/theme/fcbaz_theme.dart';
 import '../../../src/ui/section_header.dart';
 import '../../../src/utils/persian_formatters.dart';
 import '../../../src/ui/state_views.dart';
-import '../../market/presentation/market_screen.dart';
 import '../../search/search_history_repository.dart';
 import '../../settings/app_settings_repository.dart';
 import '../data/player_repository.dart';
@@ -16,6 +15,10 @@ import '../domain/player.dart';
 import 'advanced_player_filter_sheet.dart';
 import 'player_item_visual.dart';
 import 'player_market_tile.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
+
+part 'widgets/cards_filter_chips.dart';
 
 class CardsScreen extends StatefulWidget {
   const CardsScreen({this.focusRequests, super.key});
@@ -27,9 +30,9 @@ class CardsScreen extends StatefulWidget {
 }
 
 class _CardsScreenState extends State<CardsScreen> {
-  final repository = PlayerRepository();
-  final historyRepository = SearchHistoryRepository();
-  final settingsRepository = AppSettingsRepository();
+  final repository = AppDependencies.instance.players;
+  final historyRepository = AppDependencies.instance.history;
+  final settingsRepository = AppDependencies.instance.settings;
   final controller = TextEditingController();
   final searchFocus = FocusNode();
   final scrollController = ScrollController();
@@ -201,11 +204,7 @@ class _CardsScreenState extends State<CardsScreen> {
                       child: FilledButton.icon(
                         onPressed: () {
                           Navigator.of(sheetContext).pop();
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => const MarketScreen(),
-                            ),
-                          );
+                          AppNavigator.market(context);
                         },
                         icon: const Icon(Icons.show_chart_rounded, size: 18),
                         label: const Text('بازار'),
@@ -745,203 +744,4 @@ class _CardsScreenState extends State<CardsScreen> {
     ];
   }
 }
-
-class _PriceFreshnessChip extends StatelessWidget {
-  const _PriceFreshnessChip({
-    required this.updatedAt,
-    required this.ageLabel,
-    required this.onTap,
-  });
-
-  final DateTime? updatedAt;
-  final String? ageLabel;
-  final VoidCallback onTap;
-
-  /// Green under an hour, amber under six hours, red beyond that; the verified
-  /// snapshot age is visible without opening anything.
-  Color _dotColor(FcbazPalette palette) {
-    final at = updatedAt;
-    if (at == null) return palette.lineStrong;
-    final age = DateTime.now().difference(at.toLocal());
-    if (age.inMinutes < 60) return palette.success;
-    if (age.inHours < 6) return palette.warning;
-    return palette.danger;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-    final label = ageLabel == null ? 'کاتالوگ FC27' : 'قیمت‌ها · $ageLabel';
-    return Semantics(
-      button: true,
-      label: 'تازگی قیمت‌ها: $label',
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(FcbazRadius.pill),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
-            decoration: BoxDecoration(
-              color: palette.surfaceRaised.withValues(alpha: .72),
-              borderRadius: BorderRadius.circular(FcbazRadius.pill),
-              border: Border.all(color: palette.line),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  width: 6,
-                  height: 6,
-                  decoration: BoxDecoration(
-                    color: _dotColor(palette),
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(width: 5),
-                Flexible(
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: palette.textMuted,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 3),
-                Icon(
-                  Icons.info_outline_rounded,
-                  size: 12,
-                  color: palette.textMuted.withValues(alpha: .8),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _FreshnessRow extends StatelessWidget {
-  const _FreshnessRow({
-    required this.icon,
-    required this.label,
-    required this.value,
-  });
-
-  final IconData icon;
-  final String label;
-  final String value;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 5),
-      child: Row(
-        children: [
-          Icon(icon, size: 16, color: palette.primary),
-          const SizedBox(width: 8),
-          Text(
-            label,
-            style: TextStyle(
-              color: palette.textMuted,
-              fontSize: 12,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const Spacer(),
-          Flexible(
-            child: Text(
-              value,
-              textAlign: TextAlign.left,
-              style: TextStyle(
-                color: palette.text,
-                fontSize: 12,
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _RarityChip extends StatelessWidget {
-  const _RarityChip({
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final palette = context.palette;
-    return Padding(
-      padding: const EdgeInsets.only(left: 6),
-      child: ChoiceChip(
-        label: Text(label, textDirection: TextDirection.ltr),
-        selected: active,
-        onSelected: (_) => onTap(),
-        showCheckmark: false,
-        selectedColor: palette.primary,
-        labelStyle: TextStyle(
-          color: active ? palette.onPrimary : palette.text,
-          fontSize: 11,
-          fontWeight: FontWeight.w800,
-        ),
-      ),
-    );
-  }
-}
-
-class _ActiveFilters extends StatelessWidget {
-  const _ActiveFilters({required this.filter, required this.onClear});
-
-  final PlayerFilter filter;
-  final VoidCallback onClear;
-
-  @override
-  Widget build(BuildContext context) {
-    final labels = <String>[
-      if (filter.position != null) filter.position!,
-      if (filter.version != null) filter.version!,
-      if (filter.league != null) filter.league!,
-      if (filter.club != null) filter.club!,
-      if (filter.nation != null) filter.nation!,
-      if (filter.minRating != 40 || filter.maxRating != 99)
-        'OVR ${filter.minRating}–${filter.maxRating}',
-      if (filter.platform == 'pc') 'PC',
-      if (filter.role != null) 'Role ${filter.role!}',
-      if (filter.playStyle != null) filter.playStyle!,
-      if (filter.playStylePlus != null) '+ ${filter.playStylePlus!}',
-    ];
-
-    return SizedBox(
-      height: 34,
-      child: ListView(
-        scrollDirection: Axis.horizontal,
-        children: [
-          for (final label in labels) ...[
-            Chip(label: Text(label)),
-            const SizedBox(width: 5),
-          ],
-          ActionChip(
-            avatar: const Icon(Icons.close_rounded, size: 15),
-            label: const Text('پاک کردن'),
-            onPressed: onClear,
-          ),
-        ],
-      ),
-    );
-  }
-}
+

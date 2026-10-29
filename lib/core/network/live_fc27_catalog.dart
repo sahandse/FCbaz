@@ -355,7 +355,7 @@ class LiveFc27Catalog {
   Future<Map<String, dynamic>?> _loadBundledCatalog() async {
     try {
       return _decodeAndValidate(
-        await rootBundle.loadString('assets/data/catalog.json'),
+        await rootBundle.loadString('data/live/catalog.json'),
       );
     } catch (_) {
       return null;

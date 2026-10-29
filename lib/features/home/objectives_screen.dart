@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'home_repository.dart';
 import 'objective_progress_repository.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class ObjectivesScreen extends StatefulWidget {
   const ObjectivesScreen({super.key});
@@ -11,8 +12,8 @@ class ObjectivesScreen extends StatefulWidget {
 }
 
 class _ObjectivesScreenState extends State<ObjectivesScreen> {
-  final repository = HomeRepository();
-  final progressRepository = ObjectiveProgressRepository();
+  final repository = AppDependencies.instance.home;
+  final progressRepository = AppDependencies.instance.objectives;
 
   bool loading = true;
   String? error;

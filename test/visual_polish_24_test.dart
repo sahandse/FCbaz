@@ -8,6 +8,8 @@ import 'package:fcbaz/features/players/presentation/player_market_tile.dart';
 import 'package:fcbaz/src/theme/fcbaz_theme.dart';
 import 'package:fcbaz/src/ui/state_views.dart';
 
+import 'support/source_bundle.dart';
+
 Player _player() => const Player(
   id: '1',
   name: 'Alexia Putellas',
@@ -63,9 +65,9 @@ void main() {
     final source = File(
       'lib/features/players/presentation/cards_screen.dart',
     ).readAsStringSync();
-    final details = File(
+    final details = readSourceBundle(
       'lib/features/players/presentation/player_details_screen.dart',
-    ).readAsStringSync();
+    );
 
     expect(source, contains('heroTag: playerHeroTag('));
     expect(details, contains('tag: playerHeroTag(player.id)'));

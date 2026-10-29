@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
-import '../evolutions/presentation/evolutions_screen.dart';
-import '../home/objectives_screen.dart';
-import '../players/data/player_repository.dart';
-import '../players/presentation/player_details_screen.dart';
 import 'deadline_alert_service.dart';
 import 'notification_repository.dart';
-import 'notification_settings_screen.dart';
 import 'price_alert_service.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
 
 enum _NotificationFilter { all, price, deadline }
 
@@ -20,10 +17,10 @@ class NotificationCenterScreen extends StatefulWidget {
 }
 
 class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
-  final repository = NotificationRepository();
+  final repository = AppDependencies.instance.notifications;
   final priceAlertService = PriceAlertService();
   final deadlineAlertService = DeadlineAlertService();
-  final playerRepository = PlayerRepository();
+  final playerRepository = AppDependencies.instance.players;
 
   bool loading = true;
   bool checking = false;
@@ -80,9 +77,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
   }
 
   Future<void> _openSettings() async {
-    await Navigator.of(context).push(
-      MaterialPageRoute(builder: (_) => const NotificationSettingsScreen()),
-    );
+    await AppNavigator.notificationSettings(context);
   }
 
   Future<void> _openItem(FCBazNotification item) async {
@@ -90,11 +85,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       try {
         final player = await playerRepository.getPlayer(item.playerId!);
         if (!mounted) return;
-        await Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (_) => PlayerDetailsScreen(player: player),
-          ),
-        );
+        await AppNavigator.playerDetails(context, player);
       } catch (e) {
         if (!mounted) return;
         ScaffoldMessenger.of(
@@ -104,15 +95,11 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
       return;
     }
     if (item.type == 'objective_deadline') {
-      await Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const ObjectivesScreen()));
+      await AppNavigator.objectives(context);
       return;
     }
     if (item.type == 'evolution_deadline') {
-      await Navigator.of(
-        context,
-      ).push(MaterialPageRoute(builder: (_) => const EvolutionsScreen()));
+      await AppNavigator.evolutions(context);
     }
   }
 

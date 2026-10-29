@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/network/live_fc27_catalog.dart';
 import 'app_settings_repository.dart';
 import 'update_repository.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({
@@ -20,7 +21,7 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   late AppSettings settings = widget.settings;
-  final updateRepository = UpdateRepository();
+  final updateRepository = AppDependencies.instance.update;
   final liveCatalog = LiveFc27Catalog();
 
   bool checkingUpdate = false;

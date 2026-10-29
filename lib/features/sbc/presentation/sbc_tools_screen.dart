@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import '../../market/data/market_repository.dart';
 import '../../players/domain/player.dart';
 import '../domain/sbc_rating_tools.dart';
+import 'package:fcbaz/src/app_dependencies.dart';
 
 class SbcToolsScreen extends StatefulWidget {
   const SbcToolsScreen({super.key});
@@ -12,7 +12,7 @@ class SbcToolsScreen extends StatefulWidget {
 }
 
 class _SbcToolsScreenState extends State<SbcToolsScreen> {
-  final marketRepository = MarketRepository();
+  final marketRepository = AppDependencies.instance.market;
   final calculator = const SbcRatingCalculator();
 
   int targetRating = 84;
