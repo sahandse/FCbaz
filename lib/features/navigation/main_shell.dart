@@ -43,6 +43,7 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   int index = 0;
   int unread = 0;
   bool checkingLocalAlerts = false;
+  bool tabChosenByUser = false;
 
   @override
   void initState() {
@@ -85,7 +86,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
 
   Future<void> _initializeNavigation() async {
     final saved = await navigationRepository.loadTab();
-    if (!mounted) return;
+    // The stored tab may resolve after the first frame, so never let it
+    // override a destination the user already picked.
+    if (!mounted || tabChosenByUser) return;
     setState(() => index = saved);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _openPendingPlayer();
@@ -94,7 +97,9 @@ class _MainShellState extends State<MainShell> with WidgetsBindingObserver {
   }
 
   Future<void> _selectTab(int value) async {
-    if (!mounted || value == index) return;
+    if (!mounted) return;
+    tabChosenByUser = true;
+    if (value == index) return;
     HapticFeedback.selectionClick();
     setState(() => index = value);
     await navigationRepository.saveTab(value);

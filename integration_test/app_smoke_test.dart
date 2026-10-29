@@ -17,6 +17,26 @@ Future<void> _pumpUntil(
   fail('Timed out waiting for $finder');
 }
 
+Future<void> _selectTab(
+  WidgetTester tester, {
+  required IconData icon,
+  required int expectedIndex,
+}) async {
+  await tester.tap(
+    find.descendant(
+      of: find.byType(NavigationBar),
+      matching: find.byIcon(icon),
+    ),
+  );
+  final deadline = DateTime.now().add(const Duration(seconds: 10));
+  while (DateTime.now().isBefore(deadline)) {
+    await tester.pump(const Duration(milliseconds: 200));
+    final bar = tester.widget<NavigationBar>(find.byType(NavigationBar));
+    if (bar.selectedIndex == expectedIndex) return;
+  }
+  fail('The navigation bar never selected tab $expectedIndex');
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -26,23 +46,18 @@ void main() {
 
     NavigationBar navigationBar() =>
         tester.widget<NavigationBar>(find.byType(NavigationBar));
-    FcbazTopBar topBar() => tester.widget<FcbazTopBar>(find.byType(FcbazTopBar));
+    FcbazTopBar topBar() =>
+        tester.widget<FcbazTopBar>(find.byType(FcbazTopBar));
 
     expect(navigationBar().destinations, hasLength(5));
     expect(navigationBar().selectedIndex, 0);
     expect(topBar().title, 'اخبار');
 
-    await tester.tap(find.byIcon(Icons.style_outlined));
-    await tester.pump(const Duration(milliseconds: 400));
-    await tester.pump(const Duration(milliseconds: 400));
-
+    await _selectTab(tester, icon: Icons.style_outlined, expectedIndex: 1);
     expect(navigationBar().selectedIndex, 1);
     expect(topBar().title, 'کارت‌ها');
 
-    await tester.tap(find.byIcon(Icons.grid_view_rounded));
-    await tester.pump(const Duration(milliseconds: 400));
-    await tester.pump(const Duration(milliseconds: 400));
-
+    await _selectTab(tester, icon: Icons.grid_view_rounded, expectedIndex: 4);
     expect(navigationBar().selectedIndex, 4);
     expect(topBar().title, 'بیشتر');
   });

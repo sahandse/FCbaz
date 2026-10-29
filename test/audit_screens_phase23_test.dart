@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:fcbaz/features/evolutions/presentation/evolutions_screen.dart';
 import 'package:fcbaz/features/home/objectives_screen.dart';
 import 'package:fcbaz/features/sbc/presentation/sbc_screen.dart';
@@ -6,6 +9,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+String _firstSbcTitle() {
+  final catalog =
+      jsonDecode(File('data/live/catalog.json').readAsStringSync())
+          as Map<String, dynamic>;
+  for (final item in catalog['sbcs'] as List<dynamic>) {
+    if (item is! Map) continue;
+    final title = (item['title'] ?? item['name'] ?? '').toString().trim();
+    if (title.isNotEmpty) return title;
+  }
+  fail('The live catalog exposes no SBC titles');
+}
 
 Future<List<FlutterErrorDetails>> _pumpScreen(
   WidgetTester tester,
@@ -51,7 +66,7 @@ void main() {
 
     expect(find.text('SBC HUB'), findsOneWidget);
     expect(find.text('ابزارهای Rating و Cheapest'), findsOneWidget);
-    expect(find.textContaining('Base Hero'), findsWidgets);
+    expect(find.textContaining(_firstSbcTitle()), findsWidgets);
     expect(find.text('SBC در دسترس نیست'), findsNothing);
     expect(find.text('SBC فعالی پیدا نشد'), findsNothing);
     expect(errors, isEmpty);
