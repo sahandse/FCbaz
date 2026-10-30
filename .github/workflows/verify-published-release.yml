@@ -11,12 +11,12 @@ on:
       tag:
         description: Release tag to verify
         required: true
-        default: v2.6.3
+        default: v2.6.4
         type: string
       version_code:
         description: Expected Android versionCode
         required: true
-        default: '51'
+        default: '52'
         type: string
   push:
     branches:
@@ -162,7 +162,7 @@ jobs:
             fi
           else
             actual_code="$(printf '%s\n' "$pkg" | sed -n "s/.*versionCode='\([0-9]*\)'.*/\1/p")"
-            if ! [[ "$actual_code" =~ ^[0-9]+$ ]] || [ "$actual_code" -lt 51 ]; then
+            if ! [[ "$actual_code" =~ ^[0-9]+$ ]] || [ "$actual_code" -lt 52 ]; then
               echo "::error title=Published versionCode invalid::${pkg}"
               exit 1
             fi
