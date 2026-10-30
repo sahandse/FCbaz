@@ -10,12 +10,12 @@ on:
       release_version:
         description: Release version without v prefix
         required: true
-        default: 2.6.4
+        default: 2.6.5
         type: string
       build_number:
-        description: Android versionCode (must be greater than the previous 51)
+        description: Android versionCode (must be greater than the previous 52)
         required: true
-        default: '52'
+        default: '53'
         type: string
       api_base_url:
         description: Optional production FCBaz API base URL; leave empty for verified public data path
@@ -26,11 +26,11 @@ on:
     branches:
       - main
     paths:
-      - '.release/fcbaz-v2.6.4'
+      - '.release/fcbaz-v2.6.5'
 
 env:
-  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.6.4' }}
-  RELEASE_BUILD_NUMBER: ${{ github.event_name == 'workflow_dispatch' && inputs.build_number || '52' }}
+  RELEASE_VERSION: ${{ github.event_name == 'workflow_dispatch' && inputs.release_version || '2.6.5' }}
+  RELEASE_BUILD_NUMBER: ${{ github.event_name == 'workflow_dispatch' && inputs.build_number || '53' }}
   FCBAZ_API_BASE_URL: ${{ github.event_name == 'workflow_dispatch' && inputs.api_base_url || '' }}
   EXPECTED_CERT_SHA256: 244aab755d0c8c45fe54d9b999aadd36f1e56bce099cd52232b64871d21a0b94
 
@@ -61,7 +61,7 @@ jobs:
           set -euo pipefail
           [[ "$RELEASE_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "release_version must be X.Y.Z"; exit 1; }
           [[ "$RELEASE_BUILD_NUMBER" =~ ^[0-9]+$ ]] || { echo "build_number must be numeric"; exit 1; }
-          [ "$RELEASE_BUILD_NUMBER" -ge 52 ] || { echo "build_number must be 52 or newer"; exit 1; }
+          [ "$RELEASE_BUILD_NUMBER" -ge 53 ] || { echo "build_number must be 53 or newer"; exit 1; }
           if git ls-remote --tags origin "refs/tags/v${RELEASE_VERSION}" | grep -q .; then
             echo "Tag v${RELEASE_VERSION} already exists; choose a new release_version instead of overwriting it"
             exit 1
@@ -228,6 +228,13 @@ jobs:
           - ترکیب‌ساز جای‌های خالی را با بازیکنان هم‌پست کاتالوگ واقعی پر می‌کند، جای‌های بدون گزینه را خالی و گزارش‌شده نگه می‌دارد و متن ترکیب را برای اشتراک‌گذاری کپی می‌کند.
           - کارت تصویری ترکیب با FileProvider قابل اشتراک‌گذاری است؛ پنل استفاده بازیکن (Evolutionها و SBCهای فعال) و توضیح «چرا این پیشنهاد؟» فقط از داده واقعی کاتالوگ و ترکیب استفاده می‌کنند.
           - لایه بصری بازطراحی شد: کیت رنگی باشگاه، درخشش کارت‌های ویژه، پس‌زمینه Paper Pitch در تم روشن، انتقال نرم بین تب‌ها، تایپوگرافی و اعداد فارسی؛ فهرست کامل بازیکنان در ترکیب‌ساز بازیابی شد.
+          - مقایسه ۲ تا ۴ کارت با رادار آمار، نوارهای هم‌تراز با برنده و ارزش هر رنکینگ پس از مالیات اضافه شد؛ همه اعداد فقط از قیمت واقعی PS/PC همان کارت محاسبه می‌شوند.
+          - جدول فشرده بازار با جستجوی چسبان، فیلترهای ذخیره‌شده، جابه‌جایی PS/PC و روند قیمت محلی اضافه شد.
+          - نوسان‌سنج ۲۴ساعته و ۷روزه فقط از مشاهده‌های واقعی همین دستگاه ساخته می‌شود؛ با کمتر از دو مشاهده، به‌جای عدد ساختگی پیام کمبود داده نمایش داده می‌شود.
+          - هشدار قیمت محلی با ارقام فارسی، پیش‌نمایش اعلان و برچسب «محلی» اضافه شد؛ ارزیابی هنگام مشاهده قیمت و بررسی دوره‌ای پس‌زمینه فقط قیمت واقعی را می‌سنجند و قیمت صفر هرگز هشدار نمی‌سازد.
+          - حل‌کننده SBC بودجه‌محور با لیست خرید، جمع هزینه، کمبود بودجه و خروجی متنی/تصویری اضافه شد؛ ابتدا کارت‌های کلوب استفاده می‌شوند و خرید اضافه فقط از قیمت واقعی بازار محاسبه می‌شود.
+          - مسیر ایوولوشن با آپگرید واقعی آمار، صفحه ارزش خرید (ارزان‌ترین کارت‌های ۸۵+ و سکه به‌ازای هر رنکینگ) و جایگزین ارزان‌تر در جزئیات بازیکن اضافه شد؛ در نبود داده، جایگزین ساختگی پیشنهاد نمی‌شود.
+          - اکشن‌های سریع کارت (مقایسه، دیده‌بان، علاقه‌مندی) و هیرو (دیده‌بان، اشتراک تصویری) اضافه شد؛ الماس‌های شیمی هر جای ترکیب، لمس و حذف با هپتیک، و اسکلتون/خالی/خطا با تلاش دوباره و ارقام جدولی در سراسر رابط.
           - کارت‌های بازیکن با طراحی FC27، قیمت PS/PC جدا، نشان PlayStyle+ و کارت رسمی EA؛ هاب خانه، جستجو، فیلترها، SBC، Objectives، Evolutions و اخبار از کاتالوگ زنده تغذیه می‌شوند.
           - سازگاری نصب: Android 7.0 (API 24) و بالاتر. نسخه v2.5.0 با امضای debug منتشر شده بود؛ اگر آن را نصب کرده‌اید، برای نصب این نسخه امضاشده باید نسخه قبلی را حذف کنید. ارتقای مستقیم از v2.3.2 و نسخه‌های با امضای پایدار حفظ می‌شود.
           EOF
