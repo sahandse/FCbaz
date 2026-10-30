@@ -27,6 +27,19 @@ void main() {
     expect(draft, contains('shareOutcomeMessage'));
   });
 
+  test('player hero renders a share card from real card data', () {
+    final details = readSourceBundle(
+      'lib/features/players/presentation/player_details_screen.dart',
+    );
+
+    expect(details, contains("import '../../../src/share/share_card.dart';"));
+    expect(details, contains('ShareCardRenderer().renderPng'));
+    expect(details, contains('ShareService().shareImage'));
+    expect(details, contains('ShareCardMetric'));
+    expect(details, contains('shareCardToText(data)'));
+    expect(details, contains('اشتراک‌گذاری تصویری کارت'));
+  });
+
   test('android app registers the share channel and FileProvider', () {
     final activity = _read(
       'android/app/src/main/kotlin/ir/fcbaz/app/MainActivity.kt',

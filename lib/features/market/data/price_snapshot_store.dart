@@ -26,9 +26,34 @@ class PriceSnapshotStore {
   }) async {
     if (playerId.isEmpty) return const [];
     final prefs = await SharedPreferences.getInstance();
-    final raw = prefs.getString(_key(playerId, platform));
-    if (raw == null || raw.isEmpty) return const [];
+    return _parse(prefs.getString(_key(playerId, platform)));
+  }
 
+  /// Every locally observed stream for [platform], keyed by player id. Used by
+  /// the compact market table so each row can show its own real sparkline.
+  Future<Map<String, List<PricePoint>>> getAllHistories({
+    String platform = 'console',
+  }) async {
+    final prefs = await SharedPreferences.getInstance();
+    final prefix = '${_prefix}_';
+    final suffix = '_${Uri.encodeComponent(platform)}';
+    final result = <String, List<PricePoint>>{};
+    for (final key in prefs.getKeys()) {
+      if (!key.startsWith(prefix) || !key.endsWith(suffix)) continue;
+      final encodedId = key.substring(
+        prefix.length,
+        key.length - suffix.length,
+      );
+      if (encodedId.isEmpty) continue;
+      final points = _parse(prefs.getString(key));
+      if (points.isEmpty) continue;
+      result[Uri.decodeComponent(encodedId)] = points;
+    }
+    return result;
+  }
+
+  List<PricePoint> _parse(String? raw) {
+    if (raw == null || raw.isEmpty) return const [];
     try {
       final decoded = jsonDecode(raw);
       if (decoded is! List) return const [];

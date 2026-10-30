@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../../players/domain/player.dart';
+import '../../players/domain/player_value_analysis.dart';
+import '../domain/purchase_value.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/navigation/app_navigator.dart';
+import 'package:fcbaz/src/theme/fcbaz_theme.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 import 'market_tax_calculator_panel.dart';
 
@@ -21,17 +24,21 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
   late final TabController tabController;
   List<Player> cheapest = const [];
   List<Player> popular = const [];
+  List<PurchaseValue> valueRanked = const [];
   bool loadingCheapest = true;
   bool loadingPopular = true;
+  bool loadingValue = true;
   String? cheapestError;
   String? popularError;
+  String? valueError;
   int rating = 85;
+  int valueMinRating = 85;
   String platform = 'console';
 
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 3, vsync: this);
+    tabController = TabController(length: 4, vsync: this);
     _loadAll();
   }
 
@@ -42,7 +49,7 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
   }
 
   Future<void> _loadAll() async {
-    await Future.wait([_loadCheapest(), _loadPopular()]);
+    await Future.wait([_loadCheapest(), _loadPopular(), _loadValue()]);
   }
 
   Future<void> _loadCheapest() async {
@@ -83,6 +90,38 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
     }
   }
 
+  PlayerMarketPlatform get _marketPlatform =>
+      platform == 'pc' ? PlayerMarketPlatform.pc : PlayerMarketPlatform.console;
+
+  Future<void> _loadValue() async {
+    setState(() {
+      loadingValue = true;
+      valueError = null;
+    });
+    try {
+      final data = await marketRepository.getCheapestPlayers(
+        minRating: valueMinRating,
+        maxRating: 99,
+        platform: platform,
+      );
+      if (!mounted) return;
+      final ranked = const PurchaseValueAnalyzer().rank(
+        data,
+        platform: _marketPlatform,
+        minRating: valueMinRating,
+      );
+      setState(() => valueRanked = ranked.take(30).toList());
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        valueRanked = const [];
+        valueError = e.toString();
+      });
+    } finally {
+      if (mounted) setState(() => loadingValue = false);
+    }
+  }
+
   int _price(Player player) =>
       platform == 'pc' ? player.pricePc : player.pricePs;
 
@@ -110,6 +149,7 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
           tabAlignment: TabAlignment.start,
           tabs: const [
             Tab(text: 'ارزان‌ترین بر اساس ریتینگ'),
+            Tab(text: 'ارزش خرید'),
             Tab(text: 'محبوب‌ترین بازیکنان'),
             Tab(text: 'مالیات و سود'),
           ],
@@ -119,6 +159,7 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
         controller: tabController,
         children: [
           _buildCheapest(),
+          _buildValue(),
           _buildPopular(),
           const MarketTaxCalculatorPanel(),
         ],
@@ -169,35 +210,131 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
             onSelectionChanged: (value) {
               setState(() => platform = value.first);
               _loadCheapest();
+              _loadValue();
             },
           ),
           const SizedBox(height: 18),
-          if (loadingCheapest)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 64),
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else if (cheapestError != null)
-            _StateCard(
-              title: 'داده بازار در دسترس نیست',
-              subtitle: cheapestError!,
-              action: _loadCheapest,
-            )
-          else if (cheapest.isEmpty)
-            const _StateCard(
-              title: 'قیمت معتبری پیدا نشد',
-              subtitle:
-                  'برای این ریتینگ و پلتفرم، منبع واقعی فعلاً نتیجه‌ای برنگرداند.',
-            )
-          else
-            for (var i = 0; i < cheapest.length; i++) ...[
-              _PlayerRow(
-                player: cheapest[i],
-                rank: i + 1,
-                trailing: _coins(_price(cheapest[i])),
-              ),
-              const SizedBox(height: 8),
+          _AnimatedState(
+            child: loadingCheapest
+                ? const _ToolsListSkeleton(key: ValueKey('cheapest-loading'))
+                : cheapestError != null
+                ? _StateCard(
+                    key: const ValueKey('cheapest-error'),
+                    title: 'داده بازار در دسترس نیست',
+                    subtitle: cheapestError!,
+                    action: _loadCheapest,
+                  )
+                : cheapest.isEmpty
+                ? _StateCard(
+                    key: const ValueKey('cheapest-empty'),
+                    title: 'قیمت معتبری پیدا نشد',
+                    subtitle:
+                        'برای این ریتینگ و پلتفرم، منبع واقعی فعلاً نتیجه‌ای برنگرداند.',
+                    action: _loadCheapest,
+                  )
+                : Column(
+                    key: const ValueKey('cheapest-list'),
+                    children: [
+                      for (var i = 0; i < cheapest.length; i++) ...[
+                        _PlayerRow(
+                          player: cheapest[i],
+                          rank: i + 1,
+                          trailing: _coins(_price(cheapest[i])),
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildValue() {
+    final palette = context.palette;
+    return RefreshIndicator(
+      onRefresh: _loadValue,
+      child: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 28),
+        children: [
+          Text(
+            'Value to Buy',
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 4),
+          Text(
+            'ارزش خرید از قیمت واقعی همان پلتفرم تقسیم بر ریتینگ ساخته می‌شود؛ کارت بدون قیمت واقعی کنار گذاشته می‌شود و عدد جایگزین ساخته نمی‌شود.',
+            style: TextStyle(color: palette.textMuted, height: 1.7),
+          ),
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final value in [85, 86, 87, 88, 89, 90])
+                ChoiceChip(
+                  label: Text('${faDigits(value)}+'),
+                  selected: valueMinRating == value,
+                  onSelected: (_) {
+                    setState(() => valueMinRating = value);
+                    _loadValue();
+                  },
+                ),
             ],
+          ),
+          const SizedBox(height: 12),
+          SegmentedButton<String>(
+            segments: const [
+              ButtonSegment(value: 'console', label: Text('کنسول')),
+              ButtonSegment(value: 'pc', label: Text('PC')),
+            ],
+            selected: {platform},
+            onSelectionChanged: (value) {
+              setState(() => platform = value.first);
+              _loadCheapest();
+              _loadValue();
+            },
+          ),
+          const SizedBox(height: 18),
+          _AnimatedState(
+            child: loadingValue
+                ? const _ToolsListSkeleton(key: ValueKey('value-loading'))
+                : valueError != null
+                ? _StateCard(
+                    key: const ValueKey('value-error'),
+                    title: 'داده ارزش خرید در دسترس نیست',
+                    subtitle: valueError!,
+                    action: _loadValue,
+                  )
+                : valueRanked.isEmpty
+                ? _StateCard(
+                    key: const ValueKey('value-empty'),
+                    title: 'قیمت معتبری پیدا نشد',
+                    subtitle:
+                        'برای ریتینگ ${faDigits(valueMinRating)}+ و این پلتفرم، منبع واقعی کارتی با قیمت برنگرداند.',
+                    action: _loadValue,
+                  )
+                : Column(
+                    key: const ValueKey('value-list'),
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      for (var i = 0; i < valueRanked.length; i++) ...[
+                        _ValueRow(value: valueRanked[i], rank: i + 1),
+                        const SizedBox(height: 8),
+                      ],
+                      const SizedBox(height: 6),
+                      Text(
+                        '«سکه/رنکینگ» قیمت تقسیم بر ریتینگ است؛ «فروش سربه‌سر» قیمتی است که پس از ۵٪ مالیات فروش، پول خرید را برمی‌گرداند.',
+                        style: TextStyle(
+                          fontSize: 11,
+                          height: 1.7,
+                          color: palette.textMuted,
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
         ],
       ),
     );
@@ -221,34 +358,90 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
             ),
           ),
           const SizedBox(height: 18),
-          if (loadingPopular)
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 64),
-              child: Center(child: CircularProgressIndicator()),
-            )
-          else if (popularError != null)
-            _StateCard(
-              title: 'داده محبوب‌ترین‌ها در دسترس نیست',
-              subtitle: popularError!,
-              action: _loadPopular,
-            )
-          else if (popular.isEmpty)
-            const _StateCard(
-              title: 'داده‌ای دریافت نشد',
-              subtitle:
-                  'به‌جای نمایش داده نمایشی، این بخش خالی نگه داشته شده است.',
-            )
-          else
-            for (var i = 0; i < popular.length; i++) ...[
-              _PlayerRow(
-                player: popular[i],
-                rank: i + 1,
-                trailing: popular[i].version.isEmpty
-                    ? popular[i].position
-                    : popular[i].version,
+          _AnimatedState(
+            child: loadingPopular
+                ? const _ToolsListSkeleton(key: ValueKey('popular-loading'))
+                : popularError != null
+                ? _StateCard(
+                    key: const ValueKey('popular-error'),
+                    title: 'داده محبوب‌ترین‌ها در دسترس نیست',
+                    subtitle: popularError!,
+                    action: _loadPopular,
+                  )
+                : popular.isEmpty
+                ? _StateCard(
+                    key: const ValueKey('popular-empty'),
+                    title: 'داده‌ای دریافت نشد',
+                    subtitle:
+                        'به‌جای نمایش داده نمایشی، این بخش خالی نگه داشته شده است.',
+                    action: _loadPopular,
+                  )
+                : Column(
+                    key: const ValueKey('popular-list'),
+                    children: [
+                      for (var i = 0; i < popular.length; i++) ...[
+                        _PlayerRow(
+                          player: popular[i],
+                          rank: i + 1,
+                          trailing: popular[i].version.isEmpty
+                              ? popular[i].position
+                              : popular[i].version,
+                        ),
+                        const SizedBox(height: 8),
+                      ],
+                    ],
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _AnimatedState extends StatelessWidget {
+  const _AnimatedState({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 240),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      child: child,
+    );
+  }
+}
+
+class _ToolsListSkeleton extends StatelessWidget {
+  const _ToolsListSkeleton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    return Semantics(
+      label: 'در حال بارگذاری ابزارهای بازار',
+      child: Column(
+        children: [
+          for (var i = 0; i < 5; i++)
+            Container(
+              height: 74,
+              margin: const EdgeInsets.only(bottom: 8),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topRight,
+                  end: Alignment.bottomLeft,
+                  colors: [
+                    palette.surface,
+                    palette.surfaceRaised,
+                    palette.surface,
+                  ],
+                ),
+                borderRadius: BorderRadius.circular(FcbazRadius.md),
+                border: Border.all(color: palette.line),
               ),
-              const SizedBox(height: 8),
-            ],
+            ),
         ],
       ),
     );
@@ -283,6 +476,7 @@ class _PlayerRow extends StatelessWidget {
                   style: TextStyle(
                     color: Theme.of(context).colorScheme.primary,
                     fontWeight: FontWeight.w900,
+                    fontFeatures: const [FontFeature.tabularFigures()],
                   ),
                 ),
               ),
@@ -322,7 +516,130 @@ class _PlayerRow extends StatelessWidget {
                 trailing,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: const TextStyle(fontWeight: FontWeight.w900),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w900,
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ValueRow extends StatelessWidget {
+  const _ValueRow({required this.value, required this.rank});
+
+  final PurchaseValue value;
+  final int rank;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    final player = value.player;
+    final perRating = value.coinsPerRating;
+    final breakEven = value.taxAdjustedPrice;
+
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => AppNavigator.playerDetails(context, player),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                width: 30,
+                child: Text(
+                  '#${faDigits(rank)}',
+                  style: TextStyle(
+                    color: palette.primary,
+                    fontWeight: FontWeight.w900,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+              ),
+              CircleAvatar(
+                radius: 23,
+                backgroundImage: player.imageUrl.isEmpty
+                    ? null
+                    : NetworkImage(player.imageUrl),
+                child: player.imageUrl.isEmpty
+                    ? Text(faDigits(player.rating))
+                    : null,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      player.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textDirection: TextDirection.ltr,
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'ریتینگ ${faDigits(value.rating)} • ${player.position}',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                    if (perRating != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 3),
+                        child: Text(
+                          'سکه/رنکینگ: ${formatCoinsFa(perRating.round())}',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w800,
+                            color: palette.primary,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ),
+                    if (breakEven != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: Text(
+                          'فروش سربه‌سر پس از ۵٪ مالیات: ${formatCoinsFa(breakEven)}',
+                          style: TextStyle(
+                            fontSize: 10.5,
+                            color: palette.textMuted,
+                            fontFeatures: const [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    compactCoinsFa(value.price),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value.platform == PlayerMarketPlatform.pc ? 'PC' : 'PS',
+                    textDirection: TextDirection.ltr,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: palette.textMuted,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
@@ -333,7 +650,12 @@ class _PlayerRow extends StatelessWidget {
 }
 
 class _StateCard extends StatelessWidget {
-  const _StateCard({required this.title, required this.subtitle, this.action});
+  const _StateCard({
+    required this.title,
+    required this.subtitle,
+    this.action,
+    super.key,
+  });
 
   final String title;
   final String subtitle;

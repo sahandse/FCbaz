@@ -407,77 +407,112 @@ class _CardsScreenState extends State<CardsScreen> {
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             sliver: SliverToBoxAdapter(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Row(
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'FUT COLLECTION',
+                          textDirection: TextDirection.ltr,
+                          style: TextStyle(
+                            fontFamily: 'BarlowCondensed',
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w800,
+                            fontSize: 11,
+                            letterSpacing: 1.2,
+                            color: palette.primary,
+                          ),
+                        ),
+                        Text(
+                          'کالکشن کارت‌ها',
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                      ],
+                    ),
+                  ),
+                  IconButton.outlined(
+                    onPressed: _saveCurrentView,
+                    icon: const Icon(Icons.bookmark_add_outlined),
+                    tooltip: 'ذخیره نما',
+                  ),
+                ],
+              ),
+            ),
+          ),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _StickySearchHeader(
+              height: filter.activeCount > 0 ? 96 : 56,
+              child: Material(
+                color: palette.canvas,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                      SizedBox(
+                        height: 48,
+                        child: Row(
                           children: [
-                            Text(
-                              'FUT COLLECTION',
-                              textDirection: TextDirection.ltr,
-                              style: TextStyle(
-                                fontFamily: 'BarlowCondensed',
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w800,
-                                fontSize: 11,
-                                letterSpacing: 1.2,
-                                color: palette.primary,
+                            Expanded(
+                              child: TextField(
+                                controller: controller,
+                                focusNode: searchFocus,
+                                onChanged: _onQueryChanged,
+                                onSubmitted: (_) => _search(),
+                                textInputAction: TextInputAction.search,
+                                decoration: InputDecoration(
+                                  isDense: true,
+                                  contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 12,
+                                    vertical: 12,
+                                  ),
+                                  hintText: 'نام بازیکن، باشگاه، لیگ...',
+                                  prefixIcon: const Icon(Icons.search_rounded),
+                                  suffixIcon: controller.text.isEmpty
+                                      ? null
+                                      : IconButton(
+                                          onPressed: _clearQuery,
+                                          icon: const Icon(Icons.close_rounded),
+                                          tooltip: 'پاک کردن جستجو',
+                                        ),
+                                ),
                               ),
                             ),
-                            Text(
-                              'کالکشن کارت‌ها',
-                              style: Theme.of(context).textTheme.titleLarge,
+                            const SizedBox(width: FcbazSpace.sm),
+                            Badge(
+                              isLabelVisible: filter.activeCount > 0,
+                              label: Text(faDigits(filter.activeCount)),
+                              child: IconButton.filledTonal(
+                                onPressed: _openFilters,
+                                icon: const Icon(Icons.tune_rounded),
+                                tooltip: 'فیلتر پیشرفته',
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      IconButton.outlined(
-                        onPressed: _saveCurrentView,
-                        icon: const Icon(Icons.bookmark_add_outlined),
-                        tooltip: 'ذخیره نما',
-                      ),
+                      if (filter.activeCount > 0) ...[
+                        const SizedBox(height: 6),
+                        _ActiveFilters(
+                          filter: filter,
+                          onClear: _clearAllFilters,
+                        ),
+                      ],
                     ],
                   ),
-                  const SizedBox(height: FcbazSpace.md),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: TextField(
-                          controller: controller,
-                          focusNode: searchFocus,
-                          onChanged: _onQueryChanged,
-                          onSubmitted: (_) => _search(),
-                          textInputAction: TextInputAction.search,
-                          decoration: InputDecoration(
-                            hintText: 'نام بازیکن، باشگاه، لیگ...',
-                            prefixIcon: const Icon(Icons.search_rounded),
-                            suffixIcon: controller.text.isEmpty
-                                ? null
-                                : IconButton(
-                                    onPressed: _clearQuery,
-                                    icon: const Icon(Icons.close_rounded),
-                                    tooltip: 'پاک کردن جستجو',
-                                  ),
-                          ),
-                        ),
-                      ),
-                      const SizedBox(width: FcbazSpace.sm),
-                      Badge(
-                        isLabelVisible: filter.activeCount > 0,
-                        label: Text(filter.activeCount.toString()),
-                        child: IconButton.filledTonal(
-                          onPressed: _openFilters,
-                          icon: const Icon(Icons.tune_rounded),
-                          tooltip: 'فیلتر پیشرفته',
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: FcbazSpace.md),
+                ),
+              ),
+            ),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            sliver: SliverToBoxAdapter(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   SizedBox(
                     height: 38,
                     child: ListView(
@@ -532,10 +567,6 @@ class _CardsScreenState extends State<CardsScreen> {
                       ],
                     ),
                   ),
-                  if (filter.activeCount > 0) ...[
-                    const SizedBox(height: FcbazSpace.sm),
-                    _ActiveFilters(filter: filter, onClear: _clearAllFilters),
-                  ],
                   const SizedBox(height: FcbazSpace.md),
                   if (!loading && error == null)
                     Row(

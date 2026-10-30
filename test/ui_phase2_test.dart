@@ -120,6 +120,7 @@ void main() {
     expect(find.widgetWithText(Tab, 'یادداشت'), findsOneWidget);
     expect(find.text('مقایسه'), findsOneWidget);
     expect(find.text('افزودن به باشگاه'), findsOneWidget);
+    expect(find.text('جایگزین ارزان‌تر'), findsNothing);
 
     await tester.tap(find.widgetWithText(Tab, 'آمار'));
     await tester.pump();
@@ -131,6 +132,61 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     expect(find.text('قیمت بازار'), findsOneWidget);
 
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('priced cards get a cheaper-alternative section', (tester) async {
+    SharedPreferences.setMockInitialValues({});
+    tester.view.physicalSize = const Size(360, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
+    const player = Player(
+      id: 'priced-player',
+      name: 'Priced Player',
+      rating: 88,
+      position: 'ST',
+      positions: ['ST'],
+      clubName: 'Test Club',
+      leagueName: 'Test League',
+      nationName: 'Testland',
+      version: 'Gold',
+      imageUrl: '',
+      pace: 90,
+      shooting: 88,
+      passing: 80,
+      dribbling: 85,
+      defending: 40,
+      physical: 75,
+      skillMoves: 4,
+      weakFoot: 4,
+      pricePs: 100000,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('fa'),
+        supportedLocales: const [Locale('fa')],
+        localizationsDelegates: const [
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        theme: FCBazTheme.dark(),
+        home: const PlayerDetailsScreen(player: player),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+
+    await tester.drag(find.text('قیمت بازار'), const Offset(0, -400));
+    await tester.pump();
+
+    expect(find.text('جایگزین ارزان‌تر'), findsOneWidget);
+    expect(
+      find.textContaining('کارت هم‌پستی با حداکثر ۲ ریتینگ کمتر'),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 }

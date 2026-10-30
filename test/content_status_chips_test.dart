@@ -87,6 +87,24 @@ void main() {
     expect(find.byIcon(Icons.timer_rounded), findsOneWidget);
   });
 
+  testWidgets('SBC chips can append the real Jalali deadline date', (
+    tester,
+  ) async {
+    final expiresAt = now.add(const Duration(days: 3));
+    await tester.pumpWidget(
+      _app(
+        ContentStatusChips(
+          expiresAt: expiresAt,
+          now: now,
+          showJalaliDate: true,
+        ),
+      ),
+    );
+
+    expect(find.textContaining(formatJalaliShort(expiresAt)), findsOneWidget);
+    expect(find.textContaining('مانده'), findsOneWidget);
+  });
+
   testWidgets('fresh news gets a quiet badge and stale news gets none', (
     tester,
   ) async {

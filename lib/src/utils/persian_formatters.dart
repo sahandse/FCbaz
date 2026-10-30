@@ -88,6 +88,23 @@ String faDigits(Object? value) {
   );
 }
 
+/// Reads a coin amount typed with Persian, Arabic-Indic or Latin digits and
+/// ignores thousands separators. Returns null when no digit is present.
+int? parsePersianInt(String raw) {
+  final latin = raw
+      .replaceAllMapped(
+        RegExp('[۰-۹]'),
+        (match) => '${match.group(0)!.codeUnitAt(0) - 0x06F0}',
+      )
+      .replaceAllMapped(
+        RegExp('[٠-٩]'),
+        (match) => '${match.group(0)!.codeUnitAt(0) - 0x0660}',
+      )
+      .replaceAll(RegExp('[^0-9]'), '');
+  if (latin.isEmpty) return null;
+  return int.tryParse(latin);
+}
+
 int _div(int a, int b) => (a / b).floor();
 
 List<int> _gregorianToJalali(int gy, int gm, int gd) {

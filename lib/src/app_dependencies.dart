@@ -12,6 +12,7 @@ import '../features/news/data/news_repository.dart';
 import '../features/notifications/background_sync_status_repository.dart';
 import '../features/notifications/notification_preferences_repository.dart';
 import '../features/notifications/notification_repository.dart';
+import '../features/notifications/price_alert_service.dart';
 import '../features/players/data/player_repository.dart';
 import '../features/players/data/player_review_repository.dart';
 import '../features/sbc/data/sbc_repository.dart';
@@ -47,6 +48,12 @@ class AppDependencies {
   late final NotificationRepository notifications = NotificationRepository();
   late final NotificationPreferencesRepository notificationPreferences =
       NotificationPreferencesRepository();
+  late final PriceAlertService priceAlerts = PriceAlertService(
+    marketRepository: market,
+    watchlistRepository: watchlist,
+    notificationRepository: notifications,
+    settingsRepository: settings,
+  );
   late final BackgroundSyncStatusRepository syncStatus =
       BackgroundSyncStatusRepository();
   late final AppSettingsRepository settings = AppSettingsRepository();

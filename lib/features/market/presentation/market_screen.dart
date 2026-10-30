@@ -3,10 +3,16 @@ import 'package:flutter/material.dart';
 import '../../players/domain/player.dart';
 import '../../players/presentation/player_card.dart';
 import '../data/watchlist_repository.dart';
+import '../domain/market_movers.dart';
 import '../domain/player_price.dart';
+import 'market_movers_section.dart';
+import 'market_table_screen.dart';
+import 'price_alert_sheet.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/navigation/app_navigator.dart';
 import 'package:fcbaz/src/ui/price_delta.dart';
 import 'package:fcbaz/src/ui/price_ticker.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -24,10 +30,12 @@ class _MarketScreenState extends State<MarketScreen> {
   List<WatchlistItem> saved = const [];
   List<Player> cheapest = const [];
   final Map<String, PlayerPrice> savedPrices = {};
+  Map<String, List<PricePoint>> localHistories = const {};
 
   bool loading = true;
   String platform = 'console';
   int minRating = 83;
+  MoverWindow moverWindow = MoverWindow.day;
 
   @override
   void initState() {
@@ -44,7 +52,7 @@ class _MarketScreenState extends State<MarketScreen> {
 
   Future<void> _load({bool forceRefresh = false}) async {
     setState(() => loading = true);
-    final savedItems = await watchlist.getAll();
+    var savedItems = await watchlist.getAll();
     List<Map<String, dynamic>> liveFeed = const [];
     List<Player> low = const [];
     try {
@@ -74,7 +82,49 @@ class _MarketScreenState extends State<MarketScreen> {
           platform: platform,
           checkedAt: price.updatedAt ?? DateTime.now(),
         );
+        try {
+          await AppDependencies.instance.priceSnapshots.record(
+            item.playerId,
+            price: price.current,
+            platform: platform,
+            observedAt: price.updatedAt ?? DateTime.now(),
+          );
+        } catch (_) {
+          // A failed local snapshot must not hide the verified price.
+        }
       } catch (_) {}
+    }
+
+    Map<String, List<PricePoint>> histories = const {};
+    try {
+      histories = await AppDependencies.instance.priceSnapshots.getAllHistories(
+        platform: platform,
+      );
+    } catch (_) {
+      // The chart stays empty rather than showing invented observations.
+    }
+
+    var alertsTriggered = 0;
+    for (final item in savedItems.take(12)) {
+      final price = savedPrices[item.playerId];
+      if (price == null || item.targetPrice == null) continue;
+      try {
+        final hit = await AppDependencies.instance.priceAlerts
+            .evaluateObservedPrice(
+              playerId: item.playerId,
+              playerName: item.playerName,
+              currentPrice: price.current,
+              targetPrice: item.targetPrice,
+            );
+        if (hit) alertsTriggered++;
+      } catch (_) {
+        // Foreground alert evaluation is best-effort; the price stays shown.
+      }
+    }
+    try {
+      savedItems = await watchlist.getAll();
+    } catch (_) {
+      // Keep the items already loaded when the refresh fails.
     }
 
     if (!mounted) return;
@@ -82,27 +132,76 @@ class _MarketScreenState extends State<MarketScreen> {
       feed = liveFeed;
       saved = savedItems;
       cheapest = low;
+      localHistories = histories;
       loading = false;
     });
+    if (alertsTriggered > 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            '${faDigits(alertsTriggered)} هشدار قیمت محلی ثبت شد؛ جزئیات در اعلان‌ها.',
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _editAlert(WatchlistItem item, int currentPrice) async {
+    final choice = await showPriceAlertSheet(
+      context,
+      playerName: item.playerName,
+      currentPrice: currentPrice > 0 ? currentPrice : null,
+      initialTarget: item.targetPrice,
+    );
+    if (choice == null || !mounted) return;
+
+    try {
+      await watchlist.setTargetPrice(
+        item.playerId,
+        choice.remove ? null : choice.targetPrice,
+      );
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('ذخیره هشدار ممکن نشد.')));
+      return;
+    }
+
+    var triggered = false;
+    if (!choice.remove && currentPrice > 0 && choice.targetPrice != null) {
+      try {
+        triggered = await AppDependencies.instance.priceAlerts
+            .evaluateObservedPrice(
+              playerId: item.playerId,
+              playerName: item.playerName,
+              currentPrice: currentPrice,
+              targetPrice: choice.targetPrice,
+            );
+      } catch (_) {
+        // The target is saved; the next load or background check will retry.
+      }
+    }
+
+    await _load();
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          choice.remove
+              ? 'هشدار این کارت حذف شد.'
+              : triggered
+              ? 'هدف ذخیره شد و قیمت فعلی از قبل به آن رسیده؛ هشدار ثبت شد.'
+              : 'هدف ذخیره شد؛ هشدار محلی روی همین دستگاه بررسی می‌شود.',
+        ),
+      ),
+    );
   }
 
   Future<void> _changePlatform(String value) async {
     if (value == platform) return;
     setState(() => platform = value);
     await _load(forceRefresh: true);
-  }
-
-  String _coins(int value) {
-    if (value <= 0) return '—';
-    if (value >= 1000000) {
-      final n = value / 1000000;
-      return '${n.toStringAsFixed(n >= 10 ? 0 : 1)}M';
-    }
-    if (value >= 1000) {
-      final n = value / 1000;
-      return '${n.toStringAsFixed(n >= 100 ? 0 : 1)}K';
-    }
-    return value.toString();
   }
 
   int _int(dynamic value) {
@@ -192,7 +291,7 @@ class _MarketScreenState extends State<MarketScreen> {
               )
             else
               SizedBox(
-                height: 122,
+                height: 140,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: saved.length,
@@ -201,54 +300,98 @@ class _MarketScreenState extends State<MarketScreen> {
                     final item = saved[index];
                     final price = savedPrices[item.playerId];
                     final current = price?.current ?? item.lastPrice ?? 0;
-                    return Container(
-                      width: 190,
-                      padding: const EdgeInsets.all(11),
-                      decoration: BoxDecoration(
-                        color: scheme.surface,
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(
-                          color: item.targetReached
-                              ? scheme.primary
-                              : scheme.outline,
-                        ),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
+                        onTap: () => _editAlert(item, current),
+                        child: Container(
+                          width: 190,
+                          padding: const EdgeInsets.all(11),
+                          decoration: BoxDecoration(
+                            color: scheme.surface,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: item.targetReached
+                                  ? scheme.primary
+                                  : scheme.outline,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Expanded(
-                                child: Text(
-                                  item.playerName,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.w900,
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      item.playerName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w900,
+                                      ),
+                                    ),
                                   ),
+                                  Icon(
+                                    Icons.notifications_none_rounded,
+                                    size: 15,
+                                    color: scheme.onSurfaceVariant,
+                                  ),
+                                ],
+                              ),
+                              const Spacer(),
+                              PriceTicker(
+                                price: current,
+                                changePercent: item.percentChange,
+                                updatedAt:
+                                    price?.updatedAt ?? item.lastCheckedAt,
+                                compact: true,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                item.targetPrice == null
+                                    ? 'بدون هشدار — برای تنظیم ضربه بزن'
+                                    : 'هدف: ${formatCoinsFa(item.targetPrice!)} سکه',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 9.5,
+                                  fontWeight: FontWeight.w700,
+                                  color: item.targetReached
+                                      ? scheme.primary
+                                      : scheme.onSurfaceVariant,
                                 ),
                               ),
-                              if (item.targetReached)
-                                Icon(
-                                  Icons.notifications_active_rounded,
-                                  size: 16,
-                                  color: scheme.primary,
-                                ),
                             ],
                           ),
-                          const Spacer(),
-                          PriceTicker(
-                            price: current,
-                            changePercent: item.percentChange,
-                            updatedAt: price?.updatedAt ?? item.lastCheckedAt,
-                            compact: true,
-                          ),
-                        ],
+                        ),
                       ),
                     );
                   },
                 ),
               ),
+            const SizedBox(height: 22),
+            MarketMoversSection(
+              saved: saved,
+              histories: localHistories,
+              window: moverWindow,
+              loading: loading,
+              onWindowChanged: (value) => setState(() => moverWindow = value),
+              onOpenPlayer: (playerId) =>
+                  AppNavigator.playerById(context, playerId),
+            ),
+            const SizedBox(height: 14),
+            OutlinedButton.icon(
+              onPressed: () async {
+                await AppNavigator.push<void>(
+                  context,
+                  MarketTableScreen(platform: platform),
+                );
+                if (mounted) await _load();
+              },
+              icon: const Icon(Icons.table_rows_rounded, size: 18),
+              label: const Text('جدول فشرده قیمت‌ها · PS و PC'),
+            ),
             const SizedBox(height: 20),
             Row(
               children: [
@@ -351,8 +494,7 @@ class _MarketScreenState extends State<MarketScreen> {
                         const SizedBox(width: 7),
                       ],
                       Text(
-                        '${_coins(_int(item['current'] ?? item['price']))} C',
-                        textDirection: TextDirection.ltr,
+                        '${compactCoinsFa(_int(item['current'] ?? item['price']))} سکه',
                         style: TextStyle(
                           color: scheme.primary,
                           fontWeight: FontWeight.w900,

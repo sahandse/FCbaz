@@ -6,6 +6,7 @@ import 'sbc_tools_screen.dart';
 import 'sbc_value_badge.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/ui/content_status_chips.dart';
+import 'package:fcbaz/src/ui/progress_ring.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class SbcScreen extends StatefulWidget {
@@ -269,6 +270,16 @@ class _SbcCard extends StatelessWidget {
                       ],
                     ),
                   ),
+                  if (value.ratio != null) ...[
+                    const SizedBox(width: 6),
+                    ProgressRing(
+                      value: value.ratio!,
+                      size: 40,
+                      stroke: 4,
+                      label: '${faDigits((value.ratio! * 100).round())}٪',
+                      semanticsLabel: 'نسبت بازگشت نقدی پاداش به هزینه ساخت',
+                    ),
+                  ],
                 ],
               ),
               if (item.expiresAt != null || item.repeatable) ...[
@@ -276,6 +287,7 @@ class _SbcCard extends StatelessWidget {
                 ContentStatusChips(
                   expiresAt: item.expiresAt,
                   repeatable: item.repeatable,
+                  showJalaliDate: true,
                 ),
               ],
               if (item.description.isNotEmpty) ...[
@@ -310,6 +322,17 @@ class _SbcCard extends StatelessWidget {
               ),
               const SizedBox(height: 9),
               SbcValueBadge(assessment: value),
+              const SizedBox(height: 2),
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton.icon(
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const SbcToolsScreen()),
+                  ),
+                  icon: const Icon(Icons.calculate_outlined, size: 17),
+                  label: const Text('ساخت از کلوب من'),
+                ),
+              ),
               if (item.itemScore != null) ...[
                 const SizedBox(height: 9),
                 Row(
@@ -422,6 +445,7 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                   ContentStatusChips(
                     expiresAt: sbc.expiresAt,
                     repeatable: sbc.repeatable,
+                    showJalaliDate: true,
                   ),
                 ],
                 const SizedBox(height: 10),
@@ -555,6 +579,14 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
               subtitle: solveError!,
             ),
           ],
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            onPressed: () => Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (_) => const SbcToolsScreen())),
+            icon: const Icon(Icons.calculate_outlined),
+            label: const Text('بودجه ساخت و لیست خرید از کلوب'),
+          ),
           if (solution != null) ...[
             const SizedBox(height: 14),
             _SolutionCard(solution: solution!, challenge: sbc),

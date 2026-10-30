@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+
+import '../../../src/utils/persian_formatters.dart';
 
 import '../data/player_repository.dart';
 
@@ -135,10 +138,8 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
     }
   }
 
-  int? _int(TextEditingController controller) {
-    final text = controller.text.trim();
-    return text.isEmpty ? null : int.tryParse(text);
-  }
+  int? _int(TextEditingController controller) =>
+      parsePersianInt(controller.text);
 
   PlayerFilter _result() {
     return PlayerFilter(
@@ -215,12 +216,12 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
               segments: const [
                 ButtonSegment(
                   value: 'console',
-                  label: Text('Console'),
+                  label: Text('کنسول'),
                   icon: Icon(Icons.sports_esports_rounded),
                 ),
                 ButtonSegment(
                   value: 'pc',
-                  label: Text('PC'),
+                  label: Text('رایانه'),
                   icon: Icon(Icons.computer_rounded),
                 ),
               ],
@@ -236,9 +237,14 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
                   child: TextField(
                     controller: minPriceController,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[0-9۰-۹٠-٩,٬\s]'),
+                      ),
+                    ],
                     decoration: const InputDecoration(
                       labelText: 'حداقل قیمت',
-                      suffixText: 'Coins',
+                      suffixText: 'سکه',
                     ),
                   ),
                 ),
@@ -247,9 +253,14 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
                   child: TextField(
                     controller: maxPriceController,
                     keyboardType: TextInputType.number,
+                    inputFormatters: [
+                      FilteringTextInputFormatter.allow(
+                        RegExp(r'[0-9۰-۹٠-٩,٬\s]'),
+                      ),
+                    ],
                     decoration: const InputDecoration(
                       labelText: 'حداکثر قیمت',
-                      suffixText: 'Coins',
+                      suffixText: 'سکه',
                     ),
                   ),
                 ),
@@ -277,10 +288,8 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
             ),
             const SizedBox(height: 12),
             Text(
-              'ریتینگ ' +
-                  rating.start.round().toString() +
-                  ' تا ' +
-                  rating.end.round().toString(),
+              'ریتینگ ${faDigits(rating.start.round())} تا '
+              '${faDigits(rating.end.round())}',
               style: const TextStyle(fontWeight: FontWeight.w900),
             ),
             RangeSlider(
@@ -289,8 +298,8 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
               divisions: 59,
               values: rating,
               labels: RangeLabels(
-                rating.start.round().toString(),
-                rating.end.round().toString(),
+                faDigits(rating.start.round()),
+                faDigits(rating.end.round()),
               ),
               onChanged: (value) => setState(() => rating = value),
             ),
@@ -298,42 +307,42 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
             const _SectionTitle('کارت و لیگ'),
             const SizedBox(height: 8),
             _SuggestField(
-              label: 'Version',
+              label: 'نسخه کارت',
               initialValue: version,
               options: widget.facets.versions,
               onChanged: (value) => version = value,
             ),
             const SizedBox(height: 10),
             _SuggestField(
-              label: 'Rarity',
+              label: 'کمیابی (Rarity)',
               initialValue: rarity,
               options: widget.facets.rarities,
               onChanged: (value) => rarity = value,
             ),
             const SizedBox(height: 10),
             _SuggestField(
-              label: 'Card Type',
+              label: 'نوع کارت',
               initialValue: cardType,
               options: widget.facets.cardTypes,
               onChanged: (value) => cardType = value,
             ),
             const SizedBox(height: 10),
             _SuggestField(
-              label: 'League',
+              label: 'لیگ',
               initialValue: league,
               options: widget.facets.leagues,
               onChanged: (value) => league = value,
             ),
             const SizedBox(height: 10),
             _SuggestField(
-              label: 'Club',
+              label: 'باشگاه',
               initialValue: club,
               options: widget.facets.clubs,
               onChanged: (value) => club = value,
             ),
             const SizedBox(height: 10),
             _SuggestField(
-              label: 'Nation',
+              label: 'ملیت',
               initialValue: nation,
               options: widget.facets.nations,
               onChanged: (value) => nation = value,
@@ -356,7 +365,7 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
             ),
             const SizedBox(height: 10),
             _SuggestField(
-              label: 'Role',
+              label: 'نقش (Role)',
               initialValue: role,
               options: widget.facets.roles,
               onChanged: (value) => role = value,
@@ -370,9 +379,9 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
                     decoration: const InputDecoration(labelText: 'حداقل SM'),
                     items: const [
                       DropdownMenuItem<int?>(value: null, child: Text('همه')),
-                      DropdownMenuItem<int?>(value: 3, child: Text('3★+')),
-                      DropdownMenuItem<int?>(value: 4, child: Text('4★+')),
-                      DropdownMenuItem<int?>(value: 5, child: Text('5★')),
+                      DropdownMenuItem<int?>(value: 3, child: Text('۳★+')),
+                      DropdownMenuItem<int?>(value: 4, child: Text('۴★+')),
+                      DropdownMenuItem<int?>(value: 5, child: Text('۵★')),
                     ],
                     onChanged: (value) => setState(() => minSkillMoves = value),
                   ),
@@ -384,9 +393,9 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
                     decoration: const InputDecoration(labelText: 'حداقل WF'),
                     items: const [
                       DropdownMenuItem<int?>(value: null, child: Text('همه')),
-                      DropdownMenuItem<int?>(value: 3, child: Text('3★+')),
-                      DropdownMenuItem<int?>(value: 4, child: Text('4★+')),
-                      DropdownMenuItem<int?>(value: 5, child: Text('5★')),
+                      DropdownMenuItem<int?>(value: 3, child: Text('۳★+')),
+                      DropdownMenuItem<int?>(value: 4, child: Text('۴★+')),
+                      DropdownMenuItem<int?>(value: 5, child: Text('۵★')),
                     ],
                     onChanged: (value) => setState(() => minWeakFoot = value),
                   ),
@@ -394,40 +403,40 @@ class _AdvancedPlayerFilterSheetState extends State<AdvancedPlayerFilterSheet> {
               ],
             ),
             const SizedBox(height: 18),
-            const _SectionTitle('Advanced Stat Range'),
+            const _SectionTitle('محدوده آمارها'),
             const SizedBox(height: 8),
             _StatRangeRow(
-              label: 'PAC',
+              label: 'سرعت',
               minController: statControllers['minPace']!,
               maxController: statControllers['maxPace']!,
             ),
             const SizedBox(height: 8),
             _StatRangeRow(
-              label: 'SHO',
+              label: 'شوت',
               minController: statControllers['minShooting']!,
               maxController: statControllers['maxShooting']!,
             ),
             const SizedBox(height: 8),
             _StatRangeRow(
-              label: 'PAS',
+              label: 'پاس',
               minController: statControllers['minPassing']!,
               maxController: statControllers['maxPassing']!,
             ),
             const SizedBox(height: 8),
             _StatRangeRow(
-              label: 'DRI',
+              label: 'دریبل',
               minController: statControllers['minDribbling']!,
               maxController: statControllers['maxDribbling']!,
             ),
             const SizedBox(height: 8),
             _StatRangeRow(
-              label: 'DEF',
+              label: 'دفاع',
               minController: statControllers['minDefending']!,
               maxController: statControllers['maxDefending']!,
             ),
             const SizedBox(height: 8),
             _StatRangeRow(
-              label: 'PHY',
+              label: 'فیزیک',
               minController: statControllers['minPhysical']!,
               maxController: statControllers['maxPhysical']!,
             ),
@@ -488,7 +497,7 @@ class _StatRangeRow extends StatelessWidget {
     return Row(
       children: [
         SizedBox(
-          width: 42,
+          width: 50,
           child: Text(
             label,
             style: const TextStyle(fontWeight: FontWeight.w900),
@@ -498,7 +507,10 @@ class _StatRangeRow extends StatelessWidget {
           child: TextField(
             controller: minController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Min'),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9۰-۹٠-٩,٬\s]')),
+            ],
+            decoration: const InputDecoration(labelText: 'حداقل'),
           ),
         ),
         const SizedBox(width: 8),
@@ -506,7 +518,10 @@ class _StatRangeRow extends StatelessWidget {
           child: TextField(
             controller: maxController,
             keyboardType: TextInputType.number,
-            decoration: const InputDecoration(labelText: 'Max'),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'[0-9۰-۹٠-٩,٬\s]')),
+            ],
+            decoration: const InputDecoration(labelText: 'حداکثر'),
           ),
         ),
       ],

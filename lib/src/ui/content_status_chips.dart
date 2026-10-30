@@ -32,6 +32,7 @@ class ContentStatusChips extends StatelessWidget {
     this.repeatable = false,
     this.compact = true,
     this.alignment = WrapAlignment.start,
+    this.showJalaliDate = false,
     super.key,
   });
 
@@ -41,13 +42,19 @@ class ContentStatusChips extends StatelessWidget {
   final bool repeatable;
   final bool compact;
   final WrapAlignment alignment;
+  final bool showJalaliDate;
 
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
     final chips = <Widget>[
       if (expiresAt != null)
-        DeadlineChip(expiresAt: expiresAt, now: now, compact: compact),
+        DeadlineChip(
+          expiresAt: expiresAt,
+          now: now,
+          compact: compact,
+          showJalaliDate: showJalaliDate,
+        ),
       if (repeatable)
         _StatusPill(
           icon: Icons.repeat_rounded,

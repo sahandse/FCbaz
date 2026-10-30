@@ -153,4 +153,22 @@ void main() {
     expect(await store.getHistory('p1'), isEmpty);
     expect(await store.getHistory('p1', platform: 'pc'), hasLength(1));
   });
+
+  test('returns every stored stream for one platform only', () async {
+    final store = PriceSnapshotStore(now: () => now);
+
+    await store.record('p1', price: 5000, observedAt: now);
+    await store.record('p2', price: 9000, observedAt: now);
+    await store.record('p1', price: 7000, platform: 'pc', observedAt: now);
+    await store.record('weird id/with space', price: 3000, observedAt: now);
+
+    final console = await store.getAllHistories();
+    expect(console.keys.toSet(), {'p1', 'p2', 'weird id/with space'});
+    expect(console['p1']!.single.price, 5000);
+    expect(console['weird id/with space']!.single.price, 3000);
+
+    final pc = await store.getAllHistories(platform: 'pc');
+    expect(pc.keys.toSet(), {'p1'});
+    expect(pc['p1']!.single.price, 7000);
+  });
 }

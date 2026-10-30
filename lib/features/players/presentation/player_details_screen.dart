@@ -1,19 +1,27 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../club/data/my_club_repository.dart';
 import '../../club/presentation/add_club_player_dialog.dart';
 import '../../evolutions/domain/evolution.dart';
+import '../../market/data/watchlist_repository.dart';
+import '../../market/domain/purchase_value.dart';
 import '../../market/presentation/player_market_panel.dart';
 import '../../sbc/domain/sbc.dart';
+import '../../../src/share/share_card.dart';
+import '../../../src/share/share_service.dart';
 import '../../../src/theme/fcbaz_theme.dart';
 import '../../../src/ui/segmented_tabs.dart';
 import '../../../src/ui/section_header.dart';
 import '../../../src/ui/source_badge.dart';
 import '../../../src/utils/persian_formatters.dart';
+import '../data/player_repository.dart';
 import '../data/player_review_repository.dart';
 import '../domain/chemistry_style_advisor.dart';
 import '../domain/player.dart';
+import '../domain/player_value_analysis.dart';
 import 'card/player_card_theme.dart';
 import 'player_item_visual.dart';
 import 'widgets/player_usage_panel.dart';
@@ -43,6 +51,7 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
   final historyRepository = AppDependencies.instance.history;
   final evolutionRepository = AppDependencies.instance.evolutions;
   final sbcRepository = AppDependencies.instance.sbc;
+  final watchlistRepository = AppDependencies.instance.watchlist;
   final chemistryAdvisor = const ChemistryStyleAdvisor();
 
   late final TabController tabController;
@@ -51,14 +60,19 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
   List<Player> versions = const [];
   List<Evolution> evolutions = const [];
   List<SbcChallenge> sbcChallenges = const [];
+  CheaperAlternative? cheaperAlternative;
   bool loading = true;
   bool loadingUsage = true;
+  bool loadingAlternative = false;
   bool favorite = false;
+  bool watchlisted = false;
   bool inClub = false;
   bool savingClub = false;
+  bool sharing = false;
   String? detailError;
   String? evolutionsError;
   String? sbcError;
+  String? alternativeError;
 
   @override
   void initState() {
@@ -67,6 +81,7 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
     _load();
     _loadReview();
     _loadFavorite();
+    _loadWatchlist();
     _loadClubStatus();
     _loadUsage();
   }
@@ -98,7 +113,65 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
     } catch (e) {
       if (mounted) setState(() => detailError = e.toString());
     } finally {
-      if (mounted) setState(() => loading = false);
+      if (mounted) {
+        setState(() => loading = false);
+        unawaited(_loadAlternative());
+      }
+    }
+  }
+
+  Future<void> _loadAlternative() async {
+    final target = player;
+    final platform = target.pricePs > 0
+        ? PlayerMarketPlatform.console
+        : PlayerMarketPlatform.pc;
+    final targetPrice = platform == PlayerMarketPlatform.pc
+        ? target.pricePc
+        : target.pricePs;
+    if (targetPrice <= 0 || target.rating <= 0) {
+      if (mounted) {
+        setState(() {
+          cheaperAlternative = null;
+          alternativeError = null;
+          loadingAlternative = false;
+        });
+      }
+      return;
+    }
+
+    if (mounted) {
+      setState(() {
+        loadingAlternative = true;
+        alternativeError = null;
+      });
+    }
+    try {
+      final result = await repository.advanced(
+        PlayerFilter(
+          position: target.position,
+          minRating: (target.rating - 2).clamp(40, 99),
+          maxRating: target.rating,
+          platform: platform == PlayerMarketPlatform.pc ? 'pc' : 'console',
+          sort: PlayerSort.priceAsc,
+        ),
+      );
+      final found = const CheaperAlternativeFinder().find(
+        target,
+        result.players,
+        platform: platform,
+      );
+      if (!mounted) return;
+      setState(() {
+        cheaperAlternative = found;
+        loadingAlternative = false;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() {
+        cheaperAlternative = null;
+        alternativeError = e.toString();
+        loadingAlternative = false;
+      });
     }
   }
 
@@ -110,6 +183,15 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
   Future<void> _loadFavorite() async {
     final value = await historyRepository.isFavorite(widget.player.id);
     if (mounted) setState(() => favorite = value);
+  }
+
+  Future<void> _loadWatchlist() async {
+    try {
+      final value = await watchlistRepository.contains(widget.player.id);
+      if (mounted) setState(() => watchlisted = value);
+    } catch (_) {
+      // The watchlist is a local convenience and must not block the screen.
+    }
   }
 
   Future<void> _loadClubStatus() async {
@@ -156,15 +238,97 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
       _load(),
       _loadReview(),
       _loadFavorite(),
+      _loadWatchlist(),
       _loadClubStatus(),
       _loadUsage(),
     ]);
   }
 
   Future<void> _toggleFavorite() async {
+    unawaited(HapticFeedback.selectionClick());
     await historyRepository.toggleFavorite(player);
     if (!mounted) return;
     setState(() => favorite = !favorite);
+  }
+
+  Future<void> _toggleWatchlist() async {
+    unawaited(HapticFeedback.selectionClick());
+    final platform = player.pricePs > 0 ? 'console' : 'pc';
+    final currentPrice = platform == 'pc' ? player.pricePc : player.pricePs;
+    final wasWatched = watchlisted;
+    try {
+      await watchlistRepository.toggle(
+        WatchlistItem(
+          playerId: player.id,
+          playerName: player.name,
+          platform: platform,
+        ),
+      );
+      if (!wasWatched && currentPrice > 0) {
+        await watchlistRepository.recordPrice(
+          player.id,
+          price: currentPrice,
+          platform: platform,
+        );
+      }
+    } catch (_) {
+      return;
+    }
+    if (!mounted) return;
+    setState(() => watchlisted = !wasWatched);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          watchlisted
+              ? 'به دیده‌بان بازار اضافه شد؛ هشدار قیمت را از بخش بازار تنظیم کن.'
+              : 'از دیده‌بان بازار حذف شد.',
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  Future<void> _sharePlayer() async {
+    if (sharing) return;
+    setState(() => sharing = true);
+    try {
+      final stats = _faceStats.where((stat) => stat.$2 > 0).toList();
+      final subtitle = [
+        if (player.rating > 0) 'ریتینگ ${faDigits(player.rating)}',
+        if (player.position.trim().isNotEmpty) player.position,
+        if (player.version.trim().isNotEmpty) player.version,
+      ].join(' • ');
+      final data = ShareCardData(
+        eyebrow: 'PLAYER ITEM',
+        title: player.name,
+        subtitle: subtitle.isEmpty ? null : subtitle,
+        metrics: [
+          for (final stat in stats)
+            ShareCardMetric(label: stat.$1, value: faDigits(stat.$2)),
+        ],
+        footer: 'FCBaz • دستیار فارسی FC 27',
+      );
+      final bytes = await const ShareCardRenderer().renderPng(data);
+      final outcome = await ShareService().shareImage(
+        pngBytes: bytes,
+        fileName: 'fcbaz-${player.id}.png',
+        fallbackText: shareCardToText(data),
+      );
+      if (!mounted) return;
+      final message = outcome == ShareOutcome.copiedToClipboard
+          ? 'اشتراک‌گذاری تصویری در دسترس نبود؛ متن کارت در کلیپ‌بورد کپی شد.'
+          : shareOutcomeMessage(outcome);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ساخت کارت اشتراک‌گذاری ممکن نشد.')),
+      );
+    } finally {
+      if (mounted) setState(() => sharing = false);
+    }
   }
 
   Future<void> _copyPlayer() async {
@@ -369,6 +533,29 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
                     : 'افزودن به علاقه‌مندی‌ها',
               ),
               IconButton(
+                onPressed: _toggleWatchlist,
+                icon: Icon(
+                  watchlisted
+                      ? Icons.visibility_rounded
+                      : Icons.visibility_outlined,
+                ),
+                color: watchlisted ? palette.primary : null,
+                tooltip: watchlisted
+                    ? 'حذف از دیده‌بان بازار'
+                    : 'افزودن به دیده‌بان بازار',
+              ),
+              IconButton(
+                onPressed: sharing ? null : _sharePlayer,
+                icon: sharing
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.share_rounded),
+                tooltip: 'اشتراک‌گذاری تصویری کارت',
+              ),
+              IconButton(
                 onPressed: _copyPlayer,
                 icon: const Icon(Icons.copy_rounded),
                 tooltip: 'کپی اطلاعات کارت',
@@ -444,6 +631,27 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
                     style: TextStyle(fontSize: 11, color: palette.textMuted),
                   ),
                 ),
+              if (player.pricePs > 0 || player.pricePc > 0) ...[
+                const SizedBox(height: FcbazSpace.xl),
+                const SectionHeader(kicker: 'VALUE', title: 'جایگزین ارزان‌تر'),
+                const SizedBox(height: 10),
+                _CheaperAlternativeCard(
+                  alternative: cheaperAlternative,
+                  loading: loadingAlternative,
+                  error: alternativeError,
+                  onRetry: _loadAlternative,
+                  onOpen: _openVersion,
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  'فقط کارت هم‌پست با حداکثر ۲ ریتینگ کمتر و قیمت واقعی پایین‌تر از فهرست موجود؛ پیشنهاد ساختگی ساخته نمی‌شود.',
+                  style: TextStyle(
+                    fontSize: 10.5,
+                    height: 1.6,
+                    color: palette.textMuted,
+                  ),
+                ),
+              ],
               const SizedBox(height: FcbazSpace.xl),
               const SectionHeader(
                 kicker: 'FACE STATS',

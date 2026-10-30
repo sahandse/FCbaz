@@ -1,7 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../../src/theme/fcbaz_theme.dart';
 import '../../../src/utils/persian_formatters.dart';
+import '../../market/data/watchlist_repository.dart';
 import '../domain/player.dart';
 import 'player_item_visual.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
@@ -28,18 +32,22 @@ class PlayerMarketTile extends StatefulWidget {
 
 class _PlayerMarketTileState extends State<PlayerMarketTile> {
   final history = AppDependencies.instance.history;
+  final watchlist = AppDependencies.instance.watchlist;
   bool favorite = false;
+  bool watchlisted = false;
 
   Player get player => widget.player;
 
-  int get price => widget.pricePlatform.toLowerCase() == 'pc'
-      ? player.pricePc
-      : player.pricePs;
+  String get platform =>
+      widget.pricePlatform.toLowerCase() == 'pc' ? 'pc' : 'console';
+
+  int get price => platform == 'pc' ? player.pricePc : player.pricePs;
 
   @override
   void initState() {
     super.initState();
     _loadFavorite();
+    _loadWatchlist();
   }
 
   Future<void> _loadFavorite() async {
@@ -53,6 +61,7 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
   }
 
   Future<void> _toggleFavorite() async {
+    unawaited(HapticFeedback.selectionClick());
     try {
       await history.toggleFavorite(player);
     } catch (_) {
@@ -60,6 +69,56 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
     }
     if (!mounted) return;
     setState(() => favorite = !favorite);
+  }
+
+  Future<void> _loadWatchlist() async {
+    try {
+      final value = await watchlist.contains(player.id);
+      if (!mounted) return;
+      setState(() => watchlisted = value);
+    } catch (_) {
+      // The watchlist is local; a read failure must not block the tile.
+    }
+  }
+
+  Future<void> _toggleWatchlist() async {
+    unawaited(HapticFeedback.selectionClick());
+    final wasWatched = watchlisted;
+    try {
+      await watchlist.toggle(
+        WatchlistItem(
+          playerId: player.id,
+          playerName: player.name,
+          platform: platform,
+        ),
+      );
+      if (!wasWatched && price > 0) {
+        await watchlist.recordPrice(
+          player.id,
+          price: price,
+          platform: platform,
+        );
+      }
+    } catch (_) {
+      return;
+    }
+    if (!mounted) return;
+    setState(() => watchlisted = !wasWatched);
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+      SnackBar(
+        content: Text(
+          watchlisted
+              ? 'به دیده‌بان بازار اضافه شد؛ هشدار قیمت را از بخش بازار تنظیم کن.'
+              : 'از دیده‌بان بازار حذف شد.',
+        ),
+        duration: const Duration(seconds: 2),
+      ),
+    );
+  }
+
+  void _openCompare() {
+    unawaited(HapticFeedback.selectionClick());
+    AppNavigator.compare(context, player);
   }
 
   void _openDetails() {
@@ -128,7 +187,7 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
               final clubSize = (w * .06).clamp(8.5, 12.0).toDouble();
               final captionSize = (w * .058).clamp(8.5, 10.5).toDouble();
               final priceSize = (w * .12).clamp(16.0, 26.0).toDouble();
-              final starSize = (w * .19).clamp(26.0, 36.0).toDouble();
+              final actionSize = (w * .17).clamp(24.0, 32.0).toDouble();
 
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -147,11 +206,44 @@ class _PlayerMarketTileState extends State<PlayerMarketTile> {
                           Positioned.fill(child: _tileVisual()),
                           Positioned(
                             top: 0,
+                            left: 0,
                             right: 0,
-                            child: _FavoriteStar(
-                              size: starSize,
-                              active: favorite,
-                              onTap: _toggleFavorite,
+                            child: Row(
+                              textDirection: TextDirection.ltr,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                _TileAction(
+                                  size: actionSize,
+                                  icon: Icons.compare_arrows_rounded,
+                                  semanticLabel: 'مقایسه ${player.name}',
+                                  onTap: _openCompare,
+                                ),
+                                SizedBox(width: actionSize * .22),
+                                _TileAction(
+                                  size: actionSize,
+                                  icon: watchlisted
+                                      ? Icons.visibility_rounded
+                                      : Icons.visibility_outlined,
+                                  active: watchlisted,
+                                  activeColor: palette.primary,
+                                  semanticLabel: watchlisted
+                                      ? 'حذف از دیده‌بان بازار'
+                                      : 'افزودن به دیده‌بان بازار',
+                                  onTap: _toggleWatchlist,
+                                ),
+                                SizedBox(width: actionSize * .22),
+                                _TileAction(
+                                  size: actionSize,
+                                  icon: favorite
+                                      ? Icons.star_rounded
+                                      : Icons.star_border_rounded,
+                                  active: favorite,
+                                  semanticLabel: favorite
+                                      ? 'حذف از علاقه‌مندی‌ها'
+                                      : 'افزودن به علاقه‌مندی‌ها',
+                                  onTap: _toggleFavorite,
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -367,23 +459,29 @@ class _Stat extends StatelessWidget {
   }
 }
 
-class _FavoriteStar extends StatelessWidget {
-  const _FavoriteStar({
+class _TileAction extends StatelessWidget {
+  const _TileAction({
     required this.size,
-    required this.active,
+    required this.icon,
+    required this.semanticLabel,
     required this.onTap,
+    this.active = false,
+    this.activeColor,
   });
 
   final double size;
-  final bool active;
+  final IconData icon;
+  final String semanticLabel;
   final VoidCallback onTap;
+  final bool active;
+  final Color? activeColor;
 
   @override
   Widget build(BuildContext context) {
     final palette = context.palette;
     return Semantics(
       button: true,
-      label: active ? 'حذف از علاقه‌مندی‌ها' : 'افزودن به علاقه‌مندی‌ها',
+      label: semanticLabel,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -398,10 +496,10 @@ class _FavoriteStar extends StatelessWidget {
               border: Border.all(color: Colors.white.withValues(alpha: .16)),
             ),
             child: Icon(
-              active ? Icons.star_rounded : Icons.star_border_rounded,
+              icon,
               size: size * .6,
               color: active
-                  ? palette.warning
+                  ? (activeColor ?? palette.warning)
                   : Colors.white.withValues(alpha: .92),
             ),
           ),

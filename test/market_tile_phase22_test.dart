@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'package:fcbaz/features/market/data/watchlist_repository.dart';
 import 'package:fcbaz/features/players/domain/player.dart';
 import 'package:fcbaz/features/players/presentation/player_market_tile.dart';
 import 'package:fcbaz/src/theme/fcbaz_theme.dart';
@@ -108,6 +110,50 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.byIcon(Icons.star_rounded), findsOneWidget);
+  });
+
+  testWidgets('watch action stores the card for the selected platform', (
+    tester,
+  ) async {
+    final calls = <MethodCall>[];
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        calls.add(call);
+        return null;
+      },
+    );
+    addTearDown(
+      () => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+        SystemChannels.platform,
+        null,
+      ),
+    );
+
+    await _pumpTile(tester, _player(), platform: 'pc');
+    expect(find.byIcon(Icons.visibility_outlined), findsOneWidget);
+    expect(find.byIcon(Icons.compare_arrows_rounded), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.visibility_outlined));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.byIcon(Icons.visibility_rounded), findsOneWidget);
+    final items = await WatchlistRepository().getAll();
+    expect(items.single.playerId, '1');
+    expect(items.single.platform, 'pc');
+    expect(items.single.lastPrice, 904000);
+    expect(
+      calls.any(
+        (call) =>
+            call.method == 'HapticFeedback.vibrate' &&
+            call.arguments.toString().contains('selectionClick'),
+      ),
+      isTrue,
+    );
+
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
   });
 
   testWidgets('narrow tile does not overflow', (tester) async {

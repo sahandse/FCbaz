@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 
+import '../../../club/data/my_club_repository.dart';
 import '../../../evolutions/domain/evolution.dart';
 import '../../../evolutions/domain/evolution_eligibility_engine.dart';
+import '../../../evolutions/domain/evolution_projection.dart';
 import '../../../sbc/domain/sbc.dart';
 import '../../domain/player.dart';
 import '../../domain/player_usage_service.dart';
 import 'package:fcbaz/src/theme/fcbaz_theme.dart';
+import 'package:fcbaz/src/ui/deadline_chip.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class PlayerUsagePanel extends StatelessWidget {
@@ -32,6 +35,7 @@ class PlayerUsagePanel extends StatelessWidget {
   Widget build(BuildContext context) {
     const service = PlayerUsageService();
     final palette = context.palette;
+    final clubItem = MyClubItem.fromPlayer(player, acquisitionPrice: 0);
 
     final evoMatches = [
       for (final evolution in evolutions)
@@ -91,6 +95,8 @@ class PlayerUsagePanel extends StatelessWidget {
                 detail: match.reasons.isEmpty
                     ? 'شرط قابل‌تشخیصی برای این Evolution ثبت نشده است.'
                     : faDigits(match.reasons.first),
+                extraDetails: _evolutionDetails(clubItem, match.evolution),
+                expiresAt: match.evolution.expiresAt,
               ),
           ],
         ),
@@ -140,9 +146,63 @@ class PlayerUsagePanel extends StatelessWidget {
             color: palette.textMuted,
           ),
         ),
+        const SizedBox(height: 4),
+        Text(
+          'تغییر آمار پس از Evolution فقط از داده ساختاریافتهٔ منبع محاسبه می‌شود؛ اگر منبع آمار نداشته باشد، خطی نمایش داده نمی‌شود.',
+          style: TextStyle(
+            fontSize: 10.5,
+            height: 1.6,
+            color: palette.textMuted,
+          ),
+        ),
       ],
     );
   }
+
+  List<String> _evolutionDetails(MyClubItem item, Evolution evolution) {
+    final lines = <String>[];
+    final projection = const EvolutionProjectionEngine().project(
+      item,
+      evolution,
+    );
+    if (projection != null && projection.hasChanges) {
+      final parts = <String>[];
+      for (final entry in projection.changes.entries) {
+        if (entry.value == 0) continue;
+        final label = _statLabel(entry.key);
+        if (label == null) continue;
+        final sign = entry.value > 0 ? '+' : '−';
+        parts.add('$label $sign${faDigits(entry.value.abs())}');
+      }
+      if (parts.isNotEmpty) {
+        lines.add('تغییر آمار طبق داده منبع: ${parts.join(' · ')}');
+      }
+    }
+    if (evolution.cost > 0) {
+      lines.add('هزینه: ${formatCoinsFa(evolution.cost)} سکه');
+    }
+    final stepTitles = [
+      for (final step in evolution.steps)
+        if (step.title.trim().isNotEmpty) step.title.trim(),
+    ];
+    if (stepTitles.isNotEmpty) {
+      lines.add('مسیر مراحل: ${stepTitles.join(' ← ')}');
+    }
+    return lines;
+  }
+
+  String? _statLabel(String key) => switch (key) {
+    'rating' => 'ریتینگ',
+    'pace' => 'سرعت',
+    'shooting' => 'شوت',
+    'passing' => 'پاس',
+    'dribbling' => 'دریبل',
+    'defending' => 'دفاع',
+    'physical' => 'فیزیک',
+    'skill_moves' => 'SM',
+    'weak_foot' => 'WF',
+    _ => null,
+  };
 
   int _evoRank(EvoEligibilityStatus status) => switch (status) {
     EvoEligibilityStatus.eligible => 0,
@@ -262,12 +322,16 @@ class _UsageRow extends StatelessWidget {
     required this.status,
     required this.statusColor,
     required this.detail,
+    this.extraDetails = const [],
+    this.expiresAt,
   });
 
   final String title;
   final String status;
   final Color statusColor;
   final String detail;
+  final List<String> extraDetails;
+  final DateTime? expiresAt;
 
   @override
   Widget build(BuildContext context) {
@@ -299,6 +363,31 @@ class _UsageRow extends StatelessWidget {
                     color: palette.textMuted,
                   ),
                 ),
+                for (final line in extraDetails)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(
+                      line,
+                      style: TextStyle(
+                        fontSize: 10.5,
+                        height: 1.5,
+                        fontWeight: FontWeight.w700,
+                        color: palette.text,
+                      ),
+                    ),
+                  ),
+                if (expiresAt != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 4),
+                    child: Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: DeadlineChip(
+                        expiresAt: expiresAt,
+                        compact: true,
+                        showJalaliDate: true,
+                      ),
+                    ),
+                  ),
               ],
             ),
           ),

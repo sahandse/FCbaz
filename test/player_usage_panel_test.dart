@@ -3,6 +3,7 @@ import 'package:fcbaz/features/players/domain/player.dart';
 import 'package:fcbaz/features/players/presentation/widgets/player_usage_panel.dart';
 import 'package:fcbaz/features/sbc/domain/sbc.dart';
 import 'package:fcbaz/src/theme/fcbaz_theme.dart';
+import 'package:fcbaz/src/ui/deadline_chip.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -114,6 +115,79 @@ void main() {
       find.text('ریتینگ ۸۰ کمتر از حداقل ۹۰ این SBC است.'),
       findsOneWidget,
     );
+  });
+
+  testWidgets('expands evolution rows with source-backed projection and path', (
+    tester,
+  ) async {
+    final projectionEvo = Evolution.fromJson({
+      'id': 'evo-projected',
+      'title': 'Projected Evo',
+      'requirements_raw': [
+        {'type': 'overall', 'max': 84},
+      ],
+      'upgrades_raw': [
+        {'stat': 'pace', 'delta': 3},
+        {'stat': 'shooting', 'delta': 2},
+        {'stat': 'rating', 'delta': 1},
+      ],
+      'cost': 25000,
+      'expires_at': '2030-01-01T12:00:00Z',
+      'steps': [
+        {'title': 'Stage A'},
+        {'title': 'Stage B'},
+      ],
+    });
+
+    await tester.pumpWidget(
+      host(
+        PlayerUsagePanel(
+          player: player,
+          loading: false,
+          evolutions: [projectionEvo],
+          sbcChallenges: const [],
+          evolutionsError: null,
+          sbcError: null,
+          onRetry: () {},
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Evolutionها'));
+    await tester.pumpAndSettle();
+
+    expect(
+      find.text('تغییر آمار طبق داده منبع: ریتینگ +۱ · سرعت +۳ · شوت +۲'),
+      findsOneWidget,
+    );
+    expect(find.text('هزینه: ۲۵,۰۰۰ سکه'), findsOneWidget);
+    expect(find.text('مسیر مراحل: Stage A ← Stage B'), findsOneWidget);
+    expect(find.byType(DeadlineChip), findsOneWidget);
+    expect(find.textContaining('روز مانده'), findsOneWidget);
+  });
+
+  testWidgets('keeps evolution rows honest without structured upgrades', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      host(
+        PlayerUsagePanel(
+          player: player,
+          loading: false,
+          evolutions: [eligibleEvo],
+          sbcChallenges: const [],
+          evolutionsError: null,
+          sbcError: null,
+          onRetry: () {},
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('Evolutionها'));
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('تغییر آمار طبق داده منبع'), findsNothing);
+    expect(find.byType(DeadlineChip), findsNothing);
   });
 
   testWidgets('renders loading and empty states truthfully', (tester) async {

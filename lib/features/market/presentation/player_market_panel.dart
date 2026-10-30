@@ -4,6 +4,7 @@ import '../data/market_repository.dart';
 import '../data/price_snapshot_store.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
+import 'price_alert_sheet.dart';
 import 'price_history_chart.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/ui/price_ticker.dart';
@@ -42,6 +43,7 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
   DateTime? localLastObservedAt;
   bool loading = true;
   bool saved = false;
+  int? targetPrice;
   String? error;
   String range = '7d';
 
@@ -71,6 +73,17 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
       }
 
       final isSaved = await watchlist.contains(widget.playerId);
+      int? storedTarget;
+      try {
+        for (final item in await watchlist.getAll()) {
+          if (item.playerId == widget.playerId) {
+            storedTarget = item.targetPrice;
+            break;
+          }
+        }
+      } catch (_) {
+        // A missing local watchlist entry simply means no saved target.
+      }
       List<PricePoint> realHistory = const [];
       try {
         realHistory = await market.getPriceHistory(
@@ -94,6 +107,7 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
         localSampleCount = observed.length;
         localLastObservedAt = observed.isEmpty ? null : observed.last.time;
         saved = isSaved;
+        targetPrice = storedTarget;
       });
     } catch (e) {
       if (!mounted) return;
@@ -118,59 +132,43 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
     return points.where((p) => !p.time.isBefore(cutoff)).toList();
   }
 
-  String _coins(int value) {
-    if (value >= 1000000) {
-      final v = value / 1000000;
-      return '${v.toStringAsFixed(v >= 10 ? 0 : 1)}M';
-    }
-    if (value >= 1000) {
-      final v = value / 1000;
-      return '${v.toStringAsFixed(v >= 100 ? 0 : 1)}K';
-    }
-    return value.toString();
-  }
-
   Future<void> _toggleWatchlist() async {
     await watchlist.toggle(
       WatchlistItem(playerId: widget.playerId, playerName: widget.playerName),
     );
 
     if (!mounted) return;
-    setState(() => saved = !saved);
+    setState(() {
+      saved = !saved;
+      if (!saved) targetPrice = null;
+    });
+  }
+
+  void _showMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _setAlert() async {
-    final controller = TextEditingController();
-
-    final target = await showDialog<int>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('هشدار قیمت'),
-        content: TextField(
-          controller: controller,
-          keyboardType: TextInputType.number,
-          decoration: const InputDecoration(
-            labelText: 'قیمت هدف',
-            suffixText: 'Coins',
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text('انصراف'),
-          ),
-          FilledButton(
-            onPressed: () =>
-                Navigator.pop(context, int.tryParse(controller.text.trim())),
-            child: const Text('ذخیره'),
-          ),
-        ],
-      ),
+    final choice = await showPriceAlertSheet(
+      context,
+      playerName: widget.playerName,
+      currentPrice: price?.current,
+      initialTarget: targetPrice,
     );
+    if (choice == null || !mounted) return;
 
-    controller.dispose();
-    if (target == null) return;
+    if (choice.remove) {
+      await watchlist.setTargetPrice(widget.playerId, null);
+      if (!mounted) return;
+      setState(() => targetPrice = null);
+      _showMessage('هشدار این کارت حذف شد.');
+      return;
+    }
 
+    final target = choice.targetPrice!;
     if (!saved) {
       await watchlist.toggle(
         WatchlistItem(
@@ -179,12 +177,36 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
           targetPrice: target,
         ),
       );
-      saved = true;
     } else {
       await watchlist.setTargetPrice(widget.playerId, target);
     }
 
-    if (mounted) setState(() {});
+    final current = price?.current ?? 0;
+    var triggered = false;
+    if (current > 0) {
+      try {
+        triggered = await AppDependencies.instance.priceAlerts
+            .evaluateObservedPrice(
+              playerId: widget.playerId,
+              playerName: widget.playerName,
+              currentPrice: current,
+              targetPrice: target,
+            );
+      } catch (_) {
+        // The target is stored; a foreground alert check is best-effort.
+      }
+    }
+
+    if (!mounted) return;
+    setState(() {
+      saved = true;
+      targetPrice = target;
+    });
+    _showMessage(
+      triggered
+          ? 'هدف ذخیره شد و قیمت فعلی از قبل به آن رسیده؛ هشدار همین حالا ثبت شد.'
+          : 'هدف ذخیره شد؛ هشدار محلی روی همین دستگاه بررسی می‌شود.',
+    );
   }
 
   @override
@@ -245,8 +267,8 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
                 ),
                 SegmentedButton<String>(
                   segments: const [
-                    ButtonSegment(value: '24h', label: Text('24h')),
-                    ButtonSegment(value: '7d', label: Text('7d')),
+                    ButtonSegment(value: '24h', label: Text('۲۴ ساعت')),
+                    ButtonSegment(value: '7d', label: Text('۷ روز')),
                   ],
                   selected: {range},
                   onSelectionChanged: (values) {
@@ -275,9 +297,9 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
             const SizedBox(height: 10),
             Row(
               children: [
-                _Metric(label: 'Low', value: _coins(current.low)),
+                _Metric(label: 'کف قیمت', value: compactCoinsFa(current.low)),
                 const SizedBox(width: 8),
-                _Metric(label: 'High', value: _coins(current.high)),
+                _Metric(label: 'سقف قیمت', value: compactCoinsFa(current.high)),
               ],
             ),
             const SizedBox(height: 14),
@@ -333,12 +355,37 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
               ),
             ],
             const SizedBox(height: 14),
+            if (targetPrice != null) ...[
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Icon(
+                    Icons.notifications_active_rounded,
+                    size: 15,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  const SizedBox(width: 5),
+                  Expanded(
+                    child: Text(
+                      'هدف فعلی: ${formatCoinsFa(targetPrice!)} سکه — هشدار محلی روی همین دستگاه؛ '
+                      'بررسی خودکار حدود هر ۳۰ دقیقه. هیچ قیمتی پیش‌بینی نمی‌شود.',
+                      style: Theme.of(context).textTheme.labelSmall,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+            ],
             SizedBox(
               width: double.infinity,
               child: FilledButton.tonalIcon(
                 onPressed: _setAlert,
                 icon: const Icon(Icons.notifications_active_outlined),
-                label: const Text('تنظیم هشدار قیمت'),
+                label: Text(
+                  targetPrice == null
+                      ? 'تنظیم هشدار قیمت'
+                      : 'ویرایش هشدار قیمت',
+                ),
               ),
             ),
           ],

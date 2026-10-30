@@ -507,6 +507,7 @@ class _SquadScreenProState extends State<SquadScreenPro> {
   }
 
   void _replace(String slotId, Player replacement) {
+    HapticFeedback.selectionClick();
     final players = Map<String, Player>.from(squad.playersBySlot)
       ..[slotId] = replacement;
     final configs = Map<String, SquadPlayerConfig>.from(squad.playerConfigs)
@@ -763,6 +764,7 @@ class _Pitch extends StatelessWidget {
                     child: _SlotCard(
                       slot: slot,
                       player: players[slot.id],
+                      chemistry: chemistry.bySlot[slot.id] ?? 0,
                       onTap: () => onTapSlot(slot),
                       onRemove: () => onRemove(slot.id),
                     ),
@@ -864,12 +866,14 @@ class _SlotCard extends StatelessWidget {
   const _SlotCard({
     required this.slot,
     required this.player,
+    required this.chemistry,
     required this.onTap,
     required this.onRemove,
   });
 
   final FormationSlot slot;
   final Player? player;
+  final int chemistry;
   final VoidCallback onTap;
   final VoidCallback onRemove;
 
@@ -882,45 +886,70 @@ class _SlotCard extends StatelessWidget {
       child: Material(
         color: scheme.surface,
         borderRadius: BorderRadius.circular(16),
-        child: InkWell(
-          borderRadius: BorderRadius.circular(16),
-          onTap: onTap,
-          onLongPress: player == null ? null : onRemove,
-          child: Padding(
-            padding: const EdgeInsets.all(6),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                if (player == null)
-                  Icon(Icons.add_circle_outline_rounded, color: scheme.primary)
-                else
-                  CircleAvatar(
-                    radius: 20,
-                    backgroundImage: player!.imageUrl.isEmpty
-                        ? null
-                        : NetworkImage(player!.imageUrl),
-                    child: player!.imageUrl.isEmpty
-                        ? Text(faDigits(player!.rating))
-                        : null,
-                  ),
-                const SizedBox(height: 4),
-                Text(
-                  player?.name ?? slot.position,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.w900,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: InkWell(
+                borderRadius: BorderRadius.circular(16),
+                onTap: () {
+                  HapticFeedback.selectionClick();
+                  onTap();
+                },
+                onLongPress: player == null
+                    ? null
+                    : () {
+                        HapticFeedback.mediumImpact();
+                        onRemove();
+                      },
+                child: Padding(
+                  padding: const EdgeInsets.all(6),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      if (player == null)
+                        Icon(
+                          Icons.add_circle_outline_rounded,
+                          color: scheme.primary,
+                        )
+                      else
+                        CircleAvatar(
+                          radius: 20,
+                          backgroundImage: player!.imageUrl.isEmpty
+                              ? null
+                              : NetworkImage(player!.imageUrl),
+                          child: player!.imageUrl.isEmpty
+                              ? Text(faDigits(player!.rating))
+                              : null,
+                        ),
+                      const SizedBox(height: 4),
+                      Text(
+                        player?.name ?? slot.position,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      if (player != null)
+                        Text(
+                          '${faDigits(player!.rating)} • ${slot.position}',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                    ],
                   ),
                 ),
-                if (player != null)
-                  Text(
-                    '${faDigits(player!.rating)} • ${slot.position}',
-                    style: Theme.of(context).textTheme.labelSmall,
-                  ),
-              ],
+              ),
             ),
-          ),
+            if (player != null)
+              Positioned(
+                top: 4,
+                right: 4,
+                child: IgnorePointer(
+                  child: ChemistryDiamonds(value: chemistry),
+                ),
+              ),
+          ],
         ),
       ),
     );

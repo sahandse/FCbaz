@@ -158,6 +158,30 @@ class _RarityChip extends StatelessWidget {
   }
 }
 
+class _StickySearchHeader extends SliverPersistentHeaderDelegate {
+  _StickySearchHeader({required this.height, required this.child});
+
+  final double height;
+  final Widget child;
+
+  @override
+  double get minExtent => height;
+
+  @override
+  double get maxExtent => height;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) => SizedBox(height: height, width: double.infinity, child: child);
+
+  @override
+  bool shouldRebuild(covariant _StickySearchHeader oldDelegate) =>
+      oldDelegate.height != height || oldDelegate.child != child;
+}
+
 class _ActiveFilters extends StatelessWidget {
   const _ActiveFilters({required this.filter, required this.onClear});
 
@@ -167,17 +191,25 @@ class _ActiveFilters extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final labels = <String>[
-      if (filter.position != null) filter.position!,
-      if (filter.version != null) filter.version!,
+      if (filter.position != null) 'پست ${filter.position!}',
+      if (filter.version != null) 'نسخه ${filter.version!}',
+      if (filter.rarity != null) 'کمیابی ${filter.rarity!}',
+      if (filter.cardType != null && filter.cardType != filter.rarity)
+        'نوع ${filter.cardType!}',
       if (filter.league != null) filter.league!,
       if (filter.club != null) filter.club!,
       if (filter.nation != null) filter.nation!,
       if (filter.minRating != 40 || filter.maxRating != 99)
-        'OVR ${filter.minRating}–${filter.maxRating}',
+        'ریتینگ ${faDigits(filter.minRating)}–${faDigits(filter.maxRating)}',
+      if (filter.minPrice != null) 'از ${compactCoinsFa(filter.minPrice!)}',
+      if (filter.maxPrice != null) 'تا ${compactCoinsFa(filter.maxPrice!)}',
       if (filter.platform == 'pc') 'PC',
-      if (filter.role != null) 'Role ${filter.role!}',
+      if (filter.role != null) 'نقش ${filter.role!}',
       if (filter.playStyle != null) filter.playStyle!,
       if (filter.playStylePlus != null) '+ ${filter.playStylePlus!}',
+      if (filter.minSkillMoves != null)
+        'SM ${faDigits(filter.minSkillMoves!)}★+',
+      if (filter.minWeakFoot != null) 'WF ${faDigits(filter.minWeakFoot!)}★+',
     ];
 
     return SizedBox(

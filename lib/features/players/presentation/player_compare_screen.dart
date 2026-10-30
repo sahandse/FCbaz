@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../domain/player.dart';
 import '../domain/player_value_analysis.dart';
+import '../../market/domain/purchase_value.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/theme/fcbaz_theme.dart';
+import 'package:fcbaz/src/ui/stat_radar.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class PlayerCompareScreen extends StatefulWidget {
@@ -17,6 +21,7 @@ class PlayerCompareScreen extends StatefulWidget {
 class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
   final repository = AppDependencies.instance.players;
   final analyzer = const PlayerValueAnalyzer();
+  final purchaseAnalyzer = const PurchaseValueAnalyzer();
 
   late List<Player> selected = widget.initialPlayers
       .take(4)
@@ -78,6 +83,7 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
       ),
     );
     if (player == null) return;
+    HapticFeedback.selectionClick();
     try {
       final full = await repository.getPlayer(player.id);
       if (!mounted) return;
@@ -111,11 +117,6 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
     }
   }
 
-  int _bestValue(int Function(Player p) getter) {
-    if (selected.isEmpty) return 0;
-    return selected.map(getter).reduce((a, b) => a > b ? a : b);
-  }
-
   String _coins(int value) {
     if (value <= 0) return 'ناموجود';
     if (value >= 1000000) {
@@ -133,6 +134,9 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
   Widget build(BuildContext context) {
     final analyses = selected
         .map((p) => analyzer.analyze(p, platform: platform))
+        .toList(growable: false);
+    final values = selected
+        .map((p) => purchaseAnalyzer.analyze(p, platform: platform))
         .toList(growable: false);
 
     return Scaffold(
@@ -202,11 +206,17 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
                 leading: const Icon(Icons.cloud_off_rounded),
                 title: const Text('لیست کامل بازیکنان در دسترس نیست'),
                 subtitle: Text(error!),
+                trailing: TextButton(
+                  onPressed: loading ? null : _loadPlayers,
+                  child: const Text('تلاش دوباره'),
+                ),
               ),
             ),
           ],
           const SizedBox(height: 12),
-          if (selected.isEmpty)
+          if (loading && selected.isEmpty)
+            const _CompareSkeleton()
+          else if (selected.isEmpty)
             Card(
               child: Padding(
                 padding: const EdgeInsets.all(24),
@@ -272,7 +282,7 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
                               child: image.isEmpty
                                   ? CircleAvatar(
                                       radius: 34,
-                                      child: Text(p.rating.toString()),
+                                      child: Text(faDigits(p.rating)),
                                     )
                                   : Image.network(
                                       image,
@@ -280,7 +290,7 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
                                       errorBuilder: (_, __, ___) =>
                                           CircleAvatar(
                                             radius: 34,
-                                            child: Text(p.rating.toString()),
+                                            child: Text(faDigits(p.rating)),
                                           ),
                                     ),
                             ),
@@ -308,13 +318,16 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
                               '${_coins(analysis.price)} سکه',
                               style: const TextStyle(
                                 fontWeight: FontWeight.w800,
+                                fontFeatures: [FontFeature.tabularFigures()],
                               ),
                             ),
                             const Spacer(),
                             IconButton(
                               visualDensity: VisualDensity.compact,
-                              onPressed: () =>
-                                  setState(() => selected.removeAt(index)),
+                              onPressed: () {
+                                HapticFeedback.selectionClick();
+                                setState(() => selected.removeAt(index));
+                              },
                               icon: const Icon(Icons.close_rounded, size: 18),
                             ),
                           ],
@@ -326,64 +339,11 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
               ),
             ),
             const SizedBox(height: 14),
-            _ValueSection(analyses: analyses, coins: _coins),
+            _RadarSection(players: selected),
             const SizedBox(height: 14),
-            _CompareRow(
-              label: 'ریتینگ',
-              players: selected,
-              getter: (p) => p.rating,
-              best: _bestValue((p) => p.rating),
-            ),
-            _CompareRow(
-              label: 'سرعت',
-              players: selected,
-              getter: (p) => p.pace,
-              best: _bestValue((p) => p.pace),
-            ),
-            _CompareRow(
-              label: 'شوت',
-              players: selected,
-              getter: (p) => p.shooting,
-              best: _bestValue((p) => p.shooting),
-            ),
-            _CompareRow(
-              label: 'پاس',
-              players: selected,
-              getter: (p) => p.passing,
-              best: _bestValue((p) => p.passing),
-            ),
-            _CompareRow(
-              label: 'دریبل',
-              players: selected,
-              getter: (p) => p.dribbling,
-              best: _bestValue((p) => p.dribbling),
-            ),
-            _CompareRow(
-              label: 'دفاع',
-              players: selected,
-              getter: (p) => p.defending,
-              best: _bestValue((p) => p.defending),
-            ),
-            _CompareRow(
-              label: 'فیزیک',
-              players: selected,
-              getter: (p) => p.physical,
-              best: _bestValue((p) => p.physical),
-            ),
-            _CompareRow(
-              label: 'مهارت',
-              players: selected,
-              getter: (p) => p.skillMoves,
-              best: _bestValue((p) => p.skillMoves),
-              suffix: '★',
-            ),
-            _CompareRow(
-              label: 'پای ضعیف',
-              players: selected,
-              getter: (p) => p.weakFoot,
-              best: _bestValue((p) => p.weakFoot),
-              suffix: '★',
-            ),
+            _StatsCompareTable(players: selected),
+            const SizedBox(height: 14),
+            _ValueSection(analyses: analyses, values: values, coins: _coins),
             const SizedBox(height: 14),
             if (selected.any((p) => p.playStylesPlus.isNotEmpty))
               _TextCompareSection(
@@ -410,61 +370,37 @@ class _PlayerCompareScreenState extends State<PlayerCompareScreen> {
   }
 }
 
-class _ValueSection extends StatelessWidget {
-  const _ValueSection({required this.analyses, required this.coins});
-  final List<PlayerValueAnalysis> analyses;
-  final String Function(int value) coins;
+class _CompareSkeleton extends StatelessWidget {
+  const _CompareSkeleton();
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+    final palette = context.palette;
+    return Semantics(
+      label: 'در حال بارگذاری کارت‌ها برای مقایسه',
+      child: SizedBox(
+        height: 212,
+        child: Row(
           children: [
-            const Text(
-              'تحلیل قیمت و ارزش',
-              style: TextStyle(fontWeight: FontWeight.w900),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              'شاخص ارزش FCBaz فقط وقتی قیمت واقعی کارت موجود باشد محاسبه می‌شود و پیش‌بینی بازار نیست.',
-              style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontSize: 11,
-              ),
-            ),
-            const SizedBox(height: 10),
-            for (final item in analyses) ...[
-              Row(
-                children: [
-                  Expanded(
-                    child: Directionality(
-                      textDirection: TextDirection.ltr,
-                      child: Text(
-                        item.player.name,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.w800),
-                      ),
+            for (var i = 0; i < 2; i++) ...[
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topRight,
+                      end: Alignment.bottomLeft,
+                      colors: [
+                        palette.surface,
+                        palette.surfaceRaised,
+                        palette.surface,
+                      ],
                     ),
+                    borderRadius: BorderRadius.circular(FcbazRadius.lg),
+                    border: Border.all(color: palette.line),
                   ),
-                  Text(coins(item.price)),
-                  const SizedBox(width: 12),
-                  Text(
-                    item.valueIndex == null
-                        ? 'شاخص: —'
-                        : 'شاخص: ${faDigits(item.valueIndex!.toStringAsFixed(1))}',
-                    style: TextStyle(
-                      color: item.valueIndex == null
-                          ? null
-                          : Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ],
+                ),
               ),
-              const SizedBox(height: 8),
+              if (i == 0) const SizedBox(width: 10),
             ],
           ],
         ),
@@ -473,61 +409,470 @@ class _ValueSection extends StatelessWidget {
   }
 }
 
-class _CompareRow extends StatelessWidget {
-  const _CompareRow({
-    required this.label,
-    required this.players,
-    required this.getter,
-    required this.best,
-    this.suffix = '',
-  });
-  final String label;
+class _RadarSection extends StatelessWidget {
+  const _RadarSection({required this.players});
+
   final List<Player> players;
-  final int Function(Player p) getter;
-  final int best;
-  final String suffix;
+
+  static const labels = ['PAC', 'SHO', 'PAS', 'DRI', 'DEF', 'PHY'];
 
   @override
   Widget build(BuildContext context) {
+    final palette = context.palette;
+    final colors = [
+      palette.primary,
+      palette.secondary,
+      palette.warning,
+      palette.danger,
+    ];
+    final series = <StatRadarSeries>[
+      for (var i = 0; i < players.length; i++)
+        StatRadarSeries(
+          label: players[i].name,
+          color: colors[i % colors.length],
+          values: [
+            players[i].pace.toDouble(),
+            players[i].shooting.toDouble(),
+            players[i].passing.toDouble(),
+            players[i].dribbling.toDouble(),
+            players[i].defending.toDouble(),
+            players[i].physical.toDouble(),
+          ],
+        ),
+    ];
     return Card(
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        child: Row(
+        padding: const EdgeInsets.all(14),
+        child: Column(
           children: [
-            SizedBox(
-              width: 70,
+            Align(
+              alignment: Alignment.centerRight,
               child: Text(
-                label,
-                style: const TextStyle(fontWeight: FontWeight.w900),
+                'نمودار آمار شش‌گانه',
+                style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
-            for (final p in players)
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.symmetric(horizontal: 3),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  decoration: BoxDecoration(
-                    color: getter(p) == best
-                        ? Theme.of(
-                            context,
-                          ).colorScheme.primary.withValues(alpha: .12)
-                        : Colors.transparent,
-                    borderRadius: BorderRadius.circular(12),
+            const SizedBox(height: 2),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text(
+                'محورها همان آمار چهره کارت روی مقیاس ۰ تا ۱۰۰ هستند.',
+                style: TextStyle(color: palette.textMuted, fontSize: 11),
+              ),
+            ),
+            const SizedBox(height: 10),
+            StatRadarChart(labels: labels, series: series),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _StatLine {
+  const _StatLine(this.label, this.getter, {this.max = 99, this.suffix = ''});
+
+  final String label;
+  final int Function(Player player) getter;
+  final int max;
+  final String suffix;
+}
+
+class _StatsCompareTable extends StatelessWidget {
+  const _StatsCompareTable({required this.players});
+
+  final List<Player> players;
+
+  static const _headerHeight = 44.0;
+  static const _rowHeight = 58.0;
+  static const _cellWidth = 92.0;
+  static const _labelWidth = 62.0;
+
+  static final _lines = <_StatLine>[
+    _StatLine('ریتینگ', (p) => p.rating),
+    _StatLine('سرعت', (p) => p.pace),
+    _StatLine('شوت', (p) => p.shooting),
+    _StatLine('پاس', (p) => p.passing),
+    _StatLine('دریبل', (p) => p.dribbling),
+    _StatLine('دفاع', (p) => p.defending),
+    _StatLine('فیزیک', (p) => p.physical),
+    _StatLine('مهارت', (p) => p.skillMoves, max: 5, suffix: '★'),
+    _StatLine('پای ضعیف', (p) => p.weakFoot, max: 5, suffix: '★'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 12, 10, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'مقایسه آمار',
+                    style: Theme.of(context).textTheme.titleMedium,
                   ),
-                  child: Text(
-                    faDigits('${getter(p)}$suffix'),
-                    textAlign: TextAlign.center,
+                  const SizedBox(height: 2),
+                  Text(
+                    players.length > 2
+                        ? 'برنده هر ردیف با جام مشخص شده؛ جدول را افقی بکشید تا بقیه کارت‌ها را ببینید.'
+                        : 'برنده هر ردیف با جام و رنگ اصلی مشخص شده است.',
                     style: TextStyle(
-                      fontWeight: FontWeight.w900,
-                      color: getter(p) == best
-                          ? Theme.of(context).colorScheme.primary
-                          : null,
+                      color: palette.textMuted,
+                      fontSize: 11,
+                      height: 1.6,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 10),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(
+                  width: _labelWidth,
+                  child: Column(
+                    children: [
+                      const SizedBox(height: _headerHeight),
+                      for (final line in _lines)
+                        SizedBox(
+                          height: _rowHeight,
+                          child: Align(
+                            alignment: Alignment.centerRight,
+                            child: Text(
+                              line.label,
+                              style: TextStyle(
+                                fontSize: 11.5,
+                                fontWeight: FontWeight.w800,
+                                color: palette.textMuted,
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: _headerHeight,
+                          child: Row(
+                            children: [
+                              for (final player in players)
+                                SizedBox(
+                                  width: _cellWidth,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 6,
+                                    ),
+                                    child: Directionality(
+                                      textDirection: TextDirection.ltr,
+                                      child: Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          player.name,
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 11.5,
+                                            fontWeight: FontWeight.w800,
+                                            height: 1.3,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
+                        ),
+                        for (final line in _lines)
+                          SizedBox(
+                            height: _rowHeight,
+                            child: Row(
+                              children: [
+                                for (final player in players)
+                                  _StatCell(
+                                    width: _cellWidth,
+                                    value: line.getter(player),
+                                    max: line.max,
+                                    suffix: line.suffix,
+                                    winner:
+                                        line.getter(player) > 0 &&
+                                        line.getter(player) ==
+                                            players
+                                                .map(line.getter)
+                                                .reduce(
+                                                  (a, b) => a > b ? a : b,
+                                                ),
+                                    semanticLabel:
+                                        '${player.name}، ${line.label}',
+                                  ),
+                              ],
+                            ),
+                          ),
+                      ],
                     ),
                   ),
                 ),
-              ),
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _StatCell extends StatelessWidget {
+  const _StatCell({
+    required this.width,
+    required this.value,
+    required this.max,
+    required this.suffix,
+    required this.winner,
+    required this.semanticLabel,
+  });
+
+  final double width;
+  final int value;
+  final int max;
+  final String suffix;
+  final bool winner;
+  final String semanticLabel;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    final fraction = value <= 0 ? 0.0 : (value / max).clamp(0.0, 1.0);
+    final color = value <= 0
+        ? palette.textMuted
+        : winner
+        ? palette.primary
+        : palette.text;
+    return Semantics(
+      label:
+          '$semanticLabel، ${value <= 0 ? 'بدون داده' : faDigits(value)}'
+          '${winner ? '، بیشترین مقدار' : ''}',
+      excludeSemantics: true,
+      child: Container(
+        width: width,
+        margin: const EdgeInsets.symmetric(horizontal: 2),
+        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 6),
+        decoration: BoxDecoration(
+          color: winner ? palette.primary.withValues(alpha: .1) : null,
+          borderRadius: BorderRadius.circular(10),
+          border: winner
+              ? Border.all(color: palette.primary.withValues(alpha: .28))
+              : null,
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (winner) ...[
+                  Icon(
+                    Icons.emoji_events_rounded,
+                    size: 12,
+                    color: palette.primary,
+                  ),
+                  const SizedBox(width: 2),
+                ],
+                Flexible(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(
+                      value <= 0 ? '—' : faDigits('$value$suffix'),
+                      maxLines: 1,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w900,
+                        color: color,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            Container(
+              height: 4,
+              decoration: BoxDecoration(
+                color: palette.surfaceRaised,
+                borderRadius: BorderRadius.circular(4),
+              ),
+              alignment: Alignment.centerRight,
+              child: FractionallySizedBox(
+                widthFactor: fraction,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: winner ? 1 : .5),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ValueSection extends StatelessWidget {
+  const _ValueSection({
+    required this.analyses,
+    required this.values,
+    required this.coins,
+  });
+
+  final List<PlayerValueAnalysis> analyses;
+  final List<PurchaseValue> values;
+  final String Function(int value) coins;
+
+  String _perRating(double value) => formatCoinsFa(value.round());
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(14),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'تحلیل قیمت و ارزش',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'سکه به‌ازای رنکینگ از قیمت واقعی پلتفرم تقسیم بر ریتینگ می‌آید. ردیف «با مالیات ۵٪» قیمت سربه‌سر فروش است تا پول خرید کامل برگردد. هیچ‌کدام پیش‌بینی بازار نیست.',
+              style: TextStyle(
+                color: palette.textMuted,
+                fontSize: 11,
+                height: 1.6,
+              ),
+            ),
+            const SizedBox(height: 10),
+            for (var i = 0; i < analyses.length; i++) ...[
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: palette.surfaceRaised.withValues(alpha: .5),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: palette.line),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Directionality(
+                            textDirection: TextDirection.ltr,
+                            child: Text(
+                              analyses[i].player.name,
+                              overflow: TextOverflow.ellipsis,
+                              style: const TextStyle(
+                                fontWeight: FontWeight.w800,
+                              ),
+                            ),
+                          ),
+                        ),
+                        Text(
+                          '${coins(values[i].price)} سکه',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w800,
+                            fontFeatures: [FontFeature.tabularFigures()],
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Wrap(
+                      spacing: 6,
+                      runSpacing: 6,
+                      children: [
+                        _MiniStat(
+                          icon: Icons.calculate_rounded,
+                          label: values[i].coinsPerRating == null
+                              ? 'سکه/رنکینگ: —'
+                              : 'سکه/رنکینگ: ${_perRating(values[i].coinsPerRating!)}',
+                        ),
+                        _MiniStat(
+                          icon: Icons.receipt_long_rounded,
+                          label: values[i].taxAdjustedCoinsPerRating == null
+                              ? 'با مالیات ۵٪: —'
+                              : 'با مالیات ۵٪: ${_perRating(values[i].taxAdjustedCoinsPerRating!)}',
+                        ),
+                        _MiniStat(
+                          icon: Icons.insights_rounded,
+                          color: palette.primary,
+                          label: analyses[i].valueIndex == null
+                              ? 'شاخص FCBaz: —'
+                              : 'شاخص FCBaz: ${faDigits(analyses[i].valueIndex!.toStringAsFixed(1))}',
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              if (i < analyses.length - 1) const SizedBox(height: 8),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MiniStat extends StatelessWidget {
+  const _MiniStat({required this.icon, required this.label, this.color});
+
+  final IconData icon;
+  final String label;
+  final Color? color;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    final resolved = color ?? palette.textMuted;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 4),
+      decoration: BoxDecoration(
+        color: resolved.withValues(alpha: .08),
+        borderRadius: BorderRadius.circular(7),
+        border: Border.all(color: resolved.withValues(alpha: .22)),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: resolved),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              color: resolved,
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -23,4 +23,18 @@ void main() {
     expect(formatCoinsFa(0), '—');
     expect(compactCoinsFa(1500000), '۱.۵M');
   });
+
+  test('parsePersianInt accepts Persian and Arabic digits with separators', () {
+    expect(parsePersianInt('۹۵٬۰۰۰'), 95000);
+    expect(parsePersianInt('۱,۲۳۴,۵۶۷'), 1234567);
+    expect(parsePersianInt('٩٥٠٠٠'), 95000);
+    expect(parsePersianInt('95,000'), 95000);
+    expect(parsePersianInt(' ۲۵۰۰۰ '), 25000);
+  });
+
+  test('parsePersianInt returns null when no amount was typed', () {
+    expect(parsePersianInt(''), isNull);
+    expect(parsePersianInt('سکه'), isNull);
+    expect(parsePersianInt('—'), isNull);
+  });
 }

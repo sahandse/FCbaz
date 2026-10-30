@@ -8,12 +8,14 @@ class DeadlineChip extends StatelessWidget {
     required this.expiresAt,
     this.now,
     this.compact = false,
+    this.showJalaliDate = false,
     super.key,
   });
 
   final DateTime? expiresAt;
   final DateTime? now;
   final bool compact;
+  final bool showJalaliDate;
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,11 @@ class DeadlineChip extends StatelessWidget {
         : remaining < const Duration(hours: 24)
         ? Icons.timer_rounded
         : Icons.schedule_rounded;
+    final label = expired
+        ? 'منقضی'
+        : showJalaliDate
+        ? '${relativeDeadlineFa(value, now: now)} • ${formatJalaliShort(value)}'
+        : relativeDeadlineFa(value, now: now);
 
     return Container(
       padding: EdgeInsets.symmetric(
@@ -49,7 +56,7 @@ class DeadlineChip extends StatelessWidget {
           Icon(icon, size: 13, color: color),
           const SizedBox(width: 4),
           Text(
-            expired ? 'منقضی' : relativeDeadlineFa(value, now: now),
+            label,
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,

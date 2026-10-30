@@ -106,7 +106,11 @@ class SbcClubSolverCard extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 'جمع قیمت خرید ثبت‌شده کارت‌های قابل‌فروش: ${formatCoinsFa(acquisitionValue)} سکه',
-                style: TextStyle(fontSize: 11, color: scheme.onSurfaceVariant),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: scheme.onSurfaceVariant,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
               ),
             ],
             ExpansionTile(

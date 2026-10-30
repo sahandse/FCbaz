@@ -178,6 +178,148 @@ class _ReviewCard extends StatelessWidget {
   }
 }
 
+class _CheaperAlternativeCard extends StatelessWidget {
+  const _CheaperAlternativeCard({
+    required this.alternative,
+    required this.loading,
+    required this.error,
+    required this.onRetry,
+    required this.onOpen,
+  });
+
+  final CheaperAlternative? alternative;
+  final bool loading;
+  final String? error;
+  final VoidCallback onRetry;
+  final ValueChanged<Player> onOpen;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = context.palette;
+    if (loading) {
+      return const Padding(
+        padding: EdgeInsets.symmetric(vertical: 10),
+        child: LinearProgressIndicator(minHeight: 2),
+      );
+    }
+
+    final value = alternative;
+    if (value == null) {
+      return Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: palette.surfaceRaised.withValues(alpha: .58),
+          borderRadius: BorderRadius.circular(FcbazRadius.md),
+          border: Border.all(color: palette.line),
+        ),
+        child: Row(
+          children: [
+            Icon(Icons.swap_horiz_rounded, size: 18, color: palette.textMuted),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(
+                error == null
+                    ? 'در فهرست موجود، کارت هم‌پستی با حداکثر ۲ ریتینگ کمتر و قیمت پایین‌تر پیدا نشد.'
+                    : 'جستجوی جایگزین ممکن نشد: $error',
+                style: TextStyle(
+                  fontSize: 11,
+                  height: 1.6,
+                  color: palette.textMuted,
+                ),
+              ),
+            ),
+            if (error != null)
+              TextButton(onPressed: onRetry, child: const Text('تلاش دوباره')),
+          ],
+        ),
+      );
+    }
+
+    final candidate = value.player;
+    final platformLabel = value.platform == PlayerMarketPlatform.pc
+        ? 'PC'
+        : 'PS';
+    return Card(
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => onOpen(candidate),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CircleAvatar(
+                radius: 24,
+                backgroundImage: candidate.imageUrl.isEmpty
+                    ? null
+                    : NetworkImage(candidate.imageUrl),
+                child: candidate.imageUrl.isEmpty
+                    ? Text(faDigits(candidate.rating))
+                    : null,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      candidate.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      textDirection: TextDirection.ltr,
+                      style: const TextStyle(fontWeight: FontWeight.w900),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      'ریتینگ ${faDigits(candidate.rating)} • ${candidate.position} • ${faDigits(value.ratingGap)} ریتینگ کمتر',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 11, color: palette.textMuted),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      'صرفه‌جویی ${formatCoinsFa(value.savings)} سکه روی $platformLabel',
+                      style: TextStyle(
+                        fontSize: 11.5,
+                        fontWeight: FontWeight.w800,
+                        color: palette.success,
+                        fontFeatures: const [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Text(
+                    compactCoinsFa(value.price),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w900,
+                      fontFeatures: [FontFeature.tabularFigures()],
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    platformLabel,
+                    textDirection: TextDirection.ltr,
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w800,
+                      color: palette.textMuted,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _EmptyLine extends StatelessWidget {
   const _EmptyLine(this.message);
   final String message;

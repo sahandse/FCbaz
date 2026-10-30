@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
+import '../../src/utils/persian_formatters.dart';
+
 class SystemNotificationService {
   SystemNotificationService._();
 
@@ -124,7 +126,9 @@ class SystemNotificationService {
     await _plugin.show(
       id: _stableId('price:$playerId:$targetPrice'),
       title: 'قیمت هدف رسید',
-      body: '$playerName به $currentPrice سکه رسیده است.',
+      body:
+          '$playerName به ${faDigits(currentPrice)} سکه رسیده است '
+          '(هدف: ${faDigits(targetPrice)}).',
       notificationDetails: const NotificationDetails(
         android: AndroidNotificationDetails(
           _priceChannelId,

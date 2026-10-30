@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../src/utils/persian_formatters.dart';
 import '../../players/domain/player.dart';
 import '../domain/squad_models.dart';
 
@@ -227,4 +228,46 @@ class _ChemistryLinkPainter extends CustomPainter {
       oldDelegate.entrance != entrance ||
       oldDelegate.strong != strong ||
       oldDelegate.weak != weak;
+}
+
+/// Three diamonds per slot, matching the 0–3 chemistry a single player can
+/// earn. Filled diamonds use the theme accent; empty ones stay dim.
+class ChemistryDiamonds extends StatelessWidget {
+  const ChemistryDiamonds({required this.value, this.size = 5, super.key});
+
+  final int value;
+  final double size;
+
+  @override
+  Widget build(BuildContext context) {
+    final color = Theme.of(context).colorScheme.primary;
+    final filled = value.clamp(0, 3);
+    return Semantics(
+      label: 'شیمی ${faDigits(filled)} از ۳',
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        textDirection: TextDirection.ltr,
+        children: [
+          for (var i = 0; i < 3; i++)
+            Padding(
+              padding: EdgeInsets.only(left: i == 0 ? 0 : size / 2),
+              child: Transform.rotate(
+                angle: math.pi / 4,
+                child: Container(
+                  key: ValueKey(
+                    i < filled ? 'chem-diamond-filled' : 'chem-diamond-empty',
+                  ),
+                  width: size,
+                  height: size,
+                  decoration: BoxDecoration(
+                    color: i < filled ? color : color.withValues(alpha: .18),
+                    borderRadius: BorderRadius.circular(1),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 }
