@@ -100,6 +100,10 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     }
     if (item.type == 'evolution_deadline') {
       await AppNavigator.evolutions(context);
+      return;
+    }
+    if (item.type == 'sbc_deadline') {
+      await AppNavigator.sbc(context);
     }
   }
 
@@ -113,6 +117,7 @@ class _NotificationCenterScreenState extends State<NotificationCenterScreen> {
     if (item.type == 'price_alert') return Icons.price_check_rounded;
     if (item.type == 'objective_deadline') return Icons.flag_rounded;
     if (item.type == 'evolution_deadline') return Icons.auto_awesome_rounded;
+    if (item.type == 'sbc_deadline') return Icons.extension_rounded;
     return Icons.notifications_rounded;
   }
 

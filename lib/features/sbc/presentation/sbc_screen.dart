@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
 import '../domain/sbc.dart';
+import '../domain/sbc_value_advisor.dart';
 import 'sbc_tools_screen.dart';
+import 'sbc_value_badge.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/ui/content_status_chips.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class SbcScreen extends StatefulWidget {
@@ -198,6 +201,12 @@ class _SbcCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final value = const SbcValueAdvisor().assess(
+      cost: item.estimatedCost,
+      reward: item.reward,
+      category: item.category,
+      title: item.title,
+    );
     return Material(
       color: scheme.surface,
       borderRadius: BorderRadius.circular(12),
@@ -260,15 +269,15 @@ class _SbcCard extends StatelessWidget {
                       ],
                     ),
                   ),
-                  if (item.repeatable)
-                    const Chip(
-                      label: Text(
-                        'REPEATABLE',
-                        textDirection: TextDirection.ltr,
-                      ),
-                    ),
                 ],
               ),
+              if (item.expiresAt != null || item.repeatable) ...[
+                const SizedBox(height: 8),
+                ContentStatusChips(
+                  expiresAt: item.expiresAt,
+                  repeatable: item.repeatable,
+                ),
+              ],
               if (item.description.isNotEmpty) ...[
                 const SizedBox(height: 10),
                 Text(
@@ -299,6 +308,8 @@ class _SbcCard extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 9),
+              SbcValueBadge(assessment: value),
               if (item.itemScore != null) ...[
                 const SizedBox(height: 9),
                 Row(
@@ -406,6 +417,23 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
                     style: TextStyle(color: scheme.onSurfaceVariant),
                   ),
                 ],
+                if (sbc.expiresAt != null || sbc.repeatable) ...[
+                  const SizedBox(height: 10),
+                  ContentStatusChips(
+                    expiresAt: sbc.expiresAt,
+                    repeatable: sbc.repeatable,
+                  ),
+                ],
+                const SizedBox(height: 10),
+                SbcValueBadge(
+                  assessment: const SbcValueAdvisor().assess(
+                    cost: sbc.estimatedCost,
+                    reward: sbc.reward,
+                    category: sbc.category,
+                    title: sbc.title,
+                  ),
+                  showDetail: true,
+                ),
                 const SizedBox(height: 12),
                 _MiniStat(
                   label: 'REWARD',
@@ -529,7 +557,7 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
           ],
           if (solution != null) ...[
             const SizedBox(height: 14),
-            _SolutionCard(solution: solution!),
+            _SolutionCard(solution: solution!, challenge: sbc),
           ],
         ],
       ),
@@ -538,8 +566,9 @@ class _SbcDetailScreenState extends State<SbcDetailScreen> {
 }
 
 class _SolutionCard extends StatelessWidget {
-  const _SolutionCard({required this.solution});
+  const _SolutionCard({required this.solution, required this.challenge});
   final SbcSolution solution;
+  final SbcChallenge challenge;
 
   @override
   Widget build(BuildContext context) {
@@ -576,6 +605,18 @@ class _SolutionCard extends StatelessWidget {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 10),
+            SbcValueBadge(
+              assessment: const SbcValueAdvisor().assess(
+                cost: solution.totalCost > 0
+                    ? solution.totalCost
+                    : challenge.estimatedCost,
+                reward: challenge.reward,
+                category: challenge.category,
+                title: challenge.title,
+              ),
+              showDetail: true,
             ),
             const SizedBox(height: 8),
             Text(

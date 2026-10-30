@@ -16,7 +16,8 @@ class NotificationSettingsScreen extends StatefulWidget {
 
 class _NotificationSettingsScreenState
     extends State<NotificationSettingsScreen> {
-  final preferencesRepository = AppDependencies.instance.notificationPreferences;
+  final preferencesRepository =
+      AppDependencies.instance.notificationPreferences;
   final appSettingsRepository = AppDependencies.instance.settings;
   final syncStatusRepository = AppDependencies.instance.syncStatus;
   final systemNotifications = SystemNotificationService.instance;
@@ -209,6 +210,18 @@ class _NotificationSettingsScreenState
                           title: const Text('هشدار قیمت'),
                           subtitle: const Text(
                             'وقتی قیمت واقعی فهرست پیگیری به هدف برسد',
+                          ),
+                        ),
+                        const Divider(height: 1),
+                        SwitchListTile(
+                          value: preferences.sbcDeadlines,
+                          onChanged: (value) => _savePreferences(
+                            preferences.copyWith(sbcDeadlines: value),
+                          ),
+                          secondary: const Icon(Icons.extension_rounded),
+                          title: const Text('مهلت SBCها'),
+                          subtitle: const Text(
+                            'فقط برای SBC دارای زمان پایان واقعی',
                           ),
                         ),
                         const Divider(height: 1),

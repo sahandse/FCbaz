@@ -4,6 +4,7 @@ import '../../players/domain/player.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/navigation/app_navigator.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
+import 'market_tax_calculator_panel.dart';
 
 class MarketToolsScreen extends StatefulWidget {
   const MarketToolsScreen({super.key});
@@ -30,7 +31,7 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
   @override
   void initState() {
     super.initState();
-    tabController = TabController(length: 2, vsync: this);
+    tabController = TabController(length: 3, vsync: this);
     _loadAll();
   }
 
@@ -105,15 +106,22 @@ class _MarketToolsScreenState extends State<MarketToolsScreen>
         title: const Text('ابزارهای بازار'),
         bottom: TabBar(
           controller: tabController,
+          isScrollable: true,
+          tabAlignment: TabAlignment.start,
           tabs: const [
             Tab(text: 'ارزان‌ترین بر اساس ریتینگ'),
             Tab(text: 'محبوب‌ترین بازیکنان'),
+            Tab(text: 'مالیات و سود'),
           ],
         ),
       ),
       body: TabBarView(
         controller: tabController,
-        children: [_buildCheapest(), _buildPopular()],
+        children: [
+          _buildCheapest(),
+          _buildPopular(),
+          const MarketTaxCalculatorPanel(),
+        ],
       ),
     );
   }

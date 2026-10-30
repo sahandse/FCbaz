@@ -37,6 +37,39 @@ class SquadReplacementSuggestion {
   double get scoreGain => replacementScore - currentScore;
 }
 
+class MetaScoreBreakdown {
+  const MetaScoreBreakdown({
+    required this.base,
+    required this.playStylesPlusBonus,
+    required this.playStylesBonus,
+    required this.chemistryBonus,
+    required this.roleBonus,
+    required this.roleFit,
+    required this.playStylesPlusCount,
+    required this.playStylesCount,
+    required this.chemistry,
+  });
+
+  final double base;
+  final double playStylesPlusBonus;
+  final double playStylesBonus;
+  final double chemistryBonus;
+  final double roleBonus;
+  final bool roleFit;
+  final int playStylesPlusCount;
+  final int playStylesCount;
+  final int chemistry;
+
+  double get total =>
+      (base +
+              playStylesPlusBonus +
+              playStylesBonus +
+              chemistryBonus +
+              roleBonus)
+          .clamp(0, 100)
+          .toDouble();
+}
+
 class SquadInsights {
   const SquadInsights({
     required this.metaScore,
@@ -326,6 +359,18 @@ class SquadInsightsService {
     String slotPosition, {
     required int chemistry,
     required String selectedRole,
+  }) => explainMetaScore(
+    p,
+    slotPosition,
+    chemistry: chemistry,
+    selectedRole: selectedRole,
+  ).total;
+
+  MetaScoreBreakdown explainMetaScore(
+    Player p,
+    String slotPosition, {
+    required int chemistry,
+    required String selectedRole,
   }) {
     final roleFit = selectedRole.isNotEmpty && p.roles.contains(selectedRole);
     final plusBonus = (p.playStylesPlus.length * 2.2).clamp(0, 6).toDouble();
@@ -365,9 +410,17 @@ class SquadInsightsService {
       base = p.rating.toDouble();
     }
 
-    return (base + plusBonus + styleBonus + chemistryBonus + roleBonus)
-        .clamp(0, 100)
-        .toDouble();
+    return MetaScoreBreakdown(
+      base: base,
+      playStylesPlusBonus: plusBonus,
+      playStylesBonus: styleBonus,
+      chemistryBonus: chemistryBonus,
+      roleBonus: roleBonus,
+      roleFit: roleFit,
+      playStylesPlusCount: p.playStylesPlus.length,
+      playStylesCount: p.playStyles.length,
+      chemistry: chemistry,
+    );
   }
 
   bool _inPosition(Player p, String position) =>

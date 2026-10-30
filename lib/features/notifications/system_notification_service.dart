@@ -65,7 +65,7 @@ class SystemNotificationService {
       const AndroidNotificationChannel(
         _deadlineChannelId,
         'مهلت‌ها',
-        description: 'یادآوری پایان Objective و Evolutionهای واقعی FC27',
+        description: 'یادآوری پایان Objective، SBC و Evolutionهای واقعی FC27',
         importance: Importance.high,
       ),
     );
@@ -146,7 +146,7 @@ class SystemNotificationService {
     required Duration remaining,
   }) async {
     if (!Platform.isAndroid || !await notificationsEnabled()) return;
-    final label = type == 'objective' ? 'Objective' : 'Evolution';
+    final label = _deadlineLabel(type);
 
     await _plugin.show(
       id: _stableId('deadline-now:$type:$sourceId'),
@@ -156,7 +156,8 @@ class SystemNotificationService {
         android: AndroidNotificationDetails(
           _deadlineChannelId,
           'مهلت‌ها',
-          channelDescription: 'یادآوری پایان Objective و Evolutionهای واقعی',
+          channelDescription:
+              'یادآوری پایان Objective، SBC و Evolutionهای واقعی',
           importance: Importance.high,
           priority: Priority.high,
           icon: 'ic_stat_fcbaz',
@@ -179,7 +180,7 @@ class SystemNotificationService {
     if (!scheduled.isAfter(DateTime.now())) return;
 
     final when = tz.TZDateTime.from(scheduled, tz.local);
-    final label = type == 'objective' ? 'Objective' : 'Evolution';
+    final label = _deadlineLabel(type);
 
     await _plugin.zonedSchedule(
       id: _stableId('$type:$sourceId:${expiresAt.toIso8601String()}'),
@@ -190,7 +191,8 @@ class SystemNotificationService {
         android: AndroidNotificationDetails(
           _deadlineChannelId,
           'مهلت‌ها',
-          channelDescription: 'یادآوری پایان Objective و Evolutionهای واقعی',
+          channelDescription:
+              'یادآوری پایان Objective، SBC و Evolutionهای واقعی',
           importance: Importance.high,
           priority: Priority.high,
           icon: 'ic_stat_fcbaz',
@@ -215,6 +217,12 @@ class SystemNotificationService {
     }
     return hash;
   }
+
+  String _deadlineLabel(String type) => switch (type) {
+    'objective' => 'Objective',
+    'sbc' => 'SBC',
+    _ => 'Evolution',
+  };
 
   String _relativeHours(Duration value) {
     final hours = value.inHours;

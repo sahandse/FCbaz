@@ -111,6 +111,14 @@ class SbcChallenge {
       }
     }
 
+    var estimatedCost = asNullableInt(
+      json['estimated_cost'] ?? json['cost'] ?? json['price'],
+    );
+    final rawPublicSolution = json['public_solution'];
+    if (estimatedCost == null && rawPublicSolution is Map) {
+      estimatedCost = asNullableInt(rawPublicSolution['total_cost']);
+    }
+
     return SbcChallenge(
       id: _sbcId(json),
       title: displayTitle,
@@ -128,9 +136,7 @@ class SbcChallenge {
       requirements: requirements,
       repeatable: json['repeatable'] == true,
       expiresAt: DateTime.tryParse((json['expires_at'] ?? '').toString()),
-      estimatedCost: asNullableInt(
-        json['estimated_cost'] ?? json['cost'] ?? json['price'],
-      ),
+      estimatedCost: estimatedCost,
       itemScore: asNullableInt(
         json['item_score'] ?? json['required_item_score'],
       ),

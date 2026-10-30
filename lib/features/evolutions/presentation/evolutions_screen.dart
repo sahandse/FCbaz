@@ -5,6 +5,7 @@ import '../domain/evolution.dart';
 import '../domain/evolution_eligibility_engine.dart';
 import '../domain/evolution_projection.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/ui/content_status_chips.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class EvolutionsScreen extends StatefulWidget {
@@ -215,12 +216,6 @@ class _EvolutionCardState extends State<_EvolutionCard> {
     }
   }
 
-  String _expiry(Evolution item) {
-    final value = item.expiresAt;
-    if (value == null) return '—';
-    return formatJalaliShort(value);
-  }
-
   String _cost(int value) {
     if (value <= 0) return 'FREE';
     if (value >= 1000000) {
@@ -326,7 +321,7 @@ class _EvolutionCardState extends State<_EvolutionCard> {
             runSpacing: 6,
             children: [
               _Tag(label: 'COST', value: _cost(item.cost)),
-              _Tag(label: 'EXPIRES', value: _expiry(item)),
+              ContentStatusChips(expiresAt: item.expiresAt),
             ],
           ),
         ),

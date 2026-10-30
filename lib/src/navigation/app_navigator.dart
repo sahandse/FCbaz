@@ -8,6 +8,7 @@ import '../../features/notifications/notification_settings_screen.dart';
 import '../../features/players/domain/player.dart';
 import '../../features/players/presentation/player_compare_screen.dart';
 import '../../features/players/presentation/player_details_screen.dart';
+import '../../features/sbc/presentation/sbc_screen.dart';
 import '../../features/squad/squad_screen.dart';
 import '../app_dependencies.dart';
 
@@ -36,10 +37,7 @@ abstract final class AppNavigator {
   }
 
   static Future<void> compare(BuildContext context, Player player) async {
-    await push<void>(
-      context,
-      PlayerCompareScreen(initialPlayers: [player]),
-    );
+    await push<void>(context, PlayerCompareScreen(initialPlayers: [player]));
   }
 
   static Future<void> objectives(BuildContext context) async {
@@ -48,6 +46,10 @@ abstract final class AppNavigator {
 
   static Future<void> evolutions(BuildContext context) async {
     await push<void>(context, const EvolutionsScreen());
+  }
+
+  static Future<void> sbc(BuildContext context) async {
+    await push<void>(context, const SbcScreen());
   }
 
   static Future<void> notifications(BuildContext context) async {
@@ -83,6 +85,8 @@ abstract final class AppNavigator {
         await objectives(context);
       case 'evolution':
         await evolutions(context);
+      case 'sbc':
+        await sbc(context);
     }
   }
 }

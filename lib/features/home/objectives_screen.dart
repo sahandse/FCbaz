@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'home_repository.dart';
 import 'objective_progress_repository.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/ui/content_status_chips.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class ObjectivesScreen extends StatefulWidget {
   const ObjectivesScreen({super.key});
@@ -52,8 +54,7 @@ class _ObjectivesScreenState extends State<ObjectivesScreen> {
 
   String _expiry(DateTime? value) {
     if (value == null) return 'بدون زمان پایان مشخص';
-    final local = value.toLocal();
-    return '${local.year}/${local.month.toString().padLeft(2, '0')}/${local.day.toString().padLeft(2, '0')}';
+    return formatJalaliDate(value);
   }
 
   List<String> get _categories {
@@ -258,6 +259,10 @@ class _ObjectiveCard extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (item.category.isNotEmpty) Text(item.category),
+            if (item.expiresAt != null) ...[
+              const SizedBox(height: 5),
+              ContentStatusChips(expiresAt: item.expiresAt),
+            ],
             const SizedBox(height: 5),
             LinearProgressIndicator(
               value: item.tasks.isEmpty ? null : progress,

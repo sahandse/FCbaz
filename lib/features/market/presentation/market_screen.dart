@@ -5,6 +5,8 @@ import '../../players/presentation/player_card.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/ui/price_delta.dart';
+import 'package:fcbaz/src/ui/price_ticker.dart';
 
 class MarketScreen extends StatefulWidget {
   const MarketScreen({super.key});
@@ -108,6 +110,11 @@ class _MarketScreenState extends State<MarketScreen> {
     return int.tryParse((value ?? '').toString()) ?? 0;
   }
 
+  double? _double(dynamic value) {
+    if (value is num) return value.toDouble();
+    return double.tryParse((value ?? '').toString());
+  }
+
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -185,7 +192,7 @@ class _MarketScreenState extends State<MarketScreen> {
               )
             else
               SizedBox(
-                height: 92,
+                height: 122,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
                   itemCount: saved.length,
@@ -195,7 +202,7 @@ class _MarketScreenState extends State<MarketScreen> {
                     final price = savedPrices[item.playerId];
                     final current = price?.current ?? item.lastPrice ?? 0;
                     return Container(
-                      width: 174,
+                      width: 190,
                       padding: const EdgeInsets.all(11),
                       decoration: BoxDecoration(
                         color: scheme.surface,
@@ -209,30 +216,18 @@ class _MarketScreenState extends State<MarketScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            item.playerName,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(fontWeight: FontWeight.w900),
-                          ),
-                          const Spacer(),
                           Row(
                             children: [
-                              Icon(
-                                Icons.toll_rounded,
-                                size: 14,
-                                color: scheme.primary,
-                              ),
-                              const SizedBox(width: 4),
-                              Text(
-                                '${_coins(current)} C',
-                                textDirection: TextDirection.ltr,
-                                style: const TextStyle(
-                                  fontWeight: FontWeight.w900,
-                                  fontFeatures: [FontFeature.tabularFigures()],
+                              Expanded(
+                                child: Text(
+                                  item.playerName,
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w900,
+                                  ),
                                 ),
                               ),
-                              const Spacer(),
                               if (item.targetReached)
                                 Icon(
                                   Icons.notifications_active_rounded,
@@ -240,6 +235,13 @@ class _MarketScreenState extends State<MarketScreen> {
                                   color: scheme.primary,
                                 ),
                             ],
+                          ),
+                          const Spacer(),
+                          PriceTicker(
+                            price: current,
+                            changePercent: item.percentChange,
+                            updatedAt: price?.updatedAt ?? item.lastCheckedAt,
+                            compact: true,
                           ),
                         ],
                       ),
@@ -342,6 +344,12 @@ class _MarketScreenState extends State<MarketScreen> {
                           style: const TextStyle(fontWeight: FontWeight.w900),
                         ),
                       ),
+                      if (_double(item['change_24h_percent']) != null) ...[
+                        PriceDelta(
+                          percent: _double(item['change_24h_percent']),
+                        ),
+                        const SizedBox(width: 7),
+                      ],
                       Text(
                         '${_coins(_int(item['current'] ?? item['price']))} C',
                         textDirection: TextDirection.ltr,

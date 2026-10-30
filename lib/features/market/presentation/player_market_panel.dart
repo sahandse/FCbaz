@@ -1,30 +1,45 @@
 import 'package:flutter/material.dart';
 
+import '../data/market_repository.dart';
+import '../data/price_snapshot_store.dart';
 import '../data/watchlist_repository.dart';
 import '../domain/player_price.dart';
 import 'price_history_chart.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/ui/price_ticker.dart';
+import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class PlayerMarketPanel extends StatefulWidget {
   const PlayerMarketPanel({
     required this.playerId,
     required this.playerName,
+    this.market,
+    this.watchlist,
+    this.snapshots,
     super.key,
   });
 
   final String playerId;
   final String playerName;
+  final MarketRepository? market;
+  final WatchlistRepository? watchlist;
+  final PriceSnapshotStore? snapshots;
 
   @override
   State<PlayerMarketPanel> createState() => _PlayerMarketPanelState();
 }
 
 class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
-  final market = AppDependencies.instance.market;
-  final watchlist = AppDependencies.instance.watchlist;
+  late final market = widget.market ?? AppDependencies.instance.market;
+  late final watchlist = widget.watchlist ?? AppDependencies.instance.watchlist;
+  late final snapshots =
+      widget.snapshots ?? AppDependencies.instance.priceSnapshots;
 
   PlayerPrice? price;
   List<PricePoint> history = const [];
+  bool localHistory = false;
+  int localSampleCount = 0;
+  DateTime? localLastObservedAt;
   bool loading = true;
   bool saved = false;
   String? error;
@@ -44,6 +59,17 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
 
     try {
       final livePrice = await market.getPlayerPrice(widget.playerId);
+
+      var observed = const <PricePoint>[];
+      try {
+        observed = await snapshots.record(
+          widget.playerId,
+          price: livePrice.current,
+        );
+      } catch (_) {
+        // Snapshot storage is best-effort; the live price stays usable.
+      }
+
       final isSaved = await watchlist.contains(widget.playerId);
       List<PricePoint> realHistory = const [];
       try {
@@ -55,10 +81,18 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
         // Current price remains useful even when the provider has no real history.
       }
 
+      final useLocal = realHistory.isEmpty;
+      final localPoints = useLocal
+          ? _localRange(observed)
+          : const <PricePoint>[];
+
       if (!mounted) return;
       setState(() {
         price = livePrice;
-        history = realHistory;
+        history = useLocal ? localPoints : realHistory;
+        localHistory = useLocal;
+        localSampleCount = observed.length;
+        localLastObservedAt = observed.isEmpty ? null : observed.last.time;
         saved = isSaved;
       });
     } catch (e) {
@@ -73,6 +107,15 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
     if (value == range) return;
     setState(() => range = value);
     await _load();
+  }
+
+  List<PricePoint> _localRange(List<PricePoint> points) {
+    if (points.length < 2) return points;
+    final span = range == '24h'
+        ? const Duration(hours: 24)
+        : const Duration(days: 7);
+    final cutoff = points.last.time.subtract(span);
+    return points.where((p) => !p.time.isBefore(cutoff)).toList();
   }
 
   String _coins(int value) {
@@ -185,7 +228,6 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
 
     final current = price!;
     final change = current.change24hPercent;
-    final positive = change != null && change >= 0;
 
     return Card(
       child: Padding(
@@ -225,42 +267,71 @@ class _PlayerMarketPanelState extends State<PlayerMarketPanel> {
               ],
             ),
             const SizedBox(height: 10),
-            Text(
-              '${_coins(current.current)} Coins',
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w900),
+            PriceTicker(
+              price: current.current,
+              changePercent: change,
+              updatedAt: current.updatedAt,
             ),
-            const SizedBox(height: 6),
+            const SizedBox(height: 10),
             Row(
               children: [
                 _Metric(label: 'Low', value: _coins(current.low)),
                 const SizedBox(width: 8),
                 _Metric(label: 'High', value: _coins(current.high)),
-                const SizedBox(width: 8),
-                _Metric(
-                  label: '24h',
-                  value: change == null
-                      ? '—'
-                      : '${positive ? '+' : ''}${change.toStringAsFixed(1)}%',
-                ),
               ],
             ),
             const SizedBox(height: 14),
             if (history.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 18),
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 18),
                 child: Center(
                   child: Text(
-                    'تاریخچه قیمت واقعی برای این کارت در دسترس نیست.',
+                    localHistory && localSampleCount > 0
+                        ? 'تاریخچه سرور در دسترس نیست. ${faDigits(localSampleCount)} مشاهده محلی ثبت شده، اما در بازه انتخابی به حداقل ۲ نقطه برای نمودار نیاز است.'
+                        : 'تاریخچه قیمت واقعی برای این کارت در دسترس نیست.',
+                    textAlign: TextAlign.center,
                   ),
                 ),
               )
-            else
+            else ...[
+              if (localHistory)
+                Container(
+                  margin: const EdgeInsets.only(bottom: 8),
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Icon(
+                        Icons.smartphone_rounded,
+                        size: 18,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          'تاریخچه محلی: ${faDigits(history.length)} نقطه در این بازه از ${faDigits(localSampleCount)} مشاهده واقعی روی همین دستگاه. '
+                          'آخرین مشاهده: ${formatJalaliDateTime(localLastObservedAt!)}. تاریخچه سرور در دسترس نیست و نقطه‌ای ساختگی اضافه نشده است.',
+                          style: Theme.of(context).textTheme.labelSmall,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               PriceHistoryChart(
                 points: history,
-                rangeLabel: range == '24h' ? '۲۴ ساعت' : '۷ روز',
+                rangeLabel: localHistory
+                    ? '${range == '24h' ? '۲۴ ساعت' : '۷ روز'} (محلی)'
+                    : range == '24h'
+                    ? '۲۴ ساعت'
+                    : '۷ روز',
               ),
+            ],
             const SizedBox(height: 14),
             SizedBox(
               width: double.infinity,

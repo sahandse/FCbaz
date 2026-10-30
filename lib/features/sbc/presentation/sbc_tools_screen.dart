@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../club/data/my_club_repository.dart';
 import '../../players/domain/player.dart';
 import '../domain/sbc_rating_tools.dart';
+import 'sbc_club_solver_card.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
@@ -14,6 +16,7 @@ class SbcToolsScreen extends StatefulWidget {
 
 class _SbcToolsScreenState extends State<SbcToolsScreen> {
   final marketRepository = AppDependencies.instance.market;
+  final clubRepository = AppDependencies.instance.club;
   final calculator = const SbcRatingCalculator();
 
   int targetRating = 84;
@@ -22,11 +25,32 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
   String? error;
   Map<int, Player> cheapestByRating = const {};
   List<SbcRatingCombination> combinations = const [];
+  List<MyClubItem> clubItems = const [];
 
   @override
   void initState() {
     super.initState();
+    _loadClub();
     _load();
+  }
+
+  Future<void> _loadClub() async {
+    final items = await clubRepository.getAll();
+    if (!mounted) return;
+    setState(() => clubItems = items);
+  }
+
+  Future<void> _refresh() async {
+    await _loadClub();
+    await _load();
+  }
+
+  Map<int, int> get _ownedCountByRating {
+    final counts = <int, int>{};
+    for (final item in clubItems) {
+      counts.update(item.rating, (value) => value + 1, ifAbsent: () => 1);
+    }
+    return counts;
   }
 
   Future<void> _load() async {
@@ -62,6 +86,7 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
         minCardRating: minRating,
         maxCardRating: maxRating,
         cheapestPriceByRating: prices,
+        ownedCountByRating: _ownedCountByRating,
       );
 
       if (!mounted) return;
@@ -97,7 +122,7 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text('ابزارهای SBC')),
       body: RefreshIndicator(
-        onRefresh: _load,
+        onRefresh: _refresh,
         child: ListView(
           padding: const EdgeInsets.fromLTRB(16, 8, 16, 28),
           children: [
@@ -177,6 +202,8 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
               ),
             ],
             const SizedBox(height: 18),
+            SbcClubSolverCard(items: clubItems, targetRating: targetRating),
+            const SizedBox(height: 18),
             Text(
               'ارزان‌ترین کارت واقعی هر ریتینگ',
               style: Theme.of(context).textTheme.titleLarge,
@@ -222,7 +249,7 @@ class _SbcToolsScreenState extends State<SbcToolsScreen> {
             ),
             const SizedBox(height: 6),
             Text(
-              'هزینه فقط زمانی نمایش داده می‌شود که برای تمام ریتینگ‌های استفاده‌شده قیمت واقعی موجود باشد.',
+              'هزینه خرید فقط زمانی نمایش داده می‌شود که برای ریتینگ‌های خریدنی قیمت واقعی موجود باشد. کارت‌های ثبت‌شده در کلوب از تعداد خرید کم می‌شوند.',
               style: TextStyle(
                 fontSize: 11,
                 color: Theme.of(context).colorScheme.onSurfaceVariant,

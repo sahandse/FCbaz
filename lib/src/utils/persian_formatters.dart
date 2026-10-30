@@ -53,6 +53,18 @@ String formatNewsDateFa(String raw) {
   return '${faDigits(day)} ${_gregorianMonthsFa[monthIndex]} ${faDigits(match.group(3)!)}';
 }
 
+DateTime? parseFeedDate(String raw) {
+  final match = RegExp(
+    r'([A-Za-z]+)\s+(\d{1,2}),?\s+(\d{4})',
+  ).firstMatch(raw.trim());
+  if (match == null) return null;
+  final monthIndex = _englishMonths.indexOf(match.group(1)!.toLowerCase());
+  final day = int.tryParse(match.group(2)!);
+  final year = int.tryParse(match.group(3)!);
+  if (monthIndex < 0 || day == null || year == null) return null;
+  return DateTime(year, monthIndex + 1, day);
+}
+
 const _englishMonths = [
   'january',
   'february',

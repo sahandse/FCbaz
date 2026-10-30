@@ -4,6 +4,8 @@ import '../../players/domain/player.dart';
 import '../../players/presentation/player_card.dart';
 import '../domain/draft_models.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/share/share_card.dart';
+import 'package:fcbaz/src/share/share_service.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class DraftScreen extends StatefulWidget {
@@ -16,9 +18,11 @@ class DraftScreen extends StatefulWidget {
 class _DraftScreenState extends State<DraftScreen> {
   final _service = const DraftSimulatorService();
   final _playerRepo = AppDependencies.instance.players;
+  final _shareService = ShareService();
   DraftState? _draftState;
   List<Player> _allPlayers = [];
   bool _isLoading = true;
+  bool _sharingDraft = false;
 
   @override
   void initState() {
@@ -49,6 +53,56 @@ class _DraftScreenState extends State<DraftScreen> {
     setState(() {
       _draftState = _service.createNewDraft(allPlayers: _allPlayers);
     });
+  }
+
+  Future<void> _shareDraft() async {
+    final state = _draftState;
+    if (state == null || !state.isCompleted || _sharingDraft) return;
+    setState(() => _sharingDraft = true);
+    try {
+      final rows = <ShareCardRow>[
+        for (final slot in state.slots)
+          if (state.picks[slot.index] != null)
+            ShareCardRow(
+              position: slot.position,
+              name: state.picks[slot.index]!.name,
+              rating: state.picks[slot.index]!.rating,
+            ),
+      ];
+      final data = ShareCardData(
+        eyebrow: 'FUT DRAFT',
+        title: 'درافت FC 27',
+        subtitle: state.formation,
+        metrics: [
+          ShareCardMetric(label: 'ریتینگ', value: faDigits(state.teamRating)),
+          ShareCardMetric(
+            label: 'شیمی',
+            value: faDigits('${state.teamChemistry}/33'),
+          ),
+          ShareCardMetric(label: 'بازیکن', value: faDigits(rows.length)),
+        ],
+        rows: rows,
+        footer: 'FCBaz • دستیار فارسی FC 27',
+      );
+      final pngBytes = await const ShareCardRenderer().renderPng(data);
+      final outcome = await _shareService.shareImage(
+        pngBytes: pngBytes,
+        fileName: 'fcbaz-draft.png',
+        fallbackText: shareCardToText(data),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(shareOutcomeMessage(outcome))));
+    } catch (error) {
+      debugPrint('Draft share failed: $error');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ساخت کارت تصویری درافت ممکن نشد.')),
+      );
+    } finally {
+      if (mounted) setState(() => _sharingDraft = false);
+    }
   }
 
   @override
@@ -92,7 +146,12 @@ class _DraftScreenState extends State<DraftScreen> {
         const SizedBox(height: 16),
 
         if (state.isCompleted) ...[
-          _DraftCompletedSummary(state: state, onRestart: _restartDraft),
+          _DraftCompletedSummary(
+            state: state,
+            onRestart: _restartDraft,
+            onShare: _shareDraft,
+            sharing: _sharingDraft,
+          ),
         ] else ...[
           // Current Selection Prompt
           _SlotPromptHeader(slot: state.slots[state.currentSlotIndex]),
@@ -308,9 +367,16 @@ class _SlotPromptHeader extends StatelessWidget {
 }
 
 class _DraftCompletedSummary extends StatelessWidget {
-  const _DraftCompletedSummary({required this.state, required this.onRestart});
+  const _DraftCompletedSummary({
+    required this.state,
+    required this.onRestart,
+    required this.onShare,
+    required this.sharing,
+  });
   final DraftState state;
   final VoidCallback onRestart;
+  final VoidCallback onShare;
+  final bool sharing;
 
   @override
   Widget build(BuildContext context) {
@@ -344,6 +410,18 @@ class _DraftCompletedSummary extends StatelessWidget {
               backgroundColor: scheme.primary,
               foregroundColor: scheme.onPrimary,
             ),
+          ),
+          const SizedBox(height: 10),
+          OutlinedButton.icon(
+            onPressed: sharing ? null : onShare,
+            icon: sharing
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.ios_share_rounded),
+            label: const Text('اشتراک‌گذاری کارت درافت'),
           ),
         ],
       ),

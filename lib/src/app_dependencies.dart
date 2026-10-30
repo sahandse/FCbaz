@@ -4,6 +4,7 @@ import '../features/evolutions/data/evolution_repository.dart';
 import '../features/home/home_repository.dart';
 import '../features/home/objective_progress_repository.dart';
 import '../features/market/data/market_repository.dart';
+import '../features/market/data/price_snapshot_store.dart';
 import '../features/market/data/watchlist_repository.dart';
 import '../features/meta/data/meta_repository.dart';
 import '../features/navigation/app_navigation_repository.dart';
@@ -34,13 +35,15 @@ class AppDependencies {
   late final NewsRepository news = NewsRepository();
   late final MarketRepository market = MarketRepository();
   late final WatchlistRepository watchlist = WatchlistRepository();
+  late final PriceSnapshotStore priceSnapshots = PriceSnapshotStore();
   late final SquadRepository squads = SquadRepository();
   late final MyClubRepository club = MyClubRepository();
   late final SbcRepository sbc = SbcRepository();
   late final EvolutionRepository evolutions = EvolutionRepository();
   late final MetaRepository meta = MetaRepository();
   late final HomeRepository home = HomeRepository();
-  late final ObjectiveProgressRepository objectives = ObjectiveProgressRepository();
+  late final ObjectiveProgressRepository objectives =
+      ObjectiveProgressRepository();
   late final NotificationRepository notifications = NotificationRepository();
   late final NotificationPreferencesRepository notificationPreferences =
       NotificationPreferencesRepository();

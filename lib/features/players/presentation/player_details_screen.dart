@@ -3,7 +3,9 @@ import 'package:flutter/services.dart';
 
 import '../../club/data/my_club_repository.dart';
 import '../../club/presentation/add_club_player_dialog.dart';
+import '../../evolutions/domain/evolution.dart';
 import '../../market/presentation/player_market_panel.dart';
+import '../../sbc/domain/sbc.dart';
 import '../../../src/theme/fcbaz_theme.dart';
 import '../../../src/ui/segmented_tabs.dart';
 import '../../../src/ui/section_header.dart';
@@ -14,6 +16,7 @@ import '../domain/chemistry_style_advisor.dart';
 import '../domain/player.dart';
 import 'card/player_card_theme.dart';
 import 'player_item_visual.dart';
+import 'widgets/player_usage_panel.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/navigation/app_navigator.dart';
 
@@ -38,17 +41,24 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
   final reviewRepository = AppDependencies.instance.reviews;
   final clubRepository = AppDependencies.instance.club;
   final historyRepository = AppDependencies.instance.history;
+  final evolutionRepository = AppDependencies.instance.evolutions;
+  final sbcRepository = AppDependencies.instance.sbc;
   final chemistryAdvisor = const ChemistryStyleAdvisor();
 
   late final TabController tabController;
   late Player player = widget.player;
   PlayerReview? review;
   List<Player> versions = const [];
+  List<Evolution> evolutions = const [];
+  List<SbcChallenge> sbcChallenges = const [];
   bool loading = true;
+  bool loadingUsage = true;
   bool favorite = false;
   bool inClub = false;
   bool savingClub = false;
   String? detailError;
+  String? evolutionsError;
+  String? sbcError;
 
   @override
   void initState() {
@@ -58,6 +68,7 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
     _loadReview();
     _loadFavorite();
     _loadClubStatus();
+    _loadUsage();
   }
 
   @override
@@ -106,12 +117,47 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
     if (mounted) setState(() => inClub = ids.contains(widget.player.id));
   }
 
+  Future<void> _loadUsage() async {
+    if (!loadingUsage && mounted) setState(() => loadingUsage = true);
+    await Future.wait([_loadEvolutions(), _loadSbcs()]);
+    if (mounted) setState(() => loadingUsage = false);
+  }
+
+  Future<void> _loadEvolutions() async {
+    try {
+      final items = await evolutionRepository.getActive();
+      if (!mounted) return;
+      setState(() {
+        evolutions = items;
+        evolutionsError = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => evolutionsError = e.toString());
+    }
+  }
+
+  Future<void> _loadSbcs() async {
+    try {
+      final items = await sbcRepository.getActive();
+      if (!mounted) return;
+      setState(() {
+        sbcChallenges = items;
+        sbcError = null;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => sbcError = e.toString());
+    }
+  }
+
   Future<void> _refreshAll() async {
     await Future.wait([
       _load(),
       _loadReview(),
       _loadFavorite(),
       _loadClubStatus(),
+      _loadUsage(),
     ]);
   }
 
@@ -465,6 +511,21 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
                     ),
                   ),
                 ),
+              const SizedBox(height: FcbazSpace.xl),
+              const SectionHeader(
+                kicker: 'WHERE IT IS USED',
+                title: 'کجا استفاده می‌شود',
+              ),
+              const SizedBox(height: 10),
+              PlayerUsagePanel(
+                player: player,
+                loading: loadingUsage,
+                evolutions: evolutions,
+                sbcChallenges: sbcChallenges,
+                evolutionsError: evolutionsError,
+                sbcError: sbcError,
+                onRetry: _loadUsage,
+              ),
             ]),
             _tabBody('stats', [
               const SectionHeader(kicker: 'FACE STATS', title: 'آمار چهره'),
@@ -585,4 +646,3 @@ class _PlayerDetailsScreenState extends State<PlayerDetailsScreen>
     );
   }
 }
-

@@ -49,7 +49,7 @@ class DeadlineChip extends StatelessWidget {
           Icon(icon, size: 13, color: color),
           const SizedBox(width: 4),
           Text(
-            relativeDeadlineFa(value, now: now),
+            expired ? 'منقضی' : relativeDeadlineFa(value, now: now),
             style: TextStyle(
               fontSize: 11,
               fontWeight: FontWeight.w700,

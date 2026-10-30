@@ -6,6 +6,7 @@ import '../draft/presentation/draft_screen.dart';
 import '../club/presentation/my_club_screen.dart';
 import '../dns/presentation/dns_screen.dart';
 import '../evolutions/presentation/evolutions_screen.dart';
+import '../home/content_hub_screen.dart';
 import '../home/objectives_screen.dart';
 import '../market/presentation/market_screen.dart';
 import '../market/presentation/market_tools_screen.dart';
@@ -153,6 +154,12 @@ class MoreScreen extends StatelessWidget {
             mainAxisExtent: 148,
           ),
           children: [
+            _ToolCard(
+              title: 'مرکز محتوا',
+              subtitle: 'شمارش معکوس SBC، Evolution و Objectiveها',
+              icon: Icons.hourglass_top_rounded,
+              onTap: () => _open(context, const ContentHubScreen()),
+            ),
             _ToolCard(
               title: 'بازار',
               subtitle: 'قیمت زنده و فهرست پیگیری',

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../domain/news_article.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
 import 'package:fcbaz/src/theme/fcbaz_theme.dart';
+import 'package:fcbaz/src/ui/content_status_chips.dart';
 import 'package:fcbaz/src/ui/section_heading.dart';
 import 'package:fcbaz/src/ui/stadium_hero.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
@@ -260,6 +261,7 @@ class _NewsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final publishedAt = parseFeedDate(article.published);
 
     return Card(
       shape: RoundedRectangleBorder(
@@ -310,6 +312,10 @@ class _NewsCard extends StatelessWidget {
                   ),
                 ],
               ),
+              if (isFreshContent(publishedAt)) ...[
+                const SizedBox(height: 8),
+                ContentStatusChips(publishedAt: publishedAt),
+              ],
               const SizedBox(height: 10),
               Text(
                 article.displayTitle,
@@ -379,6 +385,7 @@ class _FeaturedNewsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
+    final publishedAt = parseFeedDate(article.published);
 
     return Semantics(
       button: true,
@@ -482,6 +489,10 @@ class _FeaturedNewsCard extends StatelessWidget {
                             ),
                           ],
                         ),
+                        if (isFreshContent(publishedAt)) ...[
+                          const SizedBox(height: 8),
+                          ContentStatusChips(publishedAt: publishedAt),
+                        ],
                         const SizedBox(height: 12),
                         Text(
                           article.displayTitle,

@@ -22,6 +22,28 @@ class SbcRatingCombination {
   }
 }
 
+class SbcClubSquad<T> {
+  const SbcClubSquad({
+    required this.selected,
+    required this.untradeables,
+    required this.tradeables,
+    required this.counts,
+    required this.squadRating,
+    required this.targetRating,
+  });
+
+  final List<T> selected;
+  final List<T> untradeables;
+  final List<T> tradeables;
+  final Map<int, int> counts;
+  final int squadRating;
+  final int targetRating;
+
+  bool get meetsTarget => squadRating >= targetRating;
+  int get shortfall => meetsTarget ? 0 : targetRating - squadRating;
+  int get playerCount => selected.length;
+}
+
 class SbcRatingCalculator {
   const SbcRatingCalculator();
 
@@ -47,6 +69,7 @@ class SbcRatingCalculator {
   List<SbcRatingCombination> combinations({
     required int targetRating,
     Map<int, int> cheapestPriceByRating = const {},
+    Map<int, int> ownedCountByRating = const {},
     int squadSize = 11,
     int? minCardRating,
     int? maxCardRating,
@@ -69,6 +92,7 @@ class SbcRatingCalculator {
           counts: counts,
           targetRating: targetRating,
           cheapestPriceByRating: cheapestPriceByRating,
+          ownedCountByRating: ownedCountByRating,
         );
         counts.remove(ratingBand[index]);
         return;
@@ -110,6 +134,7 @@ class SbcRatingCalculator {
     required Map<int, int> counts,
     required int targetRating,
     required Map<int, int> cheapestPriceByRating,
+    required Map<int, int> ownedCountByRating,
   }) {
     final ratings = <int>[];
     for (final entry in counts.entries) {
@@ -121,15 +146,24 @@ class SbcRatingCalculator {
     if (squadRating < targetRating) return;
 
     int? cost;
-    if (cheapestPriceByRating.isNotEmpty &&
-        counts.keys.every(
-          (rating) => (cheapestPriceByRating[rating] ?? 0) > 0,
-        )) {
+    if (cheapestPriceByRating.isNotEmpty) {
       var totalCost = 0;
+      var priced = true;
       for (final entry in counts.entries) {
-        totalCost += cheapestPriceByRating[entry.key]! * entry.value;
+        final owned = (ownedCountByRating[entry.key] ?? 0).clamp(
+          0,
+          entry.value,
+        );
+        final paidCount = entry.value - owned;
+        if (paidCount <= 0) continue;
+        final price = cheapestPriceByRating[entry.key] ?? 0;
+        if (price <= 0) {
+          priced = false;
+          break;
+        }
+        totalCost += price * paidCount;
       }
-      cost = totalCost;
+      if (priced) cost = totalCost;
     }
 
     results.add(
@@ -147,49 +181,121 @@ class SbcRatingCalculator {
     return ratings.last - ratings.first;
   }
 
-  /// Suggests the best players from a club inventory to fulfill a target squad rating.
-  /// Prioritizes untradeable and lowest suitable ratings first to minimize coin waste.
-  List<T> solveFromClub<T>({
+  /// Builds the club-aware SBC squad for [targetRating].
+  ///
+  /// Priority: use the fewest tradeable cards (untradeable cards cost nothing
+  /// to sacrifice), then the lowest ratings that still reach the target. The
+  /// result is data driven; when the club cannot reach the target the best
+  /// achievable squad is returned with [SbcClubSquad.meetsTarget] false and a
+  /// real [SbcClubSquad.shortfall], never a padded estimate.
+  SbcClubSquad<T>? solveClubSquad<T>({
     required List<T> clubItems,
     required int Function(T item) getRating,
     required bool Function(T item) isUntradeable,
     required int targetRating,
     int squadSize = 11,
   }) {
-    if (clubItems.length < squadSize) return [];
+    if (squadSize <= 0 || clubItems.length < squadSize) return null;
 
-    // Sort items: untradeable first, then by rating ascending
-    final sorted = List<T>.from(clubItems)
-      ..sort((a, b) {
-        final untradeableA = isUntradeable(a) ? 1 : 0;
-        final untradeableB = isUntradeable(b) ? 1 : 0;
-        if (untradeableA != untradeableB)
-          return untradeableB.compareTo(untradeableA);
-        return getRating(a).compareTo(getRating(b));
-      });
+    final untradeable = clubItems.where(isUntradeable).toList()
+      ..sort((a, b) => getRating(a).compareTo(getRating(b)));
+    final tradeable = clubItems.where((item) => !isUntradeable(item)).toList()
+      ..sort((a, b) => getRating(a).compareTo(getRating(b)));
 
-    // Greedy pick candidate combinations
-    final selected = <T>[];
-    for (final item in sorted) {
-      selected.add(item);
-      if (selected.length == squadSize) {
-        final ratings = selected.map(getRating).toList();
-        if (calculateSquadRating(ratings) >= targetRating) {
-          return selected;
+    for (
+      var tradeableCount = 0;
+      tradeableCount <= squadSize;
+      tradeableCount++
+    ) {
+      final untradeableCount = squadSize - tradeableCount;
+      if (untradeableCount > untradeable.length ||
+          tradeableCount > tradeable.length) {
+        continue;
+      }
+
+      var untradeableStart = 0;
+      var tradeableStart = 0;
+
+      while (true) {
+        final selected = <T>[
+          for (var i = 0; i < untradeableCount; i++)
+            untradeable[untradeableStart + i],
+          for (var i = 0; i < tradeableCount; i++)
+            tradeable[tradeableStart + i],
+        ];
+        final squadRating = calculateSquadRating(
+          selected.map(getRating).toList(),
+        );
+
+        if (squadRating >= targetRating) {
+          return _buildClubSquad(
+            selected: selected,
+            getRating: getRating,
+            isUntradeable: isUntradeable,
+            squadRating: squadRating,
+            targetRating: targetRating,
+          );
         }
-        selected.removeAt(0); // slide window
+
+        final canUpgradeUntradeable =
+            untradeableCount > 0 &&
+            untradeableStart + untradeableCount < untradeable.length;
+        final canUpgradeTradeable =
+            tradeableCount > 0 &&
+            tradeableStart + tradeableCount < tradeable.length;
+        if (!canUpgradeUntradeable && !canUpgradeTradeable) break;
+
+        final nextUntradeable = canUpgradeUntradeable
+            ? getRating(untradeable[untradeableStart + untradeableCount])
+            : null;
+        final nextTradeable = canUpgradeTradeable
+            ? getRating(tradeable[tradeableStart + tradeableCount])
+            : null;
+
+        if (nextUntradeable != null &&
+            (nextTradeable == null || nextUntradeable <= nextTradeable)) {
+          untradeableStart++;
+        } else {
+          tradeableStart++;
+        }
       }
     }
 
-    // Fallback: pick highest rating squadSize items if available
-    final highest = List<T>.from(clubItems)
+    final best = [...clubItems]
       ..sort((a, b) => getRating(b).compareTo(getRating(a)));
-    final topSquad = highest.take(squadSize).toList();
-    if (calculateSquadRating(topSquad.map(getRating).toList()) >=
-        targetRating) {
-      return topSquad;
-    }
+    final selected = best.take(squadSize).toList();
+    return _buildClubSquad(
+      selected: selected,
+      getRating: getRating,
+      isUntradeable: isUntradeable,
+      squadRating: calculateSquadRating(selected.map(getRating).toList()),
+      targetRating: targetRating,
+    );
+  }
 
-    return [];
+  SbcClubSquad<T> _buildClubSquad<T>({
+    required List<T> selected,
+    required int Function(T item) getRating,
+    required bool Function(T item) isUntradeable,
+    required int squadRating,
+    required int targetRating,
+  }) {
+    final counts = <int, int>{};
+    for (final item in selected) {
+      final rating = getRating(item);
+      counts.update(rating, (value) => value + 1, ifAbsent: () => 1);
+    }
+    final ordered = [...selected]
+      ..sort((a, b) => getRating(b).compareTo(getRating(a)));
+    return SbcClubSquad(
+      selected: List<T>.unmodifiable(ordered),
+      untradeables: List<T>.unmodifiable(ordered.where(isUntradeable)),
+      tradeables: List<T>.unmodifiable(
+        ordered.where((item) => !isUntradeable(item)),
+      ),
+      counts: Map<int, int>.unmodifiable(counts),
+      squadRating: squadRating,
+      targetRating: targetRating,
+    );
   }
 }

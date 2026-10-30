@@ -1,17 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'squad_screenshot_analyzer.dart';
 
 import '../players/domain/player.dart';
 import 'domain/chemistry_engine.dart';
+import 'domain/squad_auto_fill_service.dart';
 import 'domain/squad_chemistry_optimizer.dart';
 import 'domain/squad_formation_migrator.dart';
 import 'domain/squad_models.dart';
+import 'domain/squad_text_exporter.dart';
 import 'presentation/chemistry_links.dart';
 import 'presentation/formation_picker_sheet.dart';
 import 'presentation/squad_insights_panel.dart';
 import 'presentation/tactics_editor_sheet.dart';
 import 'package:fcbaz/src/app_dependencies.dart';
+import 'package:fcbaz/src/share/share_card.dart';
+import 'package:fcbaz/src/share/share_service.dart';
 import 'package:fcbaz/src/ui/section_heading.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
@@ -29,7 +34,10 @@ class _SquadScreenProState extends State<SquadScreenPro> {
   final formationMigrator = const SquadFormationMigrator();
   final chemistryOptimizer = const SquadChemistryOptimizer();
   final screenshotAnalyzer = SquadScreenshotAnalyzer();
+  final shareService = ShareService();
   bool importingScreenshot = false;
+  bool sharingSquad = false;
+  bool autoFilling = false;
 
   List<SquadStateModel> savedSquads = const [];
   late SquadStateModel squad;
@@ -85,6 +93,74 @@ class _SquadScreenProState extends State<SquadScreenPro> {
 
   Future<void> _new() async {
     setState(() => squad = _newSquad());
+  }
+
+  Future<void> _shareSquad() async {
+    if (sharingSquad) return;
+    if (squad.playersBySlot.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'برای اشتراک‌گذاری اول بازیکن‌ها را به ترکیب اضافه کن.',
+          ),
+        ),
+      );
+      return;
+    }
+
+    setState(() => sharingSquad = true);
+    try {
+      final rows = <ShareCardRow>[
+        for (final slot in formation.slots)
+          if (squad.playersBySlot[slot.id] != null)
+            ShareCardRow(
+              position: slot.position,
+              name: squad.playersBySlot[slot.id]!.name,
+              rating: squad.playersBySlot[slot.id]!.rating,
+            ),
+      ];
+      if (rows.isEmpty) {
+        throw StateError('ترکیب بازیکن قابل اشتراک‌گذاری ندارد.');
+      }
+      final averageRating =
+          (rows.fold<int>(0, (sum, row) => sum + row.rating) / rows.length)
+              .round();
+      final data = ShareCardData(
+        eyebrow: 'SQUAD BUILDER',
+        title: squad.name.trim().isEmpty ? 'ترکیب من' : squad.name,
+        subtitle: '${formation.name} • FC 27',
+        metrics: [
+          ShareCardMetric(label: 'ریتینگ', value: faDigits(averageRating)),
+          ShareCardMetric(
+            label: 'شیمی',
+            value: faDigits(
+              '${chemistry.total}/${chemistry.maxForFilledPlayers}',
+            ),
+          ),
+          ShareCardMetric(label: 'بازیکن', value: faDigits(rows.length)),
+        ],
+        rows: rows,
+        footer: 'FCBaz • دستیار فارسی FC 27',
+      );
+      final pngBytes = await const ShareCardRenderer().renderPng(data);
+      final outcome = await shareService.shareImage(
+        pngBytes: pngBytes,
+        fileName: 'fcbaz-squad.png',
+        fallbackText: shareCardToText(data),
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(shareOutcomeMessage(outcome))));
+    } catch (error) {
+      debugPrint('Squad share failed: $error');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('ساخت کارت تصویری ترکیب ممکن نشد.')),
+      );
+    } finally {
+      if (mounted) setState(() => sharingSquad = false);
+    }
   }
 
   Future<void> _rename() async {
@@ -303,6 +379,86 @@ class _SquadScreenProState extends State<SquadScreenPro> {
     }
   }
 
+  Future<void> _autoFill() async {
+    if (autoFilling) return;
+    final hasEmptySlot = formation.slots.any(
+      (slot) => !squad.playersBySlot.containsKey(slot.id),
+    );
+    if (!hasEmptySlot) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('همه جای‌های ترکیب پر هستند.')),
+      );
+      return;
+    }
+
+    setState(() => autoFilling = true);
+    try {
+      final catalog = await playerRepository.getPlayers();
+      if (!mounted) return;
+      final result = const SquadAutoFillService().fillEmptySlots(
+        formation: formation,
+        current: squad.playersBySlot,
+        catalog: catalog,
+        manager: squad.manager,
+        excludedIds: squad.bench.map((p) => p.id).toSet(),
+      );
+
+      if (result.filledCount == 0) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text(
+              'برای جای‌های خالی، بازیکن مناسبی در کاتالوگ پیدا نشد. انتخاب دستی را امتحان کن.',
+            ),
+          ),
+        );
+        return;
+      }
+
+      setState(
+        () => squad = squad.copyWith(playersBySlot: result.playersBySlot),
+      );
+      final missing = result.unfilledPositions;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            missing.isEmpty
+                ? '${faDigits(result.filledCount)} جای خالی با بازیکنان کاتالوگ پر شد؛ ترکیب کامل است. ذخیره را فراموش نکن.'
+                : '${faDigits(result.filledCount)} جای خالی پر شد؛ برای ${missing.join('، ')} بازیکن مناسبی در کاتالوگ نبود.',
+          ),
+        ),
+      );
+    } catch (error) {
+      debugPrint('Squad auto fill failed: $error');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('خواندن کاتالوگ بازیکنان ممکن نشد؛ دوباره تلاش کن.'),
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => autoFilling = false);
+    }
+  }
+
+  Future<void> _copySquadText() async {
+    if (squad.playersBySlot.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('برای خروجی متنی اول بازیکن‌ها را به ترکیب اضافه کن.'),
+        ),
+      );
+      return;
+    }
+    final text = const SquadTextExporter().export(squad);
+    await Clipboard.setData(ClipboardData(text: text));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('متن ترکیب کپی شد و آماده اشتراک‌گذاری است.'),
+      ),
+    );
+  }
+
   Future<void> _pickPlayer(FormationSlot slot) async {
     List<Player> players;
     try {
@@ -397,6 +553,24 @@ class _SquadScreenProState extends State<SquadScreenPro> {
                 tooltip: 'تغییر نام',
               ),
               const SizedBox(width: 6),
+              IconButton.filledTonal(
+                onPressed: sharingSquad ? null : _shareSquad,
+                icon: sharingSquad
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : const Icon(Icons.ios_share_rounded),
+                tooltip: 'اشتراک‌گذاری تصویری',
+              ),
+              const SizedBox(width: 6),
+              IconButton.filledTonal(
+                onPressed: _copySquadText,
+                icon: const Icon(Icons.copy_all_rounded),
+                tooltip: 'کپی متن ترکیب',
+              ),
+              const SizedBox(width: 6),
               IconButton.filled(
                 onPressed: _save,
                 icon: const Icon(Icons.save_rounded),
@@ -461,6 +635,29 @@ class _SquadScreenProState extends State<SquadScreenPro> {
                 importingScreenshot
                     ? 'در حال شناسایی بازیکنان...'
                     : 'وارد کردن عکس ترکیب کنسول',
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.tonalIcon(
+              onPressed:
+                  autoFilling ||
+                      squad.playersBySlot.length == formation.slots.length
+                  ? null
+                  : _autoFill,
+              icon: autoFilling
+                  ? const SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.auto_fix_high_rounded),
+              label: Text(
+                autoFilling
+                    ? 'در حال پر کردن جای‌های خالی...'
+                    : 'پر کردن خودکار جای‌های خالی',
               ),
             ),
           ),

@@ -4,6 +4,7 @@ import '../../players/domain/player.dart';
 import '../domain/chemistry_engine.dart';
 import '../domain/squad_insights_service.dart';
 import '../domain/squad_models.dart';
+import 'insight_explain_sheet.dart';
 import 'package:fcbaz/src/utils/persian_formatters.dart';
 
 class SquadInsightsPanel extends StatefulWidget {
@@ -66,6 +67,42 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
       return '${n.toStringAsFixed(n >= 100 ? 0 : 1)}K';
     }
     return value.toString();
+  }
+
+  FormationSlot? _slotById(String? slotId) {
+    if (slotId == null) return null;
+    for (final slot in widget.formation.slots) {
+      if (slot.id == slotId) return slot;
+    }
+    return null;
+  }
+
+  void _explainWeakness(SquadWeakness issue) {
+    final slotId = issue.slotId;
+    final slot = _slotById(slotId);
+    final config = slotId == null ? null : widget.squad.playerConfigs[slotId];
+    showWeaknessExplanation(
+      context,
+      issue: issue,
+      player: slotId == null ? null : widget.squad.playersBySlot[slotId],
+      slotPosition: slot?.position,
+      slotDetail: slotId == null ? null : widget.chemistry.details[slotId],
+      role: config?.role ?? '',
+      focus: config?.focus ?? '',
+    );
+  }
+
+  void _explainSuggestion(SquadReplacementSuggestion suggestion) {
+    final slot = _slotById(suggestion.slotId);
+    final config = widget.squad.playerConfigs[suggestion.slotId];
+    showReplacementExplanation(
+      context,
+      suggestion: suggestion,
+      slotPosition: slot?.position ?? suggestion.currentPlayer.position,
+      platform: platform,
+      currentSlotChemistry: widget.chemistry.details[suggestion.slotId],
+      currentRole: config?.role ?? '',
+    );
   }
 
   @override
@@ -176,6 +213,7 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
           const SizedBox(height: 8),
           for (final issue in data.weaknesses)
             Card(
+              clipBehavior: Clip.antiAlias,
               child: ListTile(
                 leading: Icon(
                   issue.severity >= 3
@@ -187,6 +225,8 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
                 subtitle: Text(issue.detail),
+                trailing: const Icon(Icons.help_outline_rounded, size: 20),
+                onTap: () => _explainWeakness(issue),
               ),
             ),
         ],
@@ -251,14 +291,29 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
         else if (suggestions.isNotEmpty)
           for (final suggestion in suggestions)
             Card(
+              clipBehavior: Clip.antiAlias,
               child: ListTile(
                 leading: _PlayerAvatar(player: suggestion.replacement),
                 title: Text(
                   suggestion.replacement.name,
                   style: const TextStyle(fontWeight: FontWeight.w900),
                 ),
-                subtitle: Text(
-                  '${faDigits(suggestion.replacement.rating)} • ${suggestion.replacement.position} • ${faDigits(_coins(suggestion.price))} سکه • Meta +${faDigits(suggestion.scoreGain.toStringAsFixed(1))}',
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '${faDigits(suggestion.replacement.rating)} • ${suggestion.replacement.position} • ${faDigits(_coins(suggestion.price))} سکه • Meta +${faDigits(suggestion.scoreGain.toStringAsFixed(1))}',
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'دلیل این پیشنهاد',
+                      style: TextStyle(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w700,
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                  ],
                 ),
                 trailing: FilledButton(
                   onPressed: () => widget.onReplace(
@@ -267,6 +322,7 @@ class _SquadInsightsPanelState extends State<SquadInsightsPanel> {
                   ),
                   child: const Text('جایگزین'),
                 ),
+                onTap: () => _explainSuggestion(suggestion),
               ),
             )
         else
